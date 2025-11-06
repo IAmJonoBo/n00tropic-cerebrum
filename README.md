@@ -130,10 +130,13 @@ Operational outputs live in the shared filesystem at `/Volumes/APFS Space/n00tro
 
 ## Getting Started Locally
 
-1. Clone the workspace and initialise submodules if present.
-2. Install toolchains per repo (Python venv for `n00-frontiers`, Node for `n00-cortex` and `n00t`, pnpm for `n00plicate`).
-3. Open the multi-root VS Code workspace (`n00-cortex/generators/n00tropic-cerebrum.code-workspace`).
-4. Run baseline checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific health commands.
-5. Explore `1. Cerebrum Docs/` for ADRs, Renovate setup, and onboarding guides.
+1. Clone the workspace: `git clone https://github.com/IAmJonoBo/n00tropic-cerebrum.git && cd n00tropic-cerebrum`.
+2. Initialise submodules: `git submodule update --init --recursive`.
+3. Install toolchains per repo (Python venv for `n00-frontiers`, Node for `n00-cortex` and `n00t`, pnpm for `n00plicate`).
+4. Open the multi-root VS Code workspace (`n00-cortex/generators/n00tropic-cerebrum.code-workspace`).
+5. Run baseline checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific health commands.
+6. Explore `1. Cerebrum Docs/` for ADRs, Renovate setup, and onboarding guides.
 
 By keeping the repos loosely coupled yet automation-aware, the Cerebrum workspace lets contributors evolve generators, docs, and agents without tripping over each other's toolchains while still sharing a coherent release pulse.
+
+> ❗️ Do not run `git init` in `/Volumes/APFS Space/n00tropic`. The organisational root is intentionally non-versioned; all contributions should originate from this repository or its submodules.
