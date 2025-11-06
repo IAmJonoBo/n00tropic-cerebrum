@@ -47,6 +47,7 @@ Proposed – 2025-01-14
 - Introduce `project-metadata.schema.json` in `n00-cortex/schemas/` and publish documentation in `n00-cortex/docs`.
 - Add workspace validation guardrails via `n00-frontiers/test_imports.py` and `.dev/automation/scripts/validate-project-metadata.py` so malformed metadata fails fast in CI and automation runs.
 - Ship n00t orchestration entrypoints (`project.capture`, `project.sync.github`, `project.sync.erpnext`) backed by `.dev/automation/scripts/project-orchestration.py` with acceptance fixtures from the idea + project charter.
+- Publish the operator runbook in `n00t/START HERE/PROJECT_ORCHESTRATION.md` so humans/cloud agents share the same playbook.
 - Add a nightly `.dev/automation` job (`sync-project-registry.sh`) that:
   1. Scans for metadata blocks across repos.
   2. Reconciles the catalog in `n00-cortex/data/catalog/projects.json`.
