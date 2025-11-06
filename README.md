@@ -19,6 +19,8 @@ Frontiers --> Cortex
 
 Schemas published from `n00-cortex` drive automation in `n00-frontiers`, which then feeds downstream consumers such as `n00plicate` and the shared documentation set. `n00t` orchestrates the automation surface, while doctrine (`n00tropic`) and training signals (`n00-school`) complete the feedback loop.
 
+> Looking for the people-facing handbook? It now lives alongside the filesystem in `../n00tropic_HQ/`.
+
 ## Repository Profiles
 
 ### `1. Cerebrum Docs/`
