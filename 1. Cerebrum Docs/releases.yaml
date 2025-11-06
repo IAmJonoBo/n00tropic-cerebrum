@@ -1,0 +1,13 @@
+version: 2025.11.04
+generated: "Tue Nov  4 12:57:48 SAST 2025"
+repositories:
+  - repo: n00-frontiers
+    tag: unreleased
+  - repo: n00-cortex
+    tag: unreleased
+  - repo: n00t
+    tag: unreleased
+  - repo: n00tropic
+    tag: unreleased
+  - repo: n00plicate
+    tag: unreleased

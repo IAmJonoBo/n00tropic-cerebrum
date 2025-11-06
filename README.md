@@ -1,0 +1,139 @@
+# n00tropic Cerebrum Workspace
+
+The Cerebrum workspace stitches together the repositories that power n00tropic's platform: changelog automation, documentation, agent workflows, training curricula, and template generators. Each repository keeps its own release cadence and tooling, while this workspace supplies shared automation and alignment.
+
+## Ecosystem Map
+
+```mermaid
+graph TD
+Cortex["n00-cortex\nSchemas & Docs"] --> Frontiers["n00-frontiers\nTemplates, CLI, Renderers"]
+Cortex --> N00t["n00t\nAgent & MCP Surface"]
+N00t --> Frontiers
+Frontiers --> N00plicate["n00plicate\nPolyglot Consumer"]
+Frontiers --> Docs["1. Cerebrum Docs\nCross-repo ADRs"]
+N00tropic["n00tropic\nOperational Playbooks"] --> Docs
+N00school["n00-school\nTraining Curriculum"] --> N00t
+N00school --> Frontiers
+Frontiers --> Cortex
+```
+
+Schemas published from `n00-cortex` drive automation in `n00-frontiers`, which then feeds downstream consumers such as `n00plicate` and the shared documentation set. `n00t` orchestrates the automation surface, while doctrine (`n00tropic`) and training signals (`n00-school`) complete the feedback loop.
+
+## Repository Profiles
+
+### `1. Cerebrum Docs/`
+
+- **Focus**: Cross-repo decision records, release manifests, and workspace onboarding docs.
+- **Key artifacts**: ADRs, `RENOVATE_SETUP.md`, `TRUNK_GUIDE.md`, `releases.yaml` (written by automation).
+- **Role**: Acts as canonical reference material that other repos cite for shared policy.
+
+### `n00-frontiers/`
+
+- **Mandate**: Authoritative source for software, delivery, and design excellence. Defines the standards that every downstream system follows.
+- **Output**: Templates, notebooks, CLI tooling, and the quality bar for frontier-grade work.
+- **Cadence**: Updated frequently; every change should be reflected in `docs/`, `catalog.json`, and TASKS/ADR tracking.
+
+### `n00-cortex/`
+
+- **Mandate**: Systematise and enforce the rules issued by `n00-frontiers`. Publishes schemas, manifests, and documentation that downstream consumers must obey.
+- **Output**: JSON Schemas, toolchain manifests, canonical documentation site, and reusable templates.
+- **Dependency**: Pulls rendered assets and policies from `n00-frontiers` before distributing them.
+
+### `n00tropic/`
+
+- **Mandate**: Organisational handbook and flagship generation engine. Houses briefs, discovery artefacts, and generators that translate context into scaffolded projects and assets.
+- **Output**: Context ingestion, directory/project scaffolding, and operational doctrine for every service pillar.
+- **Integration**: Feeds `n00t` with briefs and configuration; ensures generated artefacts comply with `n00-frontiers` and `n00-cortex`.
+
+### `n00t/`
+
+- **Mandate**: Agent and automation control centre. Discovers capabilities, runs workspace scripts, and brokers context between humans, agents, and repos.
+- **Output**: MCP host, capability manifest, orchestration UI/CLI.
+- **Integration**: Invokes automation scripts and propagates telemetry back to `n00-cortex` and `n00-frontiers`.
+
+### `n00plicate/`
+
+- **Mandate**: Platform-agnostic design asset + CDN generator. Converts Penpot/token sources into multi-runtime packages.
+- **Output**: Token orchestrator, UI kernel, framework adapters, and reference apps.
+- **Integration**: Aligns with `n00-frontiers` design rules and feeds packaged assets to `n00tropic` deliverables.
+
+### `n00-school/`
+
+- **Mandate**: Training centre and R&D lab for n00tropic assistants. Develops and evaluates pipelines that improve automation quality.
+- **Output**: Training datasets, pipelines, evaluation harnesses, and telemetry.
+- **Integration**: Capabilities surface through `n00t`; insights loop back into `n00-frontiers` standards.
+
+### `n00-horizons/`
+
+- **Mandate**: Project management, ideation, and strategy hub. Ensures every idea is traceable to deliverables and upstream/downstream impacts.
+- **Output**: Experiment briefs, GitHub issue/project orchestration, and strategic playbooks.
+- **Integration**: Operates under the `n00-frontiers` horizon workflow and reports impacts to affected repos.
+
+## Cross-Repo Release Flow
+
+```mermaid
+sequenceDiagram
+participant Dev as Contributor
+participant Cortex as n00-cortex
+participant Frontiers as n00-frontiers
+participant Docs as 1. Cerebrum Docs
+participant Automation as .dev/automation
+
+Dev->>Cortex: Update schemas and manifests
+Cortex-->>Frontiers: Publish new toolchain rules
+Dev->>Frontiers: Regenerate templates and run sanity checks
+Dev->>Automation: Run meta-check and trunk sync
+Automation-->>Docs: Write releases.yaml via workspace-release.sh
+Docs-->>Dev: Document decisions and ADR updates
+```
+
+This sequence highlights the typical cadence: adjust policy in `n00-cortex`, adapt generators in `n00-frontiers`, validate via automation, and record the outcome in shared documentation.
+
+## Automation Toolkit
+
+Automation scripts live under `.dev/automation/scripts/` and surface through the `n00t` capability manifest.
+
+| Script                            | Purpose                                                                                                  |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `meta-check.sh`                   | Orchestrates repo health checks, schema validation, and CVE scans before publishing changes.             |
+| `refresh-workspace.sh`            | Fast-forwards each repo and updates submodules to keep local clones aligned.                             |
+| `trunk-upgrade.sh`                | Runs `trunk upgrade` across repos (supports repo filters and extra flags when invoked via capabilities). |
+| `check-cross-repo-consistency.py` | Ensures toolchain manifests and overrides remain aligned.                                                |
+| `workspace-release.sh`            | Verifies clean git state and writes `1. Cerebrum Docs/releases.yaml`.                                    |
+| `ai-workflows/*`                  | Phase-specific scripts for the AI-assisted development workflow surfaced by `n00t`.                      |
+
+Automation executions append telemetry to `.dev/automation/artifacts/automation/agent-runs.json`, which powers dashboards and agent insights.
+
+## Operating Guidelines
+
+- **Plan in public**: Capture cross-repo decisions in `1. Cerebrum Docs/ADR/` and link to repo-specific ADRs.
+- **Keep repos pristine**: Use `.dev/` directories for scratch assets and avoid committing generated artefacts.
+- **Version discipline**: Update `n00-cortex/data/toolchain-manifest.json` first when bumping runtimes so Renovate presets and generators stay aligned.
+- **Release sequencing**: Tag repos independently, then run `workspace-release.sh` to snapshot versions and update documentation.
+- **Security hygiene**: Run `pip-audit -r n00-frontiers/requirements.txt` (or rely on `meta-check`) before shipping templates.
+- **Automation discovery**: Use `n00t/capabilities/manifest.json` to discover scripted operations for CLI or MCP clients.
+
+## Workspace Filesystem
+
+Operational outputs live in the shared filesystem at `/Volumes/APFS Space/n00tropic`, organised as:
+
+- `01-Leadership/` – governance, legal, and risk artefacts with links back to `n00tropic/01-Leadership`.
+- `02-Revenue/` – campaign results, CRM exports, and sales intelligence synced from ERPNext.
+- `03-Delivery/` – project deliverables, QA evidence, and support transcripts tied to ERPNext Projects.
+- `04-People/` – HRMS snapshots, onboarding packs, and n00-school evaluation summaries.
+- `05-Finance-Procurement/` – accounting closes, purchasing approvals, and vendor records.
+- `06-Innovation-Labs/` – R&D experiment outputs spanning `n00-frontiers`, `n00-cortex`, and `n00plicate`.
+- `07-Platform-Ops/` – automation runbooks, telemetry, and ERPNext self-hosting playbooks.
+- `99-Clients/` – per-client deliverables using the `@slug` naming convention.
+- `90-Archive/` – immutable exports with checksums for audits.
+- `98-Scratchpad/` – temporary drafts purged automatically after 30 days.
+
+## Getting Started Locally
+
+1. Clone the workspace and initialise submodules if present.
+2. Install toolchains per repo (Python venv for `n00-frontiers`, Node for `n00-cortex` and `n00t`, pnpm for `n00plicate`).
+3. Open the multi-root VS Code workspace (`n00-cortex/generators/n00tropic-cerebrum.code-workspace`).
+4. Run baseline checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific health commands.
+5. Explore `1. Cerebrum Docs/` for ADRs, Renovate setup, and onboarding guides.
+
+By keeping the repos loosely coupled yet automation-aware, the Cerebrum workspace lets contributors evolve generators, docs, and agents without tripping over each other's toolchains while still sharing a coherent release pulse.

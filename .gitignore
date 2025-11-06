@@ -1,0 +1,9 @@
+Typora.app/
+DashboardApp.app/
+**/DashboardApp.app/
+artifacts/
+stuff/
+.DS_Store
+.secrets/
+n00-dashboard/.build/
+n00-dashboard/.swiftpm/
