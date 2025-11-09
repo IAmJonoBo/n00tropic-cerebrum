@@ -95,14 +95,19 @@ This sequence highlights the typical cadence: adjust policy in `n00-cortex`, ada
 
 Automation scripts live under `.dev/automation/scripts/` and surface through the `n00t` capability manifest.
 
-| Script                            | Purpose                                                                                                  |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `meta-check.sh`                   | Orchestrates repo health checks, schema validation, and CVE scans before publishing changes.             |
-| `refresh-workspace.sh`            | Fast-forwards each repo and updates submodules to keep local clones aligned.                             |
-| `trunk-upgrade.sh`                | Runs `trunk upgrade` across repos (supports repo filters and extra flags when invoked via capabilities). |
-| `check-cross-repo-consistency.py` | Ensures toolchain manifests and overrides remain aligned.                                                |
-| `workspace-release.sh`            | Verifies clean git state and writes `1. Cerebrum Docs/releases.yaml`.                                    |
-| `ai-workflows/*`                  | Phase-specific scripts for the AI-assisted development workflow surfaced by `n00t`.                      |
+| Script                            | Purpose                                                                                                    |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `meta-check.sh`                   | Orchestrates repo health checks, schema validation, and CVE scans before publishing changes.               |
+| `refresh-workspace.sh`            | Fast-forwards each repo and updates submodules to keep local clones aligned.                               |
+| `trunk-upgrade.sh`                | Runs `trunk upgrade` across repos (supports repo filters and extra flags when invoked via capabilities).   |
+| `check-cross-repo-consistency.py` | Ensures toolchain manifests and overrides remain aligned.                                                  |
+| `workspace-release.sh`            | Verifies clean git state and writes `1. Cerebrum Docs/releases.yaml`.                                      |
+| `ai-workflows/*`                  | Phase-specific scripts for the AI-assisted development workflow surfaced by `n00t`.                        |
+| `project-preflight.sh`            | Chains capture + GitHub/ERPNext syncs and fails fast when review cadence, links, or IDs are missing.       |
+| `project-lifecycle-radar.sh`      | Emits a JSON radar summarising lifecycle totals, overdue reviews, and integration gaps for planning.       |
+| `project-control-panel.sh`        | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights. |
+| `scripts/erpnext-run.sh`          | One-shot ERPNext launcher: idempotent setup + managed `bench start` with automatic shutdown on exit.       |
+| `project-preflight-batch.sh`      | Executes preflight across every registry entry to keep GitHub + ERPNext sync warnings visible.             |
 
 Automation executions append telemetry to `.dev/automation/artifacts/automation/agent-runs.json`, which powers dashboards and agent insights.
 

@@ -7,7 +7,7 @@ Proposed – 2025-01-14
 ## Context
 
 - Ideas, briefs, and research notes are scattered across multiple surfaces:
-  `n00tropic_HQ/99. Internal-Projects`,
+  `n00tropic_HQ/98. Internal-Projects`,
   `n00-horizons/ideas`, `n00-horizons/learning-log`, and ad-hoc documents elsewhere.
 - GitHub Issues and Projects provide the default execution surface for engineering work,
   yet there is no deterministic bridge from the upstream ideation artefacts into actionable
@@ -24,8 +24,8 @@ Proposed – 2025-01-14
 1. Adopt a **four-stage lifecycle** (`Discover → Shape → Deliver → Archive`) to govern every
    initiative across repositories and ERPNext modules.
    - **Discover**: Ideation artefacts captured in `n00-horizons/ideas/**`, `learning-log/**`,
-     or `n00tropic_HQ/99. Internal-Projects/**`.
-   - **Shape**: Structured project charters created under `n00tropic_HQ/99. Internal-Projects/IP-*/`
+     or `n00tropic_HQ/98. Internal-Projects/**`.
+   - **Shape**: Structured project charters created under `n00tropic_HQ/98. Internal-Projects/IP-*/`
      with synchronized metadata published to `n00-horizons/projects/`.
    - **Deliver**: Execution migrated to GitHub Issues/Projects with bi-directional syncing to ERPNext
      Projects/Tasks.
@@ -49,7 +49,7 @@ Proposed – 2025-01-14
 5. Require every new project or experiment to register through the orchestration capability,
    generating:
    - An ADR (in `1. Cerebrum Docs/ADR/`) when the initiative introduces cross-repo conventions.
-   - A project charter in `n00tropic_HQ/99. Internal-Projects/IP-*/`.
+   - A project charter in `n00tropic_HQ/98. Internal-Projects/IP-*/`.
    - A GitHub Project draft and ERPNext Project/Task stubs.
 6. Leverage n00-frontiers for **quality assurance of project artefacts** by adding validation schemas
    and unit tests to `test_imports.py` (ensuring metadata compliance and lifecycle integrity).

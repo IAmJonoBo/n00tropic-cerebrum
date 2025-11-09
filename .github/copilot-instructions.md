@@ -21,6 +21,10 @@
 - Use `n00t/capabilities/manifest.json` to discover MCP actions mapping to
   `.dev/automation/scripts/*` (e.g. `meta-check.sh`, `refresh-workspace.sh`,
   `trunk-upgrade.sh`, `workspace-release.sh`).
+- Delivery gating now exposes dedicated capabilities:
+  - `project.preflight` chains capture + GitHub/ERPNext syncs and fails fast when `links[]`, `review_date`, or integration IDs are missing.
+  - `project.lifecycleRadar` exports a JSON radar of overdue reviews, lifecycle totals, and slices missing traceability so agents can snapshot planning context.
+  - `project.controlPanel` refreshes the Markdown control panel so humans (and agents) can skim radar signals, preflight blockers, and outstanding jobs without touching raw artefacts.
 - Honour workflow stages with `get_workflow_status`, `run_workflow_phase`
   (planning → review), or `run_full_workflow` when the whole pipeline should
   execute.
