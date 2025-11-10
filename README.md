@@ -108,6 +108,7 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 | `project-control-panel.sh`        | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights. |
 | `scripts/erpnext-run.sh`          | One-shot ERPNext launcher: idempotent setup + managed `bench start` with automatic shutdown on exit.       |
 | `project-preflight-batch.sh`      | Executes preflight across every registry entry to keep GitHub + ERPNext sync warnings visible.             |
+| `workspace-health.py`             | Summarises root + submodule git status, highlights dirty repos, and can `--autofix` submodule sync/init.   |
 
 Automation executions append telemetry to `.dev/automation/artifacts/automation/agent-runs.json`, which powers dashboards and agent insights.
 
@@ -139,10 +140,11 @@ Operational outputs live in the shared filesystem at `/Volumes/APFS Space/n00tro
 
 1. Clone the workspace: `git clone https://github.com/IAmJonoBo/n00tropic-cerebrum.git && cd n00tropic-cerebrum`.
 2. Initialise submodules: `git submodule update --init --recursive`.
-3. Install toolchains per repo (Python venv for `n00-frontiers`, Node for `n00-cortex` and `n00t`, pnpm for `n00plicate`).
-4. Open the multi-root VS Code workspace (`n00-cortex/generators/n00tropic-cerebrum.code-workspace`).
-5. Run baseline checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific health commands.
-6. Explore `1. Cerebrum Docs/` for ADRs, Renovate setup, and onboarding guides.
+3. Run `.dev/automation/scripts/workspace-health.sh --autofix` to ensure submodules are synced and report repo health in one go.
+4. Install toolchains per repo (Python venv for `n00-frontiers`, Node for `n00-cortex` and `n00t`, pnpm for `n00plicate`).
+5. Open the multi-root VS Code workspace (`n00-cortex/generators/n00tropic-cerebrum.code-workspace`).
+6. Run baseline checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific health commands.
+7. Explore `1. Cerebrum Docs/` for ADRs, Renovate setup, and onboarding guides.
 
 By keeping the repos loosely coupled yet automation-aware, the Cerebrum workspace lets contributors evolve generators, docs, and agents without tripping over each other's toolchains while still sharing a coherent release pulse.
 
