@@ -18,5 +18,18 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Run workspace-health
-        run: ./.dev/automation/scripts/workspace-health.sh --sync-submodules --strict-submodules --json
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: n00t/pnpm-lock.yaml
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+      - name: Install n00t dependencies
+        working-directory: n00t
+        run: pnpm install --frozen-lockfile
+      - name: Run workspace.gitDoctor capability
+        run: ./.dev/automation/scripts/workspace-gitdoctor-capability.sh --sync-submodules --publish-artifact --strict

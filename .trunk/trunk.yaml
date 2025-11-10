@@ -46,7 +46,7 @@ lint:
   custom:
     - name: workspace-health
       description: Ensure submodules are clean/aligned before pushing.
-      run: .dev/automation/scripts/workspace-health.sh --strict-submodules
+      run: .dev/automation/scripts/workspace-gitdoctor-capability.sh --strict
       files: ["**/*"]
   disabled:
     - markdownlint # Replaced with markdownlint-cli2
