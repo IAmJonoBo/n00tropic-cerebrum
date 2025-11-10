@@ -162,23 +162,28 @@ def ensure_repo_remote(repo: str, path: Path, apply_changes: bool) -> None:
     print(f"[remotes] {repo}: added remote alias -> {url}")
 
 
-def run_trunk_upgrade(targets: Iterable[str]) -> None:
-    for name, path in iter_repos(targets):
-        trunk_config = path / ".trunk" / "trunk.yaml"
-        if not trunk_config.exists():
-            print(f"[trunk] {name}: no .trunk/trunk.yaml found, skipping")
+def run_trunk_upgrade(targets: Optional[Iterable[str]]) -> None:
+    if not targets:
+        run_script("trunk-upgrade.sh")
+        return
+
+    resolved: List[str] = []
+    seen = set()
+    for name, _ in iter_repos(targets):
+        canonical = "n00tropic-cerebrum" if name == "workspace" else name
+        if canonical in seen:
             continue
-        cmd = ["trunk", "upgrade"]
-        print(f"[trunk] {name}: running {' '.join(cmd)}")
-        try:
-            result = subprocess.run(cmd, cwd=path, check=False, timeout=TRUNK_TIMEOUT)
-        except subprocess.TimeoutExpired:
-            raise SystemExit(
-                f"trunk upgrade timed out after {TRUNK_TIMEOUT}s for {name}. "
-                "Set TRUNK_UPGRADE_TIMEOUT to adjust the guard."
-            ) from None
-        if result.returncode != 0:
-            raise SystemExit(f"trunk upgrade failed for {name}")
+        seen.add(canonical)
+        resolved.append(canonical)
+
+    if not resolved:
+        print("[trunk] No matching repositories resolved; nothing to do.", file=sys.stderr)
+        return
+
+    args: List[str] = []
+    for name in resolved:
+        args.extend(["--repo", name])
+    run_script("trunk-upgrade.sh", *args)
 
 
 def main() -> int:
@@ -308,12 +313,10 @@ def main() -> int:
     elif args.command == "capabilities":
         list_capabilities(args.id)
     elif args.command == "trunk-upgrade":
-        targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
-        run_trunk_upgrade(targets)
+        run_trunk_upgrade(args.repos)
     elif args.command == "trunk":
-        targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
         if args.subcommand == "upgrade":
-            run_trunk_upgrade(targets)
+            run_trunk_upgrade(args.repos)
         else:  # pragma: no cover
             raise SystemExit(f"Unsupported trunk subcommand: {args.subcommand}")
     elif args.command == "remotes":

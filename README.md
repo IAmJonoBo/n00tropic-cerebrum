@@ -71,6 +71,12 @@ Schemas published from `n00-cortex` drive automation in `n00-frontiers`, which t
 - **Output**: Experiment briefs, GitHub issue/project orchestration, and strategic playbooks.
 - **Integration**: Operates under the `n00-frontiers` horizon workflow and reports impacts to affected repos.
 
+### `n00clear-fusion/`
+
+- **Mandate**: Ingestion, enrichment, and RAG-friendly export pipelines that transform PDFs, Word docs, tabular data, and transcripts into n00t-ready training packs.
+- **Output**: `corpora/` manifests, `pipelines/` processors, and `exports/` bundles that downstream repos (n00-horizons jobs, n00-frontiers templates, n00t capabilities) can consume without extra glue code.
+- **Integration**: Shares derived assets with `n00-cortex` taxonomies, feeds cookiecutters/templates in `n00-frontiers`, and backfills `n00t` capabilities so agents can scaffold projects from curated source material.
+
 ## Cross-Repo Release Flow
 
 ```mermaid
@@ -113,6 +119,13 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 Run `python cli.py --help` from the workspace root (or `n00-horizons/cli.py`, `n00-frontiers/cli.py`, etc.) to access curated wrappers around these scripts for both agents and humans.
 
 Automation executions append telemetry to `.dev/automation/artifacts/automation/agent-runs.json`, which powers dashboards and agent insights.
+
+## Formatter Guardrails
+
+- **Python format flow**: Every Trunk config runs `isort@7.0.0` before `black@25.x` so imports settle before layout styling. If a formatter loop appears, run `trunk fmt --filter=isort,black` or `isort . && black .` in the affected repo.
+- **isort configuration**: `n00-frontiers/.isort.cfg` pins `profile = black` and `line_length = 88`, and the setting is mirrored by the other repos via Trunk sync so Black never rewrites imports immediately after isort.
+- **Deep dive**: See `n00-school/in-dev-learnings/black-isort-conflicts.md` plus `n00-frontiers/docs/quality/formatting-style.md` for the rationale, escalation steps, and verification checklist agents should follow when formatters disagree.
+- **Automation reminder**: `trunk-upgrade.sh` (and the `python3 cli.py trunk-upgrade` helper) keep formatter versions in lockstep across every repo, so rerun it whenever `isort`/`black` ship compatibility fixes.
 
 ## Operating Guidelines
 
