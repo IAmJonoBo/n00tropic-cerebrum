@@ -44,7 +44,7 @@ lint:
     - trufflehog@3.90.13
     - yamllint@1.37.1
   disabled:
-    - markdownlint # Replaced with markdownlint-cli2
+    - markdownlint
 actions:
   enabled:
     - trunk-announce
