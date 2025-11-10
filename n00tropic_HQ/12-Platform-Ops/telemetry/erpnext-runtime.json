@@ -1,0 +1,10 @@
+{
+  "status": "ready",
+  "message": "ERPNext responding at http://erpnext.local:8000",
+  "siteUrl": "http://erpnext.local:8000",
+  "healthUrl": "http://erpnext.local:8000/api/method/ping",
+  "stackRoot": "/Users/jonathanbotha/.local/share/erpnext-stack",
+  "benchName": "erpnext-bench",
+  "benchPath": "/Users/jonathanbotha/.local/share/erpnext-stack/erpnext-bench",
+  "startedAt": "2025-11-10T14:04:10Z"
+}

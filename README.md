@@ -106,7 +106,7 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 | `project-preflight.sh`            | Chains capture + GitHub/ERPNext syncs and fails fast when review cadence, links, or IDs are missing.       |
 | `project-lifecycle-radar.sh`      | Emits a JSON radar summarising lifecycle totals, overdue reviews, and integration gaps for planning.       |
 | `project-control-panel.sh`        | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights. |
-| `scripts/erpnext-run.sh`          | One-shot ERPNext launcher: idempotent setup + managed `bench start` with automatic shutdown on exit.       |
+| `scripts/erpnext-run.sh`          | Run-and-gun ERPNext dev stack: bootstraps bench, verifies MySQL/Redis, launches browser, logs telemetry, and triggers PM/telemetry exports. |
 | `project-preflight-batch.sh`      | Executes preflight across every registry entry to keep GitHub + ERPNext sync warnings visible.             |
 | `workspace-health.py`             | Summarises root + submodule git status, emits `artifacts/workspace-health.json`, cleans safe untracked files, and syncs submodules on demand. |
 

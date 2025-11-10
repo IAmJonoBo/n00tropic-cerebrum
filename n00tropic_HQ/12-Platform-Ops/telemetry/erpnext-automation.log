@@ -1,0 +1,99 @@
+2025-11-10T13:04:32Z using ERPNext credentials from /Volumes/APFS Space/n00tropic/n00tropic-cerebrum/../n00tropic_HQ/12-Platform-Ops/secrets/erpnext.env
+2025-11-10T13:04:32Z starting ERPNext export
+/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic/.dev/automation/scripts/erpnext-export.sh: line 92: mapfile: command not found
+2025-11-10T13:04:32Z export script failed
+2025-11-10T13:14:06Z using ERPNext credentials from /Volumes/APFS Space/n00tropic/n00tropic-cerebrum/../n00tropic_HQ/12-Platform-Ops/secrets/erpnext.env
+2025-11-10T13:14:06Z starting ERPNext export
+/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic/.dev/automation/scripts/erpnext-export.sh: line 92: mapfile: command not found
+2025-11-10T13:14:06Z export script failed
+2025-11-10T13:22:15Z using ERPNext credentials from /Volumes/APFS Space/n00tropic/n00tropic-cerebrum/../n00tropic_HQ/12-Platform-Ops/secrets/erpnext.env
+2025-11-10T13:22:15Z starting ERPNext export
+curl: (22) The requested URL returned error: 404
+curl: (22) The requested URL returned error: 404
+curl: (22) The requested URL returned error: 404
+curl: (22) The requested URL returned error: 404
+curl: (22) The requested URL returned error: 404
+Exports complete: accounting|placeholder|placeholder-generated crm|placeholder|placeholder-generated hr|placeholder|placeholder-generated projects|placeholder|placeholder-generated support|placeholder|placeholder-generated
+{
+  "status": "partial",
+  "telemetryPath": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic_HQ/12-Platform-Ops/telemetry/erpnext-export-2025-11-10.json",
+  "timestamp": "2025-11-10T13:22:15Z",
+  "format": "json",
+  "pageLimit": "500",
+  "modules": ["accounting","crm","hr","projects","support"],
+  "details": [{"module":"accounting","status":"placeholder","notes":"placeholder-generated"},{"module":"crm","status":"placeholder","notes":"placeholder-generated"},{"module":"hr","status":"placeholder","notes":"placeholder-generated"},{"module":"projects","status":"placeholder","notes":"placeholder-generated"},{"module":"support","status":"placeholder","notes":"placeholder-generated"}]
+}
+2025-11-10T13:22:15Z running checksum verification
+Traceback (most recent call last):
+  File "<stdin>", line 48, in <module>
+  File "/Users/jonathanbotha/micromamba/lib/python3.14/pathlib/__init__.py", line 495, in relative_to
+    raise ValueError(f"{str(self)!r} is not in the subpath of {str(other)!r}")
+ValueError: '/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic_HQ/12-Platform-Ops/telemetry/erpnext-export-checksums.json' is not in the subpath of '/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic'
+2025-11-10T13:22:15Z checksum verification failed
+2025-11-10T13:23:36Z using ERPNext credentials from /Volumes/APFS Space/n00tropic/n00tropic-cerebrum/../n00tropic_HQ/12-Platform-Ops/secrets/erpnext.env
+2025-11-10T13:23:36Z starting ERPNext export
+curl: (22) The requested URL returned error: 404
+curl: (22) The requested URL returned error: 404
+curl: (22) The requested URL returned error: 404
+curl: (22) The requested URL returned error: 404
+curl: (22) The requested URL returned error: 404
+Exports complete: accounting|placeholder|placeholder-generated crm|placeholder|placeholder-generated hr|placeholder|placeholder-generated projects|placeholder|placeholder-generated support|placeholder|placeholder-generated
+{
+  "status": "partial",
+  "telemetryPath": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic_HQ/12-Platform-Ops/telemetry/erpnext-export-2025-11-10.json",
+  "timestamp": "2025-11-10T13:23:36Z",
+  "format": "json",
+  "pageLimit": "500",
+  "modules": ["accounting","crm","hr","projects","support"],
+  "details": [{"module":"accounting","status":"placeholder","notes":"placeholder-generated"},{"module":"crm","status":"placeholder","notes":"placeholder-generated"},{"module":"hr","status":"placeholder","notes":"placeholder-generated"},{"module":"projects","status":"placeholder","notes":"placeholder-generated"},{"module":"support","status":"placeholder","notes":"placeholder-generated"}]
+}
+2025-11-10T13:23:36Z running checksum verification
+Checksum drift detected; check /Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic_HQ/12-Platform-Ops/telemetry/erpnext-export-checksums.json
+{
+  "timestamp": "2025-11-10T13:23:36Z",
+  "added": [],
+  "removed": [],
+  "modified": [
+    "accounting/2025-11-10/accounting-2025-11-10-placeholder.json",
+    "checksums.json",
+    "crm/2025-11-10/crm-2025-11-10-placeholder.json",
+    "hr/2025-11-10/hr-2025-11-10-placeholder.json",
+    "projects/2025-11-10/projects-2025-11-10-placeholder.json",
+    "support/2025-11-10/support-2025-11-10-placeholder.json"
+  ],
+  "fileCount": 6,
+  "manifestPath": "90-Archive/erpnext-exports/checksums.json",
+  "alert": true,
+  "status": "failure",
+  "telemetryPath": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic_HQ/12-Platform-Ops/telemetry/erpnext-export-checksums.json"
+}
+2025-11-10T13:23:36Z erpnext automation complete
+2025-11-10T14:04:07Z using ERPNext credentials from /Volumes/APFS Space/n00tropic/n00tropic-cerebrum/../n00tropic_HQ/12-Platform-Ops/secrets/erpnext.env
+2025-11-10T14:04:07Z synchronizing ERPNext project and job data
+2025-11-10T14:04:09Z starting ERPNext export
+Exports complete: accounting|success|written crm|success|written hr|success|written projects|success|written support|success|written
+{
+  "status": "success",
+  "telemetryPath": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic_HQ/12-Platform-Ops/telemetry/erpnext-export-2025-11-10.json",
+  "timestamp": "2025-11-10T14:04:09Z",
+  "format": "json",
+  "pageLimit": "500",
+  "modules": ["accounting","crm","hr","projects","support"],
+  "details": [{"module":"accounting","status":"success","notes":"written"},{"module":"crm","status":"success","notes":"written"},{"module":"hr","status":"success","notes":"written"},{"module":"projects","status":"success","notes":"written"},{"module":"support","status":"success","notes":"written"}]
+}
+2025-11-10T14:04:10Z running checksum verification
+Checksums verified (no alert)
+{
+  "timestamp": "2025-11-10T14:04:10Z",
+  "added": [],
+  "removed": [],
+  "modified": [
+    "checksums.json"
+  ],
+  "fileCount": 11,
+  "manifestPath": "90-Archive/erpnext-exports/checksums.json",
+  "alert": false,
+  "status": "success",
+  "telemetryPath": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic_HQ/12-Platform-Ops/telemetry/erpnext-export-checksums.json"
+}
+2025-11-10T14:04:10Z erpnext automation complete

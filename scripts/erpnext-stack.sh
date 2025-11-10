@@ -179,6 +179,10 @@ repos_need_update() {
 }
 
 maybe_upgrade() {
+	if [[ ${SKIP_BENCH_UPDATE:-0} -eq 1 ]]; then
+		echo "Skipping bench update (SKIP_BENCH_UPDATE=1)."
+		return
+	fi
 	local needs=0
 	if repos_need_update "${BENCH_PATH}/apps/frappe" "${FRAPPE_BRANCH}"; then
 		needs=1
@@ -195,7 +199,12 @@ maybe_upgrade() {
 start_stack() {
 	bench_env
 	cd "${BENCH_PATH}"
-	"${BENCH_BIN}" start &
+	local start_args=()
+	if [[ -n ${BENCH_START_FLAGS:-} ]]; then
+		read -r -a start_args <<<"${BENCH_START_FLAGS}"
+	fi
+	echo "Running: bench start ${start_args[*]}" >&2
+	"${BENCH_BIN}" start "${start_args[@]}" &
 	local bench_pid=$!
 	BENCH_CHILD_PID=${bench_pid}
 	trap 'echo "Stopping ERPNext services"; kill -TERM ${BENCH_CHILD_PID} >/dev/null 2>&1 || true; wait ${BENCH_CHILD_PID} >/dev/null 2>&1 || true' INT TERM

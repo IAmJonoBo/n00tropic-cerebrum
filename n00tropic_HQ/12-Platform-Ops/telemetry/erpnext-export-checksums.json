@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-11-10T14:04:10Z",
+  "added": [],
+  "removed": [],
+  "modified": [
+    "checksums.json"
+  ],
+  "fileCount": 11,
+  "manifestPath": "90-Archive/erpnext-exports/checksums.json",
+  "alert": false,
+  "status": "success",
+  "telemetryPath": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic_HQ/12-Platform-Ops/telemetry/erpnext-export-checksums.json"
+}
