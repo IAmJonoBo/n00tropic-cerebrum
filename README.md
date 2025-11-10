@@ -108,7 +108,7 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 | `project-control-panel.sh`        | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights. |
 | `scripts/erpnext-run.sh`          | One-shot ERPNext launcher: idempotent setup + managed `bench start` with automatic shutdown on exit.       |
 | `project-preflight-batch.sh`      | Executes preflight across every registry entry to keep GitHub + ERPNext sync warnings visible.             |
-| `workspace-health.py`             | Summarises root + submodule git status, highlights dirty repos, and can `--autofix` submodule sync/init.   |
+| `workspace-health.py`             | Summarises root + submodule git status, emits `artifacts/workspace-health.json`, cleans safe untracked files, and syncs submodules on demand. |
 
 Automation executions append telemetry to `.dev/automation/artifacts/automation/agent-runs.json`, which powers dashboards and agent insights.
 
@@ -116,7 +116,7 @@ Automation executions append telemetry to `.dev/automation/artifacts/automation/
 
 - **Plan in public**: Capture cross-repo decisions in `1. Cerebrum Docs/ADR/` and link to repo-specific ADRs.
 - **Keep repos pristine**: Use `.dev/` directories for scratch assets and avoid committing generated artefacts.
-- **Run the workspace maintenance loop**: Follow `1. Cerebrum Docs/WORKSPACE_MAINTENANCE.md` to run `workspace-health`, `meta-check`, and project preflights before every PR or release.
+- **Run the workspace maintenance loop**: Follow `1. Cerebrum Docs/WORKSPACE_MAINTENANCE.md` (plus the `AI_WORKSPACE_PLAYBOOK.md` companion) to run `workspace-health`, `meta-check`, and project preflights before every PR or release.
 - **Version discipline**: Update `n00-cortex/data/toolchain-manifest.json` first when bumping runtimes so Renovate presets and generators stay aligned.
 - **Release sequencing**: Tag repos independently, then run `workspace-release.sh` to snapshot versions and update documentation.
 - **Security hygiene**: Run `pip-audit -r n00-frontiers/requirements.txt` (or rely on `meta-check`) before shipping templates.
@@ -141,7 +141,7 @@ Operational outputs live in the shared filesystem at `/Volumes/APFS Space/n00tro
 
 1. Clone the workspace: `git clone https://github.com/IAmJonoBo/n00tropic-cerebrum.git && cd n00tropic-cerebrum`.
 2. Initialise submodules: `git submodule update --init --recursive`.
-3. Run `.dev/automation/scripts/workspace-health.sh --autofix` to ensure submodules are synced and report repo health in one go.
+3. Run `.dev/automation/scripts/workspace-health.sh --sync-submodules --publish-artifact --json` (optionally `--clean-untracked`) to ensure submodules are aligned and to snapshot git state for agents/CI.
 4. Install toolchains per repo (Python venv for `n00-frontiers`, Node for `n00-cortex` and `n00t`, pnpm for `n00plicate`).
 5. Open the multi-root VS Code workspace (`n00-cortex/generators/n00tropic-cerebrum.code-workspace`).
 6. Run baseline checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific health commands.

@@ -5,12 +5,15 @@ This guide keeps the federated workspace healthy whether you are preparing a pul
 ## 1. Assess the Workspace
 
 ```bash
-./.dev/automation/scripts/workspace-health.sh --strict-submodules --json
+./.dev/automation/scripts/workspace-health.sh --strict-submodules --publish-artifact --json
 ```
 
 - **Goal**: ensure every submodule is clean and aligned with its upstream.
+- `--publish-artifact` writes the JSON snapshot to `artifacts/workspace-health.json` so agents and CI can ingest it without rerunning the script.
 - Add `--sync-submodules` when reviving a stale clone, or `--fix-all` to run submodule + trunk sync together.
+- Use `--clean-untracked` to safely drop generated files; it only runs `git clean -fd` inside repos that have _no_ tracked changes.
 - Use `--repo-cmd n00-cortex:"git status -sb"` for quick targeted diagnostics.
+- See `AI_WORKSPACE_PLAYBOOK.md` for the agent-oriented cheatsheet (workspace topology, payload formats, and remediation flow).
 
 ## 2. Fix Drift (if needed)
 
@@ -19,6 +22,7 @@ This guide keeps the federated workspace healthy whether you are preparing a pul
 | Submodule has untracked changes you want to discard | `git -C <repo> checkout -- .` or run `workspace-health --repo-cmd <repo>:"git checkout -- ."` |
 | Submodule is behind | `git -C <repo> pull --ff-only` |
 | Tooling configs diverged | `./.dev/automation/scripts/sync-trunk.py --pull` (automatically included in `--fix-all`) |
+| Only untracked files remain (root or submodule) | `./.dev/automation/scripts/workspace-health.sh --clean-untracked` |
 | Workspace root dirty | Commit or stash before release automation |
 
 ## 3. Run Cross-Repo Checks
@@ -46,3 +50,9 @@ Preflight chains capture, GitHub sync, and ERPNext sync to confirm IDs, links, a
 3. Run `./.dev/automation/scripts/workspace-release.sh` when tagging a coordinated drop so release manifests stay in sync.
 
 > Tip: wire the workflow above into automation pipelines (Trunk, CI) to fail fast whenever the workspace drifts.
+
+## AI / Agent Quick Reference
+
+- Preferred capability: `workspace.gitDoctor` (backed by `workspace-health.sh`). Payload keys include `cleanUntracked`, `syncSubmodules`, `publishArtifact`, and `strict`.
+- Automation emits `artifacts/workspace-health.json`, which distinguishes tracked vs untracked entries per repo so agents can react programmatically.
+- Additional context and sample payload LIVE in [`AI_WORKSPACE_PLAYBOOK.md`](AI_WORKSPACE_PLAYBOOK.md).

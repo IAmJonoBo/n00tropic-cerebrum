@@ -41,3 +41,4 @@ These scripts back the `workspace.*` capabilities exposed through `n00t/capabili
 - Need to reason about organisational policy? Jump to [`../START HERE/README.md`](../START%20HERE/README.md).
 - Wiring a new automation? Add the script under `../.dev/automation/scripts/`, expose it from `n00t/capabilities/manifest.json`, and document usage in the relevant repo’s `START HERE`.
 - Looking for Renovate or Trunk conventions? See `1. Cerebrum Docs/RENOVATE_SETUP.md` and `1. Cerebrum Docs/TRUNK_GUIDE.md`.
+- Attaching an agent or ephemeral workspace? Review `1. Cerebrum Docs/AI_WORKSPACE_PLAYBOOK.md` for topology, payload formats, and cleanup recipes.
