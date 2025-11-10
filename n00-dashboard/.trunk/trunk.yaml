@@ -13,6 +13,13 @@ runtimes:
     - python@3.10.8
 lint:
   enabled:
+    - bandit@1.8.6
+    - black@25.11.0
+    - checkov@3.2.491
+    - isort@7.0.0
+    - markdownlint@0.45.0
+    - ruff@0.14.4
+    - trufflehog@3.90.13
     - git-diff-check
     - markdownlint-cli2@0.18.1
     - prettier@3.6.2
