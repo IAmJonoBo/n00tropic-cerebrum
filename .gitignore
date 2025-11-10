@@ -18,7 +18,7 @@ __pycache__/
 
 # Node / tooling
 node_modules/
-.trunk/
+/.trunk/
 dist/
 build/
 

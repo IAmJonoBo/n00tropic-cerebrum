@@ -1,0 +1,331 @@
+#!/usr/bin/env python3
+"""Workspace orchestration CLI for the n00tropic polyrepo."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+from typing import Iterable, List, Optional, Tuple
+
+WORKSPACE_ROOT = Path(__file__).resolve().parent
+ORG_ROOT = WORKSPACE_ROOT.parent
+SCRIPTS_ROOT = ORG_ROOT / ".dev" / "automation" / "scripts"
+TRUNK_TIMEOUT = int(os.environ.get("TRUNK_UPGRADE_TIMEOUT", "600"))
+
+SUBREPO_MAP = {
+    "workspace": WORKSPACE_ROOT,
+    "n00-cortex": WORKSPACE_ROOT / "n00-cortex",
+    "n00-dashboard": WORKSPACE_ROOT / "n00-dashboard",
+    "n00-frontiers": WORKSPACE_ROOT / "n00-frontiers",
+    "n00-horizons": WORKSPACE_ROOT / "n00-horizons",
+    "n00-school": WORKSPACE_ROOT / "n00-school",
+    "n00clear-fusion": WORKSPACE_ROOT / "n00clear-fusion",
+    "n00plicate": WORKSPACE_ROOT / "n00plicate",
+    "n00t": WORKSPACE_ROOT / "n00t",
+    "n00tropic": WORKSPACE_ROOT / "n00tropic",
+}
+
+
+def iter_repos(selected: Optional[Iterable[str]] = None) -> List[Tuple[str, Path]]:
+    names = list(selected) if selected else list(SUBREPO_MAP.keys())
+    repos: List[Tuple[str, Path]] = []
+    for name in names:
+        path = SUBREPO_MAP.get(name)
+        if not path:
+            print(f"[remotes] Unknown repo '{name}' – skipping", file=sys.stderr)
+            continue
+        repos.append((name, path))
+    return repos
+
+
+def run(cmd: List[str], cwd: Path) -> None:
+    subprocess.run(cmd, check=True, cwd=cwd)
+
+
+def run_script(script_name: str, *args: str) -> None:
+    script_path = SCRIPTS_ROOT / script_name
+    if not script_path.exists():
+        raise SystemExit(f"Script not found: {script_path}")
+    run([str(script_path), *args], cwd=ORG_ROOT)
+
+
+def run_workspace_script(script_name: str, *args: str) -> None:
+    script_path = WORKSPACE_ROOT / ".dev" / "automation" / "scripts" / script_name
+    if not script_path.exists():
+        raise SystemExit(f"Workspace script not found: {script_path}")
+    run([str(script_path), *args], cwd=WORKSPACE_ROOT)
+
+
+def status_report() -> None:
+    repos = iter_repos()
+    repos.append(("n00tropic_HQ", ORG_ROOT / "n00tropic_HQ"))
+    for name, repo_path in repos:
+        if not repo_path.exists():
+            continue
+        result = subprocess.run(
+            ["git", "status", "-sb"],
+            cwd=repo_path,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        print(f"== {name} ==")
+        output = result.stdout.strip()
+        print(output or "clean")
+        print()
+
+
+def read_manifest(path: Path) -> None:
+    try:
+        data = json.loads(path.read_text())
+    except Exception as exc:  # pragma: no cover - diagnostic helper
+        raise SystemExit(f"Unable to read {path}: {exc}") from exc
+    print(json.dumps(data, indent=2))
+
+
+def load_capabilities_manifest() -> List[dict]:
+    manifest_path = WORKSPACE_ROOT / "n00t" / "capabilities" / "manifest.json"
+    if not manifest_path.exists():
+        raise SystemExit(
+            f"Capabilities manifest not found at {manifest_path}. Clone the n00t repo or run from the workspace root."
+        )
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    capabilities = payload.get("capabilities", [])
+    if not isinstance(capabilities, list):
+        raise SystemExit("n00t capabilities manifest is malformed (expected a list).")
+    return capabilities
+
+
+def list_capabilities(capability_id: Optional[str]) -> None:
+    capabilities = load_capabilities_manifest()
+    if capability_id:
+        for capability in capabilities:
+            if capability.get("id") == capability_id:
+                print(json.dumps(capability, indent=2))
+                return
+        raise SystemExit(f"Capability '{capability_id}' not found in n00t manifest.")
+    for capability in capabilities:
+        summary = capability.get("summary") or capability.get("description") or ""
+        print(f"- {capability.get('id')}: {summary}")
+
+
+def repo_has_git(path: Path) -> bool:
+    return (path / ".git").exists() or (path / ".git").is_file()
+
+
+def ensure_repo_remote(repo: str, path: Path, apply_changes: bool) -> None:
+    if not path.exists():
+        print(f"[remotes] {repo}: path missing ({path})")
+        return
+    is_repo = subprocess.run(
+        ["git", "rev-parse", "--is-inside-work-tree"],
+        cwd=path,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    ).returncode == 0
+    if not is_repo:
+        print(f"[remotes] {repo}: not a git repository, skipping")
+        return
+    current = subprocess.run(
+        ["git", "remote"],
+        cwd=path,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    remotes = {line.strip() for line in current.stdout.splitlines() if line.strip()}
+    if repo in remotes:
+        print(f"[remotes] {repo}: remote already configured")
+        return
+    origin_url = subprocess.run(
+        ["git", "remote", "get-url", "origin"],
+        cwd=path,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if origin_url.returncode != 0:
+        print(f"[remotes] {repo}: origin remote missing, cannot synchronise")
+        return
+    if not apply_changes:
+        print(
+            f"[remotes] {repo}: remote missing – re-run with --apply to add alias using origin url"
+        )
+        return
+    url = origin_url.stdout.strip()
+    subprocess.run(["git", "remote", "add", repo, url], cwd=path, check=True)
+    print(f"[remotes] {repo}: added remote alias -> {url}")
+
+
+def run_trunk_upgrade(targets: Iterable[str]) -> None:
+    for name, path in iter_repos(targets):
+        trunk_config = path / ".trunk" / "trunk.yaml"
+        if not trunk_config.exists():
+            print(f"[trunk] {name}: no .trunk/trunk.yaml found, skipping")
+            continue
+        cmd = ["trunk", "upgrade"]
+        print(f"[trunk] {name}: running {' '.join(cmd)}")
+        try:
+            result = subprocess.run(cmd, cwd=path, check=False, timeout=TRUNK_TIMEOUT)
+        except subprocess.TimeoutExpired:
+            raise SystemExit(
+                f"trunk upgrade timed out after {TRUNK_TIMEOUT}s for {name}. "
+                "Set TRUNK_UPGRADE_TIMEOUT to adjust the guard."
+            ) from None
+        if result.returncode != 0:
+            raise SystemExit(f"trunk upgrade failed for {name}")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="n00tropic cerebrum orchestrator")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    subparsers.add_parser("radar", help="Regenerate lifecycle radar artefacts.")
+
+    preflight_parser = subparsers.add_parser(
+        "preflight", help="Run batch preflight across registry and/or target docs."
+    )
+    preflight_parser.add_argument("--paths", nargs="*", default=[], help="Specific metadata paths to include.")
+    preflight_parser.add_argument(
+        "--include-registry", action="store_true", help="Include every registry-sourced document."
+    )
+
+    subparsers.add_parser("control-panel", help="Regenerate the control panel snapshot.")
+
+    autofix_parser = subparsers.add_parser(
+        "autofix-links", help="Repair metadata link blocks (default dry-run)."
+    )
+    autofix_parser.add_argument(
+        "--path", dest="path_list", action="append", default=[], help="Metadata document to autofix."
+    )
+    autofix_parser.add_argument("--all", action="store_true", help="Run across all known documents.")
+    autofix_parser.add_argument("--apply", action="store_true", help="Persist fixes to disk.")
+
+    for name in ("capture", "sync-github", "sync-erpnext"):
+        cmd_parser = subparsers.add_parser(name, help=f"{name.replace('-', ' ').title()} a metadata document.")
+        cmd_parser.add_argument("--path", required=True, help="Path to the metadata-bearing Markdown file.")
+
+    doctor_parser = subparsers.add_parser("doctor", help="Run workspace git doctor checks.")
+    doctor_parser.add_argument("--strict", action="store_true", help="Fail on advisory findings.")
+
+    upgrade_parser = subparsers.add_parser("upgrade-tools", help="Check for latest tool versions.")
+    upgrade_parser.add_argument("--apply", action="store_true", help="Apply suggested upgrades where possible.")
+
+    subparsers.add_parser("status", help="Show git status for the workspace and key subrepos.")
+
+    manifest_parser = subparsers.add_parser("manifest", help="Pretty-print an artefact JSON/manifest.")
+    manifest_parser.add_argument("path", help="Path to the JSON file.")
+
+    caps_parser = subparsers.add_parser("capabilities", help="List or inspect n00t capabilities.")
+    caps_parser.add_argument("--id", help="Show the full manifest entry for a specific capability.")
+
+    trunk_parser = subparsers.add_parser(
+        "trunk-upgrade", help="Run `trunk upgrade` inside every repo with Trunk configuration."
+    )
+    trunk_parser.add_argument(
+        "--repos",
+        nargs="*",
+        help="Optional subset of repo names. Defaults to all tracked repos when omitted.",
+    )
+
+    trunk_alias_parser = subparsers.add_parser(
+        "trunk",
+        help="Compatibility shim so `python3 cli.py trunk upgrade` maps to the trunk-upgrade command.",
+    )
+    trunk_alias_parser.add_argument(
+        "subcommand",
+        choices=["upgrade"],
+        help="Currently only `upgrade` is supported.",
+    )
+    trunk_alias_parser.add_argument(
+        "--repos",
+        nargs="*",
+        help="Optional subset of repo names to include when running the trunk subcommand.",
+    )
+
+    remote_parser = subparsers.add_parser(
+        "remotes", help="Verify that each repo has a remote alias that matches its directory name."
+    )
+    remote_parser.add_argument(
+        "--repos",
+        nargs="*",
+        help="Optional subset of repo names to inspect. Defaults to all tracked repos.",
+    )
+    remote_parser.add_argument(
+        "--apply",
+        action="store_true",
+        help="Add the missing remote alias using the origin URL when needed.",
+    )
+
+    args = parser.parse_args()
+
+    if args.command == "radar":
+        run_script("project-lifecycle-radar.sh")
+    elif args.command == "preflight":
+        cmd: List[str] = []
+        if args.paths:
+            cmd.extend(["--paths", *args.paths])
+        if args.include_registry:
+            cmd.append("--include-registry")
+        run_script("project-preflight-batch.sh", *cmd)
+    elif args.command == "control-panel":
+        run_script("project-control-panel.sh")
+    elif args.command == "autofix-links":
+        cmd: List[str] = []
+        if args.path_list:
+            for path in args.path_list:
+                cmd.extend(["--path", path])
+        if args.all:
+            cmd.append("--all")
+        if args.apply:
+            cmd.append("--apply")
+        run_script("project-autofix-links.sh", *cmd)
+    elif args.command in {"capture", "sync-github", "sync-erpnext"}:
+        if args.command == "capture":
+            script_name = "project-capture.sh"
+        elif args.command == "sync-github":
+            script_name = "project-sync-github.sh"
+        else:
+            script_name = "project-sync-erpnext.sh"
+        run_script(script_name, "--path", args.path)
+    elif args.command == "doctor":
+        flags: List[str] = []
+        if args.strict:
+            flags.append("--strict")
+        run_workspace_script("workspace-gitdoctor-capability.sh", *flags)
+    elif args.command == "upgrade-tools":
+        flags = ["--apply"] if args.apply else []
+        run_script("get-latest-tool-versions.py", *flags)
+    elif args.command == "status":
+        status_report()
+    elif args.command == "manifest":
+        read_manifest(Path(args.path))
+    elif args.command == "capabilities":
+        list_capabilities(args.id)
+    elif args.command == "trunk-upgrade":
+        targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
+        run_trunk_upgrade(targets)
+    elif args.command == "trunk":
+        targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
+        if args.subcommand == "upgrade":
+            run_trunk_upgrade(targets)
+        else:  # pragma: no cover
+            raise SystemExit(f"Unsupported trunk subcommand: {args.subcommand}")
+    elif args.command == "remotes":
+        targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
+        for name, path in iter_repos(targets):
+            ensure_repo_remote(name, path, args.apply)
+    else:  # pragma: no cover - safety net
+        parser.print_help()
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

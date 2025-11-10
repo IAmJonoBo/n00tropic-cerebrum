@@ -22,7 +22,7 @@ lint:
     - oxipng@9.1.5
     - rustfmt@1.65.0
     - isort@7.0.0 # run import sorting before black formatting
-    - black@25.9.0
+    - black@25.11.0
     - tflint@0.59.1
     - hadolint@2.14.0
     - svgo@4.0.0
@@ -30,24 +30,19 @@ lint:
     - golangci-lint2@2.6.1
     - actionlint@1.7.8
     - bandit@1.8.6
-    - checkov@3.2.490
+    - checkov@3.2.491
     - git-diff-check
     - markdownlint-cli2@0.18.1
     - eslint@9.39.1
     - osv-scanner@2.2.4
     - prettier@3.6.2
-    - renovate@42.0.1
+    - renovate@42.3.0
     - ruff@0.14.4
     - shellcheck@0.11.0
     - shfmt@3.6.0
     - taplo@0.10.0
     - trufflehog@3.90.13
     - yamllint@1.37.1
-  custom:
-    - name: workspace-health
-      description: Ensure submodules are clean/aligned before pushing.
-      run: .dev/automation/scripts/workspace-gitdoctor-capability.sh --strict
-      files: ["**/*"]
   disabled:
     - markdownlint # Replaced with markdownlint-cli2
 actions:

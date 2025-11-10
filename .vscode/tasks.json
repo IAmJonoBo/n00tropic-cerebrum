@@ -1,21 +1,36 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "swift",
-			"args": [
-				"build",
-				"--build-tests"
-			],
-			"env": {
-				"DEVELOPER_DIR": "/Applications/Xcode.app/Contents/Developer"
-			},
-			"cwd": "/Volumes/APFS Space/n00tropic-cerebrum/n00-dashboard",
-			"disableTaskQueue": true,
-			"group": "build",
-			"problemMatcher": [],
-			"label": "swift: Build All (n00tropic-cerebrum/n00-dashboard)",
-			"detail": "swift build --build-tests"
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "workspace: trunk upgrade",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "cli.py",
+        "trunk-upgrade"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "detail": "Run trunk upgrade across every subrepo with a .trunk directory."
+    },
+    {
+      "label": "swift: build dashboard",
+      "type": "shell",
+      "command": "swift",
+      "args": [
+        "build",
+        "--build-tests"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/n00-dashboard",
+        "env": {
+          "DEVELOPER_DIR": "/Applications/Xcode.app/Contents/Developer"
+        }
+      },
+      "group": "build",
+      "detail": "swift build --build-tests (n00-dashboard)"
+    }
+  ]
 }
