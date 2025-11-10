@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=missing-function-docstring,invalid-name,line-too-long
 """
 md-reflow: Recursively reflow long lines in Markdown files intelligently.
 
@@ -337,7 +338,7 @@ def format_markdown(text: str, opts: FormatOptions) -> str:
         # Fenced code block
         m = FENCE_OPEN_RE.match(line)
         if m:
-            indent, fence, _rest = m.groups()
+            _, fence, _rest = m.groups()
             end_re = fence_close_re(fence[0], len(fence))
             out.append(line.rstrip())
             i += 1

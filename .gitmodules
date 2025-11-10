@@ -19,3 +19,6 @@
 [submodule "n00tropic"]
 	path = n00tropic
 	url = https://github.com/IAmJonoBo/n00tropic.git
+[submodule "n00clear-fusion"]
+	path = n00clear-fusion
+	url = https://github.com/IAmJonoBo/n00clear-fusion.git
