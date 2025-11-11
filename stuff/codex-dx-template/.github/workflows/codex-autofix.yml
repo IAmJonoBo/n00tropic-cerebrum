@@ -30,7 +30,7 @@ jobs:
           fi
 
       - name: Checkout Failing Ref
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ env.FAILED_HEAD_SHA }}
           fetch-depth: 0
