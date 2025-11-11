@@ -1,0 +1,48 @@
+name: docs
+on:
+  push: { branches: [ main ] }
+  pull_request:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+jobs:
+  build-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0, submodules: recursive }
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Install dependencies
+        run: npm install
+      - name: Install Antora + extensions
+        run: |
+          npm i -g @antora/cli@latest @antora/site-generator@latest @antora/lunr-extension@latest
+      - name: Vale
+        uses: errata-ai/vale-action@v2
+        with: { files: "docs" }
+        continue-on-error: true
+      - name: Link check
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --config .lychee.toml 'docs/**/*.adoc' 'docs/**/*.md' '**/*.html'
+        continue-on-error: true
+      - name: Attr checks
+        run: node scripts/check-attrs.mjs
+      - name: Build Antora
+        run: npx antora antora-playbook.yml --stacktrace
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with: { path: build/site }
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build-validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

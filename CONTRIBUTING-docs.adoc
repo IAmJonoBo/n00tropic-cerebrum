@@ -1,0 +1,208 @@
+= Documentation Contribution Guide
+:toc:
+:toclevels: 2
+
+== Overview
+
+The n00 Cerebrum documentation uses https://docs.antora.org/[Antora] to build a multi-repository documentation site. All documentation follows the https://diataxis.fr/[Diátaxis framework] for structured technical documentation.
+
+== Diátaxis Framework
+
+Diátaxis divides documentation into four distinct modes:
+
+* **Tutorial** - Learning-oriented, greenfield walk-throughs (e.g., provisioning frontier workspaces)
+* **How-to Guide** - Task-oriented, focused jobs with clear outcomes (e.g., running ERPNext exports)
+* **Reference** - Information-oriented, exhaustive configuration, API schemas, CLI flags
+* **Explanation** - Understanding-oriented, architecture notes, ADRs, and rationale
+
+When creating or editing documentation, always classify your content according to these modes.
+
+== Page Requirements
+
+Every AsciiDoc page must include the following attributes in the header:
+
+[source,asciidoc]
+----
+= Page Title
+:page-tags: diataxis:<tutorial|howto|reference|explanation>, domain:<product|platform|ops>, audience:<user|operator|agent|contrib>, stability:<draft|beta|stable>
+:reviewed: YYYY-MM-DD
+----
+
+=== Tag Taxonomy
+
+==== Diátaxis Tags
+* `diataxis:tutorial` - Step-by-step learning guides
+* `diataxis:howto` - Problem-solving guides
+* `diataxis:reference` - Technical specifications
+* `diataxis:explanation` - Conceptual explanations
+
+==== Domain Tags
+* `domain:product` - End-user product features
+* `domain:platform` - Platform and infrastructure
+* `domain:ops` - Operational procedures
+
+==== Audience Tags
+* `audience:user` - End users
+* `audience:operator` - System operators
+* `audience:agent` - AI agents
+* `audience:contrib` - Contributors
+
+==== Stability Tags
+* `stability:draft` - Work in progress
+* `stability:beta` - Under review
+* `stability:stable` - Production ready
+
+=== Review SLA
+
+Documentation pages must be reviewed at least every **90 days**. Update the `:reviewed:` date when:
+
+* Content is verified as current
+* Links are checked and working
+* Code examples are tested
+* Technical accuracy is confirmed
+
+The CI pipeline will fail if pages have stale review dates (>90 days).
+
+== Snippet Tagging
+
+To prevent documentation drift, reference live code and configuration files using tagged regions:
+
+.In source file (example: scripts/example.sh)
+[source,bash]
+----
+# tag::snippet-example[]
+n00 --help
+# end::snippet-example[]
+----
+
+.In documentation file
+[source,asciidoc]
+----
+\include::../../../../scripts/example.sh[tags=snippet-example]
+----
+
+This ensures documentation stays synchronized with actual code.
+
+== Partials for Reusable Content
+
+Factor repeated content into partials under `docs/modules/ROOT/partials/`:
+
+[source,asciidoc]
+----
+\include::partial$common-warning.adoc[]
+----
+
+== Writing Style
+
+* Use Oxford English spelling
+* Write in present tense
+* Use active voice
+* Keep sentences concise
+* Avoid gerunds in headings (enforced by Vale)
+* Use code blocks for commands and outputs
+* Include examples and screenshots where helpful
+
+== CI/CD Checks
+
+All documentation PRs are validated against:
+
+* **Vale** - Prose linting for style and terminology
+* **Lychee** - Link checking
+* **Attribute checks** - Validates presence of `:page-tags:` and `:reviewed:`
+* **DangerJS** - PR policy enforcement
+* **Antora build** - Ensures the site builds successfully
+
+== Local Development
+
+=== Building the Docs
+
+[source,bash]
+----
+# Install Antora and extensions
+npm i -g @antora/cli@latest @antora/site-generator@latest @antora/lunr-extension@latest
+
+# Build the site
+npx antora antora-playbook.yml
+
+# View the output
+open build/site/index.html
+----
+
+=== Running Validation
+
+[source,bash]
+----
+# Check attributes
+node scripts/check-attrs.mjs
+
+# Run Vale (requires Vale CLI installed)
+vale docs
+
+# Check links (requires Lychee CLI installed)
+lychee --config .lychee.toml 'docs/**/*.adoc'
+----
+
+== Navigation Structure
+
+Update `docs/modules/ROOT/nav.adoc` when adding new pages. Organize navigation hierarchically using Antora's xref syntax:
+
+[source,asciidoc]
+----
+* xref:index.adoc[Home]
+** xref:getting-started.adoc[Getting Started]
+** xref:tutorials/first-steps.adoc[First Steps Tutorial]
+----
+
+== Markdown to AsciiDoc Conversion
+
+When converting existing Markdown documentation:
+
+[source,bash]
+----
+# Using kramdown-asciidoc (recommended)
+kramdoc -o docs/modules/ROOT/pages/converted.adoc original.md
+
+# Or using Pandoc
+pandoc -f markdown -t asciidoc -o converted.adoc original.md
+----
+
+After conversion:
+1. Add required page attributes (`:page-tags:`, `:reviewed:`)
+2. Fix any formatting issues
+3. Update internal links to use xref syntax
+4. Test the build
+
+== Search and Indexing
+
+=== Offline Search (Lunr)
+
+Antora automatically generates a Lunr search index during build. The index includes:
+* Page content
+* Page titles
+* Page tags
+* Metadata
+
+=== Production Search (Algolia DocSearch)
+
+For production deployments, Algolia DocSearch provides enhanced search capabilities. The crawler runs automatically on GitHub Pages deployments.
+
+== MCP Docs Server (Optional)
+
+For AI agent access, run the MCP docs server:
+
+[source,bash]
+----
+make mcp-dev
+----
+
+This provides three tools:
+* `search(query)` - Full-text search
+* `get_page(id)` - Retrieve page content
+* `list_tags()` - List all available tags
+
+== Questions and Support
+
+For questions about documentation:
+* Open an issue in the repository
+* Ask in the #docs channel
+* Review existing ADRs in `docs/modules/ROOT/pages/1. Cerebrum Docs/ADR/`
