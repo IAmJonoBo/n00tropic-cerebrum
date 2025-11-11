@@ -13,6 +13,7 @@ BENCH_PATH="${STACK_ROOT}/${BENCH_NAME}"
 BENCH_LOG_DIR="${STACK_ROOT}/logs"
 BENCH_LOG_FILE="${BENCH_LOG_DIR}/bench-start.log"
 SITE_PORT="${ERP_SITE_PORT:-8000}"
+SITE_PORT_CEILING="${ERP_SITE_PORT_MAX:-$((SITE_PORT + 50))}"
 DEFAULT_HEALTH_PATH="/api/method/ping"
 HEALTH_PATH="${ERP_HEALTH_PATH:-$DEFAULT_HEALTH_PATH}"
 OPEN_BROWSER=1
@@ -51,7 +52,7 @@ Options:
   --attach            Keep bench attached to this console (default detaches after success).
   -h, --help          Show this help.
 Environment overrides:
-  STACK_ROOT, BENCH_NAME, ERP_SITE_PORT, ERP_SITE_URL, ERP_ENV_FILE, ERP_HEALTH_TIMEOUT, ERP_HEALTH_PATH.
+  STACK_ROOT, BENCH_NAME, ERP_SITE_PORT, ERP_SITE_PORT_MAX, ERP_SITE_URL, ERP_ENV_FILE, ERP_HEALTH_TIMEOUT, ERP_HEALTH_PATH.
 EOF
 }
 
@@ -347,6 +348,32 @@ detect_site_name() {
 	printf '%s\n' "${first_site:-erpnext.local}"
 }
 
+find_available_port() {
+	local start="$1"
+	local ceiling="$2"
+	if [[ "$ceiling" -lt "$start" ]]; then
+		ceiling="$start"
+	fi
+	python3 - "$start" "$ceiling" <<'PY'
+import socket
+import sys
+
+start = int(sys.argv[1])
+ceiling = int(sys.argv[2])
+for port in range(start, ceiling + 1):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            sock.bind(("127.0.0.1", port))
+        except OSError:
+            continue
+        print(port)
+        sys.exit(0)
+print(start)
+sys.exit(1)
+PY
+}
+
 determine_site_url() {
 	if [[ -n ${SITE_URL_OVERRIDE} ]]; then
 		printf '%s\n' "${SITE_URL_OVERRIDE}"
@@ -356,6 +383,12 @@ determine_site_url() {
 	site_name=$(detect_site_name)
 	printf 'http://%s:%s\n' "${site_name}" "${SITE_PORT}"
 }
+
+AVAILABLE_SITE_PORT=$(find_available_port "${SITE_PORT}" "${SITE_PORT_CEILING}")
+if [[ "${AVAILABLE_SITE_PORT}" != "${SITE_PORT}" ]]; then
+	log "Port ${SITE_PORT} busy; shifting ERPNext site to ${AVAILABLE_SITE_PORT} (override via ERP_SITE_PORT*)."
+	SITE_PORT="${AVAILABLE_SITE_PORT}"
+fi
 
 SITE_URL=$(determine_site_url)
 SITE_HOST=""
@@ -370,6 +403,7 @@ if SITE_COMPONENTS=$(parse_site_host_port "${SITE_URL}" 2>/dev/null); then
 	fi
 fi
 SITE_PORT="${SITE_PORT_VALUE}"
+
 HEALTH_URL="${SITE_URL%/}${HEALTH_PATH}"
 if [[ -n ${SITE_HOST} && ${SITE_HOST} != "localhost" && ${SITE_HOST} != "127.0.0.1" ]]; then
 	if ! host_resolves "${SITE_HOST}"; then
