@@ -120,14 +120,24 @@ All documentation PRs are validated against:
 
 [source,bash]
 ----
-# Install Antora and extensions
-npm i -g @antora/cli@latest @antora/site-generator@latest @antora/lunr-extension@latest
+# Install dependencies locally via pnpm (preferred)
+pnpm install
 
-# Build the site
-npx antora antora-playbook.yml
+# Build the site using the workspace's local Antora binaries
+pnpm exec antora antora-playbook.yml
 
 # View the output
 open build/site/index.html
+----
+
+=== DangerJS
+
+The repository includes a `Dangerfile.ts` to enforce PR policy checks. Install and run Danger locally via pnpm:
+
+[source,bash]
+----
+pnpm add -D danger
+pnpm exec danger ci
 ----
 
 === Running Validation
