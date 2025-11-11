@@ -1,0 +1,65 @@
+template_version: "1.0.0"
+name: frontier-repo
+description: Comprehensive, stack-agnostic repository scaffold.
+structure:
+  - path: README.md
+    type: file
+  - path: LICENSE
+    type: file
+  - path: CODE_OF_CONDUCT.md
+    type: file
+  - path: CONTRIBUTING.md
+    type: file
+  - path: SECURITY.md
+    type: file
+  - path: CHANGELOG.md
+    type: file
+  - path: CITATION.cff
+    type: file
+  - path: codemeta.json
+    type: file
+  - path: .editorconfig
+    type: file
+  - path: .gitattributes
+    type: file
+  - path: .gitignore
+    type: file
+  - path: CODEOWNERS
+    type: file
+  - path: .pre-commit-config.yaml
+    type: file
+  - path: docs/
+    type: dir
+  - path: docs/architecture/adr/
+    type: dir
+  - path: api/
+    type: dir
+  - path: apps/
+    type: dir
+  - path: services/
+    type: dir
+  - path: packages/
+    type: dir
+  - path: libs/
+    type: dir
+  - path: tests/
+    type: dir
+  - path: infra/terraform/
+    type: dir
+  - path: infra/k8s/
+    type: dir
+  - path: infra/helm/
+    type: dir
+  - path: ops/
+    type: dir
+  - path: security/
+    type: dir
+  - path: scripts/
+    type: dir
+  - path: .github/workflows/
+    type: dir
+  - path: .devcontainer/
+    type: dir
+generators:
+  python_script: tools/generate_from_template.py
+  cookiecutter: Use cookiecutter to transform this into a parametrised template.

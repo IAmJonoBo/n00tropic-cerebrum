@@ -1,0 +1,4 @@
+# Example: assign ownership by path
+# /infra/ @team-infra
+# /apps/web/ @team-web
+# /packages/ @team-platform

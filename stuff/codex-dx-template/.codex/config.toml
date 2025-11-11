@@ -1,0 +1,40 @@
+# Codex configuration template
+# NOTE: Codex looks for this file at ~/.codex/config.toml.
+# You can keep this version in-repo for reference and copy relevant parts to your user config.
+#
+# Docs:
+# - Codex CLI overview & install: https://developers.openai.com/codex/cli/
+# - Local configuration options (model, approvals, sandbox, profiles): https://developers.openai.com/codex/local-config
+# - MCP servers (connect docs/tools safely): https://developers.openai.com/codex/mcp/
+
+# Default options (used if no profile is specified)
+model = "gpt-5-codex"             # switch in CLI with: codex --model gpt-5-codex
+model_reasoning_effort = "medium" # try "high" for complex tasks
+approval_policy = "auto"          # ask before leaving workspace or using network
+sandbox_mode = "workspace-write"  # read/write inside repo; no home/root writes
+
+[shell_environment_policy]
+include_only = ["PATH", "HOME"] # keep the surface area small
+
+# Profiles let you switch behaviours quickly: codex --profile offline-strict
+[profiles.offline-strict]
+model = "gpt-5-codex"
+model_reasoning_effort = "medium"
+approval_policy = "on-request"    # pause more often
+sandbox_mode = "workspace-write"
+
+[profiles.full-access]
+model = "gpt-5-codex"
+model_reasoning_effort = "high"
+approval_policy = "auto"
+sandbox_mode = "danger-full-access" # CAUTION: use sparingly
+
+# Example MCP servers — enable targeted tools/context safely.
+# Add via CLI:  codex mcp add context7 -- npx -y @upstash/context7-mcp
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]
+
+# Example: Playwright browser MCP (HTTP server form)
+# [mcp_servers.playwright]
+# url = "https://mcp.playwright.dev/mcp"

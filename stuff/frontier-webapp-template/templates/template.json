@@ -1,0 +1,43 @@
+{
+  "template_version": "1.0.0",
+  "name": "frontier-webapp",
+  "description": "Comprehensive, framework-agnostic web app scaffold (PWA/SEO/a11y/perf/testing).",
+  "structure": [
+    {
+      "path": "apps/web/public/manifest.webmanifest",
+      "type": "file"
+    },
+    {
+      "path": "apps/web/public/robots.txt",
+      "type": "file"
+    },
+    {
+      "path": "apps/web/public/sitemap.xml",
+      "type": "file"
+    },
+    {
+      "path": "apps/web/public/sw.js",
+      "type": "file"
+    },
+    {
+      "path": "apps/web/src",
+      "type": "dir"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "type": "file"
+    },
+    {
+      "path": "apps/web/package.json",
+      "type": "file"
+    },
+    {
+      "path": ".github/workflows/web-ci.yml",
+      "type": "file"
+    },
+    {
+      "path": ".lighthouserc.json",
+      "type": "file"
+    }
+  ]
+}

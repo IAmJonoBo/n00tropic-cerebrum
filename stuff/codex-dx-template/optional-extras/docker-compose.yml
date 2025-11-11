@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  codex-dx:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: pnpm start
+
+  # Optional Python service (uncomment and adjust if needed)
+  # python-service:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.python
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - PYTHON_ENV=production
+  #   volumes:
+  #     - .:/app
+  #   command: python main.py

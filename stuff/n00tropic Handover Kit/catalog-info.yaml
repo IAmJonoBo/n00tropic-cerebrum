@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: example-service
+  description: Example service registered in the n00tropic catalog.
+  tags: [service, web]
+spec:
+  type: service
+  owner: group:eng-platform
+  lifecycle: production
+  system: n00tropic-suite
+  providesApis:
+    - example-service-api
+  dependsOn:
+    - resource:db-example
+  links:
+    - url: ./docs/project/HANDOVER_CONTRACT.md
+      title: Handover Contract
+      icon: docs

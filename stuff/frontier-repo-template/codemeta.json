@@ -1,0 +1,10 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "name": "Frontier Repo Template",
+  "version": "0.1.0",
+  "license": "https://spdx.org/licenses/MIT.html",
+  "programmingLanguage": ["agnostic"],
+  "codeRepository": "https://example.com/your/repo",
+  "developmentStatus": "active"
+}

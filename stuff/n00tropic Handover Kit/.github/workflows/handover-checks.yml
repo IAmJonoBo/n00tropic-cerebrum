@@ -1,0 +1,27 @@
+name: Handover & Contracts Checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Required docs present
+        run: |
+          test -f docs/project/HANDOVER_CONTRACT.md
+          test -f docs/project/SCOPE_CHANGE_PROTOCOL.md
+          test -f catalog-info.yaml
+          test -f contracts/openapi/OPENAPI.yaml
+          test -f contracts/asyncapi/ASYNCAPI.yaml
+      - name: Validate OpenAPI (basic)
+        run: |
+          npx -y @redocly/cli@latest lint contracts/openapi/OPENAPI.yaml || true
+      - name: Validate AsyncAPI (basic)
+        run: |
+          npx -y @asyncapi/cli@latest validate contracts/asyncapi/ASYNCAPI.yaml || true
+      - name: Generate Handover Packet
+        run: make handover

@@ -1,0 +1,3 @@
+apiVersion: v2
+name: example-chart
+version: 0.1.0

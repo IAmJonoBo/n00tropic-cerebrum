@@ -1,0 +1,20 @@
+# Node / tooling
+node_modules/
+.pnpm-store/
+dist/
+build/
+.cache/
+tmp/
+*.log
+*.tsbuildinfo
+
+# Env
+.env
+.env.*
+.env.local
+.env.*.local
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
