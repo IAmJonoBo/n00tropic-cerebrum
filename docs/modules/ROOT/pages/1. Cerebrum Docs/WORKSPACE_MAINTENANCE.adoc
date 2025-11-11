@@ -71,4 +71,4 @@ TIP: wire the workflow above into automation pipelines (Trunk, CI) to fail fast 
 
 * Preferred capability: `workspace.gitDoctor` (backed by `workspace-health.sh`). Payload keys include `cleanUntracked`, `syncSubmodules`, `publishArtifact`, and `strict`.
 * Automation emits `artifacts/workspace-health.json`, which distinguishes tracked vs untracked entries per repo so agents can react programmatically.
-* Additional context and sample payload LIVE in xref:AI_WORKSPACE_PLAYBOOK.adoc[`AI_WORKSPACE_PLAYBOOK.md`].
+* Additional context and sample payload LIVE in xref:++1. Cerebrum Docs/AI_WORKSPACE_PLAYBOOK.adoc++[`AI_WORKSPACE_PLAYBOOK.md`].

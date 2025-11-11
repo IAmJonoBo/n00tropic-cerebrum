@@ -32,8 +32,8 @@ This directory captures workspace-level knowledge that sits above any single rep
 
 == Current Workspace ADRs
 
-* xref:ADR/ADR-001-workspace-federation.adoc[ADR-001: Federated Generator Workspace]
-* xref:ADR/ADR-002-agent-orchestration-and-training.adoc[ADR-002: Agent Orchestration & Training Spine]
-* xref:ADR/ADR-003-operational-workspace-taxonomy-and-erpnext-integration.adoc[ADR-003: Operational Workspace Taxonomy & ERPNext Integration]
+* xref:++1. Cerebrum Docs/ADR/ADR-001-workspace-federation.adoc++[ADR-001: Federated Generator Workspace]
+* xref:++1. Cerebrum Docs/ADR/ADR-002-agent-orchestration-and-training.adoc++[ADR-002: Agent Orchestration & Training Spine]
+* xref:++1. Cerebrum Docs/ADR/ADR-003-operational-workspace-taxonomy-and-erpnext-integration.adoc++[ADR-003: Operational Workspace Taxonomy & ERPNext Integration]
 
 Keep the documentation concise and avoid duplicating material maintained inside the individual repositories.
