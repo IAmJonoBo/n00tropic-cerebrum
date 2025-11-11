@@ -226,7 +226,7 @@ jobs:
       - name: Attr checks
         run: node scripts/check-attrs.mjs
       - name: Build Antora
-        run: npx antora antora-playbook.yml --stacktrace
+  run: pnpm exec antora antora-playbook.yml --stacktrace
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with: { path: build/site }
@@ -279,7 +279,7 @@ Add a **Makefile** target **make mcp-dev** to run it locally.
 
 ## **7) E2E validation**
 
-1. **Build** with npx antora antora-playbook.yml** and confirm output in **build/site**.**
+1. **Build** with pnpm exec antora antora-playbook.yml** and confirm output in **build/site**.**
 2. **Search (Lunr):** confirm the search box returns results; verify tags are present in page metadata and visible in the UI (can be surfaced via a small UI partial if desired).
 3. **Links & style:** GH Action shows **Vale** and **Lychee** passing.
 4. **Freshness:** the attribute script and DangerJS pass; no **:reviewed:** older than 90 days.
