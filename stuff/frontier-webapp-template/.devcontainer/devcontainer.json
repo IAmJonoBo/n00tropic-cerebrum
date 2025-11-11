@@ -1,0 +1,10 @@
+{
+  "name": "frontier-web",
+  "build": { "dockerfile": "../Dockerfile" },
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  },
+  "postCreateCommand": "npm install --prefix apps/web"
+}

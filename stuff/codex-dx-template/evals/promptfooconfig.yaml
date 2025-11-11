@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "Lightweight, deterministic checks to keep agent outputs on the rails"
+providers:
+  - id: openai:gpt-4.1-mini
+    config:
+      temperature: 0
+prompts:
+  - "Explain {file} at a high level in <=6 bullets."
+  - "Propose a minimal fix for failing test: {test}"
+# Load extra test cases from the evals/tests directory
+tests: file://tests/*
+defaultTest:
+  assert:
+    - type: contains-any
+      value: ["AST", "token", "grammar", "parse"]
+    - type: javascript
+      value: "output.length > 0"

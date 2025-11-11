@@ -1,0 +1,13 @@
+name: CI
+on:
+  push: { branches: ["main"] }
+  pull_request:
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pre-commit
+        uses: pre-commit/action@v3.0.1
+      - name: Placeholder tests
+        run: echo "Run language-specific test runners here"

@@ -1,0 +1,3 @@
+- Report vulnerabilities privately (security@example.com).
+- Never commit secrets. Use `config/environments/*.example` for templates.
+- Baseline: set security headers (see `apps/web/server/security-headers.ts`) and CSP.

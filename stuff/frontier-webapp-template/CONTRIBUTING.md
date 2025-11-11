@@ -1,0 +1,3 @@
+- Trunk-based development; short-lived branches.
+- Conventional Commits; semantic release-friendly.
+- Unit tests alongside code; integration/E2E under `tests/`.

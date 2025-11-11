@@ -1,0 +1,14 @@
+asyncapi: "3.0.0"
+info:
+  title: Example Async API
+  version: 0.1.0
+channels:
+  example.events.v1:
+    address: example.events.v1
+    messages:
+      EventHappened:
+        payload:
+          type: object
+          properties:
+            id:
+              type: string

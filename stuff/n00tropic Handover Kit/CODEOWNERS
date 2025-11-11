@@ -1,0 +1,6 @@
+# Example CODEOWNERS — tune for your org
+/docs/ @n00tropic/docs-team
+/docs/architecture/ @n00tropic/arch-team
+/docs/ai/ @n00tropic/ai-team
+/src/ @n00tropic/eng-team
+/scripts/ @n00tropic/platform-team

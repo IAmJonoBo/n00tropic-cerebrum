@@ -1,0 +1,10 @@
+{
+  "name": "frontier-dev",
+  "build": { "dockerfile": "Dockerfile" },
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "esbenp.prettier-vscode"]
+    }
+  }
+}

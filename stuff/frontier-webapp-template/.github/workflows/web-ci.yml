@@ -1,0 +1,35 @@
+name: Web CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Install deps
+        run: npm ci --prefix apps/web || (cd apps/web && npm install)
+      - name: Lint
+        run: npm run lint --prefix apps/web
+      - name: Unit tests
+        run: npm run test --prefix apps/web
+      - name: Build
+        run: npm run build --prefix apps/web
+
+  lighthouse:
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Install deps
+        run: npm ci --prefix apps/web || (cd apps/web && npm install)
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          configPath: .lighthouserc.json
+          uploadArtifacts: true

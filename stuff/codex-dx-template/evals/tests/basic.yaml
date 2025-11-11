@@ -1,0 +1,9 @@
+# Basic example test case — customise per repo
+- vars:
+    file: "src/core/parser.ts"
+    test: "parser handles nested arrays"
+  assert:
+    - type: icontains
+      value: "parser"
+    - type: not-icontains
+      value: "lorem ipsum"
