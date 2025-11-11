@@ -34,6 +34,7 @@ log() {
 	printf '[erpnext-run] %s\n' "$*" >&2
 }
 
+# tag::snippet-erpnext-run[]
 usage() {
 	cat <<'EOF'
 Usage: scripts/erpnext-run.sh [options]
@@ -55,6 +56,7 @@ Environment overrides:
   STACK_ROOT, BENCH_NAME, ERP_SITE_PORT, ERP_SITE_PORT_MAX, ERP_SITE_URL, ERP_ENV_FILE, ERP_HEALTH_TIMEOUT, ERP_HEALTH_PATH.
 EOF
 }
+# end::snippet-erpnext-run[]
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in

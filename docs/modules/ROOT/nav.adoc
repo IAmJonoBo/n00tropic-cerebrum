@@ -1,0 +1,18 @@
+* xref:index.adoc[Home]
+* xref:migration-status.adoc[Migration Tracker]
+* xref:README.adoc[Legacy README]
+* xref:contributing.adoc[Docs Contribution Playbook]
+* xref:search/index.adoc[Search & MCP]
+* Legacy imports
+** xref:++1. Cerebrum Docs/README.adoc++[Cerebrum Knowledge Hub]
+*** xref:++1. Cerebrum Docs/AI_WORKSPACE_PLAYBOOK.adoc++[AI Workspace Playbook]
+*** xref:++1. Cerebrum Docs/TRUNK_GUIDE.adoc++[Trunk Guide]
+*** xref:++1. Cerebrum Docs/WORKSPACE_MAINTENANCE.adoc++[Workspace Maintenance]
+*** xref:++1. Cerebrum Docs/RENOVATE_SETUP.adoc++[Renovate Setup]
+*** xref:++1. Cerebrum Docs/Agent Assisted Development/ai-assisted-development-playbook-multimodel-2025-v1.0.adoc++[Agent Assisted Development]
+*** xref:++1. Cerebrum Docs/START HERE/README.adoc++[Cerebrum START HERE]
+*** ADRs
+**** xref:++1. Cerebrum Docs/ADR/ADR-001-workspace-federation.adoc++[ADR-001 Workspace Federation]
+**** xref:++1. Cerebrum Docs/ADR/ADR-002-agent-orchestration-and-training.adoc++[ADR-002 Agent Orchestration]
+**** xref:++1. Cerebrum Docs/ADR/ADR-003-operational-workspace-taxonomy-and-erpnext-integration.adoc++[ADR-003 Workspace Taxonomy]
+**** xref:++1. Cerebrum Docs/ADR/ADR-004-unified-project-management-system.adoc++[ADR-004 Unified PM System]

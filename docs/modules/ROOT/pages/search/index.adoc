@@ -1,0 +1,5 @@
+= Search & Indexing
+:page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-11
+
+include::../../../../search/README.adoc[]

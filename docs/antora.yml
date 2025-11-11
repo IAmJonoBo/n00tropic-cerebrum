@@ -1,0 +1,5 @@
+name: n00-cerebrum
+title: n00 Cerebrum
+version: main
+nav:
+  - modules/ROOT/nav.adoc

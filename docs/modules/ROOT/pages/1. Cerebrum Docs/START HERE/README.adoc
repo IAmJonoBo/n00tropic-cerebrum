@@ -1,0 +1,49 @@
+= Start Here: 1. Cerebrum Docs
+:page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-11
+
+This repo records cross-workspace decisions, shared policy, and release manifests. Treat it as the governance layer for the polyrepo.
+
+== If you only have 5 minutes
+
+* Read xref:../README.adoc[`README.md`] for the current doc structure.
+* Check `ADR/` for recent architecture decisions; every cross-repo change should reference an ADR here.
+* Review `RENOVATE_SETUP.md` and `TRUNK_GUIDE.md` when adjusting dependency or linting policies.
+
+== Quick start (humans)
+
+[,bash]
+----
+cd "1. Cerebrum Docs"
+npm install --prefix ../n00-cortex docs # optional: reuse Docusaurus tooling
+
+# Lint markdown and front matter
+trunk check --filter markdownlint-cli2
+
+# Generate release snapshot (from workspace root)
+../.dev/automation/scripts/workspace-release.sh
+----
+
+== Key directories
+
+|===
+| Path | Purpose
+
+| `ADR/`
+| Canonical architecture decision records.
+
+| `releases.yaml`
+| Workspace release log written by automation.
+
+| `RENOVATE_SETUP.md`
+| Guidance on shared Renovate presets and onboarding.
+
+| `TRUNK_GUIDE.md`
+| Describes Trunk usage across repos.
+|===
+
+== Contribution guardrails
+
+* Number ADRs sequentially and keep titles descriptive. Link back to repo-specific ADRs or PRs.
+* Update `releases.yaml` via automation scripts, not manual edits.
+* When introducing new workspace policy, document the process change here first, then reference it from other repos`' `START HERE` guides.

@@ -1,0 +1,48 @@
+= ADR-001: Federated Generator Workspace
+:page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-11
+
+== Status
+
+Accepted -- 2025-11-04
+
+== Context
+
+The n00tropic platform relies on a collection of repositories, many of which feed the generator system that scaffolds downstream customer projects. A full monorepo would simplify certain tooling, but it brings real risks:
+
+* Large generator surfaces (Python CLI, pnpm apps, documentation sites, operational playbooks) would be coupled. A single failing toolchain could block all pipelines.
+* Generators consume tagged releases from multiple repos. Co-locating everything makes it easier to accidentally commit experimental tooling or local artefacts that then leak into generated projects.
+* Each repository has distinct governance (ownership teams, release cadences, CI workflows). A monorepo complicates CODEOWNERS and permissions.
+* Contributors would need to install every runtime just to make a small change in one area.
+
+At the same time, contributors need a reliable map so they can make cross-repo changes safely and confidently.
+
+== Decision
+
+Maintain a federated workspace with shared documentation and governance at the root level.
+
+. Keep the existing repositories (`n00-frontiers`, `n00-cortex`, `n00t`, `n00tropic`, `n00plicate`) independent with their own CI and release flows.
+. Provide a workspace map and coordination guardrails in `README` at the root of the filesystem.
+. Store cross-repo ADRs and process notes in `1. Cerebrum Docs/` so decisions that impact generators are traceable without polluting any single repo.
+. Reference repository-specific ADR indices instead of duplicating their content. Workspace ADRs should link to those indices when a decision spans multiple repos.
+. Enforce separation of concerns: generated artefacts, experimental code, and repo-specific caches must never be committed across repo boundaries.
+
+== Consequences
+
+* Positive: Each stack stays lean and can evolve at its own pace.
+* Positive: Workspace decisions are recorded centrally without breaking repo-level history or generator outputs.
+* Positive: Downstream generators continue to point at tagged releases, reducing the risk of accidental contamination.
+* Negative: Cross-repo work still requires coordination and multiple PRs. Contributors must follow the workflow documented in the root README.
+* Negative: Shared tooling (for example, a combined superlinter) needs glue scripts instead of living inside a single CI pipeline.
+
+== Implementation Notes
+
+* Populate the root README with the workspace atlas, generator boundaries, and contribution workflow (completed alongside this ADR).
+* Keep `1. Cerebrum Docs/README.md` up to date so new contributors know where to add workspace-level documentation.
+* When a decision affects generator contracts (manifest formats, release tagging rules), add a new ADR in this folder and link it from the relevant repo documentation.
+
+== Follow-up Questions
+
+* Should we add an automated "workspace smoke test" script that shells into each repo and runs its primary health check?
+* Do we need a signed release manifest so generators can verify inputs across repositories?
+* How should we surface the status of pending cross-repo work (issue tracker vs. docs site vs. dashboards)?

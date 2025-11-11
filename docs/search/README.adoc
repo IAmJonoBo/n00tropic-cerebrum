@@ -1,0 +1,20 @@
+= Search Operations
+:page-tags: diataxis:howto, domain:platform, audience:operator, stability:beta
+:reviewed: 2025-11-11
+
+== Modes
+
+* **Offline / local builds** – Lunr indexes are emitted automatically when running `npx antora antora-playbook.yml`. Confirm `build/site/search-index.js` exists.
+* **Production (Algolia DocSearch)** – Option A is active. The DocSearch crawler targets the GitHub Pages deployment for `n00-cerebrum`. Keep the `docsearch.json` configuration in the Algolia dashboard in sync with any URL changes.
+
+== Re-index steps
+
+. Push doc changes to `main` (or a release branch) and wait for `ci/docs.yml` to finish so GitHub Pages is up-to-date.
+. Sign in to Algolia DocSearch, select the `n00-cerebrum` index, and trigger a **manual crawl**. (Automated crawling can be scheduled once the domain stabilizes.)
+. Verify the new documents via the DocSearch preview, then smoke test the in-site search UI.
+
+== Troubleshooting
+
+* If Lunr search returns no hits, delete `build/site` and rebuild to ensure stale indexes are removed.
+* When Algolia misses fresh content, double-check that pages declare `:page-tags:` and `:reviewed:`. Missing attributes are rejected by the crawler.
+* For hackable offline experiments, point your browser at `build/site/index.html` and inspect the `window.antoraLunrIndex` payload.
