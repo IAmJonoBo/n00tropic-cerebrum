@@ -33,7 +33,7 @@ jobs:
       - name: Build Antora
         run: npx antora antora-playbook.yml --stacktrace
       - name: Upload site artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with: { path: build/site }
   deploy:
     if: github.ref == 'refs/heads/main'
