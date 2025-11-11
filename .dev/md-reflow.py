@@ -292,6 +292,7 @@ def _fill(text: str, width: int, initial_indent: str, subsequent_indent: str) ->
 
 @dataclasses.dataclass
 class FormatOptions:
+    """Tweakable settings controlling markdown reflow behavior."""
     width: int = 100
     prose_wrap: str = "always"  # "always" | "preserve"
     include_mdx: bool = False
