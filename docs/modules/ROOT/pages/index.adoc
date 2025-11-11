@@ -34,7 +34,7 @@ xref:migration-status.adoc[Open the migration tracker] for task-level detail. Th
 
 [source,shell]
 ----
-include::../../../../scripts/erpnext-run.sh[tags=snippet-erpnext-run]
+include::example$scripts/erpnext-run.sh[tags=snippet-erpnext-run]
 ----
 
 Because snippets are tagged in-source they stay evergreen whenever tests update the files that own the truth.
@@ -42,7 +42,7 @@ Because snippets are tagged in-source they stay evergreen whenever tests update 
 == Search & MCP
 
 * xref:search/index.adoc[Search + indexing]
-* Refer to `docs/search/README.adoc` for the Algolia procedure until we automate crawls.
+* Refer to xref:search/index.adoc#algolia[`docs/search/README.adoc`] for the Algolia procedure until we automate crawls.
 * Run `make mcp-dev` to expose the docs MCP server locally and experiment with agent retrieval.
 
 == Legacy imports
