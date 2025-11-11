@@ -83,7 +83,7 @@ def is_script_file(file_path: pathlib.Path) -> bool:
             first_line = f.readline().strip()
             if first_line.startswith('#!'):
                 return True
-    except Exception:
+    except OSError:
         pass
     return False
 
@@ -112,7 +112,7 @@ def get_script_description(file_path: pathlib.Path) -> str:
                 elif line and not line.startswith('#'):
                     break  # Stop at first non-comment line
             return ' '.join(description).strip() if description else "No description available"
-    except Exception:
+    except OSError:
         return "Unable to read description"
 
 def categorize_scripts(workspace_root: pathlib.Path) -> Dict[str, List[Tuple[pathlib.Path, str]]]:
@@ -152,7 +152,10 @@ def categorize_scripts(workspace_root: pathlib.Path) -> Dict[str, List[Tuple[pat
 
     return dict(scripts_by_category)
 
-def generate_markdown_index(scripts_by_category: Dict[str, List[Tuple[pathlib.Path, str]]], workspace_root: pathlib.Path) -> str:
+def generate_markdown_index(
+    scripts_by_category: Dict[str, List[Tuple[pathlib.Path, str]]],
+    workspace_root: pathlib.Path,
+) -> str:
     """Generate Markdown content for the script index."""
     lines = []
     lines.append("# n00tropic Polyrepo Script Index")
@@ -171,7 +174,8 @@ def generate_markdown_index(scripts_by_category: Dict[str, List[Tuple[pathlib.Pa
     # Table of contents
     for category in sorted(scripts_by_category.keys()):
         count = len(scripts_by_category[category])
-        lines.append(f"- [{category}](#{category.lower().replace('/', '-').replace(' ', '-')}) ({count} scripts)")
+        anchor = category.lower().replace('/', '-').replace(' ', '-')
+        lines.append(f"- [{category}](#{anchor}) ({count} scripts)")
 
     lines.append("")
     lines.append("---")
@@ -198,7 +202,7 @@ def generate_markdown_index(scripts_by_category: Dict[str, List[Tuple[pathlib.Pa
                 size_kb = stat.st_size / 1024
                 lines.append(f"- **Size:** {size_kb:.1f} KB")
                 lines.append(f"- **Modified:** {stat.st_mtime}")
-            except Exception:
+            except OSError:
                 pass
             lines.append("")
 
@@ -208,13 +212,19 @@ def generate_markdown_index(scripts_by_category: Dict[str, List[Tuple[pathlib.Pa
 
     return '\n'.join(lines)
 
+
 def main():
+    """Entry point for generating the script index from the workspace."""
     workspace_root = pathlib.Path("/Volumes/APFS Space/n00tropic")
     output_file = pathlib.Path(__file__).parent / "script_index.md"
 
     print(f"Scanning workspace: {workspace_root}")
     scripts_by_category = categorize_scripts(workspace_root)
-    print(f"Found {sum(len(s) for s in scripts_by_category.values())} scripts in {len(scripts_by_category)} categories")
+    total_found = sum(len(s) for s in scripts_by_category.values())
+    category_count = len(scripts_by_category)
+    print(
+        f"Found {total_found} scripts in {category_count} categories",
+    )
 
     print(f"Generating index at: {output_file}")
     markdown_content = generate_markdown_index(scripts_by_category, workspace_root)
