@@ -1,0 +1,3 @@
+verbose = true
+exclude = ["^mailto:", "localhost", "127.0.0.1"]
+retry = { count = 2, code = [429, 500, 502, 503, 504] }

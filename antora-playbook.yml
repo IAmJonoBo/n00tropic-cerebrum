@@ -36,7 +36,7 @@ ui:
     snapshot: true
 antora:
   extensions:
-    - @antora/lunr-extension
+    - '@antora/lunr-extension'
 asciidoc:
   attributes:
     page-pagination: ''
