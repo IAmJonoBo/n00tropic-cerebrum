@@ -213,7 +213,9 @@ jobs:
         with: { node-version: '20' }
       - name: Install Antora + extensions
         run: |
-          npm i -g @antora/cli@latest @antora/site-generator@latest @antora/lunr-extension@latest
+          # Install Antora tooling locally via pnpm and run using pnpm exec
+          pnpm install
+          pnpm exec antora antora-playbook.yml --stacktrace
       - name: Vale
         uses: errata-ai/vale-action@v2
         with: { files: "docs" }
