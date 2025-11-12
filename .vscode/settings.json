@@ -1,4 +1,33 @@
 {
+  "npm.packageManager": "pnpm",
+  "vitest.disableWorkspaceWarning": true,
+  "files.exclude": {
+    "**/Typora.app": true
+  },
+  "python.terminal.useEnvFile": true,
+  "mcp": {
+    "servers": {
+      "ai-workflow": {
+        "command": "node",
+        "args": [
+          "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/.dev/automation/mcp-server/index.js"
+        ],
+        "cwd": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+        "env": {
+          "NODE_ENV": "development"
+        }
+      },
+      "cortex": {
+        "command": "node",
+        "args": [
+          "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-cortex/mcp-server/index.js"
+        ],
+        "cwd": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-cortex"
+      }
+    }
+  }
+}
+{
   "vitest.disableWorkspaceWarning": true,
   "files.exclude": {
     "**/Typora.app": true
