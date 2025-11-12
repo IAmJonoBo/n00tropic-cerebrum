@@ -6,6 +6,16 @@ content:
     - url: .
       branches: [HEAD]
       start_paths: [docs]
+    # To aggregate remote components in CI (requires credentials), add one entry per repo:
+    # - url: https://github.com/IAmJonoBo/n00-frontiers.git
+    #   branches: [ main ]
+    #   start_paths: [ docs ]
+  # Optional: include sibling component sources (for CI or remote builds).
+  # Example:
+  # - url: https://github.com/IAmJonoBo/n00-frontiers.git
+  #   branches: [docs/antora-migration,main]
+  #   start_paths: [docs]
+  # NOTE: n00-cortex is omitted for now (private repo requires credentials in CI).
 ui:
   bundle:
     url: ./vendor/antora/ui-bundle.zip
