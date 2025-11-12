@@ -94,6 +94,14 @@ Quick commands:
   - pnpm -s docs:generate-spelling-counts
   - pnpm -s docs:vale-whitelist-candidates
 
+Note about Markdown/AsciiDoc linting:
+
+- There's a repository-level `config.markdownlint-cli2.jsonc` file which relaxes a
+  few markdown rules for AsciiDoc files (line length, bare URLs, inline HTML, and
+  emphasis/heading style differences). This reduces false positives for AsciiDoc
+  pages. To run markdown linting with the repo configuration, use:
+  - pnpm -s exec markdownlint-cli2 --config config.markdownlint-cli2.jsonc "docs/\*_/_.adoc"
+
 Notes:
 
 - The `n00` vocabulary is located at `styles/config/vocabularies/n00/accept.txt`. Add project-specific acronyms or tooling names there to reduce irrelevant Vale.Spelling flags during full runs.
