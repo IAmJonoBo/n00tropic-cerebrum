@@ -39,6 +39,8 @@
     "docs:generate-spelling-counts": "node scripts/generate-spelling-counts.mjs",
     "docs:vale-whitelist-candidates": "node scripts/vale-whitelist-candidates.mjs",
     "lint:python": "node scripts/lint-python.mjs"
+    ,
+    "trunk:check-all": "bash .dev/automation/scripts/run-trunk-subrepos.sh"
   },
   "pnpm": {
     "overrides": {
