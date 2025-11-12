@@ -170,7 +170,7 @@ enum Dashboard {
 
             static var defaultTranscript: [ChatMessage] {
                 [ChatMessage(role: .system,
-                             text: "Welcome to n00ton Control Centre. Pick a capability from the panel or free-type a request to orchestrate workspace automation.",
+                             text: "Welcome to n00t Control Centre. Pick a capability from the panel or free-type a request to orchestrate workspace automation.",
                              status: .informational,
                              capabilityId: nil,
                              stream: .transcript)]
@@ -852,7 +852,7 @@ enum Dashboard {
                 Dashboard.Log.warn("Unable to resolve application support directory for transcripts")
                 return nil
             }
-            let directory = support.appendingPathComponent("n00ton", isDirectory: true)
+            let directory = support.appendingPathComponent("n00t", isDirectory: true)
             do {
                 try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
             } catch {

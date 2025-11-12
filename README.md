@@ -101,19 +101,19 @@ This sequence highlights the typical cadence: adjust policy in `n00-cortex`, ada
 
 Automation scripts live under `.dev/automation/scripts/` and surface through the `n00t` capability manifest.
 
-| Script                            | Purpose                                                                                                    |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `meta-check.sh`                   | Orchestrates repo health checks, schema validation, and CVE scans before publishing changes.               |
-| `refresh-workspace.sh`            | Fast-forwards each repo and updates submodules to keep local clones aligned.                               |
-| `trunk-upgrade.sh`                | Runs `trunk upgrade` across repos (supports repo filters and extra flags when invoked via capabilities).   |
-| `check-cross-repo-consistency.py` | Ensures toolchain manifests and overrides remain aligned.                                                  |
-| `workspace-release.sh`            | Verifies clean git state and writes `1. Cerebrum Docs/releases.yaml`.                                      |
-| `ai-workflows/*`                  | Phase-specific scripts for the AI-assisted development workflow surfaced by `n00t`.                        |
-| `project-preflight.sh`            | Chains capture + GitHub/ERPNext syncs and fails fast when review cadence, links, or IDs are missing.       |
-| `project-lifecycle-radar.sh`      | Emits a JSON radar summarising lifecycle totals, overdue reviews, and integration gaps for planning.       |
-| `project-control-panel.sh`        | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights. |
-| `scripts/erpnext-run.sh`          | Run-and-gun ERPNext dev stack: bootstraps bench, verifies MySQL/Redis, launches browser, logs telemetry, and triggers PM/telemetry exports. |
-| `project-preflight-batch.sh`      | Executes preflight across every registry entry to keep GitHub + ERPNext sync warnings visible.             |
+| Script                            | Purpose                                                                                                                                       |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `meta-check.sh`                   | Orchestrates repo health checks, schema validation, and CVE scans before publishing changes.                                                  |
+| `refresh-workspace.sh`            | Fast-forwards each repo and updates submodules to keep local clones aligned.                                                                  |
+| `trunk-upgrade.sh`                | Runs `trunk upgrade` across repos (supports repo filters and extra flags when invoked via capabilities).                                      |
+| `check-cross-repo-consistency.py` | Ensures toolchain manifests and overrides remain aligned.                                                                                     |
+| `workspace-release.sh`            | Verifies clean git state and writes `1. Cerebrum Docs/releases.yaml`.                                                                         |
+| `ai-workflows/*`                  | Phase-specific scripts for the AI-assisted development workflow surfaced by `n00t`.                                                           |
+| `project-preflight.sh`            | Chains capture + GitHub/ERPNext syncs and fails fast when review cadence, links, or IDs are missing.                                          |
+| `project-lifecycle-radar.sh`      | Emits a JSON radar summarising lifecycle totals, overdue reviews, and integration gaps for planning.                                          |
+| `project-control-panel.sh`        | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights.                                    |
+| `scripts/erpnext-run.sh`          | Run-and-gun ERPNext dev stack: bootstraps bench, verifies MySQL/Redis, launches browser, logs telemetry, and triggers PM/telemetry exports.   |
+| `project-preflight-batch.sh`      | Executes preflight across every registry entry to keep GitHub + ERPNext sync warnings visible.                                                |
 | `workspace-health.py`             | Summarises root + submodule git status, emits `artifacts/workspace-health.json`, cleans safe untracked files, and syncs submodules on demand. |
 
 Run `python cli.py --help` from the workspace root (or `n00-horizons/cli.py`, `n00-frontiers/cli.py`, etc.) to access curated wrappers around these scripts for both agents and humans.
@@ -192,7 +192,6 @@ pnpm exec antora antora-playbook.yml
 ```bash
 open build/site/index.html
 ```
-
 
 ## Script Index
 

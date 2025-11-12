@@ -6,7 +6,7 @@ Accepted – 2025-11-04
 
 ## Context
 
-- n00t (n00ton) has evolved from a simple MCP host into the control plane for workspace automation (refresh, meta-check, release).
+- n00t (n00t) has evolved from a simple MCP host into the control plane for workspace automation (refresh, meta-check, release).
 - We need a single entry point for running simulated delivery flows, validating generated projects, and exercising future customer environments.
 - The organisation is spinning up `n00-school/` as the home for proprietary model training, evaluations, and red-team simulations. Outputs from that programme must loop back into generators and governance docs.
 - Prior automation lived in repo-local scripts; there was no shared telemetry bus or mechanism to broadcast new toolchain requirements to downstream consumers.

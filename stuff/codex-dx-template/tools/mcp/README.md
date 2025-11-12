@@ -5,13 +5,13 @@ Configure servers in your `~/.codex/config.toml` using entries like:
 
 ```toml
 [mcp_servers.context7]
-command = "npx"
-args = ["-y", "@upstash/context7-mcp"]
+command = "pnpm"
+args = ["dlx", "-y", "@upstash/context7-mcp"]
 ```
 
 Quick start:
 
-- Add via CLI: `codex mcp add context7 -- npx -y @upstash/context7-mcp`
+- Add via CLI: `codex mcp add context7 -- pnpm dlx -y @upstash/context7-mcp`
 - Inspect active servers in the Codex TUI with `/mcp`
 
 Keep MCP access minimal. Prefer read‑only docs; avoid write‑capable tools unless strictly required.

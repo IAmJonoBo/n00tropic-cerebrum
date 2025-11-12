@@ -18,6 +18,7 @@ runtimes:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   enabled:
+    - vale@3.13.0
     - clippy@1.65.0
     - oxipng@9.1.5
     - rustfmt@1.65.0
@@ -30,13 +31,13 @@ lint:
     - golangci-lint2@2.6.1
     - actionlint@1.7.8
     - bandit@1.8.6
-    - checkov@3.2.491
+    - checkov@3.2.492
     - git-diff-check
     - markdownlint-cli2@0.18.1
     - eslint@9.39.1
     - osv-scanner@2.2.4
     - prettier@3.6.2
-    - renovate@42.3.0
+    - renovate@42.5.4
     - ruff@0.14.4
     - shellcheck@0.11.0
     - shfmt@3.6.0

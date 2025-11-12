@@ -5,7 +5,7 @@ FROM node:24-alpine
 WORKDIR /app
 
 # Install pnpm globally
-RUN npm install -g pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Copy package files
 COPY package.json pnpm-lock.yaml* ./

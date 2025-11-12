@@ -1,11 +1,13 @@
-**Copilot, perform an E2E docs migration to Antora (multi-repo, tagged, searchable)**
+# Antora Migration
+
+## Copilot, perform an E2E docs migration to Antora (multi-repo, tagged, searchable)\*\*
 
 You are an expert repo-migration assistant. Execute the following tasks exactly, opening PRs as needed. Use concise commits with conventional prefixes (e.g., **docs:**, **ci:**). Assume this repo is the **root** (**n00-cerebrum**) and may reference sibling repos in the **IAmJonoBo** org.
 
 ## **0) Preconditions**
 
-* Create a new branch in **each affected repo** named **docs/antora-migration**.
-* Detect all repos in this org that belong to the n00 ecosystem (pattern: **n00*** or those linked in this superrepo’s README/submodules). If discovery fails, at minimum apply the steps to this repo and leave TODOs for others.
+- Create a new branch in **each affected repo** named **docs/antora-migration**.
+- Detect all repos in this org that belong to the n00 ecosystem (pattern: **n00\*** or those linked in this superrepo’s README/submodules). If discovery fails, at minimum apply the steps to this repo and leave TODOs for others.
 
 ## **1) Per-repo structure (standalone docs)**
 
@@ -33,7 +35,7 @@ docs/
       examples/
 ```
 
-3. Convert existing Markdown docs to AsciiDoc (lossless where possible). For each ***.md** under **docs/** or legacy locations, run **Kramdown-AsciiDoc** and place results under **pages/**, preserving relative paths:
+3. Convert existing Markdown docs to AsciiDoc (lossless where possible). For each **\*.md** under **docs/** or legacy locations, run **Kramdown-AsciiDoc** and place results under **pages/**, preserving relative paths:
 
 ```
 # example conversion; keep original MD, write .adoc siblings in pages/
@@ -66,7 +68,7 @@ include::../../../../path/to/file.ext[tags=snippet-cli]
 
 7. Factor repeated blurbs/tables into **partials/** and reuse via **include::partial$`<name>`.adoc[]**.
 
-## **2) Root aggregation from** ****
+## **2) Root aggregation from** \*\*\*\*
 
 ## **n00-cerebrum**
 
@@ -108,12 +110,12 @@ runtime:
 
 ## **3) Search (now/offline and prod)**
 
-* **Now (offline):** Use the Lunr extension (already added in playbook) and verify a client-side index is generated in **build/site**.
-* **Prod option A:** wire **Algolia DocSearch** (crawler-based).
-* **Prod option B:** wire **Typesense DocSearch** (self-hosted).
+- **Now (offline):** Use the Lunr extension (already added in playbook) and verify a client-side index is generated in **build/site**.
+- **Prod option A:** wire **Algolia DocSearch** (crawler-based).
+- **Prod option B:** wire **Typesense DocSearch** (self-hosted).
   Create **docs/search/README.adoc** that explains which mode is active and how to re-index.
 
-**If ****Typesense** is chosen, add scripts/docsearch.typesense.env.example** and **docsearch.config.json** plus a GH Action **search-reindex.yml** that runs the ****typesense-docsearch-scraper** on deploy.
+**If \*\***Typesense** is chosen, add scripts/docsearch.typesense.env.example** and **docsearch.config.json** plus a GH Action **search-reindex.yml** that runs the \***\*typesense-docsearch-scraper** on deploy.
 
 ## **4) CI: link health, style, metadata, build & deploy**
 
@@ -209,8 +211,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0, submodules: recursive }
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
+      - uses: actions/setup-node@v6
+        with: { node-version: '24' }
       - name: Install Antora + extensions
         run: |
           # Install Antora tooling locally via pnpm and run using pnpm exec
@@ -243,8 +245,8 @@ jobs:
 
 ## **5) Optional: Typesense DocSearch integration**
 
-* **Add **.github/workflows/search-reindex.yml** that runs after **deploy** and executes the ****typesense-docsearch-scraper** using docsearch.config.json**.**
-* Provide **docsearch.config.json** with selectors for Antora’s HTML.
+- **Add **.github/workflows/search-reindex.yml** that runs after **deploy** and executes the \*\***typesense-docsearch-scraper** using docsearch.config.json**.\*\*
+- Provide **docsearch.config.json** with selectors for Antora’s HTML.
 
 ## **6) Optional: MCP “docs” server (read-only)**
 
@@ -289,17 +291,17 @@ Add a **Makefile** target **make mcp-dev** to run it locally.
 
 ## **8) Deliverables**
 
-* PR(s) per repo adding Antora structure, converted pages, tags, nav.
-* Root PR adding **antora-playbook.yml**, root pages/nav, CI workflows, and (optional) search/MCP extras.
-* A short **CONTRIBUTING-docs.adoc** explaining Diátaxis, tagging, review SLA, and snippet tagging.
+- PR(s) per repo adding Antora structure, converted pages, tags, nav.
+- Root PR adding **antora-playbook.yml**, root pages/nav, CI workflows, and (optional) search/MCP extras.
+- A short **CONTRIBUTING-docs.adoc** explaining Diátaxis, tagging, review SLA, and snippet tagging.
 
 ---
 
 ## **Notes and key references**
 
-* Antora is built for **single or multi-repository** sites; aggregate with a **playbook** and **content.sources**. Modules hold pages/partials/examples/images. Page attributes (including custom **page-***) flow to the UI/search.
-* Use **include tagged regions** to pull real code/config snippets to prevent drift.
-* **Lunr extension** provides offline search; DocSearch (Algolia) or **Typesense DocSearch** are production options.
-* **Vale** for style linting; GitHub Action available. **Lychee** for link checking; Action available.
-* Markdown → AsciiDoc migration via **kramdown-asciidoc** (preferred) or Pandoc.
-* MCP spec/registry if exposing docs to agents via a read-only server.
+- Antora is built for **single or multi-repository** sites; aggregate with a **playbook** and **content.sources**. Modules hold pages/partials/examples/images. Page attributes (including custom **page-\***) flow to the UI/search.
+- Use **include tagged regions** to pull real code/config snippets to prevent drift.
+- **Lunr extension** provides offline search; DocSearch (Algolia) or **Typesense DocSearch** are production options.
+- **Vale** for style linting; GitHub Action available. **Lychee** for link checking; Action available.
+- Markdown → AsciiDoc migration via **kramdown-asciidoc** (preferred) or Pandoc.
+- MCP spec/registry if exposing docs to agents via a read-only server.
