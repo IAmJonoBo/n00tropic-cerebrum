@@ -33,7 +33,7 @@ runtimes change, capture the decision here and update
  introduced
 * Model curriculum: `../n00-school/README.md`
 * Renovate governance: `RENOVATE_SETUP.md`
-* Trunk CI guidance: `TRUNK_GUIDE.md`
+* Trunk ci guidance: `TRUNK_GUIDE.md`
 == Current Workspace ADRs
 
 * xref:++1. Cerebrum Docs/ADR/ADR-001-workspace-federation.adoc++[ADR-001:

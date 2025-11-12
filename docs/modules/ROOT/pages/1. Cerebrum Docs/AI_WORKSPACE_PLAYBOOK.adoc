@@ -52,7 +52,7 @@ clean -fd` for repos that have no tracked changes.
 `./.dev/automation/scripts/workspace-health.sh --fix-all` | Alias for the
 previous two steps.
 
-| Strict CI-style enforcement | Append `--strict-submodules --strict-root` |
+| Strict ci-style enforcement | Append `--strict-submodules --strict-root` |
 Causes a non-zero exit when anything is dirty/diverged. |===
 
 == n00t Capability: `workspace.gitDoctor`
@@ -62,7 +62,7 @@ Causes a non-zero exit when anything is dirty/diverged. |===
  or MCP host: ** `cleanUntracked` → toggles `--clean-untracked`. **
  `syncSubmodules` → toggles `--sync-submodules`. ** `publishArtifact` → writes
  the JSON file to `artifacts/workspace-health.json`. ** `strict`/`check` →
- mirrors the CLI `--strict` flag for CI checks.
+ mirrors the CLI `--strict` flag for ci checks.
 * Results are persisted automatically when the runner sets
  `CAPABILITY_PAYLOAD.output`, so agents always have a JSON artefact to inspect
  after the run.

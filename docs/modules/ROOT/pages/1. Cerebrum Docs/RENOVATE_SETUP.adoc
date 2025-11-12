@@ -27,7 +27,7 @@ automerge rules).
 
 * *pip-tools (`pip-compile`)* -- Generate deterministic `requirements.txt` files;
  configure Renovate `postUpgradeTasks` to run `pip-compile` for Python projects.
-* *pip-audit / Safety* -- Add to CI pipelines (for example via
+* *pip-audit / Safety* -- Add to ci pipelines (for example via
  `.dev/automation/scripts/meta-check.sh`) to block merges when known CVEs exist.
 * *Node lockfiles* -- Ensure `package-lock.json`/`pnpm-lock.yaml` are committed so
  Renovate upgrades stay reproducible.

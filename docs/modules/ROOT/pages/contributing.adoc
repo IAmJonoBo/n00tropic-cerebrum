@@ -27,7 +27,7 @@ to these modes.
 
 == Page Requirements
 
-Every AsciiDoc page must include the following attributes in the header:
+Every asciidoc page must include the following attributes in the header:
 
 [source,asciidoc]
 ----
@@ -69,7 +69,7 @@ Documentation pages must be reviewed at least every **90 days**. Update the `:re
 * Code examples are tested
 * Technical accuracy is confirmed
 
-The CI pipeline will fail if pages have stale review dates (>90 days).
+The ci pipeline will fail if pages have stale review dates (>90 days).
 
 == Snippet Tagging
 
@@ -109,7 +109,7 @@ Factor repeated content into partials under `docs/modules/ROOT/partials/`:
 * Avoid gerunds in headings (enforced by Vale)
 * Use code blocks for commands and outputs
 * Include examples and screenshots where helpful
-== CI/CD Checks
+== ci/CD Checks
 
 All documentation PRs are validated against:
 
@@ -148,7 +148,7 @@ node scripts/check-attrs.mjs
 # make setup-vale-local
 # VALE_LOCAL=1 make validate-docs
 #
-# To run the full Vale check (CI-style) with third-party styles (Google/Microsoft), sync styles first:
+# To run the full Vale check (ci-style) with third-party styles (Google/Microsoft), sync styles first:
 # make vale-sync
 # vale docs
 
@@ -168,7 +168,7 @@ hierarchically using Antora's xref syntax:
 ** xref:tutorials/first-steps.adoc[First Steps Tutorial]
 ----
 
-== Markdown to AsciiDoc Conversion
+== Markdown to asciidoc Conversion
 
 When converting existing Markdown documentation:
 

@@ -83,7 +83,7 @@ treated as the single source of truth and updated carefully.
 documentation in `n00-cortex/docs`.
 * Add workspace validation guardrails via `n00-frontiers/test_imports.py` and
 `.dev/automation/scripts/validate-project-metadata.py` so malformed metadata
-fails fast in CI and automation runs.
+fails fast in ci and automation runs.
 * Ship n00t orchestration entrypoints (`project.capture`, `project.sync.github`,
 `project.sync.erpnext`) backed by
 `.dev/automation/scripts/project-orchestration.py` with acceptance fixtures from

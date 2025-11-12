@@ -124,12 +124,12 @@ speed boosts). Pipe outputs via copy-paste or scripts.
 * *Output:* Bug-free, optimized code (e.g., 20% faster Python runtime).
 === 5. Review, Deployment & Iteration (Led by Copilot: 5-10%)
 
-* *Why Copilot?* Integrated with GitHub for PRs/CI.
+* *Why Copilot?* Integrated with GitHub for PRs/ci.
 * *Steps:* ** Push code; Copilot auto-generates PRs/reviews. ** For issues (e.g.,
  TS builds), query Grok/Codex. ** Post-deploy: Grok monitors X/user feedback.
 * *Pro Enhancements:* Copilot Workspace for end-to-end auto-PRs; Grok 4 for
  real-time trend analysis.
-* *Fit for Python/TS:* Handles CI YAML; researches cloud tools.
+* *Fit for Python/TS:* Handles ci YAML; researches cloud tools.
 == Phase Summary Table
 
 |=== | Phase | Primary AI | Backup AIs | Time Savings | Example in Python/TS
@@ -222,7 +222,7 @@ strengths per phase and keep a local/open path ready for privacy‑sensitive cod
  propose experiments. ** *2:* Validate architecture for invariants and threat
  models; generate acceptance criteria. ** *3:* High‑quality refactors; translate
  code between languages; generate tests that actually run. ** *4:* Excellent at
- repo‑wide debugging and systematic failure analysis; pairs well with CI logs. **
+ repo‑wide debugging and systematic failure analysis; pairs well with ci logs. **
  *5:* Draft precise PR reviews; good at change‑risk notes and rollback plans.
 * *Notes:* Use *Opus* (or latest Sonnet w/ "`computer use`") for heavy reasoning
  and interactive tool control.
