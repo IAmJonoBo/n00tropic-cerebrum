@@ -9,10 +9,10 @@ include::partial$diataxis-blurb.adoc[]
 | Repo | Branch | Notes / TODO
 | n00-cerebrum | docs/antora-migration | ✅ Base component descriptor, nav, and CI added.
 | n00-frontiers | docs/antora-migration | ✅ Minimal Antora component scaffold added; conversion TODOs remain (see PR).
-| n00-cortex | docs/antora-migration | ⏳ Focus on automation docs + tag governance references.
+| n00-cortex | docs/antora-migration | ✅ Minimal Antora component scaffold added; conversion TODOs remain.
 | n00-horizons | docs/antora-migration | ⏳ Migrate experiment/job templates into modules per idea track.
 | n00-school | docs/antora-migration | ⏳ Publish learning journeys with Diátaxis tagging.
-| n00t | docs/antora-migration | ⏳ Surface agent runner docs + capability manifests.
+| n00t | docs/antora-migration | ✅ Minimal Antora component scaffold added; migration in progress.
 | n00plicate | docs/antora-migration | ⏳ Capture toolchain instructions + Vitest harness docs.
 | n00tropic | docs/antora-migration | ⏳ Move ERPNext ops playbooks into Antora layout.
 | n00clear-fusion | docs/antora-migration | ⏳ Audit repo for publishable docs (placeholder entry added in playbook).
