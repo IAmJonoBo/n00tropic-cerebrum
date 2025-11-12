@@ -128,6 +128,23 @@ Automation executions append telemetry to `.dev/automation/artifacts/automation/
 - **Automation reminder**: `trunk-upgrade.sh` (and the `python3 cli.py trunk-upgrade` helper) keep formatter versions in lockstep across every repo, so rerun it whenever `isort`/`black` ship compatibility fixes.
 - **Python linting helper**: run `pnpm run lint:python` in the workspace root to run `isort`, `black` and `ruff` checks across Python subprojects. The workspace CI now runs `pnpm run lint:python` as part of `workspace-health` to validate Python formatting and lint checks in PRs.
 
+## Trunk: Workspace-level control vs. subrepo autonomy
+
+To validate all subrepos centrally while preserving subrepo autonomy, the workspace CI runs the root helper script (`pnpm run trunk:check-all`) that executes `trunk check` in each subrepo. Each subrepo's `.trunk/trunk.yaml` still governs behaviour for developer workflows and PR-bottom checks. This avoids conflicts and ensures CI-level uniformity.
+
+- Root CI behaviour: `pnpm run trunk:check-all` iterates over repository folders and runs `trunk check` in each, capturing JSON artifacts in `artifacts/trunk-results/`.
+- Subrepo behaviour: Each subrepo provides its own `.trunk/trunk.yaml`. If a subrepo lacks a `.trunk` directory, the workspace runner will still run `trunk check` with default settings and fail/record findings.
+
+Local commands:
+
+```bash
+# Run trunk checks across each subrepo (same script CI uses):
+pnpm run trunk:check-all
+
+# Run the workspace-level Python checks (isort, black, ruff) locally:
+pnpm run lint:python
+```
+
 ## Operating Guidelines
 
 - **Plan in public**: Capture cross-repo decisions in `1. Cerebrum Docs/ADR/` and link to repo-specific ADRs.
