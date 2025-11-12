@@ -9,16 +9,16 @@ Accepted -- 2025-11-06
 == Context
 
 * n00tropic uses multiple repositories (`n00tropic`, `n00-frontiers`,
-  `n00-cortex`, `n00t`, `n00-school`) that already segment operational knowledge
-  by function.
+ `n00-cortex`, `n00t`, `n00-school`) that already segment operational knowledge
+ by function.
 * ERPNext introduces authoritative records for accounting, CRM, projects, support,
-  HR, and more. We need a predictable home for exports and derived artefacts
-  outside the repos to avoid bloating source control.
+ HR, and more. We need a predictable home for exports and derived artefacts
+ outside the repos to avoid bloating source control.
 * Stakeholders require a "top-of-house" filesystem at `/Volumes/APFS
-  Space/n00tropic` that any agency teammate can navigate without understanding
-  every repo.
+ Space/n00tropic` that any agency teammate can navigate without understanding
+ every repo.
 * Previous ad hoc folders made it difficult to trace data lineage back to ERPNext
-  modules or automation outputs.
+ modules or automation outputs.
 == Decision
 
 . Establish a canonical root taxonomy at `/Volumes/APFS Space/n00tropic` with
@@ -39,23 +39,23 @@ telemetry and exports into the new taxonomy.
 == Consequences
 
 * Positive: Contributors have a single navigable workspace that mirrors ERPNext
-  domains without polluting individual repos.
+ domains without polluting individual repos.
 * Positive: Data lineage improves--each export or deliverable points back to both
-  the ERPNext module and the originating repository artefact.
+ the ERPNext module and the originating repository artefact.
 * Positive: Automation can treat the taxonomy as a contract, simplifying sync jobs
-  and audits.
+ and audits.
 * Negative: Additional discipline is required to keep READMEs current and ensure
-  large files do not accumulate unchecked.
+ large files do not accumulate unchecked.
 * Negative: Two layers of organisation (repos + workspace) may confuse newcomers;
-  onboarding docs must highlight the relationship.
+ onboarding docs must highlight the relationship.
 == Implementation Notes
 
 * Each directory contains a README describing ownership, expected contents, and
-  references.
+ references.
 * `07-Platform-Ops/erpnext/` maintains deployment playbooks, configuration
-  templates, and open tasks for self-hosting ERPNext.
+ templates, and open tasks for self-hosting ERPNext.
 * Nightly automation should checksum ERPNext exports before writing into
-  `90-Archive/erpnext-exports/`.
+ `90-Archive/erpnext-exports/`.
 * Update onboarding material in `1. Cerebrum Docs/README.md` and
-  `n00tropic/README.md` to reference the taxonomy during future documentation
-  passes.
+ `n00tropic/README.md` to reference the taxonomy during future documentation
+ passes.

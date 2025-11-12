@@ -12,17 +12,17 @@ Proposed -- 2025-01-14
 `n00tropic_HQ/98. Internal-Projects`, `n00-horizons/ideas`,
 `n00-horizons/learning-log`, and ad hoc documents elsewhere.
 * GitHub Issues and Projects provide the default execution surface for engineering
-  work,
+ work,
 yet there is no deterministic bridge from the upstream ideation artefacts into
 actionable issues.
 * ERPNext holds authoritative operational data (Projects, Tasks, Timesheets) and
-  must remain
+ must remain
 the system of record for commercial delivery, billing, and support.
 * n00t and downstream agents need machine-readable context to escalate artefacts
-  into the
+ into the
 correct lane, request approvals, and update status without human babysitting.
 * Existing ADRs (e.g., ADR-003) define the workspace taxonomy and ERPNext
-  touchpoints but stop
+ touchpoints but stop
 short of a cross-repo, cross-tool project management lifecycle.
 
 == Decision
@@ -62,19 +62,19 @@ project artefacts* by adding validation schemas and unit tests to
 == Consequences
 
 * Positive: Every idea progresses through the same traceable lifecycle with
-  auditable metadata,
+ auditable metadata,
 reducing context loss between ideation, delivery, and operations.
 * Positive: n00t gains a deterministic control plane to promote artefacts into
-  GitHub/ERPNext,
+ GitHub/ERPNext,
 enabling autonomous execution while preserving governance.
 * Positive: Tags become universal across repositories, documentation, and ERPNext,
-  improving
+ improving
 discoverability and analytics.
 * Negative: Additional upfront work is required to author metadata blocks and keep
-  them up to date;
+ them up to date;
 tooling must automate as much as possible.
 * Negative: Misalignment between GitHub labels and ERPNext tags can create drift;
-  the catalog must be
+ the catalog must be
 treated as the single source of truth and updated carefully.
 
 == Implementation Notes
@@ -91,12 +91,12 @@ the idea + project charter.
 * Publish the operator runbook in `n00t/START HERE/PROJECT_ORCHESTRATION.md` so
 humans/cloud agents share the same playbook.
 * Add a nightly `.dev/automation` job (`sync-project-registry.sh`) that: .. Scans
-  for metadata blocks across repos. .. Reconciles the catalog in
-  `n00-cortex/data/catalog/projects.json`. .. Raises alerts when lifecycle stages
-  regress or metadata fields are missing.
+ for metadata blocks across repos. .. Reconciles the catalog in
+ `n00-cortex/data/catalog/projects.json`. .. Raises alerts when lifecycle stages
+ regress or metadata fields are missing.
 * Seed GitHub projects using templates stored in
-  `n00-frontiers/templates/project-management/`.
+ `n00-frontiers/templates/project-management/`.
 * Extend ERPNext integration scripts (`07-Platform-Ops/erpnext/deploy/`) to
-  consume the catalog and update ERPNext via REST API.
+ consume the catalog and update ERPNext via REST API.
 * Document operator runbooks in `n00t/capabilities/manifest.json` and
-  `n00-horizons/README.md` to guide humans and agents through the lifecycle.
+ `n00-horizons/README.md` to guide humans and agents through the lifecycle.

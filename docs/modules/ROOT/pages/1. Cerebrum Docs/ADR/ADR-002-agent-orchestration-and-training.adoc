@@ -9,14 +9,14 @@ Accepted -- 2025-11-04
 == Context
 
 * n00t (n00t) has evolved from a simple MCP host into the control plane for
-  workspace automation (refresh, meta-check, release).
+ workspace automation (refresh, meta-check, release).
 * We need a single entry point for running simulated delivery flows, validating
-  generated projects, and exercising future customer environments.
+ generated projects, and exercising future customer environments.
 * The organisation is spinning up `n00-school/` as the home for proprietary model
-  training, evaluations, and red-team simulations. Outputs from that programme
-  must loop back into generators and governance docs.
+ training, evaluations, and red-team simulations. Outputs from that programme
+ must loop back into generators and governance docs.
 * Prior automation lived in repo-local scripts; there was no shared telemetry bus
-  or mechanism to broadcast new toolchain requirements to downstream consumers.
+ or mechanism to broadcast new toolchain requirements to downstream consumers.
 == Decision
 
 . Promote *n00t* to the canonical agent orchestration surface: ** All workspace
@@ -37,15 +37,15 @@ Workspace releases require a clean cross-repo consistency check
 == Consequences
 
 * Positive: A single automation surface reduces duplication and makes downstream
-  orchestration (CI/CD, agents) predictable.
+ orchestration (CI/CD, agents) predictable.
 * Positive: Training/telemetry footprints are isolated in n00-school with
-  first-class documentation.
+ first-class documentation.
 * Positive: Toolchain updates are now auditable via Cortex + cross-repo checks,
-  reducing mismatch bugs.
+ reducing mismatch bugs.
 * Negative: n00t must ship additional adapters (CLI wrappers, socket integrations)
-  before full rollout.
+ before full rollout.
 * Negative: n00-school needs security review and access controls before storing
-  sensitive datasets.
+ sensitive datasets.
 == Follow-up Tasks
 
 . Flesh out n00t capability manifests (MCP resources) for meta-check, refresh,

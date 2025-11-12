@@ -39,8 +39,8 @@ GitHub Actions
 [,yaml]
 ----
 - uses: actions/cache@v4 with: path: ~/.cache/trunk key: ${{ runner.os
-  }}-trunk-${{ hashFiles('**/.trunk/trunk.yaml') }} restore-keys: | ${{ runner.os
-  }}-trunk-
+ }}-trunk-${{ hashFiles('**/.trunk/trunk.yaml') }} restore-keys: | ${{ runner.os
+ }}-trunk-
 ----
 
 GitLab CI
@@ -77,8 +77,8 @@ value: ${HTTP_PROXY}
 == When to consider alternatives
 
 * *pre-commit* + *pre-commit.ci* -- No local downloads, strong community support,
-  integrates with git hooks.
+ integrates with git hooks.
 * *Mega-Linter* -- Containerized linter suite, good for locked-down environments,
-  heavier on CI minutes.
+ heavier on CI minutes.
 Stick with Trunk if you can cache `~/.cache/trunk` and provide system runtimes;
 swap only if network policies forbid the necessary downloads.

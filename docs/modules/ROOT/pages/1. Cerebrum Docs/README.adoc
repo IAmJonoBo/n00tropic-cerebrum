@@ -29,20 +29,20 @@ runtimes change, capture the decision here and update
 
 * Root workspace map: `../README`
 * Repo ADR indices: ** `../n00-frontiers/docs/adr/README.md` **
-  `../n00-cortex/docs/adr/` (if present) ** Additional indices as they are
-  introduced
+ `../n00-cortex/docs/adr/` (if present) ** Additional indices as they are
+ introduced
 * Model curriculum: `../n00-school/README.md`
 * Renovate governance: `RENOVATE_SETUP.md`
 * Trunk CI guidance: `TRUNK_GUIDE.md`
 == Current Workspace ADRs
 
 * xref:++1. Cerebrum Docs/ADR/ADR-001-workspace-federation.adoc++[ADR-001:
-  Federated Generator Workspace]
+ Federated Generator Workspace]
 * xref:++1. Cerebrum
-  Docs/ADR/ADR-002-agent-orchestration-and-training.adoc++[ADR-002: Agent
-  Orchestration & Training Spine]
+ Docs/ADR/ADR-002-agent-orchestration-and-training.adoc++[ADR-002: Agent
+ Orchestration & Training Spine]
 * xref:++1. Cerebrum
-  Docs/ADR/ADR-003-operational-workspace-taxonomy-and-erpnext-integration.adoc++[ADR-003:
-  Operational Workspace Taxonomy & ERPNext Integration]
+ Docs/ADR/ADR-003-operational-workspace-taxonomy-and-erpnext-integration.adoc++[ADR-003:
+ Operational Workspace Taxonomy & ERPNext Integration]
 Keep the documentation concise and avoid duplicating material maintained inside
 the individual repositories.

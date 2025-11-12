@@ -5,11 +5,11 @@
 == Modes
 
 * **Offline / local builds**–Lunr indexes are emitted automatically when running
-  `pnpm exec antora-playbook.yml`. Confirm `build/site/search-index.js` exists.
+ `pnpm exec antora-playbook.yml`. Confirm `build/site/search-index.js` exists.
 * **Production (Algolia DocSearch)**–Option A is active. The DocSearch crawler
-  targets the GitHub Pages deployment for `n00-cerebrum`. Keep the
-  `docsearch.json` configuration in the Algolia dashboard in sync with any URL
-  changes.
+ targets the GitHub Pages deployment for `n00-cerebrum`. Keep the
+ `docsearch.json` configuration in the Algolia dashboard in sync with any URL
+ changes.
 [#algolia]
 == Re-index steps
 
@@ -22,8 +22,8 @@ DocSearch preview, then smoke test the in-site search UI.
 == Troubleshooting
 
 * If Lunr search returns no hits, delete `build/site` and rebuild to ensure stale
-  indexes are removed.
+ indexes are removed.
 * When Algolia misses fresh content, double-check that pages declare `:page-tags:`
-  and `:reviewed:`. Missing attributes are rejected by the crawler.
+ and `:reviewed:`. Missing attributes are rejected by the crawler.
 * For hackable offline experiments, point your browser at `build/site/index.html`
-  and inspect the `window.antoraLunrIndex` payload.
+ and inspect the `window.antoraLunrIndex` payload.

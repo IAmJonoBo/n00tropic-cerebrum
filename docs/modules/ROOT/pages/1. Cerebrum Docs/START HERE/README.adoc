@@ -9,9 +9,9 @@ manifests. Treat it as the governance layer for the polyrepo.
 
 * Read xref:../README.adoc[`README.md`] for the current doc structure.
 * Check `ADR/` for recent architecture decisions; every cross-repo change should
-  reference an ADR here.
+ reference an ADR here.
 * Review `RENOVATE_SETUP.md` and `TRUNK_GUIDE.md` when adjusting dependency or
-  linting policies.
+ linting policies.
 == Quick start (humans)
 
 [,bash]
@@ -41,7 +41,7 @@ trunk check --filter markdownlint-cli2
 == Contribution guardrails
 
 * Number ADRs sequentially and keep titles descriptive. Link back to repo-specific
-  ADRs or PRs.
+ ADRs or PRs.
 * Update `releases.yaml` via automation scripts, not manual edits.
 * When introducing new workspace policy, document the process change here first,
-  then reference it from other repos`' `START HERE` guides.
+ then reference it from other repos`' `START HERE` guides.
