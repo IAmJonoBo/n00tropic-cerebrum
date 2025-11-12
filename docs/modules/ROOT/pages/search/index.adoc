@@ -10,7 +10,7 @@
  targets the GitHub Pages deployment for `n00-cerebrum`. Keep the
  `docsearch.json` configuration in the Algolia dashboard in sync with any URL
  changes.
-[#algolia]
+[#Algolia]
 == Re-index steps
 
 . Push doc changes to `main` (or a release branch) and wait for `ci/docs.yml` to

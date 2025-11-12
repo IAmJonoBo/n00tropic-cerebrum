@@ -37,6 +37,12 @@ for (const f of files) {
   s = s.replace(/"([\w-./]+)",/g, '"$1,"');
   // Replace i.e. -> that is (safe rewrite)
   s = s.replace(/\bi\.e\.\b/gi, "that is");
+  // Normalize AsciiDoc to asciidoc (Vale prefers lowercase)
+  s = s.replace(/\bAsciiDoc\b/g, "asciidoc");
+  // Normalize CI to ci (Vale prefers lowercase ci)
+  s = s.replace(/\bCI\b/g, "ci");
+  // Normalize algolia to Algolia (proper noun capitalization)
+  s = s.replace(/\balgolia\b/gi, "Algolia");
   // Normalize CLI to 'CLI' in sentences, but avoid code blocks: we avoid touching inline code (best effort)
   s = s.replace(/\b[Cc][Ll][Ii]\b/g, "CLI");
   // Remove trailing whitespace on lines

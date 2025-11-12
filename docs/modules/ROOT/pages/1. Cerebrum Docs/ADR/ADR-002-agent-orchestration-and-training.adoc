@@ -37,7 +37,7 @@ Workspace releases require a clean cross-repo consistency check
 == Consequences
 
 * Positive: A single automation surface reduces duplication and makes downstream
- orchestration (CI/CD, agents) predictable.
+ orchestration (ci/CD, agents) predictable.
 * Positive: Training/telemetry footprints are isolated in n00-school with
  first-class documentation.
 * Positive: Toolchain updates are now auditable via Cortex + cross-repo checks,
