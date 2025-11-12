@@ -53,6 +53,8 @@ jobs:
         uses: errata-ai/vale-action@v2
         with:
           files: docs
+      - name: Vale triage artifacts
+        run: pnpm run docs:vale-triage || true
       - name: Link check
         uses: lycheeverse/lychee-action@v2
         with:
