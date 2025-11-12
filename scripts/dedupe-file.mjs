@@ -6,7 +6,7 @@ if (process.argv.length < 3) {
   process.exit(2);
 }
 const file = process.argv[2];
-let s = readFileSync(file, "utf8");
+const s = readFileSync(file, "utf8");
 const header = "# Vale local development guide";
 const first = s.indexOf(header);
 if (first === -1) {
