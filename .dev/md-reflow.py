@@ -34,7 +34,7 @@ FRONT_MATTER_DELIMS = (
     "{",  # JSON; we detect only if first non-ws char is '{' and ends with '}' alone on a line
 )
 
-DEFAULT_EXTS = (".md", ".markdown")
+DEFAULT_EXTS = (".md", ".markdown", ".adoc")
 MDX_EXTS = (".mdx",)
 
 # A conservative set of HTML block starters; we skip reflow until a blank line or closing tag.
@@ -49,10 +49,10 @@ HTML_BLOCK_START_RE = re.compile(
 )
 HTML_BLOCK_END_RE = re.compile(r".*?(-->)\s*$", re.IGNORECASE)
 
-ATX_HEADING_RE = re.compile(r"^\s{0,3}#{1,6}(?:\s|$)")
+ATX_HEADING_RE = re.compile(r"^\s{0,3}(?:#{1,6}|={1,6})(?:\s|$)")
 SETEXT_UNDERLINE_RE = re.compile(r"^\s{0,3}(=+|-+)\s*$")
 
-FENCE_OPEN_RE = re.compile(r"^(\s*)(`{3,}|~{3,})(.*)$")
+FENCE_OPEN_RE = re.compile(r"^(\s*)(`{3,}|~{3,}|-{4,}|\.{4,}|\+{4,})(.*)$")
 
 
 # closing fence must match fence char and length, ignoring trailing spaces.
@@ -154,6 +154,19 @@ def protect_spans(s: str) -> Tuple[str, List[Tuple[int, int]]]:
         mark_span(m.start(), m.end())
     # 3) Autolinks
     for m in AUTOLINK_RE.finditer(s):
+        mark_span(m.start(), m.end())
+
+    # 4) AsciiDoc link/image/include/xref forms: link:url[text], image::path[], xref:target[]
+    ADOC_LINK_RE = re.compile(r"(?:link:|image:|xref:|include:)\S*\[[^\]]*\]")
+    for m in ADOC_LINK_RE.finditer(s):
+        mark_span(m.start(), m.end())
+    # 5) AsciiDoc double angle xref <<target,label>>: protect entire thing
+    XREF_ANGLE_RE = re.compile(r"<<[^>]+>>")
+    for m in XREF_ANGLE_RE.finditer(s):
+        mark_span(m.start(), m.end())
+    # 6) AsciiDoc attribute references like {var} should not be broken
+    ATTR_REF_RE = re.compile(r"\{[^}]+\}")
+    for m in ATTR_REF_RE.finditer(s):
         mark_span(m.start(), m.end())
 
     if not spans:
@@ -293,6 +306,7 @@ def _fill(text: str, width: int, initial_indent: str, subsequent_indent: str) ->
 @dataclasses.dataclass
 class FormatOptions:
     """Tweakable settings controlling markdown reflow behavior."""
+
     width: int = 100
     prose_wrap: str = "always"  # "always" | "preserve"
     include_mdx: bool = False
@@ -313,6 +327,18 @@ def format_markdown(text: str, opts: FormatOptions) -> str:
         # Blank lines pass through
         if line.strip() == "":
             out.append("")
+            i += 1
+            continue
+
+        # AsciiDoc attribute assignment (':name: value'), include directives, conditionals: pass through
+        ls = line.lstrip()
+        if (
+            ls.startswith(":")
+            or ls.startswith("include::")
+            or ls.startswith("ifdef::")
+            or ls.startswith("ifndef::")
+        ):
+            out.append(line.rstrip())
             i += 1
             continue
 
@@ -681,7 +707,7 @@ def iter_markdown_files(
 def main(argv: Optional[Sequence[str]] = None) -> int:
     ap = argparse.ArgumentParser(
         prog="md-reflow",
-        description="Recursively reflow long lines in Markdown files while preserving semantics.",
+        description="Recursively reflow long lines in Markdown and AsciiDoc files while preserving semantics.",
     )
     ap.add_argument("paths", nargs="+", help="Files or directories to process.")
     ap.add_argument(
@@ -700,7 +726,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument(
         "--exts",
         default=",".join(DEFAULT_EXTS),
-        help="Comma-separated list of file extensions to include (default: .md,.markdown).",
+        help="Comma-separated list of file extensions to include (default: .md,.markdown,.adoc).",
     )
     ap.add_argument(
         "--include-mdx", action="store_true", help="Also process .mdx files (opt-in)."
