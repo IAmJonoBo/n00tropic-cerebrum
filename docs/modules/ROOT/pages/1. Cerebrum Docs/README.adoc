@@ -7,8 +7,8 @@ This directory captures workspace-level knowledge that sits above any single rep
 [,text]
 ----
 1.CEREBRUM-DOCS/
-├── README.md                 # You are here
-└── ADR/                      # Architecture Decision Records for the workspace
+├── README.md # You are here
+└── ADR/ # Architecture Decision Records for the workspace
 ----
 
 == Using This Folder

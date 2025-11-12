@@ -254,7 +254,7 @@ This section adds high‑value models not covered above and shows where they slo
 | --
 |===
 
-TIP: keep each model behind a tiny interface ("planner", "coder", "debugger", "reviewer"). Swap providers without touching calling code.
+TIP: keep each model behind a tiny interface ("planner," "coder," "debugger," "reviewer"). Swap providers without touching calling code.
 
 === Minimal Integration Recipes
 

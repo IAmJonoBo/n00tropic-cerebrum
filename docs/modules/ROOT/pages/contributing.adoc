@@ -120,24 +120,14 @@ All documentation PRs are validated against:
 
 [source,bash]
 ----
-# Install dependencies locally via pnpm (preferred)
-pnpm install
+# Install Antora and extensions
+npm i -g @antora/CLI@latest @antora/site-generator@latest @antora/lunr-extension@latest
 
-# Build the site using the workspace's local Antora binaries
-pnpm exec antora antora-playbook.yml
+# Build the site
+npx antora-playbook.yml
 
 # View the output
 open build/site/index.html
-----
-
-=== DangerJS
-
-The repository includes a `Dangerfile.ts` to enforce PR policy checks. Install and run Danger locally via pnpm:
-
-[source,bash]
-----
-pnpm add -D danger
-pnpm exec danger ci
 ----
 
 === Running Validation
@@ -147,8 +137,15 @@ pnpm exec danger ci
 # Check attributes
 node scripts/check-attrs.mjs
 
-# Run Vale (requires Vale CLI installed)
-vale docs
+# Run Vale (local) (recommended for lightweight checks):
+# Use the local style focused on n00 rules
+#
+# make setup-vale-local
+# VALE_LOCAL=1 make validate-docs
+#
+# To run the full Vale check (CI-style) with third-party styles (Google/Microsoft), sync styles first:
+# make vale-sync
+# vale docs
 
 # Check links (requires Lychee CLI installed)
 lychee --config .lychee.toml 'docs/**/*.adoc'
@@ -174,8 +171,7 @@ When converting existing Markdown documentation:
 # Using kramdown-asciidoc (recommended)
 kramdoc -o docs/modules/ROOT/pages/converted.adoc original.md
 
-# Or using Pandoc
-pandoc -f markdown -t asciidoc -o converted.adoc original.md
+# Or using Pandoc -f markdown -t asciidoc -o converted.adoc original.md
 ----
 
 After conversion:

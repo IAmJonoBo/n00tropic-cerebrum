@@ -1,0 +1,49 @@
+extends: existence
+message: "Allow project-specific words and acronyms in content"
+link: ""
+level: suggestion
+ignorecase: true
+tokens:
+  - ERPNext
+  - repo
+  - repos
+  - ADRs
+  - Algolia
+  - Antora
+  - onboarding
+  - toolchain
+  - toolchains
+  - runbooks
+  - untracked
+  - runtimes
+  - Lunr
+  - pnpm
+  - system_version
+  - monorepo
+  - Codestral
+  - deliverables
+  - TODOs
+  - automerge
+  - CVEs
+  - Renovate
+  - publishArtifact
+  - cleanUntracked
+  - syncSubmodules
+  - APIs
+  - npm
+  - npx
+  - Antora's
+  - Pandoc
+  - Grok's
+  - ESLint
+  - Renderers
+  - PDFs
+  - backfills
+  - sequenceDiagram
+  - Dev
+  - dev
+  - fmt
+  - formatters
+  - asciidoc
+  - Tools
+  - Repo

@@ -10,7 +10,7 @@ The n00 Cerebrum super-repo now owns the Antora playbook for every sibling works
 
 xref:migration-status.adoc[Open the migration tracker] for task-level detail. The snapshot below highlights immediate focus:
 
-[cols="1,1,2",options="header"]
+[cols="1,1,2,"options="header"]
 |===
 | Component | Status | Next action
 | n00-cerebrum | ✅ Baseline scaffold merged | Finalize page tagging + CI (this branch)
@@ -21,7 +21,7 @@ xref:migration-status.adoc[Open the migration tracker] for task-level detail. Th
 
 == Diátaxis cheatsheet
 
-[cols="1,3",options="header"]
+[cols="1,3,"options="header"]
 |===
 | Mode | When to choose it
 | Tutorial | Greenfield walk-throughs (e.g., provisioning frontier workspaces).

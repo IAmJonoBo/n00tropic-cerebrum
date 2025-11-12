@@ -11,17 +11,17 @@ Trunk configuration (`n00-frontiers/.trunk/trunk.yaml`) allows the system Node.j
 [,yaml]
 ----
 runtimes:
-  enabled:
-    - python
-    - go
-    - node
-  definitions:
-    - type: python
-      system_version: allowed
-    - type: go
-      system_version: allowed
-    - type: node
-      system_version: allowed
+ enabled:
+ - python
+ - go
+ - node
+ definitions:
+ - type: python
+ system_version: allowed
+ - type: go
+ system_version: allowed
+ - type: node
+ system_version: allowed
 ----
 
 With these settings the hermetic bootstrap script is a no-op (`scripts/bootstrap-trunk-python.sh`).
@@ -35,11 +35,11 @@ GitHub Actions
 [,yaml]
 ----
 - uses: actions/cache@v4
-  with:
-    path: ~/.cache/trunk
-    key: ${{ runner.os }}-trunk-${{ hashFiles('**/.trunk/trunk.yaml') }}
-    restore-keys: |
-      ${{ runner.os }}-trunk-
+ with:
+ path: ~/.cache/trunk
+ key: ${{ runner.os }}-trunk-${{ hashFiles('**/.trunk/trunk.yaml') }}
+ restore-keys: |
+ ${{ runner.os }}-trunk-
 ----
 
 GitLab CI
@@ -47,9 +47,9 @@ GitLab CI
 [,yaml]
 ----
 cache:
-  key: "trunk-${CI_RUNNER_EXECUTABLE_ARCH}"
-  paths:
-    - $HOME/.cache/trunk
+ key: "trunk-${CI_RUNNER_EXECUTABLE_ARCH}"
+ paths:
+ - $HOME/.cache/trunk
 ----
 
 == Command shape
@@ -66,13 +66,13 @@ Trunk does not inherit the shell environment. If you need proxies or locales, de
 [,yaml]
 ----
 lint:
-  definitions:
-    - name: eslint
-      environment:
-        - name: HTTP_PROXY
-          value: ${HTTP_PROXY}
-        - name: HTTPS_PROXY
-          value: ${HTTPS_PROXY}
+ definitions:
+ - name: eslint
+ environment:
+ - name: HTTP_PROXY
+ value: ${HTTP_PROXY}
+ - name: HTTPS_PROXY
+ value: ${HTTPS_PROXY}
 ----
 
 == When to consider alternatives

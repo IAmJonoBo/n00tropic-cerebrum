@@ -11,7 +11,7 @@ Accepted -- 2025-11-06
 * n00tropic uses multiple repositories (`n00tropic`, `n00-frontiers`, `n00-cortex`, `n00t`, `n00-school`) that already segment operational knowledge by function.
 * ERPNext introduces authoritative records for accounting, CRM, projects, support, HR, and more. We need a predictable home for exports and derived artefacts outside the repos to avoid bloating source control.
 * Stakeholders require a "top-of-house" filesystem at `/Volumes/APFS Space/n00tropic` that any agency teammate can navigate without understanding every repo.
-* Previous ad-hoc folders made it difficult to trace data lineage back to ERPNext modules or automation outputs.
+* Previous ad hoc folders made it difficult to trace data lineage back to ERPNext modules or automation outputs.
 
 == Decision
 

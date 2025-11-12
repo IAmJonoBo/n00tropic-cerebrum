@@ -10,7 +10,7 @@ Proposed -- 2025-01-14
 
 * Ideas, briefs, and research notes are scattered across multiple surfaces:
 `n00tropic_HQ/98. Internal-Projects`,
-`n00-horizons/ideas`, `n00-horizons/learning-log`, and ad-hoc documents elsewhere.
+`n00-horizons/ideas`, `n00-horizons/learning-log`, and ad hoc documents elsewhere.
 * GitHub Issues and Projects provide the default execution surface for engineering work,
 yet there is no deterministic bridge from the upstream ideation artefacts into actionable
 issues.

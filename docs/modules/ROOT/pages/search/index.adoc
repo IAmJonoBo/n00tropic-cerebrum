@@ -4,8 +4,8 @@
 
 == Modes
 
-* **Offline / local builds** – Lunr indexes are emitted automatically when running `pnpm exec antora antora-playbook.yml`. Confirm `build/site/search-index.js` exists.
-* **Production (Algolia DocSearch)** – Option A is active. The DocSearch crawler targets the GitHub Pages deployment for `n00-cerebrum`. Keep the `docsearch.json` configuration in the Algolia dashboard in sync with any URL changes.
+* **Offline / local builds**–Lunr indexes are emitted automatically when running `pnpm exec antora-playbook.yml`. Confirm `build/site/search-index.js` exists.
+* **Production (Algolia DocSearch)**–Option A is active. The DocSearch crawler targets the GitHub Pages deployment for `n00-cerebrum`. Keep the `docsearch.json` configuration in the Algolia dashboard in sync with any URL changes.
 
 [#algolia]
 == Re-index steps

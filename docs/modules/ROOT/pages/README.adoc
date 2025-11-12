@@ -7,18 +7,16 @@ The Cerebrum workspace stitches together the repositories that power n00tropic's
 == Ecosystem Map
 
 [mermaid]
-....
+…
 graph TD
 Cortex["n00-cortex\nSchemas & Docs"] --> Frontiers["n00-frontiers\nTemplates, CLI, Renderers"]
 Cortex --> N00t["n00t\nAgent & MCP Surface"]
-N00t --> Frontiers
-Frontiers --> N00plicate["n00plicate\nPolyglot Consumer"]
+N00t --> Frontiers --> N00plicate["n00plicate\nPolyglot Consumer"]
 Frontiers --> Docs["1. Cerebrum Docs\nCross-repo ADRs"]
 N00tropic["n00tropic\nOperational Playbooks"] --> Docs
 N00school["n00-school\nTraining Curriculum"] --> N00t
-N00school --> Frontiers
-Frontiers --> Cortex
-....
+N00school --> Frontiers --> Cortex
+…
 
 Schemas published from `n00-cortex` drive automation in `n00-frontiers`, which then feeds downstream consumers such as `n00plicate` and the shared documentation set. `n00t` orchestrates the automation surface, while doctrine (`n00tropic`) and training signals (`n00-school`) complete the feedback loop.
 
@@ -85,7 +83,7 @@ ____
 == Cross-Repo Release Flow
 
 [mermaid]
-....
+…
 sequenceDiagram
 participant Dev as Contributor
 participant Cortex as n00-cortex
@@ -99,7 +97,7 @@ Dev->>Frontiers: Regenerate templates and run sanity checks
 Dev->>Automation: Run meta-check and trunk sync
 Automation-->>Docs: Write releases.yaml via workspace-release.sh
 Docs-->>Dev: Document decisions and ADR updates
-....
+…
 
 This sequence highlights the typical cadence: adjust policy in `n00-cortex`, adapt generators in `n00-frontiers`, validate via automation, and record the outcome in shared documentation.
 
@@ -147,7 +145,7 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 | Summarises root + submodule git status, emits `artifacts/workspace-health.json`, cleans safe untracked files, and syncs submodules on demand.
 |===
 
-Run `python cli.py --help` from the workspace root (or `n00-horizons/cli.py`, `n00-frontiers/cli.py`, etc.) to access curated wrappers around these scripts for both agents and humans.
+Run `python CLI.py --help` from the workspace root (or `n00-horizons/CLI.py`, `n00-frontiers/CLI.py`, etc.) to access curated wrappers around these scripts for both agents and humans.
 
 Automation executions append telemetry to `.dev/automation/artifacts/automation/agent-runs.json`, which powers dashboards and agent insights.
 
@@ -156,7 +154,7 @@ Automation executions append telemetry to `.dev/automation/artifacts/automation/
 * *Python format flow*: Every Trunk config runs `isort@7.0.0` before `black@25.x` so imports settle before layout styling. If a formatter loop appears, run `trunk fmt --filter=isort,black` or `isort . && black .` in the affected repo.
 * *isort configuration*: `n00-frontiers/.isort.cfg` pins `profile = black` and `line_length = 88`, and the setting is mirrored by the other repos via Trunk sync so Black never rewrites imports immediately after isort.
 * *Deep dive*: See `n00-school/in-dev-learnings/black-isort-conflicts.md` plus `n00-frontiers/docs/quality/formatting-style.md` for the rationale, escalation steps, and verification checklist agents should follow when formatters disagree.
-* *Automation reminder*: `trunk-upgrade.sh` (and the `python3 cli.py trunk-upgrade` helper) keep formatter versions in lockstep across every repo, so rerun it whenever `isort`/`black` ship compatibility fixes.
+* *Automation reminder*: `trunk-upgrade.sh` (and the `python3 CLI.py trunk-upgrade` helper) keep formatter versions in lockstep across every repo, so rerun it whenever `isort`/`black` ship compatibility fixes.
 
 == Operating Guidelines
 

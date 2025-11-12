@@ -64,16 +64,16 @@ ____
 [,json]
 ----
 {
-  "cleanUntracked": true,
-  "syncSubmodules": true,
-  "publishArtifact": true,
-  "strict": false
+ "cleanUntracked": true,
+ "syncSubmodules": true,
+ "publishArtifact": true,
+ "strict": false
 }
 ----
 
 == Handling Dirty States Before Push
 
-. *Root shows tracked changes to a submodule* (`workspace-health` prints `+tracked 1 ... n00t+`):
+. *Root shows tracked changes to a submodule* (`workspace-health` prints `+tracked 1 … n00t+`):
  ** Inspect the repo: `git -C n00t status -sb`.
  ** Commit/push inside the submodule if the change is intentional, then commit the pointer change at the root.
  ** Otherwise run `git submodule update --init --recursive` to reset to the recorded revision.

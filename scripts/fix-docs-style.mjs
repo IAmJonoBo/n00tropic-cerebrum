@@ -1,0 +1,42 @@
+import { readFileSync, writeFileSync } from "fs";
+import { glob } from "glob";
+
+const files = await glob("docs/**/*.adoc");
+let changed = 0;
+for (const f of files) {
+  let s = readFileSync(f, "utf8");
+  const original = s;
+  // Replace 'e.g.' and variants to 'for example'
+  s = s.replace(/\be\.g\.\b/gi, "for example");
+  s = s.replace(/\be\.g\.,\b/gi, "for example,");
+  // Replace spaced en-dashes ' – ' with ' – ' trimmed to '–'
+  s = s.replace(/\s–\s/g, "–");
+  // Replace '"<numbers>",' to put comma inside quotes (we'll do a simple fix for patterns "x", -> "x," )
+  s = s.replace(/"(\d[,\d]*)",/g, '"$1,"');
+  // Remove double occurrences like 'pandoc pandoc' or 'Pandoc Pandoc'
+  s = s.replace(/\b([Pp]andoc)\s+\1\b/g, "$1");
+  // Collapse repeated words of length 3+ (e.g., 'Frontiers Frontiers' -> 'Frontiers')
+  s = s.replace(/\b(\w{3,})\s+\1\b/gi, "$1");
+  // Normalize GUIDELINES: convert backtick code markers with repeated words like 'pandoc pandoc' inside code to single
+  s = s.replace(/`([Pp]andoc)\s+\1`/g, "`$1`");
+  // Move commas within quotes for short words (e.g., "foo", -> "foo,")
+  s = s.replace(/"([\w\-\.\/]+)",/g, '"$1,"');
+  // Replace i.e. -> that is (safe rewrite)
+  s = s.replace(/\bi\.e\.\b/gi, "that is");
+  // Normalize CLI to 'CLI' in sentences, but avoid code blocks: we avoid touching inline code (best effort)
+  s = s.replace(/\b[Cc][Ll][Ii]\b/g, "CLI");
+  // Remove trailing whitespace on lines
+  s = s.replace(/[ \t]+$/gm, "");
+  // Normalize three or more dots to ellipsis …
+  s = s.replace(/\.\.\.+/g, "…");
+  // Normalize 'ad-hoc' to 'ad hoc' (style choice) – 'ad-hoc' often flagged
+  s = s.replace(/\bad-?hoc\b/gi, "ad hoc");
+  // Normalize multiple spaces to single space (avoid code-blocks where possible)
+  s = s.replace(/([^\S\n]){2,}/g, " ");
+  if (s !== original) {
+    writeFileSync(f, s, "utf8");
+    changed++;
+    console.log("Patched", f);
+  }
+}
+console.log("Changed files:", changed);

@@ -4,7 +4,7 @@
 
 include::partial$diataxis-blurb.adoc[]
 
-[cols="1,1,2",options="header"]
+[cols="1,1,2,"options="header"]
 |===
 | Repo | Branch | Notes / TODO
 | n00-cerebrum | docs/antora-migration | ✅ Base component descriptor, nav, and CI added.
