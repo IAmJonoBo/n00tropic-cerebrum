@@ -40,7 +40,7 @@ const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
   if (args[i] === "--threshold" && args[i + 1]) {
     const v = parseInt(args[i + 1], 10);
-    if (!isNaN(v)) threshold = v;
+    if (!Number.isNaN(v)) threshold = v;
     i++;
   }
 }
