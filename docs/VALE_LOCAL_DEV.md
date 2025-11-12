@@ -22,6 +22,11 @@ Developer helpers
 - pnpm -s docs:vale-whitelist-candidates — Produce a shortlist of high-frequency tokens for review (candidates
   for whitelisting).
 
+Tip: `vale-whitelist-candidates.mjs` accepts `--threshold <n>` to lower the frequency threshold for candidates; the
+default is 3. For example:
+
+node scripts/vale-whitelist-candidates.mjs --threshold 2
+
 Notes
 
 - Add project acronyms and tooling names into styles/config/vocabularies/n00/accept.txt and run vale sync.
