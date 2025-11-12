@@ -1,7 +1,27 @@
 name: docs
 on:
-  push: { branches: [ main ] }
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+      - "n00-frontiers/docs/**"
+      - "n00-cortex/docs/**"
+      - "n00t/docs/**"
+      - "antora-playbook.yml"
+      - "antora-playbook.ci.yml"
+      - "Makefile"
+      - "scripts/**"
   pull_request:
+    paths:
+      - "docs/**"
+      - "n00-frontiers/docs/**"
+      - "n00-cortex/docs/**"
+      - "n00t/docs/**"
+      - "antora-playbook.yml"
+      - "antora-playbook.ci.yml"
+      - "Makefile"
+      - "scripts/**"
 permissions:
   contents: write
   pages: write
@@ -11,37 +31,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-        with: { fetch-depth: 0, submodules: recursive }
+        with:
+          fetch-depth: 0
+          submodules: recursive
       - uses: actions/setup-node@v6
-        with: { node-version: '24' }
+        with:
+          node-version: "24"
       - name: Install dependencies
-        run: npm install
-      - name: Install Antora + extensions
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify Antora + Danger availability
         run: |
-          npm i -g @antora/cli@latest @antora/site-generator@latest @antora/lunr-extension@latest
+          pnpm -C n00plicate exec antora --version
+          pnpm -C n00plicate exec danger --version
+      - name: Prepare pnpm and Antora
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+          # Local antora binaries are available via pnpm exec
       - name: Vale
         uses: errata-ai/vale-action@v2
-        with: { files: "docs" }
-        continue-on-error: true
+        with:
+          files: docs
       - name: Link check
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config .lychee.toml 'docs/**/*.adoc' 'docs/**/*.md' '**/*.html'
-        continue-on-error: true
+          args: >
+            --config .lychee.toml 'docs/**/*.adoc'
+            'docs/**/*.md' '**/*.html'
       - name: Attr checks
         run: node scripts/check-attrs.mjs
-      - name: Build Antora
-        run: npx antora antora-playbook.yml --stacktrace
+      - name: Build Antora (CI playbook)
+        run: |
+          cd n00plicate
+          pnpm install --frozen-lockfile
+          pnpm exec antora antora-playbook.ci.yml --stacktrace
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v4
-        with: { path: build/site }
+        with:
+          path: build/site
   deploy:
     if: github.ref == 'refs/heads/main'
     needs: build-validate
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
