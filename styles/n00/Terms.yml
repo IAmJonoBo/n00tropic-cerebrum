@@ -47,6 +47,7 @@ terms:
     "automerge",
     "CVEs",
     "Renovate",
+    "renovate",
     "publishArtifact",
     "cleanUntracked",
     "syncSubmodules",
@@ -74,6 +75,10 @@ terms:
     "e.g.",
     "ad hoc",
     "Tools",
+    "tools",
+    "erpnext",
+    "codestral",
+    "lunr",
   ]
 ---
 
