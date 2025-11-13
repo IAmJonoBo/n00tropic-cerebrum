@@ -27,11 +27,11 @@ pull request or refreshing a long-lived clone.
 
 |=== | Scenario | Action
 
-| Submodule has untracked changes you want to discard | `+git -C <repo>
-checkout -- .+` or run `+workspace-health --repo-cmd <repo>:"git checkout --
+| Submodule has untracked changes you want to discard | `+git -C <Repo>
+checkout -- .+` or run `+workspace-health --repo-cmd <Repo>:"git checkout --
 ."+`
 
-| Submodule is behind | `git -C <repo> pull --ff-only`
+| Submodule is behind | `git -C <Repo> pull --ff-only`
 
 | Tooling configs diverged | `./.dev/automation/scripts/sync-trunk.py --pull`
 (automatically included in `--fix-all`)
@@ -65,7 +65,7 @@ and review cadence before you share updates.
 
 == 5. Document & Ship
 
-. Capture relevant ADRs in `1. Cerebrum Docs/ADR/`. . Commit per-repo changes
+. Capture relevant ADRs in `1. Cerebrum Docs/ADR/`. . Commit per-Repo changes
 and push. . Run `./.dev/automation/scripts/workspace-release.sh` when tagging a
 coordinated drop so release manifests stay in sync.
 
@@ -78,6 +78,6 @@ whenever the workspace drifts.
  Payload keys include `cleanUntracked`, `syncSubmodules`, `publishArtifact`, and
  `strict`.
 * Automation emits `artifacts/workspace-health.json`, which distinguishes tracked
- vs untracked entries per repo so agents can react programmatically.
+ vs untracked entries per Repo so agents can react programmatically.
 * Additional context and sample payload LIVE in xref:++1. Cerebrum
  Docs/AI_WORKSPACE_PLAYBOOK.adoc++[`AI_WORKSPACE_PLAYBOOK.md`].
