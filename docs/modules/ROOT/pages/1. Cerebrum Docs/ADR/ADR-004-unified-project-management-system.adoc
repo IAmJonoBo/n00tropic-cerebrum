@@ -21,9 +21,9 @@ the system of record for commercial delivery, billing, and support.
 * n00t and downstream agents need machine-readable context to escalate artefacts
  into the
 correct lane, request approvals, and update status without human babysitting.
-* Existing ADRs (e.g., ADR-003) define the workspace taxonomy and ERPNext
+* Existing ADRs (for example, ADR-003) define the workspace taxonomy and ERPNext
  touchpoints but stop
-short of a cross-repo, cross-tool project management lifecycle.
+short of a cross-Repo, cross-tool project management lifecycle.
 
 == Decision
 
@@ -53,7 +53,7 @@ Projects/Tasks and push status updates. ** `project.scoreboard` -- render
 progress using data from GitHub, ERPNext, and the metadata catalog. . Require
 every new project or experiment to register through the orchestration
 capability, generating: ** An ADR (in `1. Cerebrum Docs/ADR/`) when the
-initiative introduces cross-repo conventions. ** A project charter in
+initiative introduces cross-Repo conventions. ** A project charter in
 `n00tropic_HQ/98. Internal-Projects/IP-*/`. ** A GitHub Project draft and
 ERPNext Project/Task stubs. . Leverage n00-frontiers for *quality assurance of
 project artefacts* by adding validation schemas and unit tests to
@@ -88,7 +88,7 @@ fails fast in ci and automation runs.
 `project.sync.erpnext`) backed by
 `.dev/automation/scripts/project-orchestration.py` with acceptance fixtures from
 the idea + project charter.
-* Publish the operator runbook in `n00t/START HERE/PROJECT_ORCHESTRATION.md` so
+* Publish the operator Runbook in `n00t/START HERE/PROJECT_ORCHESTRATION.md` so
 humans/cloud agents share the same playbook.
 * Add a nightly `.dev/automation` job (`sync-project-registry.sh`) that: .. Scans
  for metadata blocks across repos. .. Reconciles the catalog in
