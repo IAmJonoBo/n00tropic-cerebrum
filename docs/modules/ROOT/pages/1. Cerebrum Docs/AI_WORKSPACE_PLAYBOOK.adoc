@@ -4,13 +4,13 @@
 
 AI assistants (and ephemeral agent sessions) frequently attach to this
 filesystem after the human operator has already been iterating. The notes below
-make it trivial to recover context, detect the active repo, and tidy up
+make it trivial to recover context, detect the active Repo, and tidy up
 submodules or untracked files before attempting an automation run.
 
 == Workspace Topology
 
-* *Super root*: `/Volumes/APFS Space/n00tropic/` (intentionally not a git repo).
- It houses the federated `n00tropic-cerebrum/` repo, the operational archive in
+* *Super root*: `/Volumes/APFS Space/n00tropic/` (intentionally not a git Repo).
+ It houses the federated `n00tropic-cerebrum/` Repo, the operational archive in
  `n00tropic_HQ/`, and shared automation under `.dev/`.
 * *Primary git workspace*: `/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/`
  with submodules for `n00t/`, `n00-frontiers/`, `n00-cortex/`, etc.
@@ -27,7 +27,7 @@ plus every submodule. ____
 ./.dev/automation/scripts/workspace-health.sh --publish-artifact
 ----
 
-* Use `git rev-parse --show-toplevel` from any path to confirm which repo you are
+* Use `git rev-parse --show-toplevel` from any path to confirm which Repo you are
  in.
 * The script writes `artifacts/workspace-health.json`, which agents can parse to
  decide which submodule needs attention and whether the workspace root is
@@ -40,7 +40,7 @@ plus every submodule. ____
 `./.dev/automation/scripts/workspace-health.sh --publish-artifact --json` | JSON
 goes to stdout *and* `artifacts/workspace-health.json`.
 
-| Clean only-untracked noise (e.g. generated assets) safely |
+| Clean only-untracked noise (for example generated assets) safely |
 `./.dev/automation/scripts/workspace-health.sh --clean-untracked` | Runs `git
 clean -fd` for repos that have no tracked changes.
 
@@ -78,21 +78,21 @@ Causes a non-zero exit when anything is dirty/diverged. |===
 == Handling Dirty States Before Push
 
 . *Root shows tracked changes to a submodule* (`workspace-health` prints
-`+tracked 1 … n00t+`): ** Inspect the repo: `git -C n00t status -sb`. **
+`+tracked 1 … n00t+`): ** Inspect the Repo: `git -C n00t status -sb`. **
 Commit/push inside the submodule if the change is intentional, then commit the
 pointer change at the root. ** Otherwise run `git submodule update --init
 --recursive` to reset to the recorded revision. . *Root shows untracked files
 only*: ** Use `--clean-untracked` (safe, because it skips repos with tracked
-changes). . *Submodule behind/ahead*: ** `git -C <repo> pull --ff-only` or `git
--C <repo> push --force-with-lease` depending on the direction.
+changes). . *Submodule behind/ahead*: ** `git -C <Repo> pull --ff-only` or `git
+-C <Repo> push --force-with-lease` depending on the direction.
 
-TIP: the JSON artifact exposes `tracked` vs `untracked` arrays per repo, so an
+TIP: the JSON artifact exposes `tracked` vs `untracked` arrays per Repo, so an
 agent can branch its remediation strategy programmatically.
 
 == Agent-Friendly Checklist
 
 . `workspace-health.sh --publish-artifact --json`. . Read
-`artifacts/workspace-health.json` to determine the active repo + remediation
+`artifacts/workspace-health.json` to determine the active Repo + remediation
 path. . Run guarded cleaners (`--clean-untracked`) or `--sync-submodules` as
 needed. . When invoked via MCP, prefer `workspace.gitDoctor` so the host
 automatically records the output path.

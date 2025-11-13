@@ -15,10 +15,10 @@ Publish learning journeys with Diátaxis tagging. | n00t | docs/antora-migration
 | ✅ Minimal Antora component scaffold added; migration in progress. | n00plicate
 | docs/antora-migration | ⏳ Capture toolchain instructions + Vitest harness
 docs. | n00tropic | docs/antora-migration | ⏳ Move ERPNext ops playbooks into
-Antora layout. | n00clear-fusion | docs/antora-migration | ⏳ Audit repo for
+Antora layout. | n00clear-fusion | docs/antora-migration | ⏳ Audit Repo for
 publishable docs (placeholder entry added in playbook). |===
 
 [IMPORTANT]
 ====
-Every repo above still needs the per-repo steps from `stuff/Temp/temp-doc-2.md`. Drop a status line in this table whenever you open the corresponding PR so the aggregator reflects reality.
+Every Repo above still needs the per-Repo steps from `stuff/Temp/temp-doc-2.md`. Drop a status line in this table whenever you open the corresponding PR so the aggregator reflects reality.
 ====
