@@ -29,9 +29,9 @@ prompts, and evaluation logs live under `n00-school/`. ** Training runs are
 triggered via n00t, with progress and metrics streamed back to Cortex for
 cataloging. ** Every promoted model produces a release note in Cortex and a
 provenance record that generators can consume. . Encode governance: ** Toolchain
-changes land in Cortex first; cross-repo checks prevent drift before release. **
+changes land in Cortex first; cross-Repo checks prevent drift before release. **
 Renovate policy is centralised in Cortex and imported by every repo. **
-Workspace releases require a clean cross-repo consistency check
+Workspace releases require a clean cross-Repo consistency check
 (`.dev/automation/scripts/check-cross-repo-consistency.py`).
 
 == Consequences
@@ -40,7 +40,7 @@ Workspace releases require a clean cross-repo consistency check
  orchestration (ci/CD, agents) predictable.
 * Positive: Training/telemetry footprints are isolated in n00-school with
  first-class documentation.
-* Positive: Toolchain updates are now auditable via Cortex + cross-repo checks,
+* Positive: Toolchain updates are now auditable via Cortex + cross-Repo checks,
  reducing mismatch bugs.
 * Negative: n00t must ship additional adapters (CLI wrappers, socket integrations)
  before full rollout.
