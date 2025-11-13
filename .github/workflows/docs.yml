@@ -55,14 +55,14 @@ jobs:
       - name: Vale triage artifacts
         run: pnpm run docs:vale-triage || true
       - name: Upload Vale triage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vale-triage
           path: artifacts/vale-triage.json
       - name: Generate spelling counts
         run: pnpm run docs:generate-spelling-counts || true
       - name: Upload spelling counts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vale-spelling-counts
           path: artifacts/vale-spelling-token-counts.json
@@ -79,7 +79,7 @@ jobs:
       - name: Spelling counts
         run: pnpm run docs:generate-spelling-counts || true
       - name: Upload spelling counts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vale-spelling-counts
           path: artifacts/vale-spelling-token-counts.json
@@ -104,7 +104,7 @@ jobs:
       - name: Run lint-python script (fix mode)
         run: pnpm run lint:python:fix || true
       - name: Upload terms counts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vale-terms-counts
           path: artifacts/vale-terms-token-counts.json
