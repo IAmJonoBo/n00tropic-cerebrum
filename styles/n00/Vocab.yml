@@ -43,6 +43,8 @@ tokens:
   - sequenceDiagram
   - Dev
   - dev
+  - CI
+  - CLI
   - fmt
   - formatters
   - asciidoc

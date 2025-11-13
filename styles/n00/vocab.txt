@@ -27,6 +27,14 @@ onboarding
 toolchain
 toolchains
 Toolchain
+corepack
+corepack
+antora-playbook
+n00tropic
+n00-cortex
+AsciiDoc
+penpot
+n00
 rollout
 untracked
 system_version
@@ -63,3 +71,10 @@ start_paths
 Tools
 Repo
 Toolchain
+
+erpnext
+tools
+renovate
+codestral
+Runbook
+lunr

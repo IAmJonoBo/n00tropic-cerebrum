@@ -1,6 +1,6 @@
 # Vale local development guide
 
-This repository uses Vale for documentation linting. CI uses Google and Microsoft styles; to keep local runs
+This repository uses Vale for documentation linting. ci uses Google and Microsoft styles; to keep local runs
 faster and less noisy we provide a small local style `n00` that focuses on the checks that matter for day-to-day
 work and allows fast iteration.
 
@@ -8,7 +8,7 @@ Quick commands
 
 - vale sync — Refresh installed style packs and ensure local vocabulary is loaded
 - VALE_LOCAL=1 make validate-docs — Run the lightweight `n00` checks (recommended while authoring)
-- vale --output=JSON --ignore-syntax docs > artifacts/vale-full.json — Run a full CI-like check and write JSON to
+- vale --output=JSON --ignore-syntax docs > artifacts/vale-full.json — Run a full ci-like check and write JSON to
   artifacts/vale-full.json
 
 Developer helpers
@@ -43,32 +43,32 @@ Notes about edits and backups
 - Prefer running `--apply-edits --dry-run` to preview edits. Then run `--apply-edits --yes` to apply.
 - `--whitelist` will append tokens to `styles/n00/vocab.txt` by default. Use `--whitelist terms` to append to `styles/n00/Terms.yml` instead.
 
-Markdown / AsciiDoc linting
+Markdown / asciidoc linting
 
-- The repository contains a config.markdownlint-cli2.jsonc file tuned for AsciiDoc. It relaxes rules for long
-  table lines, inline HTML, bare URLs, and other AsciiDoc-specific cases.
-- To lint AsciiDoc files with the repository config, run:
+- The repository contains a config.markdownlint-cli2.jsonc file tuned for asciidoc. It relaxes rules for long
+  table lines, inline HTML, bare URLs, and other asciidoc-specific cases.
+- To lint asciidoc files with the repository config, run:
 
-  pnpm -s exec markdownlint-cli2 --config config.markdownlint-cli2.jsonc "docs/\*_/_.adoc"
+pnpm -s exec markdownlint-cli2 --config.markdownlint-cli2.jsonc "docs/\*_/_.adoc"
 
 Best practices
 
-- Prefer using the `n00` local run while writing. Run the full CI-style Vale check (Google/Microsoft styles) to
+- Prefer using the `n00` local run while writing. Run the full ci-style Vale check (Google/Microsoft styles) to
   confirm final issues before a PR.
 - Curate whitelists intentionally. Prefer whitelisting true project names / acronyms (e.g., `ERPNext`, `Algolia`,
   `pnpm`) rather than whitelisting typos.
 - If you want to preview the editorial patches applied by docs:fix-style, run:
 
-  node scripts/fix-docs-style.mjs --pattern "docs/\*_/_.adoc" --dry-run
+node scripts/fix-docs-style.mjs --pattern "docs/\*_/_.adoc" --dry-run
 
 If you'd like help, I can prepare a short PR that (1) curates a whitelist, (2) applies small editorial fixes across
 a subset of pages, and (3) re-runs the full Vale check to show the impact.
 
-CI and validation hooks
+ci and validation hooks
 
 - The repository includes a workspace-level health check that runs Python formatting and linting across the
   workspace. You can run it locally by invoking the pnpm script:
 
-  pnpm run lint:python
+pnpm run lint:python
 
-  And the workspace CI runs this script automatically as part of the `workspace-health` workflow.
+And the workspace ci runs this script automatically as part of the `workspace-health` workflow.
