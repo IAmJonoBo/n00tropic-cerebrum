@@ -14,7 +14,7 @@ alignment.
 Frontiers["n00-frontiers\nTemplates, CLI, Renderers"] Cortex -->
 N00t["n00t\nAgent & MCP Surface"] N00t --> Frontiers -->
 N00plicate["n00plicate\nPolyglot Consumer"] Frontiers --> Docs["1. Cerebrum
-Docs\nCross-repo ADRs"] N00tropic["n00tropic\nOperational Playbooks"] --> Docs
+Docs\nCross-Repo ADRs"] N00tropic["n00tropic\nOperational Playbooks"] --> Docs
 N00school["n00-school\nTraining Curriculum"] --> N00t N00school --> Frontiers
 --> Cortex …
 
@@ -30,7 +30,7 @@ filesystem in `../n00tropic_HQ/`. ____
 
 === `1. Cerebrum Docs/`
 
-* *Focus*: Cross-repo decision records, release manifests, and workspace
+* *Focus*: Cross-Repo decision records, release manifests, and workspace
  onboarding docs.
 * *Key artifacts*: ADRs, `RENOVATE_SETUP.md`, `TRUNK_GUIDE.md`, `releases.yaml`
  (written by automation).
@@ -125,13 +125,13 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 
 |=== | Script | Purpose
 
-| `meta-check.sh` | Orchestrates repo health checks, schema validation, and CVE
+| `meta-check.sh` | Orchestrates Repo health checks, schema validation, and CVE
 scans before publishing changes.
 
-| `refresh-workspace.sh` | Fast-forwards each repo and updates submodules to
+| `refresh-workspace.sh` | Fast-forwards each Repo and updates submodules to
 keep local clones aligned.
 
-| `trunk-upgrade.sh` | Runs `trunk upgrade` across repos (supports repo filters
+| `trunk-upgrade.sh` | Runs `trunk upgrade` across repos (supports Repo filters
 and extra flags when invoked via capabilities).
 
 | `check-cross-repo-consistency.py` | Ensures toolchain manifests and overrides
@@ -183,11 +183,11 @@ and agent insights.
  `n00-frontiers/docs/quality/formatting-style.md` for the rationale, escalation
  steps, and verification checklist agents should follow when formatters disagree.
 * *Automation reminder*: `trunk-upgrade.sh` (and the `python3 CLI.py
- trunk-upgrade` helper) keep formatter versions in lockstep across every repo, so
+ trunk-upgrade` helper) keep formatter versions in lockstep across every Repo, so
  rerun it whenever `isort`/`black` ship compatibility fixes.
 == Operating Guidelines
 
-* *Plan in public*: Capture cross-repo decisions in `1. Cerebrum Docs/ADR/` and
+* *Plan in public*: Capture cross-Repo decisions in `1. Cerebrum Docs/ADR/` and
  link to repo-specific ADRs.
 * *Keep repos pristine*: Use `.dev/` directories for scratch assets and avoid
  committing generated artefacts.
@@ -233,7 +233,7 @@ https://github.com/IAmJonoBo/n00tropic-cerebrum.git && cd n00tropic-cerebrum+`.
 `.dev/automation/scripts/workspace-health.sh --sync-submodules
 --publish-artifact --json` (optionally `--clean-untracked`) to ensure submodules
 are aligned and to snapshot git state for agents/ci. . Install toolchains per
-repo (Python venv for `n00-frontiers`, Node for `n00-cortex` and `n00t`, pnpm
+Repo (Python venv for `n00-frontiers`, Node for `n00-cortex` and `n00t`, pnpm
 for `n00plicate`). . Open the multi-root VS Code workspace
 (`n00-cortex/generators/n00tropic-cerebrum.code-workspace`). . Run baseline
 checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific
