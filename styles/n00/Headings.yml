@@ -1,6 +1,6 @@
 extends: existence
 message: "Avoid gerunds in headings."
-level: warning
+level: suggestion
 scope: heading
 tokens:
   - '\b\w+ing\b'

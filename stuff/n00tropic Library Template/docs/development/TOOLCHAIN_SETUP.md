@@ -3,7 +3,7 @@
 ## Local dev
 
 - Prereqs: language runtime(s), package manager(s).
-- One‑command bootstrap: `make setup` (or `npm run setup`).
+- One‑command bootstrap: `make setup` (or `pnpm run setup`).
 
 ## Quality hooks
 

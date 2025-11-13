@@ -22,9 +22,16 @@
   `.dev/automation/scripts/*` (e.g. `meta-check.sh`, `refresh-workspace.sh`,
   `trunk-upgrade.sh`, `workspace-release.sh`).
 - Delivery gating now exposes dedicated capabilities:
-  - `project.preflight` chains capture + GitHub/ERPNext syncs and fails fast when `links[]`, `review_date`, or integration IDs are missing.
-  - `project.lifecycleRadar` exports a JSON radar of overdue reviews, lifecycle totals, and slices missing traceability so agents can snapshot planning context.
-  - `project.controlPanel` refreshes the Markdown control panel so humans (and agents) can skim radar signals, preflight blockers, and outstanding jobs without touching raw artefacts.
+  - `project.preflight`: capture and run GitHub/ERPNext syncs.
+  - Fails fast if required metadata is missing.
+    - Required metadata examples:
+      - `links[]`
+      - `review_date`
+      - integration IDs
+  - `project.lifecycleRadar`: exports a concise JSON radar of overdue reviews
+    and lifecycle totals. It highlights slices that are missing traceability.
+  - `project.controlPanel`: refreshes a consolidated Markdown control panel
+    with pipeline and planning signals. It helps scan blockers and open jobs.
 - Honour workflow stages with `get_workflow_status`, `run_workflow_phase`
   (planning → review), or `run_full_workflow` when the whole pipeline should
   execute.
@@ -34,11 +41,11 @@
 
 ## Repo Workflows & Commands
 
-- `n00-cortex/`: Node 20+ (CI pins 24). Run `npm install` at the root and in
-  `docs/`. Validate with `npm test`, `npm run validate:schemas`, and
-  `npm run export:assets -- --check`. When docs move, regenerate via
+- `n00-cortex/`: Node 20+ (CI pins 24). Run `pnpm install` at the root and in
+  `docs/`. Validate with `pnpm test`, `pnpm run validate:schemas`, and
+  `pnpm run export:assets -- --check`. When docs move, regenerate via
   `python scripts/generate_docs_manifest.py` then
-  `npm run validate:docs-manifest`.
+  `pnpm run validate:docs-manifest`.
 - `n00-frontiers/`: Python 3.11 with nox. Install requirements, then run
   `.dev/validate-templates.sh --all` or `nox -s validate_templates_all` after
   touching templates. Consult `docs/CATALOG.md` and `BIBLE.md` when exposing

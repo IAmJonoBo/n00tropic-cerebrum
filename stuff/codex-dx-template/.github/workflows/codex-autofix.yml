@@ -39,14 +39,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "24"
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Install dependencies (if JS/TS project)
         run: |
-          if [ -f package-lock.json ]; then npm ci;
-          elif [ -f pnpm-lock.yaml ]; then npm i -g pnpm && pnpm i;
-          elif [ -f yarn.lock ]; then corepack enable && yarn install --immutable;
-          else echo "No Node lockfile found; skipping JS install"; fi
+          corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile
 
       - name: Run Codex (guard-railed)
         uses: openai/codex-action@main
@@ -61,7 +58,11 @@ jobs:
 
       - name: Verify tests (Node)
         run: |
-          if [ -f package.json ]; then npm test --silent || npm run test --silent; else echo "No Node tests detected"; fi
+          if [ -f package.json ]; then
+            pnpm test --silent || pnpm run test --silent
+          else
+            echo "No Node tests detected"
+          fi
 
       - name: Verify tests (Python)
         run: |

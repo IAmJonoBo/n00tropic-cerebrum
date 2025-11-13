@@ -6,5 +6,5 @@
       "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
     }
   },
-  "postCreateCommand": "npm install --prefix apps/web"
+  "postCreateCommand": "cd apps/web && corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile"
 }

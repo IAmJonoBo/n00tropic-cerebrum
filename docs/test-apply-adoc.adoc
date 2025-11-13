@@ -1,0 +1,5 @@
+= Sample Doc
+
+This page mentions FooBar in a sentence: our FooBar is where we store code.
+
+Also mentions another FooBar with different casing: FooBar is capitalised in another sentence.

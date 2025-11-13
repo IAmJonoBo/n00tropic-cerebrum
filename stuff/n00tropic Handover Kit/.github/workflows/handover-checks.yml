@@ -19,9 +19,9 @@ jobs:
           test -f contracts/asyncapi/ASYNCAPI.yaml
       - name: Validate OpenAPI (basic)
         run: |
-          npx -y @redocly/cli@latest lint contracts/openapi/OPENAPI.yaml || true
+          pnpm dlx -y @redocly/cli@latest lint contracts/openapi/OPENAPI.yaml || true
       - name: Validate AsyncAPI (basic)
         run: |
-          npx -y @asyncapi/cli@latest validate contracts/asyncapi/ASYNCAPI.yaml || true
+          pnpm dlx -y @asyncapi/cli@latest validate contracts/asyncapi/ASYNCAPI.yaml || true
       - name: Generate Handover Packet
         run: make handover

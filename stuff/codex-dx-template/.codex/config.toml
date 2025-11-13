@@ -30,10 +30,10 @@ approval_policy = "auto"
 sandbox_mode = "danger-full-access" # CAUTION: use sparingly
 
 # Example MCP servers — enable targeted tools/context safely.
-# Add via CLI:  codex mcp add context7 -- npx -y @upstash/context7-mcp
+# Add via CLI:  codex mcp add context7 -- pnpm dlx -y @upstash/context7-mcp
 [mcp_servers.context7]
-command = "npx"
-args = ["-y", "@upstash/context7-mcp"]
+command = "pnpm"
+args = ["dlx", "-y", "@upstash/context7-mcp"]
 
 # Example: Playwright browser MCP (HTTP server form)
 # [mcp_servers.playwright]

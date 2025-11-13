@@ -1,0 +1,67 @@
+[
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/.github/workflows/workspace-health.yml",
+    "line": 37,
+    "text": "run: pnpm run tools:scan-npm -- --exclude=templates,examples,stuff,vendor && echo \"No npm usage found\""
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-cortex/docs/_revamp-plan.md",
+    "line": 19,
+    "text": "- Resolve `npm audit --audit-level=high` findings (fast-json-patch via `ajv-cli`) and document lockfile strategy."
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-cortex/docs/docs/automation-overview.md",
+    "line": 64,
+    "text": "- `pip-audit` runs automatically as part of meta-check when present; extend with additional ecosystem scanners as needed (e.g., `npm audit`, `cargo audit`)."
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-frontiers/INDEX.md",
+    "line": 329,
+    "text": "- Replace `npm` with `pip`"
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-frontiers/applications/scaffolder/n00_frontiers_cli/cli.py",
+    "line": 774,
+    "text": "print(\"  2. pnpm install (or npm/yarn) inside apps/web\")"
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-frontiers/docs/adr/ADR-006-security-scanning-strategy.md",
+    "line": 48,
+    "text": "- Node.js: `npm audit`, GitHub Dependency Review"
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-frontiers/docs/adr/ADR-009-evergreen-template-validation.md",
+    "line": 13,
+    "text": "- Required manual cache management for expensive `npm`/`go` installs."
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00plicate/CHANGELOG.md",
+    "line": 22,
+    "text": "- `npm-run-all` (4.1.5) - Task orchestration"
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00plicate/UPGRADE_2025.md",
+    "line": 48,
+    "text": "- `npm-run-all@4.1.5` - Task orchestration"
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00plicate/apps/web/README.md",
+    "line": 55,
+    "text": "pnpm start # or `npm start`"
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00plicate/docs/ADR.md",
+    "line": 265,
+    "text": "- Provide fallback npm instructions"
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00plicate/docs/devops/TOOLCHAIN_UPGRADE_PLAYBOOK.md",
+    "line": 51,
+    "text": "# Legacy Nx migration removed. Use `pnpm dlx npm-check-updates -u` followed by `pnpm install` and run package-specific migration scripts if they exist."
+  },
+  {
+    "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/scripts/replace-npx-with-pnpm.mjs",
+    "line": 50,
+    "text": "console.log(`Would replace npx with pnpm dlx in: ${f}`);"
+  }
+]

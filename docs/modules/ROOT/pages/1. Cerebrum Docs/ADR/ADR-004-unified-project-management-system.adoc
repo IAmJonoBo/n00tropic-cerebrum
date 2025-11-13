@@ -9,64 +9,72 @@ Proposed -- 2025-01-14
 == Context
 
 * Ideas, briefs, and research notes are scattered across multiple surfaces:
-`n00tropic_HQ/98. Internal-Projects`,
-`n00-horizons/ideas`, `n00-horizons/learning-log`, and ad-hoc documents elsewhere.
-* GitHub Issues and Projects provide the default execution surface for engineering work,
-yet there is no deterministic bridge from the upstream ideation artefacts into actionable
-issues.
-* ERPNext holds authoritative operational data (Projects, Tasks, Timesheets) and must remain
+`n00tropic_HQ/98. Internal-Projects`, `n00-horizons/ideas`,
+`n00-horizons/learning-log`, and ad hoc documents elsewhere.
+* GitHub Issues and Projects provide the default execution surface for engineering
+ work,
+yet there is no deterministic bridge from the upstream ideation artefacts into
+actionable issues.
+* ERPNext holds authoritative operational data (Projects, Tasks, Timesheets) and
+ must remain
 the system of record for commercial delivery, billing, and support.
-* n00t and downstream agents need machine-readable context to escalate artefacts into the
+* n00t and downstream agents need machine-readable context to escalate artefacts
+ into the
 correct lane, request approvals, and update status without human babysitting.
-* Existing ADRs (e.g., ADR-003) define the workspace taxonomy and ERPNext touchpoints but stop
+* Existing ADRs (e.g., ADR-003) define the workspace taxonomy and ERPNext
+ touchpoints but stop
 short of a cross-repo, cross-tool project management lifecycle.
 
 == Decision
 
-. Adopt a *four-stage lifecycle* (`Discover → Shape → Deliver → Archive`) to govern every
-initiative across repositories and ERPNext modules.
- ** *Discover*: Ideation artefacts captured in `+n00-horizons/ideas/**+`, `+learning-log/**+`,
-or `+n00tropic_HQ/98. Internal-Projects/**+`.
- ** *Shape*: Structured project charters created under `n00tropic_HQ/98. Internal-Projects/IP-*/`
-with synchronized metadata published to `n00-horizons/projects/`.
- ** *Deliver*: Execution migrated to GitHub Issues/Projects with bi-directional syncing to ERPNext
-Projects/Tasks.
- ** *Archive*: Final outcomes, retrospectives, and ERPNext close-out artefacts stored in
-`/Volumes/APFS Space/n00tropic/90-Archive`.
-. Standardise on a *YAML front matter metadata block* for every initiative artefact (idea stubs,
-internal project docs, ADRs, GitHub issues export) containing:
- ** `id`, `title`, `lifecycle_stage`, `tags[]`, `owner`, `sponsors[]`, `source`,
-`erpnext_project`, `github_project`, `links[]`, `status`, `review_date`.
- ** Machine parsable by n00t capabilities and automation scripts in `.dev/automation`.
-. Create a *tag taxonomy* maintained in `n00-cortex/data/catalog/project-tags.yaml` with mirrored
-aliases in GitHub labels, ERPNext tags, and workspace directories; tags are hierarchical
-(`innovation/design-system/ui-accessibility`).
-. Extend `n00t` with a *Project Orchestration capability*:
- ** `project.capture` -- ingest a document path or URL, validate metadata, and register the artefact
-in the unified catalog.
- ** `project.sync.github` -- create/update GitHub issues or project items based on the canonical
-metadata.
- ** `project.sync.erpnext` -- map initiatives to ERPNext Projects/Tasks and push status updates.
- ** `project.scoreboard` -- render progress using data from GitHub, ERPNext, and the metadata catalog.
-. Require every new project or experiment to register through the orchestration capability,
-generating:
- ** An ADR (in `1. Cerebrum Docs/ADR/`) when the initiative introduces cross-repo conventions.
- ** A project charter in `n00tropic_HQ/98. Internal-Projects/IP-*/`.
- ** A GitHub Project draft and ERPNext Project/Task stubs.
-. Leverage n00-frontiers for *quality assurance of project artefacts* by adding validation schemas
-and unit tests to `test_imports.py` (ensuring metadata compliance and lifecycle integrity).
+. Adopt a *four-stage lifecycle* (`Discover → Shape → Deliver → Archive`) to
+govern every initiative across repositories and ERPNext modules. ** *Discover*:
+Ideation artefacts captured in `+n00-horizons/ideas/**+`, `+learning-log/**+`,
+or `+n00tropic_HQ/98. Internal-Projects/**+`. ** *Shape*: Structured project
+charters created under `n00tropic_HQ/98. Internal-Projects/IP-*/` with
+synchronized metadata published to `n00-horizons/projects/`. ** *Deliver*:
+Execution migrated to GitHub Issues/Projects with bi-directional syncing to
+ERPNext Projects/Tasks. ** *Archive*: Final outcomes, retrospectives, and
+ERPNext close-out artefacts stored in `/Volumes/APFS
+Space/n00tropic/90-Archive`. . Standardise on a *YAML front matter metadata
+block* for every initiative artefact (idea stubs, internal project docs, ADRs,
+GitHub issues export) containing: ** `id`, `title`, `lifecycle_stage`, `tags[]`,
+`owner`, `sponsors[]`, `source`, `erpnext_project`, `github_project`, `links[]`,
+`status`, `review_date`. ** Machine parsable by n00t capabilities and automation
+scripts in `.dev/automation`. . Create a *tag taxonomy* maintained in
+`n00-cortex/data/catalog/project-tags.yaml` with mirrored aliases in GitHub
+labels, ERPNext tags, and workspace directories; tags are hierarchical
+(`innovation/design-system/ui-accessibility`). . Extend `n00t` with a *Project
+Orchestration capability*: ** `project.capture` -- ingest a document path or
+URL, validate metadata, and register the artefact in the unified catalog. **
+`project.sync.github` -- create/update GitHub issues or project items based on
+the canonical metadata. ** `project.sync.erpnext` -- map initiatives to ERPNext
+Projects/Tasks and push status updates. ** `project.scoreboard` -- render
+progress using data from GitHub, ERPNext, and the metadata catalog. . Require
+every new project or experiment to register through the orchestration
+capability, generating: ** An ADR (in `1. Cerebrum Docs/ADR/`) when the
+initiative introduces cross-repo conventions. ** A project charter in
+`n00tropic_HQ/98. Internal-Projects/IP-*/`. ** A GitHub Project draft and
+ERPNext Project/Task stubs. . Leverage n00-frontiers for *quality assurance of
+project artefacts* by adding validation schemas and unit tests to
+`test_imports.py` (ensuring metadata compliance and lifecycle integrity).
 
 == Consequences
 
-* Positive: Every idea progresses through the same traceable lifecycle with auditable metadata,
+* Positive: Every idea progresses through the same traceable lifecycle with
+ auditable metadata,
 reducing context loss between ideation, delivery, and operations.
-* Positive: n00t gains a deterministic control plane to promote artefacts into GitHub/ERPNext,
+* Positive: n00t gains a deterministic control plane to promote artefacts into
+ GitHub/ERPNext,
 enabling autonomous execution while preserving governance.
-* Positive: Tags become universal across repositories, documentation, and ERPNext, improving
+* Positive: Tags become universal across repositories, documentation, and ERPNext,
+ improving
 discoverability and analytics.
-* Negative: Additional upfront work is required to author metadata blocks and keep them up to date;
+* Negative: Additional upfront work is required to author metadata blocks and keep
+ them up to date;
 tooling must automate as much as possible.
-* Negative: Misalignment between GitHub labels and ERPNext tags can create drift; the catalog must be
+* Negative: Misalignment between GitHub labels and ERPNext tags can create drift;
+ the catalog must be
 treated as the single source of truth and updated carefully.
 
 == Implementation Notes
@@ -74,17 +82,21 @@ treated as the single source of truth and updated carefully.
 * Introduce `project-metadata.schema.json` in `n00-cortex/schemas/` and publish
 documentation in `n00-cortex/docs`.
 * Add workspace validation guardrails via `n00-frontiers/test_imports.py` and
-`.dev/automation/scripts/validate-project-metadata.py` so malformed metadata fails
-fast in CI and automation runs.
+`.dev/automation/scripts/validate-project-metadata.py` so malformed metadata
+fails fast in ci and automation runs.
 * Ship n00t orchestration entrypoints (`project.capture`, `project.sync.github`,
-`project.sync.erpnext`) backed by `.dev/automation/scripts/project-orchestration.py`
-with acceptance fixtures from the idea + project charter.
+`project.sync.erpnext`) backed by
+`.dev/automation/scripts/project-orchestration.py` with acceptance fixtures from
+the idea + project charter.
 * Publish the operator runbook in `n00t/START HERE/PROJECT_ORCHESTRATION.md` so
 humans/cloud agents share the same playbook.
-* Add a nightly `.dev/automation` job (`sync-project-registry.sh`) that:
- .. Scans for metadata blocks across repos.
- .. Reconciles the catalog in `n00-cortex/data/catalog/projects.json`.
- .. Raises alerts when lifecycle stages regress or metadata fields are missing.
-* Seed GitHub projects using templates stored in `n00-frontiers/templates/project-management/`.
-* Extend ERPNext integration scripts (`07-Platform-Ops/erpnext/deploy/`) to consume the catalog and update ERPNext via REST API.
-* Document operator runbooks in `n00t/capabilities/manifest.json` and `n00-horizons/README.md` to guide humans and agents through the lifecycle.
+* Add a nightly `.dev/automation` job (`sync-project-registry.sh`) that: .. Scans
+ for metadata blocks across repos. .. Reconciles the catalog in
+ `n00-cortex/data/catalog/projects.json`. .. Raises alerts when lifecycle stages
+ regress or metadata fields are missing.
+* Seed GitHub projects using templates stored in
+ `n00-frontiers/templates/project-management/`.
+* Extend ERPNext integration scripts (`07-Platform-Ops/erpnext/deploy/`) to
+ consume the catalog and update ERPNext via REST API.
+* Document operator runbooks in `n00t/capabilities/manifest.json` and
+ `n00-horizons/README.md` to guide humans and agents through the lifecycle.

@@ -1,0 +1,1 @@
+../../../../../scripts/erpnext-run.sh
