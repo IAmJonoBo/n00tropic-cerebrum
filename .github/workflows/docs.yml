@@ -93,6 +93,16 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: build/site
+      - name: Capture Vale JSON
+        run: |
+          VALE_LOCAL=1 vale --output=JSON --ignore-syntax docs > artifacts/vale-full.json || true
+      - name: Generate Term candidates
+        run: pnpm run docs:vale-terms-candidates -- --threshold 2 --output artifacts/vale-terms-token-counts.json --json artifacts/vale-full.json || true
+      - name: Upload terms counts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vale-terms-counts
+          path: artifacts/vale-terms-token-counts.json
   deploy:
     if: github.ref == 'refs/heads/main'
     needs: build-validate

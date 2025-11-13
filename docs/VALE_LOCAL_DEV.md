@@ -21,6 +21,11 @@ Developer helpers
   decisions.
 - pnpm -s docs:vale-whitelist-candidates — Produce a shortlist of high-frequency tokens for review (candidates
   for whitelisting).
+- pnpm -s docs:vale-terms-candidates — Produce a shortlist of frequent Vale.Terms tokens and proposed edits or
+  whitelist candidates. Flags: `--threshold <n>`, `--dry-run`, `--output <file>`, `--json <path>`
+  Additional flags: `--whitelist [vocab|terms]` (append tokens to `styles/n00/vocab.txt` by default),
+  `--apply-edits` (apply Vale-suggested editorial replacements conservatively), `--interactive` (prompt for
+  confirmation), and `--yes` (skip confirmation prompts).
 
 Tip: `vale-whitelist-candidates.mjs` accepts `--threshold <n>` to lower the frequency threshold for candidates; the
 default is 3. For example:
@@ -31,6 +36,12 @@ Notes
 
 - Add project acronyms and tooling names into styles/config/vocabularies/n00/accept.txt and run vale sync.
 - Use the triage report to prioritise fixes and to identify tokens worth whitelisting.
+
+Notes about edits and backups
+
+- `--apply-edits` will create a backup of any edited file at `{path}.bak` before writing changes.
+- Prefer running `--apply-edits --dry-run` to preview edits. Then run `--apply-edits --yes` to apply.
+- `--whitelist` will append tokens to `styles/n00/vocab.txt` by default. Use `--whitelist terms` to append to `styles/n00/Terms.yml` instead.
 
 Markdown / AsciiDoc linting
 
