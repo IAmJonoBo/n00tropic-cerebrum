@@ -1,0 +1,4 @@
+[WARNING]
+====
+This content is shared across multiple pages. Edit the source to keep it in sync with the documentation and code examples.
+====

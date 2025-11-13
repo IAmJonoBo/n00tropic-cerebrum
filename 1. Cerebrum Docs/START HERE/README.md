@@ -12,7 +12,7 @@ This repo records cross-workspace decisions, shared policy, and release manifest
 
 ```bash
 cd "1. Cerebrum Docs"
-npm install --prefix ../n00-cortex docs # optional: reuse Docusaurus tooling
+pnpm install --prefix ../n00-cortex docs # optional: reuse Docusaurus tooling
 
 # Lint markdown and front matter
 trunk check --filter markdownlint-cli2
@@ -23,12 +23,12 @@ trunk check --filter markdownlint-cli2
 
 ## Key directories
 
-| Path | Purpose |
-| --- | --- |
-| `ADR/` | Canonical architecture decision records. |
-| `releases.yaml` | Workspace release log written by automation. |
+| Path                | Purpose                                             |
+| ------------------- | --------------------------------------------------- |
+| `ADR/`              | Canonical architecture decision records.            |
+| `releases.yaml`     | Workspace release log written by automation.        |
 | `RENOVATE_SETUP.md` | Guidance on shared Renovate presets and onboarding. |
-| `TRUNK_GUIDE.md` | Describes Trunk usage across repos. |
+| `TRUNK_GUIDE.md`    | Describes Trunk usage across repos.                 |
 
 ## Contribution guardrails
 

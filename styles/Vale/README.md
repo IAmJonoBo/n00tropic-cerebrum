@@ -1,0 +1,1 @@
+# Stub style for Vale

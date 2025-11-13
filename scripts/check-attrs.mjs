@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import { glob } from "glob";
 import process from "node:process";
+import { glob } from "glob";
 
 const files = await glob("docs/modules/**/pages/**/*.adoc");
 const args = process.argv.slice(2);

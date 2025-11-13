@@ -1,83 +1,84 @@
-= Trunk CI Playbook
+= Trunk ci Playbook
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 
-This workspace keeps Trunk for developer ergonomics, but we lean on system runtimes and CI caching rather than hermetic downloads.
+This workspace keeps Trunk for developer ergonomics, but we lean on system
+runtimes and ci caching rather than hermetic downloads.
 
 == Runtimes
 
-Trunk configuration (`n00-frontiers/.trunk/trunk.yaml`) allows the system Node.js, Python, and Go installs. Make sure your CI image already includes the versions declared in `n00-cortex/data/toolchain-manifest.json`.
+Trunk configuration (`n00-frontiers/.trunk/trunk.yaml`) allows the system
+Node.js, Python, and Go installs. Make sure your ci image already includes the
+versions declared in `n00-cortex/data/toolchain-manifest.json`.
 
 [,yaml]
 ----
-runtimes:
-  enabled:
-    - python
-    - go
-    - node
-  definitions:
-    - type: python
-      system_version: allowed
-    - type: go
-      system_version: allowed
-    - type: node
-      system_version: allowed
+runtimes: enabled:
+ - python
+ - go
+ - node
+definitions:
+ - type: python
+system_version: allowed
+ - type: go
+system_version: allowed
+ - type: node
+ system_version: allowed
 ----
 
-With these settings the hermetic bootstrap script is a no-op (`scripts/bootstrap-trunk-python.sh`).
+With these settings the hermetic bootstrap script is a no-op
+(`scripts/bootstrap-trunk-python.sh`).
 
 == Cache the CLI and results
 
-Persist `~/.cache/trunk` so the CLI, plugins, and linters are reused between runs.
+Persist `~/.cache/trunk` so the CLI, plugins, and linters are reused between
+runs.
 
 GitHub Actions
 
 [,yaml]
 ----
-- uses: actions/cache@v4
-  with:
-    path: ~/.cache/trunk
-    key: ${{ runner.os }}-trunk-${{ hashFiles('**/.trunk/trunk.yaml') }}
-    restore-keys: |
-      ${{ runner.os }}-trunk-
+- uses: actions/cache@v4 with: path: ~/.cache/trunk key: ${{ runner.os
+ }}-trunk-${{ hashFiles('**/.trunk/trunk.yaml') }} restore-keys: | ${{ runner.os
+ }}-trunk-
 ----
 
-GitLab CI
+GitLab ci
 
 [,yaml]
 ----
-cache:
-  key: "trunk-${CI_RUNNER_EXECUTABLE_ARCH}"
-  paths:
-    - $HOME/.cache/trunk
+cache: key: "trunk-${CI_RUNNER_EXECUTABLE_ARCH}" paths:
+ - $HOME/.cache/trunk
 ----
 
 == Command shape
 
 * Pull requests: `trunk check --ci`
 * Nightly/cron: `trunk check --all --ci`
-
-The hold-the-line behaviour cuts runtime dramatically by touching only modified files on PRs.
+The hold-the-line behaviour cuts runtime dramatically by touching only modified
+files on PRs.
 
 == Environment variables
 
-Trunk does not inherit the shell environment. If you need proxies or locales, define them in `.trunk/trunk.yaml`:
+Trunk does not inherit the shell environment. If you need proxies or locales,
+define them in `.trunk/trunk.yaml`:
 
 [,yaml]
 ----
-lint:
-  definitions:
-    - name: eslint
-      environment:
-        - name: HTTP_PROXY
-          value: ${HTTP_PROXY}
-        - name: HTTPS_PROXY
-          value: ${HTTPS_PROXY}
+lint: definitions:
+ - name: eslint
+environment:
+ - name: HTTP_PROXY
+value: ${HTTP_PROXY}
+ - name: HTTPS_PROXY
+ value: ${HTTPS_PROXY}
 ----
 
 == When to consider alternatives
 
-* *pre-commit* + *pre-commit.ci* -- No local downloads, strong community support, integrates with git hooks.
-* *Mega-Linter* -- Containerized linter suite, good for locked-down environments, heavier on CI minutes.
-
-Stick with Trunk if you can cache `~/.cache/trunk` and provide system runtimes; swap only if network policies forbid the necessary downloads.
+* *pre-commit* + *pre-commit.ci* -- No local downloads, strong community support,
+ integrates with git hooks.
+* *Mega-Linter* -- Containerized linter suite, good for locked-down environments,
+ heavier on ci minutes.
+Stick with Trunk if you can cache `~/.cache/trunk` and provide system runtimes;
+swap only if network policies forbid the necessary downloads.

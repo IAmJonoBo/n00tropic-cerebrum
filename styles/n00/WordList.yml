@@ -1,0 +1,10 @@
+extends: substitution
+message: Allow local acronyms or project terms
+level: suggestion
+ignorecase: false
+action:
+  name: replace
+swap:
+  CLI: CLI
+  CI: CI
+  Agent: Agent

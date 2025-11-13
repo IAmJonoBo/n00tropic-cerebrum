@@ -101,19 +101,19 @@ This sequence highlights the typical cadence: adjust policy in `n00-cortex`, ada
 
 Automation scripts live under `.dev/automation/scripts/` and surface through the `n00t` capability manifest.
 
-| Script                            | Purpose                                                                                                    |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `meta-check.sh`                   | Orchestrates repo health checks, schema validation, and CVE scans before publishing changes.               |
-| `refresh-workspace.sh`            | Fast-forwards each repo and updates submodules to keep local clones aligned.                               |
-| `trunk-upgrade.sh`                | Runs `trunk upgrade` across repos (supports repo filters and extra flags when invoked via capabilities).   |
-| `check-cross-repo-consistency.py` | Ensures toolchain manifests and overrides remain aligned.                                                  |
-| `workspace-release.sh`            | Verifies clean git state and writes `1. Cerebrum Docs/releases.yaml`.                                      |
-| `ai-workflows/*`                  | Phase-specific scripts for the AI-assisted development workflow surfaced by `n00t`.                        |
-| `project-preflight.sh`            | Chains capture + GitHub/ERPNext syncs and fails fast when review cadence, links, or IDs are missing.       |
-| `project-lifecycle-radar.sh`      | Emits a JSON radar summarising lifecycle totals, overdue reviews, and integration gaps for planning.       |
-| `project-control-panel.sh`        | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights. |
-| `scripts/erpnext-run.sh`          | Run-and-gun ERPNext dev stack: bootstraps bench, verifies MySQL/Redis, launches browser, logs telemetry, and triggers PM/telemetry exports. |
-| `project-preflight-batch.sh`      | Executes preflight across every registry entry to keep GitHub + ERPNext sync warnings visible.             |
+| Script                            | Purpose                                                                                                                                       |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `meta-check.sh`                   | Orchestrates repo health checks, schema validation, and CVE scans before publishing changes.                                                  |
+| `refresh-workspace.sh`            | Fast-forwards each repo and updates submodules to keep local clones aligned.                                                                  |
+| `trunk-upgrade.sh`                | Runs `trunk upgrade` across repos (supports repo filters and extra flags when invoked via capabilities).                                      |
+| `check-cross-repo-consistency.py` | Ensures toolchain manifests and overrides remain aligned.                                                                                     |
+| `workspace-release.sh`            | Verifies clean git state and writes `1. Cerebrum Docs/releases.yaml`.                                                                         |
+| `ai-workflows/*`                  | Phase-specific scripts for the AI-assisted development workflow surfaced by `n00t`.                                                           |
+| `project-preflight.sh`            | Chains capture + GitHub/ERPNext syncs and fails fast when review cadence, links, or IDs are missing.                                          |
+| `project-lifecycle-radar.sh`      | Emits a JSON radar summarising lifecycle totals, overdue reviews, and integration gaps for planning.                                          |
+| `project-control-panel.sh`        | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights.                                    |
+| `scripts/erpnext-run.sh`          | Run-and-gun ERPNext dev stack: bootstraps bench, verifies MySQL/Redis, launches browser, logs telemetry, and triggers PM/telemetry exports.   |
+| `project-preflight-batch.sh`      | Executes preflight across every registry entry to keep GitHub + ERPNext sync warnings visible.                                                |
 | `workspace-health.py`             | Summarises root + submodule git status, emits `artifacts/workspace-health.json`, cleans safe untracked files, and syncs submodules on demand. |
 
 Run `python cli.py --help` from the workspace root (or `n00-horizons/cli.py`, `n00-frontiers/cli.py`, etc.) to access curated wrappers around these scripts for both agents and humans.
@@ -123,9 +123,35 @@ Automation executions append telemetry to `.dev/automation/artifacts/automation/
 ## Formatter Guardrails
 
 - **Python format flow**: Every Trunk config runs `isort@7.0.0` before `black@25.x` so imports settle before layout styling. If a formatter loop appears, run `trunk fmt --filter=isort,black` or `isort . && black .` in the affected repo.
-- **isort configuration**: `n00-frontiers/.isort.cfg` pins `profile = black` and `line_length = 88`, and the setting is mirrored by the other repos via Trunk sync so Black never rewrites imports immediately after isort.
+- **isort configuration**: `n00-frontiers/.isort.cfg` pins `profile = black` and `line_length = 120`, and the setting is mirrored by the other repos via Trunk sync so Black never rewrites imports immediately after isort.
 - **Deep dive**: See `n00-school/in-dev-learnings/black-isort-conflicts.md` plus `n00-frontiers/docs/quality/formatting-style.md` for the rationale, escalation steps, and verification checklist agents should follow when formatters disagree.
 - **Automation reminder**: `trunk-upgrade.sh` (and the `python3 cli.py trunk-upgrade` helper) keep formatter versions in lockstep across every repo, so rerun it whenever `isort`/`black` ship compatibility fixes.
+- **Python linting helper**: run `pnpm run lint:python` in the workspace root to run `isort`, `black` and `ruff` checks across Python subprojects. The workspace CI now runs `pnpm run lint:python` as part of `workspace-health` to validate Python formatting and lint checks in PRs.
+
+## Trunk: Workspace-level control vs. subrepo autonomy
+
+To validate all subrepos centrally while preserving subrepo autonomy, the workspace CI runs the root helper script (`pnpm run trunk:check-all`) that executes `trunk check` in each subrepo. Each subrepo's `.trunk/trunk.yaml` still governs behaviour for developer workflows and PR-bottom checks. This avoids conflicts and ensures CI-level uniformity.
+
+- Root CI behaviour: `pnpm run trunk:check-all` iterates over repository folders and runs `trunk check` in each, capturing JSON artifacts in `artifacts/trunk-results/`.
+- Subrepo behaviour: Each subrepo provides its own `.trunk/trunk.yaml`. If a subrepo lacks a `.trunk` directory, the workspace runner will still run `trunk check` with default settings and fail/record findings.
+
+Tip: If you see 'unsupported linter' errors locally for `trunk` checks, run `pnpm run trunk:sync-defs` to copy the workspace standard definitions into each subrepo's `.trunk/trunk.yaml` (only when the subrepo needs the definitions locally). This avoids having to hand-edit each repo and remains reversible.
+
+Dependency placement and storage guidance
+
+- Keep shared developer tooling at the workspace root (`pnpm install` at the root) to avoid installing the same tool multiple times in each subrepo. For example, `@biomejs/biome` is a workspace-level dev-dependency. Use `pnpm -w exec biome` to run the workspace-installed Biome from a subrepo.
+- For tools used by one subrepo only (for example, Antora for documentation), prefer installing them in the subrepo where they are required or centralize them at root and make CI/workflows call into the workspace Antora binary. We added `@antora/cli` and `@antora/site-generator` to the root devDependencies so `pnpm -w exec antora` works consistently across the workspace.
+- Avoid running `pnpm install` inside each `trunk` lint definition; instead run `pnpm install` once at the job start or on the developer machine at root. Trunk definitions should invoke `pnpm -w exec` (workspace) or `pnpm -C <repo> exec` to run a binary from a specific subrepo to conserve local storage.
+
+Local commands:
+
+```bash
+# Run trunk checks across each subrepo (same script CI uses):
+pnpm run trunk:check-all
+
+# Run the workspace-level Python checks (isort, black, ruff) locally:
+pnpm run lint:python
+```
 
 ## Operating Guidelines
 
@@ -161,6 +187,37 @@ Operational outputs live in the shared filesystem at `/Volumes/APFS Space/n00tro
 5. Open the multi-root VS Code workspace (`n00-cortex/generators/n00tropic-cerebrum.code-workspace`).
 6. Run baseline checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific health commands.
 7. Explore `1. Cerebrum Docs/` for ADRs, Renovate setup, and onboarding guides.
+
+### Docs development (Antora with pnpm)
+
+We prefer `pnpm` for local development of the Antora documentation and workspace scripts. To get started with docs:
+
+1. Prepare `pnpm` via corepack (this installs the correct pnpm distribution for your environment):
+
+```bash
+corepack enable
+corepack prepare pnpm@latest --activate
+```
+
+2. Install workspace dependencies:
+
+```bash
+pnpm install
+```
+
+3. Build the documentation using the local Antora installation in the `n00plicate` submodule:
+
+```bash
+cd n00plicate
+pnpm install
+pnpm exec antora antora-playbook.yml
+```
+
+4. View the generated site:
+
+```bash
+open build/site/index.html
+```
 
 ## Script Index
 

@@ -54,7 +54,7 @@ struct ChatConsoleView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 12) {
-                Label("n00ton Orchestrator", systemImage: "sparkles")
+                Label("n00t Orchestrator", systemImage: "sparkles")
                     .font(.largeTitle.bold())
                 if let active = viewModel.activeCapabilityId {
                     Dashboard.StatusBadge(status: .informational)
@@ -258,7 +258,7 @@ struct ChatConsoleView: View {
                 }
                 .help("Select which capability to pair with the prompt")
 
-                TextField("Ask n00ton for help…", text: $draft, axis: .vertical)
+                TextField("Ask n00t for help…", text: $draft, axis: .vertical)
                     .lineLimit(1...4)
                     .textFieldStyle(.roundedBorder)
 

@@ -5,7 +5,7 @@
       "settings": {
         "preset": "desktop"
       },
-      "startServerCommand": "npm run --prefix apps/web dev"
+      "startServerCommand": "pnpm run --prefix apps/web dev"
     },
     "assert": {
       "assertions": {

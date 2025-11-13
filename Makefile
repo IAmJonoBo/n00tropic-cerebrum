@@ -1,4 +1,6 @@
 .PHONY: help docs mcp-dev clean validate create-default-ui
+setup-vale-local: ## Create local stub Vale styles to avoid runtime errors during Vale runs
+	@bash scripts/create-vale-stub-styles.sh
 
 help: ## Show this help message
 	@echo "Available targets:"
@@ -47,6 +49,14 @@ prepare-pnpm:
 	@echo "Preparing pnpm via corepack..."
 	@./scripts/setup-pnpm.sh
 
+vale-sync: ## Sync Vale styles locally (install Google/Microsoft/Vale style packs via Vale sync)
+	@if command -v vale >/dev/null 2>&1; then \
+		vale sync; \
+		echo "Vale styles synced"; \
+	else \
+		echo "Vale not installed, skipping.."; \
+	fi
+
 mcp-dev: ## Run MCP docs server locally
 	@echo "Starting MCP docs server..."
 	@if [ ! -f mcp/docs_server/requirements.txt ]; then \
@@ -86,7 +96,12 @@ validate-docs: ## Run docs validation checks (Vale + Lychee + check-attrs). Use 
 	else \
 		echo "Running Vale..."; \
 		if command -v vale >/dev/null 2>&1; then \
-			vale docs; \
+			if [ "$$VALE_LOCAL" = "1" ]; then \
+				echo "Using local vale config .vale.local.ini"; \
+				vale --config .vale.local.ini --ignore-syntax docs; \
+			else \
+				vale docs; \
+			fi; \
 		else \
 			echo "Vale not installed, skipping..."; \
 		fi; \

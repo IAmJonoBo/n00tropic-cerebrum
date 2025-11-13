@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-import { glob } from "glob";
-import { spawnSync } from "child_process";
-import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import path from "node:path";
+import { glob } from "glob";
+
 const patterns = [
   "n00-frontiers/tests/**/*.js",
   "n00-frontiers/tests/**/*.ts",

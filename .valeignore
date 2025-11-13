@@ -1,0 +1,6 @@
+# Ignore temporary or generated content
+stuff/Temp/*
+artifacts/*
+build/**
+DashboardApp.app/**
+vendor/**

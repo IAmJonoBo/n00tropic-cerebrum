@@ -1,4 +1,5 @@
 {
+  "npm.packageManager": "pnpm",
   "vitest.disableWorkspaceWarning": true,
   "files.exclude": {
     "**/Typora.app": true
