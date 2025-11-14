@@ -34,14 +34,14 @@ jobs:
 
       - name: Upload built site artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: site
           path: build/site
 
       - name: Archive logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: antora-logs
           path: ~/.npm/_logs
