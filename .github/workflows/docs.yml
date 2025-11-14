@@ -100,7 +100,7 @@ jobs:
       - name: Python lint (auto fix safe changes)
         uses: actions/setup-python@v6
         with:
-          python-version: "3.10"
+          python-version: "3.14"
       - name: Run lint-python script (fix mode)
         run: pnpm run lint:python:fix || true
       - name: Upload terms counts
