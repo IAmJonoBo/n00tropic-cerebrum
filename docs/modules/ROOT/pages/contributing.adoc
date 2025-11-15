@@ -109,6 +109,7 @@ Factor repeated content into partials under `docs/modules/ROOT/partials/`:
 * Avoid gerunds in headings (enforced by Vale)
 * Use code blocks for commands and outputs
 * Include examples and screenshots where helpful
+
 == ci/CD Checks
 
 All documentation PRs are validated against:
@@ -118,6 +119,7 @@ All documentation PRs are validated against:
 * **Attribute checks** - Validates presence of `:page-tags:` and `:reviewed:`
 * **DangerJS** - PR policy enforcement
 * **Antora build** - Ensures the site builds successfully
+
 == Local Development
 
 === Building the Docs

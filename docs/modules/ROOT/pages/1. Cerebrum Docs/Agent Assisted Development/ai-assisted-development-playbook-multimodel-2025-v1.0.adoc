@@ -189,7 +189,6 @@ summaries; Vertex evals/quotas. |===
 * *Switching:* Rotate for stuck tasks--Copilot for speed, Grok for depth, Codex
  for precision.
 * *Metrics:* 2-3x output boost, 75%+ accuracy, reduced errors.
-'''
 
 == Appended: Additional Models That Plug In Cleanly
 
@@ -264,30 +263,53 @@ strengths per phase and keep a local/open path ready for privacy‑sensitive cod
  Batch refactors and static‑analysis‑guided fixes.
 * *Notes:* Useful as a cost‑efficient local assistant; wrap with tests and
  linters.
-'''
 
 === Phase Plug‑In Matrix (new models)
 
-|=== | Model | 1 Planning/Research | 2 Architecture/Design | 3 Coding | 4
-Debug/Test | 5 Review/Deploy
+|===
+| Model | 1 Planning/Research | 2 Architecture/Design | 3 Coding | 4 Debug/Test | 5 Review/Deploy
 
-| *Gemini 2.5 Pro/Flash* | Synthesis; trend scan; Vertex grounding |
-Diagram/spec digestion | Fast scaffolds & utilities | Log/test triage |
-GCP/Vertex integration
+| *Gemini 2.5 Pro/Flash*
+| Synthesis; trend scan; Vertex grounding
+| Diagram/spec digestion
+| Fast scaffolds & utilities
+| Log/test triage
+| GCP/Vertex integration
 
-| *Claude (Opus/Sonnet)* | Risk analysis; experiments | Arch reviews; threat
-models | Refactors; test gen | Repo‑wide debugging | PR reviews & risk notes
+| *Claude (Opus/Sonnet)*
+| Risk analysis; experiments
+| Arch reviews; threat models
+| Refactors; test gen
+| Repo‑wide debugging
+| PR reviews & risk notes
 
-| *Llama 3.x (open)* | Private doc reading | Private design reviews | Local
-completion | On‑prem log agents | Internal PR automation
+| *Llama 3.x (open)*
+| Private doc reading
+| Private design reviews
+| Local completion
+| On‑prem log agents
+| Internal PR automation
 
-| *Codestral (25.08)* | -- | -- | FIM completions; helpers | Quick bug‑fix props
+| *Codestral (25.08)*
+| --
+| --
+| FIM completions; helpers
+| Quick bug‑fix props
 | --
 
-| *Cohere Command A* | Evidence‑gated RAG | Contract/type synthesis | Tool‑using
-agents | Test writing + RAG | Policy‑aware summaries
+| *Cohere Command A*
+| Evidence‑gated RAG
+| Contract/type synthesis
+| Tool‑using agents
+| Test writing + RAG
+| Policy‑aware summaries
 
-| *DeepSeek Coder V2* | -- | -- | Repo migration scripts | Batch refactors | --
+| *DeepSeek Coder V2*
+| --
+| --
+| Repo migration scripts
+| Batch refactors
+| --
 |===
 
 TIP: keep each model behind a tiny interface ("planner," "coder," "debugger,"
