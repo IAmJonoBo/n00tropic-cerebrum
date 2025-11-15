@@ -156,6 +156,11 @@ planning decks link runbooks, radar output, and preflights.
 verifies MySQL/Redis, launches browser, logs telemetry, and triggers
 PM/telemetry exports.
 
+| `scripts/docker-sync.mjs` | Pulls the latest Penpot + ERPNext docker images,
+updates compose pins, and records the outcome under
+`n00tropic_HQ/12-Platform-Ops/telemetry/docker-sync.log` so operators see when
+new containers arrive.
+
 | `project-preflight-batch.sh` | Executes preflight across every registry entry
 to keep GitHub + ERPNext sync warnings visible.
 
