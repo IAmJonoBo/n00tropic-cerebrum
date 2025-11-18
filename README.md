@@ -120,6 +120,14 @@ Run `python cli.py --help` from the workspace root (or `n00-horizons/cli.py`, `n
 
 Automation executions append telemetry to `.dev/automation/artifacts/automation/agent-runs.json`, which powers dashboards and agent insights.
 
+## Subrepo contract and boundaries
+
+- **Canonical remotes**: Every subrepo listed in `.gitmodules` now maps to `https://github.com/n00tropic/<name>.git`. During cloning, run `git submodule update --init --recursive` (or `python cli.py workspace-health --sync-submodules`) so local remotes match the organisation defaults.
+- **Standalone readiness**: Each subrepo must boot with `pnpm install`, `pip install -r requirements.txt`, or its documented workflow without relying on files from other repos. Cross-repo assets move through published schemas (`n00-cortex`), catalogs (`n00-frontiers`), and generated bundles (`n00plicate`), never via direct relative imports.
+- **Branch invariants**: `main` (or `doc` where noted) in every subrepo stays releasable. Feature branches may live either inside the subrepo or the superrepo, but merges always occur within the subrepo first so submodule pointers simply fast-forward.
+- **Change propagation**: Update order stays Cortex → Frontiers → Consumers. When schema or template changes occur, tag the owning subrepo, then bump the submodule pointer in `n00-cerebrum` via a workspace commit. Avoid editing generated assets under `n00-cortex/data/exports/**`, `n00-frontiers/applications/scaffolder/**`, or `n00tropic/06-Shared-Tools/Generated/`; instead rerun the documented generators.
+- **Automation interface**: `n00t` surfaces capabilities from `.dev/automation/scripts/*`. When adding new automation, update `n00t/capabilities/manifest.json` and ensure logs land in `.dev/automation/artifacts/automation/` so subrepos can operate independently yet expose common tooling through the superrepo.
+
 ## Formatter Guardrails
 
 - **Python format flow**: Every Trunk config runs `isort@7.0.0` before `black@25.x` so imports settle before layout styling. If a formatter loop appears, run `trunk fmt --filter=isort,black` or `isort . && black .` in the affected repo.
