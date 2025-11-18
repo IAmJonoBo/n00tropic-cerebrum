@@ -1,4 +1,4 @@
-= Start Here: 1. Cerebrum Docs
+= Start here: 1. Cerebrum docs
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 

@@ -1,5 +1,5 @@
 // vale Google.Headings = NO
-= n00tropic cerebrum workspace
+= N00tropic cerebrum workspace
 // vale Google.Headings = YES
 :page-tags: diataxis:explanation, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11

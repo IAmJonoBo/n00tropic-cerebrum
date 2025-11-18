@@ -1,4 +1,4 @@
-= ADR-003: Operational Workspace Taxonomy & ERPNext Integration
+= Architecture decision record 003: Operational workspace taxonomy and ERPNext integration
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 

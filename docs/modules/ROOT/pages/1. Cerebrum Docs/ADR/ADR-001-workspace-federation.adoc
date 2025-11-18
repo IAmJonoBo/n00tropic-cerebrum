@@ -1,4 +1,4 @@
-= ADR-001: Federated Generator Workspace
+= Architecture decision record 001: Federated generator workspace
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 

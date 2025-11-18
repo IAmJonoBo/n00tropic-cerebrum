@@ -1,4 +1,4 @@
-= *AI-Assisted Development Playbook (Multi-Model, 2025)*
+= Artificial intelligence assisted development playbook (multi-model, 2025)
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 
@@ -9,7 +9,7 @@ leverages each AI's strengths, assuming Pro tiers for unlimited access, advanced
 features, and higher limits. This hybrid approach boosts productivity by 2-3x,
 with cleaner code and fewer errors.
 
-== AI Strengths
+== Artificial intelligence strengths
 
 * *Grok (xAI)*: High-level reasoning, large context (up to 512k tokens in Grok 4
  for mega repositories), real-time tooling (web/X search, code sandbox), and fast
@@ -52,7 +52,7 @@ with cleaner code and fewer errors.
 Free tiers work for light use, but Pro enables seamless scaling (for example, no query
 limits, Codex API batches at $0.02/1k tokens).
 
-== Implementation Scripts
+== Implementation scripts
 
 This playbook has been implemented as executable scripts in the workspace
 automation directory. Use these scripts to run the workflow phases:
@@ -72,13 +72,13 @@ Run `./ai-workflow-runner.sh` to access an interactive menu for running
 individual phases or the complete workflow. All scripts generate artifacts in
 `artifacts/ai-workflows/[phase]/` and log capability runs.
 
-== Workflow Phases
+== Workflow phases
 
 Total cycle time: 20-50% faster than solo coding. Use VS Code extensions to
 query all AIs from one IDE (for example, Grok Code Fast in Copilot preview for free
 speed boosts). Pipe outputs via copy-paste or scripts.
 
-=== 1. Planning & Research (Led by Grok: 10-20% of workflow)
+=== 1. Planning and research (led by Grok: 10-20% of workflow)
 
 * *Why Grok?* Handles ambiguity, research, and synthesis best.
 * *Steps:* ** Describe project (for example, "Plan a TypeScript React app with Python
@@ -90,7 +90,7 @@ speed boosts). Pipe outputs via copy-paste or scripts.
 * *Involve Others:* Query Codex for pseudocode sketches if needed.
 * *Fit for Python/TS:* Suggests async patterns or type safety.
 * *Transition:* Export as Markdown; paste into IDE.
-=== 2. Architecture & Design (Led by Grok + Codex: 15-25%)
+=== 2. Architecture and design (led by Grok + Codex: 15-25%)
 
 * *Why this split?* Grok for diagrams/reasoning; Codex for code skeletons.
 * *Steps:* ** Grok generates architecture (for example, "Draw Mermaid diagram for
@@ -101,7 +101,7 @@ speed boosts). Pipe outputs via copy-paste or scripts.
  custom patterns.
 * *Fit for Python/TS:* Codex for TS types; Grok for cross-lang integration.
 * *Output:* Diagrams, stub files. Use Grok's sandbox for early testing.
-=== 3. Core Coding & Implementation (Led by Copilot: 30-40%)
+=== 3. Core coding and implementation (led by Copilot: 30-40%)
 
 * *Why Copilot?* Seamless IDE assistance without switching.
 * *Steps:* ** Import stubs into VS Code/JetBrains with Copilot. ** Autocomplete
@@ -113,7 +113,7 @@ speed boosts). Pipe outputs via copy-paste or scripts.
 * *Involve Grok:* For hallucinations, paste snippets for second opinions.
 * *Fit for Python/TS:* Adapts to codebase patterns.
 * *Output:* Functional code with automated tests/comments.
-=== 4. Debugging, Testing & Optimization (Led by Grok + Codex: 15-25%)
+=== 4. Debugging, testing, and optimization (led by Grok + Codex: 15-25%)
 
 * *Why this split?* Grok for repository-wide debugging; Codex for strategic fixes.
 * *Steps:* ** Paste errors to Grok: "Debug TS loop; run in sandbox." ** Grok
@@ -124,7 +124,7 @@ speed boosts). Pipe outputs via copy-paste or scripts.
  Lambda").
 * *Fit for Python/TS:* Grok for math bugs; Codex for back end logic.
 * *Output:* Bug-free, optimized code (for example, 20% faster Python runtime).
-=== 5. Review, Deployment & Iteration (Led by Copilot: 5-10%)
+=== 5. Review, deployment, and iteration (led by Copilot: 5-10%)
 
 * *Why Copilot?* Integrated with GitHub for PRs/ci.
 * *Steps:* ** Push code; Copilot automatically creates PRs/reviews. ** For issues (for example,
@@ -132,7 +132,7 @@ speed boosts). Pipe outputs via copy-paste or scripts.
 * *Pro Enhancements:* Copilot Workspace for end-to-end automated PRs; Grok 4 for
  real-time trend analysis.
 * *Fit for Python/TS:* Handles ci YAML; researches cloud tooling.
-== Phase Summary Table
+== Phase summary table
 
 |=== | Phase | Primary AI | Backup AIs | Time Savings | Example in Python/TS
 Project | Pro Enhancements
@@ -199,7 +199,7 @@ https://aws.amazon.com/blogs/aws/introducing-llama-3-2-models-from-meta-in-amazo
 | 25% | Auto‑PR TS changes; deploy Python app. | PRs from issues; policy‑aware
 summaries; Vertex evals/quotas. |===
 
-== Overall Tips
+== Overall tips
 
 * *Integration:* Query all from IDE; use scripts for piping.
 * *Cost/Scaling:* Pro tiers minimize interruptions (for example, unlimited Grok 4
@@ -208,13 +208,13 @@ summaries; Vertex evals/quotas. |===
  for precision.
 * *Metrics:* 2-3x output boost, 75%+ accuracy, reduced errors.
 
-== Appended: Additional Models That Plug In Cleanly
+== Appended: Additional models that plug in cleanly
 
 This section adds high‑value models not covered earlier and shows where they slot
 into the same five‑phase workflow. Keep your stack modular: mix provider
 strengths per phase and keep a local/open path ready for privacy‑sensitive code.
 
-=== Google Gemini (2.5 Pro / 2.5 Flash / 2.5 Flash‑Lite)
+=== Google Gemini usage notes (2.5 pro / 2.5 flash / 2.5 flash-lite)
 
 * *Strengths:* Long context (up to ~1M tokens depending on endpoint), strong
  multimodal reasoning, low-latency *Flash/Flash‑Lite* support, and tight *Vertex AI*
@@ -230,7 +230,7 @@ strengths per phase and keep a local/open path ready for privacy‑sensitive cod
  controls.
 * *Notes:* Prefer *Pro* for deeper reasoning; pick *Flash/Flash‑Lite* when
  latency/throughput dominates.
-=== Anthropic Claude (Opus • Sonnet 3.5/4.x)
+=== Anthropic Claude usage notes (Opus • Sonnet 3.5/4.x)
 
 * *Strengths:* Strong reasoning and coding, reliable tool/computer‑use automation,
  large context (hundreds of k tokens), available via *Anthropic API*, *AWS
@@ -243,7 +243,7 @@ strengths per phase and keep a local/open path ready for privacy‑sensitive cod
  *5:* Draft precise PR reviews; good at change‑risk notes and rollback plans.
 * *Notes:* Use *Opus* (or latest Sonnet w/ "`computer use`") for heavy reasoning
  and interactive tool control.
-=== Meta Llama 3.x (open‑weights family)
+=== Meta Llama 3.x usage notes (open-weights family)
 
 * *Strengths:* Open models (for example, Llama 3.1/3.2) with strong coding ability, long
  contexts (up to ~128k+ depending on variant), and on‑prem/air‑gapped
@@ -254,7 +254,7 @@ strengths per phase and keep a local/open path ready for privacy‑sensitive cod
  PR review.
 * *Notes:* Pair with retrieval (FAISS/pgvector or corporate search) and a
  lightweight guardrail (for example, Llama Guard) for production.
-=== Mistral Codestral (latest 25.08 series)
+=== Mistral Codestral usage notes (latest 25.08 series)
 
 * *Strengths:* Code‑specialised models optimised for *fill‑in‑the‑middle (FIM)*
  and low‑latency completions; competitive quality with efficient serving.
@@ -263,7 +263,7 @@ strengths per phase and keep a local/open path ready for privacy‑sensitive cod
  deliberation.
 * *Notes:* Great drop‑in for local/on‑prem coding assistance; keep prompts short
  to exploit FIM.
-=== Cohere Command A (and Command A Vision)
+=== Cohere Command A usage notes (and Command A Vision)
 
 * *Strengths:* Enterprise‑grade RAG, tool use, and long context
  (order‑of‑hundreds‑of‑k tokens depending on endpoint). Efficient throughput and
@@ -273,7 +273,7 @@ strengths per phase and keep a local/open path ready for privacy‑sensitive cod
  Structured automation that calls tooling (issue trackers, build systems) and writes
  tests. ** *5:* Policy-constrained PR summaries and release notes.
 * *Notes:* Good vendor if you need on‑prem or strict data‑isolation options.
-=== DeepSeek Coder V2 (open)
+=== DeepSeek Coder V2 usage notes (open)
 
 * *Strengths:* Open MoE code models with long context (up to ~128k), strong
  completion and repair, and permissive self‑hosting.
@@ -282,7 +282,7 @@ strengths per phase and keep a local/open path ready for privacy‑sensitive cod
 * *Notes:* Useful as a cost‑efficient local assistant; wrap with tests and
  linters.
 
-=== Phase Plug‑In Matrix (new models)
+=== Phase plug-in matrix (new models)
 
 |===
 | Model | 1 Planning/Research | 2 Architecture/Design | 3 Coding | 4 Debug/Test | 5 Review/Deploy
@@ -333,7 +333,7 @@ strengths per phase and keep a local/open path ready for privacy‑sensitive cod
 TIP: keep each model behind a tiny interface ("planner," "coder," "debugger,"
 "reviewer"). Swap providers without touching calling code.
 
-=== Minimal Integration Recipes
+=== Minimal integration recipes
 
 * *Vertex AI (Gemini):* Use a single gateway for auth, quotas, evals, and
  grounding; start with Pro for depth, fall back to Flash/Flash‑Lite in hot paths.
@@ -343,7 +343,7 @@ TIP: keep each model behind a tiny interface ("planner," "coder," "debugger,"
  RAG + guardrails; log prompts/outputs to your existing observability stack.
 * *Cohere:* Combine Command A with Embed/Rerank for end‑to‑end RAG that respects
  enterprise search and access controls.
-=== Calibration & Caveats
+=== Calibration and caveats
 
 * Specs (contexts, pricing, and features) change frequently. Keep a small "`model
  registry`" in your repository with live checks and smoke tests per provider.

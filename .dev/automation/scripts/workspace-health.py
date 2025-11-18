@@ -6,7 +6,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import subprocess
+import shlex
+import shutil
+import subprocess  # nosec B404 - toolchain commands are workspace-managed
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -66,10 +68,33 @@ class RepoStatus:
         }
 
 
-def run_git(args: Sequence[str], cwd: Path) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        ["git", *args], cwd=cwd, text=True, capture_output=True, check=False
+def _resolve_command(cmd: Sequence[str]) -> List[str]:
+    if not cmd:
+        raise ValueError("Command must include at least one argument")
+    executable = shutil.which(cmd[0])
+    if executable:
+        return [executable, *cmd[1:]]
+    return list(cmd)
+
+
+def _run_process(
+    cmd: Sequence[str],
+    *,
+    cwd: Path,
+    capture_output: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    resolved = _resolve_command(cmd)
+    return subprocess.run(  # nosec B603 - commands resolved from curated allowlist
+        resolved,
+        cwd=cwd,
+        text=True,
+        capture_output=capture_output,
+        check=False,
     )
+
+
+def run_git(args: Sequence[str], cwd: Path) -> subprocess.CompletedProcess[str]:
+    return _run_process(["git", *args], cwd=cwd)
 
 
 def parse_status(output: str) -> Dict[str, object]:
@@ -148,9 +173,7 @@ def parse_gitmodules(path: Path) -> List[Dict[str, str]]:
 
 
 def _run_command(cmd: Sequence[str], cwd: Path) -> List[str]:
-    completed = subprocess.run(
-        cmd, cwd=cwd, text=True, capture_output=True, check=False
-    )
+    completed = _run_process(cmd, cwd=cwd)
     logs: List[str] = []
     if completed.stdout:
         logs.append(completed.stdout.strip())
@@ -204,7 +227,15 @@ def run_repo_commands(
         if repo_path is None or not repo_path.exists():
             logs.append(f"Repo '{repo_name}' not found for repo-cmd")
             continue
-        logs.extend(_run_command(["bash", "-lc", raw], repo_path))
+        try:
+            command = shlex.split(raw)
+        except ValueError as exc:  # pragma: no cover - defensive guard
+            logs.append(f"Failed to parse repo command '{raw}': {exc}")
+            continue
+        if not command:
+            logs.append(f"Repo command '{entry}' is empty after parsing")
+            continue
+        logs.extend(_run_command(command, repo_path))
     return logs
 
 
@@ -259,38 +290,51 @@ def clean_untracked_entries(repos: Iterable[RepoStatus]) -> List[str]:
     return logs
 
 
+def _load_payload(raw_payload: str) -> Dict[str, object] | None:
+    try:
+        return json.loads(raw_payload)
+    except json.JSONDecodeError:
+        return None
+
+
+def _parse_payload_overrides(payload: Dict[str, object]) -> Dict[str, object]:
+    payload_input = payload.get("input")
+    if isinstance(payload_input, str):
+        try:
+            return json.loads(payload_input)
+        except json.JSONDecodeError:
+            return {}
+    if isinstance(payload_input, dict):
+        return payload_input  # type: ignore[return-value]
+    return {}
+
+
+def _apply_bool_override(
+    args: argparse.Namespace, overrides: Dict[str, object], key: str, attr: str
+) -> None:
+    if key in overrides and not getattr(args, attr):
+        setattr(args, attr, bool(overrides[key]))
+
+
 def apply_payload_overrides(args: argparse.Namespace) -> argparse.Namespace:
     raw_payload = os.environ.get("CAPABILITY_PAYLOAD") or os.environ.get(
         "CAPABILITY_INPUT"
     )
     if not raw_payload:
         return args
-    try:
-        payload = json.loads(raw_payload)
-    except json.JSONDecodeError:
+    payload = _load_payload(raw_payload)
+    if not payload:
         return args
-    overrides: Dict[str, object] = {}
-    payload_input = payload.get("input")
-    if isinstance(payload_input, str):
-        try:
-            overrides = json.loads(payload_input)
-        except json.JSONDecodeError:
-            overrides = {}
-    elif isinstance(payload_input, dict):
-        overrides = payload_input  # type: ignore[assignment]
+    overrides = _parse_payload_overrides(payload)
     if payload.get("output") and not args.json_path:
         args.json_path = str(payload["output"])
     if payload.get("check"):
         args.strict = True
-    if isinstance(overrides, dict):
-        if "cleanUntracked" in overrides and not args.clean_untracked:
-            args.clean_untracked = bool(overrides["cleanUntracked"])
-        if "syncSubmodules" in overrides and not args.sync_submodules:
-            args.sync_submodules = bool(overrides["syncSubmodules"])
-        if "publishArtifact" in overrides and not args.publish_artifact:
-            args.publish_artifact = bool(overrides["publishArtifact"])
-        if "strict" in overrides and not args.strict:
-            args.strict = bool(overrides["strict"])
+    if overrides:
+        _apply_bool_override(args, overrides, "cleanUntracked", "clean_untracked")
+        _apply_bool_override(args, overrides, "syncSubmodules", "sync_submodules")
+        _apply_bool_override(args, overrides, "publishArtifact", "publish_artifact")
+        _apply_bool_override(args, overrides, "strict", "strict")
     return args
 
 
@@ -306,73 +350,87 @@ def publish_json_artifact(payload: Dict[str, object], args: argparse.Namespace) 
     )
 
 
-def emit(report: Dict[str, object], args: argparse.Namespace) -> int:
-    root_status: RepoStatus = report["root"]
-    subs: List[RepoStatus] = report["submodules"]
-    dirty_subs = [
+def _collect_dirty_submodules(subs: Sequence[RepoStatus]) -> List[RepoStatus]:
+    return [
         repo
         for repo in subs
         if repo.tracked_lines or repo.untracked_lines or repo.ahead or repo.behind
     ]
 
-    print(
-        f"workspace: {root_status.summary()} (branch {root_status.branch}, HEAD {root_status.head})"
-    )
-    if root_status.tracked_lines:
-        print("  tracked changes:")
-        for line in root_status.tracked_lines[:10]:
-            print(f"    {line}")
-    if root_status.untracked_lines:
-        print("  untracked files:")
-        for line in root_status.untracked_lines[:10]:
-            print(f"    {line}")
-    if report["logs"]:
-        print("helper logs:")
-        for line in report["logs"]:
-            print(f"  {line}")
-    if dirty_subs:
-        print(f"submodules needing attention: {len(dirty_subs)}/{len(subs)}")
-        for repo in dirty_subs:
-            print(
-                f"- {repo.name}: {repo.summary()} (branch {repo.branch}, HEAD {repo.head})"
-            )
-            if repo.tracked_lines:
-                print("    tracked:")
-                for line in repo.tracked_lines[:3]:
-                    print(f"      {line}")
-            if repo.untracked_lines:
-                print("    untracked:")
-                for line in repo.untracked_lines[:3]:
-                    print(f"      {line}")
-    else:
-        print("all submodules clean")
 
-    payload = {
+def _print_repo_lines(header: str, lines: Sequence[str], limit: int) -> None:
+    if not lines:
+        return
+    print(header)
+    for line in lines[:limit]:
+        print(f"    {line}")
+
+
+def _print_submodule_details(dirty_subs: Sequence[RepoStatus], total: int) -> None:
+    if not dirty_subs:
+        print("all submodules clean")
+        return
+    print(f"submodules needing attention: {len(dirty_subs)}/{total}")
+    for repo in dirty_subs:
+        print(
+            f"- {repo.name}: {repo.summary()} (branch {repo.branch}, HEAD {repo.head})"
+        )
+        _print_repo_lines("    tracked:", repo.tracked_lines, 3)
+        _print_repo_lines("    untracked:", repo.untracked_lines, 3)
+
+
+def _build_payload(
+    root_status: RepoStatus, subs: Sequence[RepoStatus], logs: List[str]
+) -> Dict[str, object]:
+    return {
         "root": root_status.as_dict(),
         "submodules": [repo.as_dict() for repo in subs],
-        "logs": report["logs"],
+        "logs": logs,
     }
 
-    if args.json:
-        print(json.dumps(payload, indent=2, sort_keys=True))
 
-    if args.publish_artifact and not args.json_path:
-        args.json_path = str(DEFAULT_ARTIFACT_PATH)
-    publish_json_artifact(payload, args)
-
+def _determine_exit_code(
+    root_status: RepoStatus, dirty_subs: Sequence[RepoStatus], args: argparse.Namespace
+) -> int:
     strict_root = args.strict_root or args.strict
     strict_subs = args.strict_submodules or args.strict
-    exit_code = 0
     if strict_root and (
         root_status.tracked_lines
         or root_status.untracked_lines
         or root_status.ahead
         or root_status.behind
     ):
-        exit_code = 1
+        return 1
     if strict_subs and dirty_subs:
-        exit_code = 1
-    return exit_code
+        return 1
+    return 0
+
+
+def emit(report: Dict[str, object], args: argparse.Namespace) -> int:
+    root_status: RepoStatus = report["root"]
+    subs: List[RepoStatus] = report["submodules"]
+    logs: List[str] = report["logs"]
+    dirty_subs = _collect_dirty_submodules(subs)
+
+    print(
+        f"workspace: {root_status.summary()} (branch {root_status.branch}, HEAD {root_status.head})"
+    )
+    _print_repo_lines("  tracked changes:", root_status.tracked_lines, 10)
+    _print_repo_lines("  untracked files:", root_status.untracked_lines, 10)
+    if logs:
+        print("helper logs:")
+        for line in logs:
+            print(f"  {line}")
+    _print_submodule_details(dirty_subs, len(subs))
+
+    payload = _build_payload(root_status, subs, logs)
+    if args.json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+
+    if args.publish_artifact and not args.json_path:
+        args.json_path = str(DEFAULT_ARTIFACT_PATH)
+    publish_json_artifact(payload, args)
+    return _determine_exit_code(root_status, dirty_subs, args)
 
 
 def main() -> int:
@@ -404,7 +462,7 @@ def main() -> int:
         "--repo-cmd",
         action="append",
         default=[],
-        help="Run custom command inside a repo (format repo:command). May repeat.",
+        help="Run custom command inside a repo (format repo:command). Commands are tokenized with shlex, so shell features like && are not supported. May repeat.",
     )
     parser.add_argument(
         "--strict",

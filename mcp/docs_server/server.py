@@ -5,6 +5,7 @@ n00 Docs MCP Server
 Provides read-only access to n00 Cerebrum documentation via MCP tools.
 """
 
+import logging
 import re
 import sys
 from functools import lru_cache
@@ -18,6 +19,7 @@ except ImportError:
     raise
 
 mcp = FastMCP("n00-docs")
+logger = logging.getLogger(__name__)
 
 # Paths
 REPO_ROOT = Path(__file__).parent.parent.parent
@@ -47,7 +49,8 @@ def extract_tags_from_file(filepath: Path) -> list[str]:
             # Split by comma and clean up
             return [tag.strip() for tag in tags_str.split(",")]
         return []
-    except Exception:
+    except OSError as exc:
+        logger.warning("Failed to read tags from %s: %s", filepath, exc)
         return []
 
 
@@ -168,7 +171,8 @@ def search(query: str) -> list[dict[str, Any]]:
         adoc_file = page["file"]
         try:
             content = adoc_file.read_text(encoding="utf-8")
-        except Exception:
+        except OSError as exc:
+            logger.warning("Failed to read %s during search: %s", adoc_file, exc)
             continue
 
         lowered = content.lower()
@@ -216,12 +220,12 @@ def get_page(id: str) -> dict[str, Any]:
         try:
             html_content = html_path.read_text(encoding="utf-8")
             return {"id": page["id"], "format": "html", "content": html_content}
-        except Exception:
-            pass
+        except OSError as exc:
+            logger.warning("Failed to read rendered HTML %s: %s", html_path, exc)
 
     try:
         adoc_content = page["file"].read_text(encoding="utf-8")
-    except Exception as exc:
+    except OSError as exc:
         return {"id": page["id"], "error": f"Failed to read file: {exc}"}
 
     title_match = re.search(r"^=\s+(.+)$", adoc_content, re.MULTILINE)

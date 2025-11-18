@@ -6,9 +6,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import subprocess
+import subprocess  # nosec B404 - trusted workspace commands only
 import sys
 from pathlib import Path
+from shutil import which
 from typing import Iterable, List, Optional, Tuple
 
 from observability import initialize_tracing
@@ -17,6 +18,9 @@ WORKSPACE_ROOT = Path(__file__).resolve().parent
 ORG_ROOT = WORKSPACE_ROOT.parent
 SCRIPTS_ROOT = ORG_ROOT / ".dev" / "automation" / "scripts"
 TRUNK_TIMEOUT = int(os.environ.get("TRUNK_UPGRADE_TIMEOUT", "600"))
+GIT_BIN = which("git") or "git"
+if not GIT_BIN:
+    raise SystemExit("git executable not found in PATH")
 
 SUBREPO_MAP = {
     "workspace": WORKSPACE_ROOT,
@@ -44,8 +48,23 @@ def iter_repos(selected: Optional[Iterable[str]] = None) -> List[Tuple[str, Path
     return repos
 
 
-def run(cmd: List[str], cwd: Path) -> None:
-    subprocess.run(cmd, check=True, cwd=cwd)
+def run(
+    cmd: List[str],
+    cwd: Path,
+    *,
+    capture_output: bool = False,
+    text: bool = True,
+    check: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    """Execute trusted workspace commands with consistent subprocess defaults."""
+
+    return subprocess.run(  # nosec B603 - commands are workspace-managed and vetted
+        cmd,
+        check=check,
+        cwd=cwd,
+        capture_output=capture_output,
+        text=text,
+    )
 
 
 def run_script(script_name: str, *args: str) -> None:
@@ -68,8 +87,8 @@ def status_report() -> None:
     for name, repo_path in repos:
         if not repo_path.exists():
             continue
-        result = subprocess.run(
-            ["git", "status", "-sb"],
+        result = run(
+            [GIT_BIN, "status", "-sb"],
             cwd=repo_path,
             text=True,
             capture_output=True,
@@ -124,11 +143,11 @@ def ensure_repo_remote(repo: str, path: Path, apply_changes: bool) -> None:
         print(f"[remotes] {repo}: path missing ({path})")
         return
     is_repo = (
-        subprocess.run(
-            ["git", "rev-parse", "--is-inside-work-tree"],
+        run(
+            [GIT_BIN, "rev-parse", "--is-inside-work-tree"],
             cwd=path,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
             check=False,
         ).returncode
         == 0
@@ -136,8 +155,8 @@ def ensure_repo_remote(repo: str, path: Path, apply_changes: bool) -> None:
     if not is_repo:
         print(f"[remotes] {repo}: not a git repository, skipping")
         return
-    current = subprocess.run(
-        ["git", "remote"],
+    current = run(
+        [GIT_BIN, "remote"],
         cwd=path,
         text=True,
         capture_output=True,
@@ -147,8 +166,8 @@ def ensure_repo_remote(repo: str, path: Path, apply_changes: bool) -> None:
     if repo in remotes:
         print(f"[remotes] {repo}: remote already configured")
         return
-    origin_url = subprocess.run(
-        ["git", "remote", "get-url", "origin"],
+    origin_url = run(
+        [GIT_BIN, "remote", "get-url", "origin"],
         cwd=path,
         text=True,
         capture_output=True,
@@ -163,7 +182,7 @@ def ensure_repo_remote(repo: str, path: Path, apply_changes: bool) -> None:
         )
         return
     url = origin_url.stdout.strip()
-    subprocess.run(["git", "remote", "add", repo, url], cwd=path, check=True)
+    run([GIT_BIN, "remote", "add", repo, url], cwd=path)
     print(f"[remotes] {repo}: added remote alias -> {url}")
 
 
@@ -193,9 +212,14 @@ def run_trunk_upgrade(targets: Optional[Iterable[str]]) -> None:
     run_script("trunk-upgrade.sh", *args)
 
 
-def main() -> int:
-    # Best-effort OTLP tracing so automation runs show up in the shared collector.
-    initialize_tracing("n00tropic-workspace-cli")
+PROJECT_COMMAND_SCRIPTS = {
+    "capture": "project-capture.sh",
+    "sync-github": "project-sync-github.sh",
+    "sync-erpnext": "project-sync-erpnext.sh",
+}
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="n00tropic cerebrum orchestrator")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -234,7 +258,7 @@ def main() -> int:
         "--apply", action="store_true", help="Persist fixes to disk."
     )
 
-    for name in ("capture", "sync-github", "sync-erpnext"):
+    for name in PROJECT_COMMAND_SCRIPTS:
         cmd_parser = subparsers.add_parser(
             name, help=f"{name.replace('-', ' ').title()} a metadata document."
         )
@@ -312,66 +336,107 @@ def main() -> int:
         help="Add the missing remote alias using the origin URL when needed.",
     )
 
-    args = parser.parse_args()
+    return parser
 
-    if args.command == "radar":
-        run_script("project-lifecycle-radar.sh")
-    elif args.command == "preflight":
-        cmd: List[str] = []
-        if args.paths:
-            cmd.extend(["--paths", *args.paths])
-        if args.include_registry:
-            cmd.append("--include-registry")
-        run_script("project-preflight-batch.sh", *cmd)
-    elif args.command == "control-panel":
-        run_script("project-control-panel.sh")
-    elif args.command == "autofix-links":
-        cmd: List[str] = []
-        if args.path_list:
-            for path in args.path_list:
-                cmd.extend(["--path", path])
-        if args.all:
-            cmd.append("--all")
-        if args.apply:
-            cmd.append("--apply")
-        run_script("project-autofix-links.sh", *cmd)
-    elif args.command in {"capture", "sync-github", "sync-erpnext"}:
-        if args.command == "capture":
-            script_name = "project-capture.sh"
-        elif args.command == "sync-github":
-            script_name = "project-sync-github.sh"
-        else:
-            script_name = "project-sync-erpnext.sh"
-        run_script(script_name, "--path", args.path)
-    elif args.command == "doctor":
-        flags: List[str] = []
-        if args.strict:
-            flags.append("--strict")
-        run_workspace_script("workspace-gitdoctor-capability.sh", *flags)
-    elif args.command == "upgrade-tools":
-        flags = ["--apply"] if args.apply else []
-        run_script("get-latest-tool-versions.py", *flags)
-    elif args.command == "status":
-        status_report()
-    elif args.command == "manifest":
-        read_manifest(Path(args.path))
-    elif args.command == "capabilities":
-        list_capabilities(args.id)
-    elif args.command == "trunk-upgrade":
-        run_trunk_upgrade(args.repos)
-    elif args.command == "trunk":
-        if args.subcommand == "upgrade":
-            run_trunk_upgrade(args.repos)
-        else:  # pragma: no cover
-            raise SystemExit(f"Unsupported trunk subcommand: {args.subcommand}")
-    elif args.command == "remotes":
-        targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
-        for name, path in iter_repos(targets):
-            ensure_repo_remote(name, path, args.apply)
-    else:  # pragma: no cover - safety net
+
+def handle_radar(_: argparse.Namespace) -> None:
+    run_script("project-lifecycle-radar.sh")
+
+
+def handle_preflight(args: argparse.Namespace) -> None:
+    cmd: List[str] = []
+    if args.paths:
+        cmd.extend(["--paths", *args.paths])
+    if args.include_registry:
+        cmd.append("--include-registry")
+    run_script("project-preflight-batch.sh", *cmd)
+
+
+def handle_control_panel(_: argparse.Namespace) -> None:
+    run_script("project-control-panel.sh")
+
+
+def handle_autofix_links(args: argparse.Namespace) -> None:
+    cmd: List[str] = []
+    for path in args.path_list:
+        cmd.extend(["--path", path])
+    if args.all:
+        cmd.append("--all")
+    if args.apply:
+        cmd.append("--apply")
+    run_script("project-autofix-links.sh", *cmd)
+
+
+def handle_project_command(args: argparse.Namespace) -> None:
+    script_name = PROJECT_COMMAND_SCRIPTS[args.command]
+    run_script(script_name, "--path", args.path)
+
+
+def handle_doctor(args: argparse.Namespace) -> None:
+    flags: List[str] = ["--strict"] if args.strict else []
+    run_workspace_script("workspace-gitdoctor-capability.sh", *flags)
+
+
+def handle_upgrade_tools(args: argparse.Namespace) -> None:
+    flags = ["--apply"] if args.apply else []
+    run_script("get-latest-tool-versions.py", *flags)
+
+
+def handle_status(_: argparse.Namespace) -> None:
+    status_report()
+
+
+def handle_manifest(args: argparse.Namespace) -> None:
+    read_manifest(Path(args.path))
+
+
+def handle_capabilities(args: argparse.Namespace) -> None:
+    list_capabilities(args.id)
+
+
+def handle_trunk_upgrade(args: argparse.Namespace) -> None:
+    run_trunk_upgrade(args.repos)
+
+
+def handle_trunk_alias(args: argparse.Namespace) -> None:
+    run_trunk_upgrade(args.repos)
+
+
+def handle_remotes(args: argparse.Namespace) -> None:
+    targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
+    for name, path in iter_repos(targets):
+        ensure_repo_remote(name, path, args.apply)
+
+
+COMMAND_HANDLERS = {
+    "radar": handle_radar,
+    "preflight": handle_preflight,
+    "control-panel": handle_control_panel,
+    "autofix-links": handle_autofix_links,
+    "capture": handle_project_command,
+    "sync-github": handle_project_command,
+    "sync-erpnext": handle_project_command,
+    "doctor": handle_doctor,
+    "upgrade-tools": handle_upgrade_tools,
+    "status": handle_status,
+    "manifest": handle_manifest,
+    "capabilities": handle_capabilities,
+    "trunk-upgrade": handle_trunk_upgrade,
+    "trunk": handle_trunk_alias,
+    "remotes": handle_remotes,
+}
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    # Best-effort OTLP tracing so automation runs show up in the shared collector.
+    initialize_tracing("n00tropic-workspace-cli")
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    handler = COMMAND_HANDLERS.get(args.command)
+    if not handler:
         parser.print_help()
         return 1
-
+    handler(args)
     return 0
 
 

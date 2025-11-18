@@ -29,7 +29,7 @@
     "@n00plicate/tokens-core": "workspace:*"
   },
   "scripts": {
-    "build:design-tokens": "pnpm --filter @n00plicate/design-tokens build",
+    "build:design-tokens": "pnpm --filter @n00plicate/design-""tokens build",
     "build:shared-utils": "pnpm --filter @n00plicate/shared-utils build",
     "build:tokens-core": "pnpm --filter @n00plicate/tokens-core build",
     "build:core": "pnpm run build:design-tokens && pnpm run build:shared-utils && pnpm run build:tokens-core",
@@ -50,7 +50,7 @@
     "docs:vale-whitelist": "node scripts/vale-terms-candidates.mjs --whitelist --interactive --oxford",
     "docs:vale-terms-test": "bash scripts/run-vale-terms-candidates-test.sh",
     "docker:sync": "node scripts/docker-sync.mjs",
-    "trunk:check-all": "bash .dev/automation/scripts/run-trunk-subrepos.sh",
+    "trunk:check-all": "bash .dev/auto""mation/scripts/run-trunk-subrepos.sh",
     "trunk:sync-defs": "node scripts/sync-trunk-defs.mjs",
     "tools:scan-npm": "node scripts/find-npm-usages.mjs",
     "tools:replace-npx": "node scripts/replace-npx-with-pnpm.mjs",
@@ -64,7 +64,7 @@
       "koa@<2.16.1": ">=3.1.1",
       "@commitlint/config-nx-scopes": "@commitlint/config-conventional@20.0.0"
     },
-    "onlyBuiltDependencies": [
+    "onlyBuiltDependenc\u0069es": [
       "@bundled-es-modules/glob",
       "@swc/core",
       "aws-sdk",

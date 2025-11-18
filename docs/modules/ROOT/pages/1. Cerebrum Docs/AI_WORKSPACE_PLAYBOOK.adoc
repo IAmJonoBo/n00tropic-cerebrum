@@ -1,5 +1,5 @@
 // vale Microsoft.Terms = NO
-= AI & agent workspace playbook
+= Artificial intelligence and agent workspace playbook
 // vale Microsoft.Terms = YES
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
@@ -34,7 +34,7 @@ plus every submodule. ____
 * The script writes `artifacts/workspace-health.json`, which automation clients can parse to
  decide which submodule needs attention and whether the workspace root is
  ahead/behind origin.
-== Sanity checks & auto remediation
+== Sanity checks and auto remediation
 
 |=== | Need | Command | Notes
 
@@ -68,7 +68,7 @@ Causes a non-zero exit when anything is dirty/diverged. |===
 * Results are persisted automatically when the runner sets
  `CAPABILITY_PAYLOAD.output`, so automation clients always have a JSON artefact to inspect
  after the run.
-=== Sample MCP payload
+=== Sample automation payload (MCP)
 
 [,json]
 ----

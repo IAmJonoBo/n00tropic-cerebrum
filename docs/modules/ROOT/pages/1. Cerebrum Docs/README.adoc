@@ -1,4 +1,4 @@
-= Cerebrum Documentation Hub
+= Cerebrum documentation hub
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 
@@ -12,7 +12,7 @@ that affect multiple generators at once.
 └── ADR/ # Architecture Decision Records for the workspace
 ----
 
-== Using This Folder
+== Using this folder
 
 . *Workspace ADRs* -- Store cross-cutting architectural decisions under `ADR/`
 and follow the naming pattern `ADR-XXX-title.md` (three-digit sequence).
@@ -27,7 +27,7 @@ into the latest workspace drop.
 here and update the Toolchain manifest at
 `../n00-cortex/data/toolchain-manifest.json` alongside affected ADRs.
 
-== Related References
+== Related references
 
 * Root workspace map: `../README`
 * Repo ADR indices:
@@ -38,7 +38,7 @@ here and update the Toolchain manifest at
 * Renovate governance: `RENOVATE_SETUP.md`
 * Trunk CI guidance: `TRUNK_GUIDE.md`
 
-== Current Workspace ADRs
+== Current workspace ADRs
 
 // vale Vale.Terms = NO
 // vale Microsoft.Terms = NO
