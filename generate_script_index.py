@@ -1,271 +1,399 @@
 #!/usr/bin/env python3
-"""
-Script Index Generator for n00tropic Polyrepo
+"""Generate Markdown + Antora script indices for the n00tropic polyrepo."""
 
-This script scans the entire workspace for executable scripts and organizes them
-into a categorized index. It generates a Markdown file with sections for easy
-navigation by agents and developers.
+from __future__ import annotations
 
-Usage:
-    python generate_script_index.py
-
-The generated index will be saved as 'script_index.md' in the current directory.
-"""
-
+import argparse
+import datetime
 import os
 import pathlib
 import re
 from collections import defaultdict
-from typing import Dict, List, Tuple
+from dataclasses import dataclass
+from typing import Dict, Iterable, List
 
-# Script extensions to look for
 SCRIPT_EXTENSIONS = {
     ".sh",
     ".bash",
     ".zsh",
-    ".fish",  # Shell scripts
+    ".fish",
     ".py",
-    ".pyc",  # Python
     ".js",
     ".mjs",
-    ".cjs",  # JavaScript
+    ".cjs",
     ".ts",
-    ".tsx",  # TypeScript
-    ".rb",  # Ruby
+    ".tsx",
+    ".rb",
     ".pl",
-    ".pm",  # Perl
-    ".php",  # PHP
-    ".go",  # Go
-    ".rs",  # Rust
-    ".java",  # Java
-    ".scala",  # Scala
-    ".kt",  # Kotlin
-    ".cs",  # C#
+    ".pm",
+    ".php",
+    ".go",
+    ".rs",
+    ".java",
+    ".scala",
+    ".kt",
+    ".cs",
     ".cpp",
     ".cc",
     ".cxx",
-    ".c++",  # C++
-    ".c",  # C
-    ".swift",  # Swift
-    ".dart",  # Dart
-    ".lua",  # Lua
+    ".c++",
+    ".c",
+    ".swift",
+    ".dart",
+    ".lua",
     ".r",
-    ".R",  # R
-    ".sql",  # SQL (sometimes executable)
-    ".ps1",  # PowerShell
+    ".sql",
+    ".ps1",
     ".bat",
-    ".cmd",  # Windows batch
+    ".cmd",
 }
 
-# Directories to ignore
+NORMALIZED_SCRIPT_EXTENSIONS = {ext.lower() for ext in SCRIPT_EXTENSIONS}
+
 IGNORE_DIRS = {
+    ".bench-cli",
+    ".cypress",
     ".git",
-    "node_modules",
-    "__pycache__",
-    ".pytest_cache",
+    ".idea",
     ".mypy_cache",
-    ".tox",
-    "venv",
-    "env",
-    ".env",
-    "build",
-    "dist",
-    "target",
-    "bin",
-    "obj",
     ".next",
     ".nuxt",
-    ".vuepress",
+    ".pytest_cache",
+    ".tox",
+    ".vscode",
+    "Thumbs.db",
+    "__pycache__",
+    "artifacts",
+    "assets",
+    "bin",
+    "build",
+    "dist",
+    "docs",
+    "env",
+    "images",
+    "lib",
+    "node_modules",
+    "obj",
     "public",
     "static",
-    "assets",
-    "images",
-    "docs",
-    ".vscode",
-    ".idea",
-    ".DS_Store",
-    "Thumbs.db",
+    "target",
+    "vendor",
 }
 
+BINARY_EXTENSIONS = {".pyc"}
 
-def is_script_file(file_path: pathlib.Path) -> bool:
-    """Check if a file is a script based on shebang or executable permission."""
-    if os.access(file_path, os.X_OK):
-        return True
-    try:
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-            first_line = f.readline().strip()
-            if first_line.startswith("#!"):
-                return True
-    except OSError:
-        pass
-    return False
+REPO_ROOT = pathlib.Path(__file__).parent.resolve()
+DEFAULT_WORKSPACE_ROOT = pathlib.Path("/Volumes/APFS Space/n00tropic")
+DEFAULT_MARKDOWN_OUTPUT = REPO_ROOT / "script_index.md"
+DEFAULT_ADOC_OUTPUT = REPO_ROOT / "docs/modules/ROOT/pages/script-index.adoc"
+
+
+@dataclass
+class ScriptRecord:
+    """Metadata describing a discovered script."""
+
+    repo: str
+    category: str
+    relative_path: pathlib.Path
+    absolute_path: pathlib.Path
+    description: str
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Scan the workspace for scripts and emit Markdown/AsciiDoc indices.",
+    )
+    parser.add_argument(
+        "--workspace-root",
+        default=str(DEFAULT_WORKSPACE_ROOT),
+        help="Absolute path to the /Volumes/APFS Space/n00tropic workspace root.",
+    )
+    parser.add_argument(
+        "--markdown-output",
+        default=str(DEFAULT_MARKDOWN_OUTPUT),
+        help="Path for the generated Markdown index (defaults to script_index.md).",
+    )
+    parser.add_argument(
+        "--adoc-output",
+        default=str(DEFAULT_ADOC_OUTPUT),
+        help="Path for the generated Antora page (defaults to docs/modules/ROOT/pages/script-index.adoc).",
+    )
+    return parser.parse_args()
+
+
+def extract_first_sentence(text: str) -> str:
+    normalized = text.strip()
+    if not normalized:
+        return "No description available"
+    match = re.search(r"(.+?[.!?])(\s|$)", normalized)
+    if match:
+        return match.group(1).strip()
+    return normalized
 
 
 def get_script_description(file_path: pathlib.Path) -> str:
-    """Extract description from script comments."""
     try:
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-            lines = f.readlines()[:20]  # Read first 20 lines
-            description = []
-            for line in lines:
-                line = line.strip()
-                if line.startswith("#") and not line.startswith("#!"):
-                    # Remove leading # and spaces
-                    desc_line = re.sub(r"^#\s*", "", line)
-                    if desc_line:
-                        description.append(desc_line)
-                elif line.startswith('"""') or line.startswith("'''"):
-                    # Python docstring
-                    docstring_lines = []
-                    for next_line in lines[lines.index(line) + 1 :]:
-                        if next_line.strip().endswith(
-                            '"""'
-                        ) or next_line.strip().endswith("'''"):
-                            break
-                        docstring_lines.append(next_line.strip())
-                    description.extend(
-                        docstring_lines[:3]
-                    )  # First 3 lines of docstring
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as handle:
+            lines: List[str] = []
+            for _ in range(40):
+                line = handle.readline()
+                if not line:
                     break
-                elif line and not line.startswith("#"):
-                    break  # Stop at first non-comment line
-            return (
-                " ".join(description).strip()
-                if description
-                else "No description available"
-            )
+                lines.append(line)
     except OSError:
         return "Unable to read description"
 
+    docstring_buffer: List[str] = []
+    in_docstring = False
+    delimiter = ""
 
-def categorize_scripts(
-    workspace_root: pathlib.Path,
-) -> Dict[str, List[Tuple[pathlib.Path, str]]]:
-    """Scan workspace and categorize scripts by their containing directory."""
-    scripts_by_category = defaultdict(list)
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line:
+            continue
+        if not in_docstring and line.startswith("#!"):
+            continue
+        if line.startswith(("'''", '"""')):
+            token = line[:3]
+            content = line[3:]
+            if not in_docstring:
+                in_docstring = True
+                delimiter = token
+                if content.endswith(token):
+                    inner = content[:-3].strip()
+                    if inner:
+                        docstring_buffer.append(inner)
+                    break
+                if content.strip():
+                    docstring_buffer.append(content.strip())
+                continue
+            if content.endswith(token):
+                inner = content[:-3].strip()
+                if inner:
+                    docstring_buffer.append(inner)
+                break
+            continue
+        if in_docstring:
+            if delimiter and line.endswith(delimiter):
+                inner = line[:-3].strip()
+                if inner:
+                    docstring_buffer.append(inner)
+                break
+            docstring_buffer.append(line)
+            continue
+        if line.startswith("#"):
+            candidate = line.lstrip("#").strip()
+            if candidate:
+                return extract_first_sentence(candidate)
+        if line.startswith("//"):
+            candidate = line.lstrip("/").strip()
+            if candidate:
+                return extract_first_sentence(candidate)
+        break
+
+    if docstring_buffer:
+        return extract_first_sentence(" ".join(docstring_buffer))
+    return "No description available"
+
+
+def is_script_file(file_path: pathlib.Path) -> bool:
+    if file_path.suffix.lower() in BINARY_EXTENSIONS:
+        return False
+    if file_path.suffix.lower() in NORMALIZED_SCRIPT_EXTENSIONS:
+        return True
+    if os.access(file_path, os.X_OK):
+        return True
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as handle:
+            first_line = handle.readline().strip()
+            return first_line.startswith("#!")
+    except OSError:
+        return False
+
+
+def discover_scripts(workspace_root: pathlib.Path) -> List[ScriptRecord]:
+    records: List[ScriptRecord] = []
+    ignore_dirs = {entry.lower() for entry in IGNORE_DIRS}
 
     for root, dirs, files in os.walk(workspace_root):
-        # Remove ignored directories
-        dirs[:] = [d for d in dirs if d not in IGNORE_DIRS]
-
+        dirs[:] = [
+            d for d in dirs if d.lower() not in ignore_dirs and not d.endswith(".app")
+        ]
         root_path = pathlib.Path(root)
-        # Determine category based on relative path from workspace root
-        try:
-            relative_path = root_path.relative_to(workspace_root)
-            if relative_path == pathlib.Path("."):
-                category = "Root Scripts"
-            else:
-                # Use the first part of the path as category
-                category_parts = []
-                for part in relative_path.parts:
-                    if part not in IGNORE_DIRS and not part.startswith("."):
-                        category_parts.append(part)
-                        break
-                category = (
-                    "/".join(category_parts) if category_parts else "Miscellaneous"
+        for file_name in files:
+            file_path = root_path / file_name
+            if not file_path.is_file():
+                continue
+            if file_path.suffix.lower() in BINARY_EXTENSIONS:
+                continue
+            if not is_script_file(file_path):
+                continue
+            try:
+                relative_path = file_path.relative_to(workspace_root)
+            except ValueError:
+                continue
+            parts = relative_path.parts
+            repo = parts[0] if parts else workspace_root.name
+            within_repo = (
+                pathlib.Path(*parts[1:]) if len(parts) > 1 else pathlib.Path(file_name)
+            )
+            category_path = within_repo.parent.as_posix()
+            category = (
+                category_path
+                if category_path and category_path != "."
+                else "(repo root)"
+            )
+            description = get_script_description(file_path)
+            records.append(
+                ScriptRecord(
+                    repo=repo,
+                    category=category,
+                    relative_path=relative_path,
+                    absolute_path=file_path,
+                    description=description,
                 )
-        except ValueError:
-            category = "Miscellaneous"
+            )
+    return records
 
-        for file in files:
-            file_path = root_path / file
-            if is_script_file(file_path):
-                description = get_script_description(file_path)
-                scripts_by_category[category].append((file_path, description))
 
-    # Sort scripts within each category by filename
-    for category in scripts_by_category:
-        scripts_by_category[category].sort(key=lambda x: x[0].name.lower())
+def build_repo_map(
+    records: Iterable[ScriptRecord],
+) -> Dict[str, Dict[str, List[ScriptRecord]]]:
+    repo_map: Dict[str, Dict[str, List[ScriptRecord]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
+    for record in records:
+        repo_map[record.repo][record.category].append(record)
+    for repo in repo_map:
+        for category in repo_map[repo]:
+            repo_map[repo][category].sort(
+                key=lambda rec: rec.relative_path.as_posix().lower()
+            )
+    return repo_map
 
-    return dict(scripts_by_category)
+
+def count_totals(repo_map: Dict[str, Dict[str, List[ScriptRecord]]]) -> Dict[str, int]:
+    repos = len(repo_map)
+    categories = sum(len(categories) for categories in repo_map.values())
+    scripts = sum(
+        len(items) for categories in repo_map.values() for items in categories.values()
+    )
+    return {"repos": repos, "categories": categories, "scripts": scripts}
 
 
 def generate_markdown_index(
-    scripts_by_category: Dict[str, List[Tuple[pathlib.Path, str]]],
-    workspace_root: pathlib.Path,
+    repo_map: Dict[str, Dict[str, List[ScriptRecord]]], workspace_root: pathlib.Path
 ) -> str:
-    """Generate Markdown content for the script index."""
-    lines = []
+    totals = count_totals(repo_map)
+    lines: List[str] = []
     lines.append("# n00tropic Polyrepo Script Index")
     lines.append("")
     lines.append(
-        "This index automatically catalogs all scripts across the n00tropic polyrepo."
+        "This index automatically catalogues scripts across the workspace for agents and maintainers."
     )
-    lines.append("Generated by `generate_script_index.py`.")
-    lines.append("")
     lines.append(f"**Workspace Root:** `{workspace_root}`")
-    lines.append(f"**Total Categories:** {len(scripts_by_category)}")
-    total_scripts = sum(len(scripts) for scripts in scripts_by_category.values())
-    lines.append(f"**Total Scripts:** {total_scripts}")
-    lines.append("")
-    lines.append("## Categories")
+    lines.append(f"**Repositories Scanned:** {totals['repos']}")
+    lines.append(f"**Categories:** {totals['categories']}")
+    lines.append(f"**Total Scripts:** {totals['scripts']}")
     lines.append("")
 
-    # Table of contents
-    for category in sorted(scripts_by_category.keys()):
-        count = len(scripts_by_category[category])
-        anchor = category.lower().replace("/", "-").replace(" ", "-")
-        lines.append(f"- [{category}](#{anchor}) ({count} scripts)")
-
-    lines.append("")
-    lines.append("---")
-    lines.append("")
-
-    # Detailed sections
-    for category in sorted(scripts_by_category.keys()):
-        lines.append(f"## {category}")
+    for repo in sorted(repo_map):
+        repo_categories = repo_map[repo]
+        repo_total = sum(len(items) for items in repo_categories.values())
+        lines.append(f"## {repo}")
         lines.append("")
-        scripts = scripts_by_category[category]
-        lines.append(f"**{len(scripts)} scripts**")
+        lines.append(
+            f"**{repo_total} scripts across {len(repo_categories)} categories.**"
+        )
+        lines.append("")
+        for category in sorted(repo_categories):
+            category_records = repo_categories[category]
+            lines.append(f"### {repo} / {category} ({len(category_records)} scripts)")
+            lines.append("")
+            for record in category_records:
+                lines.append(f"#### `{record.relative_path}`")
+                lines.append("")
+                lines.append(record.description)
+                try:
+                    stat = record.absolute_path.stat()
+                    size_kb = stat.st_size / 1024
+                    modified = datetime.datetime.fromtimestamp(
+                        stat.st_mtime
+                    ).isoformat()
+                    lines.append(f"- **Size:** {size_kb:.1f} KB")
+                    lines.append(f"- **Modified:** {modified}")
+                except OSError:
+                    lines.append("- **Size:** unavailable")
+                lines.append("- **Repository:** `{}`".format(record.repo))
+                lines.append(f"- **Category:** `{record.category}`")
+                lines.append("")
+        lines.append("---")
         lines.append("")
 
-        for script_path, description in scripts:
-            relative_path = script_path.relative_to(workspace_root)
-            lines.append(f"### `{relative_path}`")
-            lines.append("")
-            lines.append(f"{description}")
-            lines.append("")
+    lines.append(
+        '*This index is automatically generated. To update, run `python generate_script_index.py --workspace-root "/Volumes/APFS Space/n00tropic"`.*'
+    )
+    lines.append("")
+    return "\n".join(lines)
 
-            # Add file info
-            try:
-                stat = script_path.stat()
-                size_kb = stat.st_size / 1024
-                lines.append(f"- **Size:** {size_kb:.1f} KB")
-                lines.append(f"- **Modified:** {stat.st_mtime}")
-            except OSError:
-                pass
-            lines.append("")
 
-    lines.append("---")
+def generate_adoc_summary(repo_map: Dict[str, Dict[str, List[ScriptRecord]]]) -> str:
+    totals = count_totals(repo_map)
+    reviewed = datetime.date.today().isoformat()
+    lines: List[str] = []
+    lines.append("= Script index")
+    lines.append(
+        ":page-tags: diataxis:reference, domain:platform, audience:operator, stability:beta"
+    )
+    lines.append(f":reviewed: {reviewed}")
+    lines.append("// vale Vale.Terms = NO")
     lines.append("")
     lines.append(
-        "*This index is automatically generated. To update, run `python generate_script_index.py`.*"
+        f"This page summarises {totals['scripts']} scripts across {totals['repos']} repositories and {totals['categories']} categories."
     )
+    lines.append(
+        "For the exhaustive Markdown export, open `script_index.md` at the workspace root."
+    )
+    lines.append("")
+    lines.append("== Repository summary")
+    lines.append("")
+
+    for repo in sorted(repo_map):
+        repo_categories = repo_map[repo]
+        repo_total = sum(len(items) for items in repo_categories.values())
+        lines.append(f"*Repository:* `{repo}` ({repo_total} scripts)")
+        lines.append("")
+        for category in sorted(repo_categories):
+            count = len(repo_categories[category])
+            lines.append(f"* `{category}`: {count} scripts")
+        lines.append("")
 
     return "\n".join(lines)
 
 
-def main():
-    """Entry point for generating the script index from the workspace."""
-    workspace_root = pathlib.Path("/Volumes/APFS Space/n00tropic")
-    output_file = pathlib.Path(__file__).parent / "script_index.md"
+def main() -> None:
+    args = parse_args()
+    workspace_root = pathlib.Path(args.workspace_root).expanduser().resolve()
+    markdown_output = pathlib.Path(args.markdown_output).resolve()
+    adoc_output = pathlib.Path(args.adoc_output).resolve()
 
     print(f"Scanning workspace: {workspace_root}")
-    scripts_by_category = categorize_scripts(workspace_root)
-    total_found = sum(len(s) for s in scripts_by_category.values())
-    category_count = len(scripts_by_category)
+    records = discover_scripts(workspace_root)
+    repo_map = build_repo_map(records)
+    totals = count_totals(repo_map)
     print(
-        f"Found {total_found} scripts in {category_count} categories",
+        f"Found {totals['scripts']} scripts across {totals['categories']} categories in {totals['repos']} repositories",
     )
 
-    print(f"Generating index at: {output_file}")
-    markdown_content = generate_markdown_index(scripts_by_category, workspace_root)
+    print(f"Writing Markdown index to: {markdown_output}")
+    markdown_output.write_text(
+        generate_markdown_index(repo_map, workspace_root), encoding="utf-8"
+    )
 
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(markdown_content)
+    print(f"Writing Antora summary to: {adoc_output}")
+    adoc_output.write_text(generate_adoc_summary(repo_map), encoding="utf-8")
 
-    print("Script index generated successfully!")
+    print("Script indices generated successfully!")
 
 
 if __name__ == "__main__":

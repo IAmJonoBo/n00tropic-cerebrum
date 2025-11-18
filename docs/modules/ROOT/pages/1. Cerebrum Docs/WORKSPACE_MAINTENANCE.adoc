@@ -1,11 +1,11 @@
-= Workspace Maintenance Runbook
+= Workspace maintenance runbook
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
-:reviewed: 2025-11-11
+:reviewed: 2025-11-18
 
 This guide keeps the federated workspace healthy whether you are preparing a
 pull request or refreshing a long-lived clone.
 
-== 1. Assess the Workspace
+== 1. Assess the workspace
 
 [,bash]
 ----
@@ -14,16 +14,16 @@ pull request or refreshing a long-lived clone.
 
 * *Goal*: ensure every submodule is clean and aligned with its upstream.
 * `--publish-artifact` writes the JSON snapshot to
- `artifacts/workspace-health.json` so agents and ci can ingest it without
+ `artifacts/workspace-health.json` so agents and CI can import it without
  rerunning the script.
 * Add `--sync-submodules` when reviving a stale clone, or `--fix-all` to run
  submodule + trunk sync together.
-* Use `--clean-untracked` to safely drop generated files; it only runs `git clean
+* Use `--clean-untracked` to drop generated files; it only runs `git clean
  -fd` inside repos that have no tracked changes.
 * Use `--repo-cmd n00-cortex:"git status -sb"` for quick targeted diagnostics.
 * See `AI_WORKSPACE_PLAYBOOK.md` for the agent-oriented cheatsheet (workspace
  topology, payload formats, and remediation flow).
-== 2. Fix Drift (if needed)
+== 2. Fix drift (if needed)
 
 |=== | Scenario | Action
 
@@ -41,7 +41,7 @@ checkout -- .+` or run `+workspace-health --repo-cmd <Repo>:"git checkout --
 
 | Workspace root dirty | Commit or stash before release automation |===
 
-== 3. Run Cross-Repo Checks
+== 3. Run cross-repo checks
 
 [,bash]
 ----
@@ -51,7 +51,7 @@ checkout -- .+` or run `+workspace-health --repo-cmd <Repo>:"git checkout --
 This script runs schema validation, Renovate preset verification, CVE scans, and
 other repo-specific linters.
 
-== 4. Validate Delivery Artefacts
+== 4. Validate delivery artefacts
 
 For any metadata-bearing document (ideas, jobs, projects):
 
@@ -63,16 +63,16 @@ For any metadata-bearing document (ideas, jobs, projects):
 Preflight chains capture, GitHub sync, and ERPNext sync to confirm IDs, links,
 and review cadence before you share updates.
 
-== 5. Document & Ship
+== 5. Document and ship
 
 . Capture relevant ADRs in `1. Cerebrum Docs/ADR/`. . Commit per-Repo changes
 and push. . Run `./.dev/automation/scripts/workspace-release.sh` when tagging a
 coordinated drop so release manifests stay in sync.
 
-TIP: wire the workflow above into automation pipelines (Trunk, ci) to fail fast
+TIP: wire the workflow described earlier into automation pipelines (Trunk, CI) to fail fast
 whenever the workspace drifts.
 
-== AI / Agent Quick Reference
+== Automation and agent quick reference
 
 * Preferred capability: `workspace.gitDoctor` (backed by `workspace-health.sh`).
  Payload keys include `cleanUntracked`, `syncSubmodules`, `publishArtifact`, and

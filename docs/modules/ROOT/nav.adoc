@@ -3,6 +3,8 @@
 * xref:README.adoc[Legacy README]
 * xref:contributing.adoc[Docs Contribution Playbook]
 * xref:search/index.adoc[Search & MCP]
+* xref:script-index.adoc[Script Index]
+* xref:pnpm-migration.adoc[pnpm Migration Guide]
 * Legacy imports
 ** xref:++1. Cerebrum Docs/README.adoc++[Cerebrum Knowledge Hub]
 *** xref:++1. Cerebrum Docs/AI_WORKSPACE_PLAYBOOK.adoc++[AI Workspace Playbook]

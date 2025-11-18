@@ -1,4 +1,4 @@
 [NOTE]
 ====
-The n00 ecosystem docs follow the Diátaxis model. Every page declares its intent via `:page-tags:` so navigation, search, and MCP tools can slice content by learning mode, domain, and audience. When unsure, bias toward **how-to** for step-by-step instructions and **reference** for exhaustive specs.
+The n00 ecosystem docs follow the Diátaxis model. Every page declares its intent via `:page-tags:` so navigation, search, and MCP integrations can slice content by learning mode, domain, and audience. When unsure, bias toward **how-to** for step-by-step instructions and **reference** for exhaustive specs.
 ====

@@ -1,39 +1,35 @@
 site:
   title: n00 Docs
-  start_page: n00-cerebrum::index.adoc
+  start_page: n00tropic-cerebrum::index.adoc
 content:
   sources:
-    - url: https://github.com/IAmJonoBo/n00-cerebrum.git
-      branches: [main]
+    - url: .
+      branches: [HEAD]
       start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00-frontiers.git
-      branches: [main]
+    - url: ./.git/modules/n00-frontiers
+      branches: [doc]
       start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00-cortex.git
-      branches: [main]
+      worktrees:
+        - path: ./n00-frontiers
+          branches: [doc]
+    - url: ./.git/modules/n00-cortex
+      branches: [doc]
       start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00-horizons.git
-      branches: [main]
+      worktrees:
+        - path: ./n00-cortex
+          branches: [doc]
+    - url: ./.git/modules/n00t
+      branches: [doc]
       start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00-school.git
-      branches: [main]
-      start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00t.git
-      branches: [main]
-      start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00plicate.git
-      branches: [main]
-      start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00tropic.git
-      branches: [main]
-      start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00clear-fusion.git
-      branches: [main]
-      start_paths: [docs]
+      worktrees:
+        - path: ./n00t
+          branches: [doc]
+    # TODO(n00tropic): Add n00-horizons, n00-school, n00plicate, n00tropic, and
+    # n00clear-fusion once their Antora scaffolding ships (track via
+    # docs/modules/ROOT/pages/migration-status.adoc).
 ui:
   bundle:
-    url: https://cdn.antora.org/ui/default
-    snapshot: true
+    url: ./vendor/antora/ui-bundle.zip
 antora:
   extensions:
     - "@antora/lunr-extension"
@@ -44,4 +40,4 @@ asciidoc:
     icons: font
     source-highlighter: highlight.js
 runtime:
-  fetch: true
+  fetch: false

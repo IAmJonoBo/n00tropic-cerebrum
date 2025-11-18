@@ -1,4 +1,4 @@
-= Trunk ci Playbook
+= Trunk CI playbook
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 
@@ -60,7 +60,7 @@ files on PRs.
 
 == Environment variables
 
-Trunk does not inherit the shell environment. If you need proxies or locales,
+Trunk doesn't inherit the shell environment. If you need proxies or locales,
 define them in `.trunk/trunk.yaml`:
 
 [,yaml]

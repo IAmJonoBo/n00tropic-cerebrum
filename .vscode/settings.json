@@ -10,9 +10,9 @@
       "ai-workflow": {
         "command": "node",
         "args": [
-          "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/.dev/automation/mcp-server/index.js"
+          "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic/.dev/automation/mcp-server/index.js"
         ],
-        "cwd": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+        "cwd": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic",
         "env": {
           "NODE_ENV": "development"
         }

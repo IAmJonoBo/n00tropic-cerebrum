@@ -1,0 +1,4 @@
+[[IgnoredVulns]]
+id = "GHSA-ffrw-9mx8-89p8"
+reason = "fast-redact 3.5.0 is the latest release; awaiting upstream patch"
+ignoreUntil = 2026-01-31

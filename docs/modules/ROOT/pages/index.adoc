@@ -1,32 +1,58 @@
-= n00 Cerebrum Documentation Portal
+= Cerebrum documentation portal
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
-:reviewed: 2025-11-11
+:reviewed: 2025-11-18
 
 include::partial$diataxis-blurb.adoc[]
 
-The n00 Cerebrum super-Repo now owns the Antora playbook for every sibling
-workspace. Each submodule will expose its docs component via the shared build so
-we can reason about projects, automations, and runbooks from one URL.
+The n00 Cerebrum super-repo owns the Antora playbook for every sibling
+workspace. Each submodule exposes its docs component via the shared build so
+contributors can reason about projects, automations, and runbooks from one
+location.
 
 == Ecosystem tracker
 
 xref:migration-status.adoc[Open the migration tracker] for task-level detail.
 The snapshot below highlights immediate focus:
 
-[cols="1,1,2,"options="header"] |=== | Component | Status | Next action |
-n00-cerebrum | ✅ Baseline scaffold merged | Finalize page tagging + ci (this
-branch) | n00-frontiers | ⏳ Awaiting Repo migration | Mirror this layout and
-point start_paths at its docs folder | n00-cortex | ⏳ Awaiting Repo migration |
-Capture automation specs + tag pipelines via includes | n00t | ⏳ Awaiting Repo
-migration | Export agent runtime docs to `docs/modules` |===
+[cols="1,1,2",options="header"]
+|===
+| Component | Status | Next action
+
+| n00tropic-cerebrum
+| ✅ Baseline scaffold merged
+| Finalize page tagging + CI (this branch)
+
+| n00-frontiers
+| ⏳ Awaiting repo migration
+| Mirror this layout and point `start_paths` at its docs folder
+
+| n00-cortex
+| ⏳ Awaiting repo migration
+| Capture automation specs + tag pipelines via includes
+
+| n00t
+| ⏳ Awaiting repo migration
+| Export agent runtime docs to `docs/modules`
+|===
 
 == Diátaxis cheatsheet
 
-[cols="1,3,"options="header"] |=== | Mode | When to choose it | Tutorial |
-Greenfield walk-throughs (for example, provisioning frontier workspaces). | How-to |
-Focused jobs with clear outcomes (for example, running ERPNext exports). | Reference |
-Exhaustive configuration, API schemas, CLI flags. | Explanation | Architecture
-notes, ADRs, and rationale. |===
+[cols="1,3",options="header"]
+|===
+| Mode | When to choose it
+
+| Tutorial
+| Greenfield walk-throughs (for example, provisioning frontier workspaces).
+
+| How-to
+| Focused jobs with clear outcomes (for example, running ERPNext exports).
+
+| Reference
+| Exhaustive configuration, API schemas, CLI flags.
+
+| Explanation
+| Architecture notes, ADRs, and rationale.
+|===
 
 == Living snippets
 
@@ -37,14 +63,14 @@ include::example$scripts/erpnext-run.sh[tags=snippet-erpnext-run]
 
 Because snippets are tagged in-source they stay evergreen whenever tests update the files that own the truth.
 
-== Search & MCP
+== Search and automation workflows
 
 * xref:search/index.adoc[Search + indexing]
-* Refer to xref:search/index.adoc#Algolia[`docs/search/README.adoc`] for the Algolia procedure until we automate crawls.
-* Run `make mcp-dev` to expose the docs MCP server locally and experiment with agent retrieval.
+* Refer to xref:search/index.adoc#Algolia[] for the Algolia procedure until automation covers crawls.
+* Run `make mcp-dev` to expose the docs MCP server locally and experiment with agent retrieval through the MCP host.
 
 == Legacy imports
 
 Converted guides live under directories that mirror their original Markdown paths, for example
-`xref:++1. Cerebrum Docs/README.adoc++[]`. Continue editing Markdown until each team is
-ready to fully author in asciidoc.
+xref:++1. Cerebrum Docs/README.adoc++[]. Continue editing Markdown until each team is
+ready to fully author in AsciiDoc.

@@ -1,4 +1,4 @@
-= Documentation Contribution Guide
+= Documentation contribution guide
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 :toc:
@@ -14,9 +14,9 @@ https://diataxis.fr/[Diátaxis framework] for structured technical documentation
 
 Diátaxis divides documentation into four distinct modes:
 
-* **Tutorial** - Learning-oriented, greenfield walk-throughs (e.g., provisioning
+* **Tutorial** - Learning-oriented, greenfield walk-throughs (for example, provisioning
  frontier workspaces)
-* **How-to Guide** - Task-oriented, focused jobs with clear outcomes (e.g.,
+* **How-to Guide** - Task-oriented, focused jobs with clear outcomes (for example,
  running ERPNext exports)
 * **Reference** - Information-oriented, exhaustive configuration, API schemas, CLI
  flags
@@ -69,7 +69,7 @@ Documentation pages must be reviewed at least every **90 days**. Update the `:re
 * Code examples are tested
 * Technical accuracy is confirmed
 
-The ci pipeline will fail if pages have stale review dates (>90 days).
+The ci pipeline fails if pages have stale review dates (>90 days).
 
 == Snippet Tagging
 
@@ -109,20 +109,36 @@ Factor repeated content into partials under `docs/modules/ROOT/partials/`:
 * Avoid gerunds in headings (enforced by Vale)
 * Use code blocks for commands and outputs
 * Include examples and screenshots where helpful
+
 == ci/CD Checks
 
 All documentation PRs are validated against:
 
-* **Vale** - Prose linting for style and terminology
-* **Lychee** - Link checking
-* **Attribute checks** - Validates presence of `:page-tags:` and `:reviewed:`
-* **DangerJS** - PR policy enforcement
-* **Antora build** - Ensures the site builds successfully
-== Local Development
+|===
+| Check | Purpose
 
-=== Building the Docs
+| **Vale**
+| Prose linting for style and terminology
+
+| **Lychee**
+| Link checking
+
+| **Attribute checks**
+| Validates presence of `:page-tags:` and `:reviewed:`
+
+| **DangerJS**
+| PR policy enforcement
+
+| **Antora build**
+| Ensures the site builds successfully
+|===
+
+=== Local Development
+
+==== Building the docs
 
 [source,bash]
+----
 # Install Antora and extensions (pnpm)
 corepack enable
 corepack prepare pnpm@latest --activate
@@ -136,8 +152,9 @@ pnpm exec antora antora-playbook.yml
 
 # View the output
 open build/site/index.html
+----
 
-=== Running Validation
+==== Running validation
 
 [source,bash]
 ----
@@ -202,7 +219,7 @@ Antora automatically generates a Lunr search index during build. The index inclu
 
 For production deployments, Algolia DocSearch provides enhanced search capabilities. The crawler runs automatically on GitHub Pages deployments.
 
-== MCP Docs Server (Optional)
+== Model Context Protocol docs server (optional)
 
 For AI agent access, run the MCP docs server:
 
@@ -211,7 +228,7 @@ For AI agent access, run the MCP docs server:
 make mcp-dev
 ----
 
-This provides three tools:
+This provides three Tools:
 * `search(query)` - Full-text search
 * `get_page(id)` - Retrieve page content
 * `list_tags()` - List all available tags

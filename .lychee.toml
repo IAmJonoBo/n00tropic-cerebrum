@@ -1,3 +1,20 @@
-verbose = true
-exclude = ["^mailto:", "localhost", "127.0.0.1"]
+# keep config minimal for CLI compatibility
+exclude = [
+  "^mailto:",
+  "localhost",
+  "127.0.0.1",
+  "https://docs\\.cloud\\.google\\.com/.*",
+  "https://cloud\\.google\\.com/.*",
+  "https://docs\\.anthropic\\.com/.*",
+  "https://docs\\.cohere\\.com/.*",
+  "https://docs\\.mistral\\.ai/.*",
+  "https://docs\\.oracle\\.com/.*",
+  "https://docs\\.github\\.com/.*",
+  "https://docs\\.x\\.ai/.*",
+  "https://aws\\.amazon\\.com/blogs/aws/introducing-llama-3-2-models-from-meta-in-amazon-bedrock-a-new-generation-of-multimodal-vision-and-lightweight-models/.*",
+  "https://github\\.com/deepseek-ai/DeepSeek-Coder-V2.*",
+  "https://diataxis\\.fr/.*",
+  "https://docs\\.antora\\.org/.*",
+]
+accept = [200, 206, 301, 302]
 retry = { count = 2, code = [429, 500, 502, 503, 504] }

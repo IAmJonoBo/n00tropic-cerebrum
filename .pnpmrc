@@ -1,0 +1,6 @@
+store-dir=.pnpm-store
+node-linker=hoisted
+# reduce disk bloat for CI/Developer PCs
+shamefully-hoist=false
+shared-workspace-lockfile=true
+store-format=v3

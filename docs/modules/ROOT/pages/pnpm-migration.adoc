@@ -1,0 +1,34 @@
+= pnpm migration guide
+:page-tags: diataxis:howto, domain:platform, audience:maintainer, stability:beta
+:reviewed: 2025-11-18
+
+This guide highlights the scripts and workflow maintainers should follow when
+converting npm-based docs and helper commands to pnpm equivalents across the
+polyrepo.
+
+== Included scripts
+
+* `scripts/find-npm-usages.mjs` -- scans the entire workspace for npm references
+  and writes a candidate list to `docs/pnpm-migration/npm-candidates.json`.
+* `scripts/replace-npx-with-pnpm.mjs` -- replaces `npx` usages with the `pnpm`
+  invocation style that matches the workspace constraints file.
+* `scripts/replace-npm-commands-with-pnpm.mjs` -- updates general npm commands
+  (`npm run`, `npm install`, etc.) to pnpm variants.
+
+== Recommended steps
+
+. Run the scan script so you understand which repositories and files are
+  affected (see `docs/pnpm-migration/npm-candidates.json`).
+. For each submodule that contains candidates, open a docs-only PR in that repo
+  to apply the safe conversions.
+. Add the relevant repo editors/owners as reviewers before merging, and keep the
+  Antora playbook on `chore/centralize-pnpm-store` in sync with each migration.
+
+== Command examples (from workspace root)
+
+[source,bash]
+----
+node scripts/find-npm-usages.mjs --workspace-root "."
+node scripts/replace-npx-with-pnpm.mjs --target n00-frontiers --dry-run
+node scripts/replace-npm-commands-with-pnpm.mjs --target n00-frontiers
+----

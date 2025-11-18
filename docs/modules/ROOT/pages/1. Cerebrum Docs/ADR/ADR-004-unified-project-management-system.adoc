@@ -1,10 +1,10 @@
-= ADR-004: Unified Project Management & Execution System
+= Architecture decision record 004: Unified project management and execution system
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 
 == Status
 
-Proposed -- 2025-01-14
+Proposed—2025-01-14
 
 == Context
 
@@ -23,7 +23,7 @@ the system of record for commercial delivery, billing, and support.
 correct lane, request approvals, and update status without human babysitting.
 * Existing ADRs (for example, ADR-003) define the workspace taxonomy and ERPNext
  touchpoints but stop
-short of a cross-Repo, cross-tool project management lifecycle.
+short of a cross-repository, cross-tool project management lifecycle.
 
 == Decision
 
@@ -44,20 +44,24 @@ GitHub issues export) containing: ** `id`, `title`, `lifecycle_stage`, `tags[]`,
 scripts in `.dev/automation`. . Create a *tag taxonomy* maintained in
 `n00-cortex/data/catalog/project-tags.yaml` with mirrored aliases in GitHub
 labels, ERPNext tags, and workspace directories; tags are hierarchical
-(`innovation/design-system/ui-accessibility`). . Extend `n00t` with a *Project
-Orchestration capability*: ** `project.capture` -- ingest a document path or
-URL, validate metadata, and register the artefact in the unified catalog. **
-`project.sync.github` -- create/update GitHub issues or project items based on
-the canonical metadata. ** `project.sync.erpnext` -- map initiatives to ERPNext
-Projects/Tasks and push status updates. ** `project.scoreboard` -- render
-progress using data from GitHub, ERPNext, and the metadata catalog. . Require
-every new project or experiment to register through the orchestration
-capability, generating: ** An ADR (in `1. Cerebrum Docs/ADR/`) when the
-initiative introduces cross-Repo conventions. ** A project charter in
-`n00tropic_HQ/98. Internal-Projects/IP-*/`. ** A GitHub Project draft and
-ERPNext Project/Task stubs. . Leverage n00-frontiers for *quality assurance of
-project artefacts* by adding validation schemas and unit tests to
-`test_imports.py` (ensuring metadata compliance and lifecycle integrity).
+(`innovation/design-system/ui-accessibility`).
+// vale Vale.Terms = NO
+. Extend `n00t` with a *Project Orchestration capability*: ** `project.capture`
+ -- import a document path or address, validate metadata, and register the
+ artefact in the unified catalog. ** `project.sync.github` -- create/update
+ GitHub issues or project items based on the canonical metadata. **
+ `project.sync.erpnext` -- map initiatives to ERPNext Projects/Tasks and push
+ status updates. ** `project.scoreboard` -- render progress using data from
+ GitHub, ERPNext, and the metadata catalog.
+. Require every new project or experiment to register through the orchestration
+ capability, generating: ** An ADR (in `1. Cerebrum Docs/ADR/`) when the
+ initiative introduces cross-repository conventions. ** A project charter in
+ `n00tropic_HQ/98. Internal-Projects/IP-*/`. ** A GitHub Project draft and
+ ERPNext Project/Task stubs.
+// vale Vale.Terms = YES
+. Leverage n00-frontiers for *quality assurance of project artefacts* by adding
+ validation schemas and unit tests to `test_imports.py` (ensuring metadata
+ compliance and lifecycle integrity).
 
 == Consequences
 
@@ -74,10 +78,9 @@ discoverability and analytics.
  them up to date;
 tooling must automate as much as possible.
 * Negative: Misalignment between GitHub labels and ERPNext tags can create drift;
- the catalog must be
-treated as the single source of truth and updated carefully.
+ the catalog must be treated as the single source of truth and updated with care.
 
-== Implementation Notes
+== Implementation notes
 
 * Introduce `project-metadata.schema.json` in `n00-cortex/schemas/` and publish
 documentation in `n00-cortex/docs`.
@@ -88,10 +91,10 @@ fails fast in ci and automation runs.
 `project.sync.erpnext`) backed by
 `.dev/automation/scripts/project-orchestration.py` with acceptance fixtures from
 the idea + project charter.
-* Publish the operator Runbook in `n00t/START HERE/PROJECT_ORCHESTRATION.md` so
+* Publish the operator runbook in `n00t/START HERE/PROJECT_ORCHESTRATION.md` so
 humans/cloud agents share the same playbook.
 * Add a nightly `.dev/automation` job (`sync-project-registry.sh`) that: .. Scans
- for metadata blocks across repos. .. Reconciles the catalog in
+ for metadata blocks across repositories. .. Reconciles the catalog in
  `n00-cortex/data/catalog/projects.json`. .. Raises alerts when lifecycle stages
  regress or metadata fields are missing.
 * Seed GitHub projects using templates stored in
