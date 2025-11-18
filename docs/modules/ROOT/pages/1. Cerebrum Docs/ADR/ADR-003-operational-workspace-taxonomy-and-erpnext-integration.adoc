@@ -4,7 +4,7 @@
 
 == Status
 
-Accepted -- 2025-11-06
+Accepted—2025-11-06
 
 == Context
 
@@ -12,48 +12,61 @@ Accepted -- 2025-11-06
  `n00-cortex`, `n00t`, `n00-school`) that already segment operational knowledge
  by function.
 * ERPNext introduces authoritative records for accounting, CRM, projects, support,
- HR, and more. We need a predictable home for exports and derived artefacts
- outside the repos to avoid bloating source control.
+ HR, and more. A predictable home for exports and derived artefacts outside the
+ repositories avoids bloating source control.
 * Stakeholders require a "top-of-house" filesystem at `/Volumes/APFS
  Space/n00tropic` that any agency teammate can navigate without understanding
- every repo.
+ every repository.
 * Previous ad hoc folders made it difficult to trace data lineage back to ERPNext
  modules or automation outputs.
 == Decision
 
 . Establish a canonical root taxonomy at `/Volumes/APFS Space/n00tropic` with
-the following directories: ** `01-Leadership/` ** `02-Revenue/` **
-`03-Delivery/` ** `04-People/` ** `05-Finance-Procurement/` **
-`06-Innovation-Labs/` ** `07-Platform-Ops/` ** `99-Clients/` ** `90-Archive/` **
-`98-Scratchpad/` . Map each directory to the relevant ERPNext module(s) and
-reference repositories: ** Financial exports flow into `05-Finance-Procurement/`
-and `90-Archive/`. ** CRM and marketing intelligence lands in `02-Revenue/`. **
-Project and support artefacts live under `03-Delivery/`. ** HRMS outputs sync
-with `04-People/`. ** Automation runbooks and telemetry sit in
-`07-Platform-Ops/`. . Keep repositories as system-of-records for process,
-templates, and automation logic; the new directories store immutable outputs,
-approvals, and cross-cutting governance. . Document ERPNext self-hosting
-procedures in `07-Platform-Ops/erpnext/` and require automation to emit
-telemetry and exports into the new taxonomy.
+ the following directories:
+.. `01-Leadership/`
+.. `02-Revenue/`
+.. `03-Delivery/`
+.. `04-People/`
+.. `05-Finance-Procurement/`
+.. `06-Innovation-Labs/`
+.. `07-Platform-Ops/`
+.. `99-Clients/`
+.. `90-Archive/`
+.. `98-Scratchpad/`
+. Map each directory to the relevant ERPNext modules and reference repositories:
+.. Financial exports flow into `05-Finance-Procurement/` and `90-Archive/`.
+.. CRM and marketing intelligence lands in `02-Revenue/`.
+.. Project and support artefacts live under `03-Delivery/`.
+.. HRMS outputs sync with `04-People/`.
+.. Automation runbooks and telemetry sit in `07-Platform-Ops/`.
+. Keep repositories as systems of record for process, templates, and automation
+ logic; the new directories store immutable outputs, approvals, and
+ cross-cutting governance.
+// vale Vale.Terms = NO
+. Document ERPNext self-hosting procedures in `07-Platform-Ops/erpnext/` and
+ require automation to emit telemetry and exports into the new taxonomy.
+// vale Vale.Terms = YES
 
 == Consequences
 
 * Positive: Contributors have a single navigable workspace that mirrors ERPNext
- domains without polluting individual repos.
-* Positive: Data lineage improves--each export or deliverable points back to both
+ domains without polluting individual repositories.
+* Positive: Data lineage improves—each export or deliverable points back to both
  the ERPNext module and the originating repository artefact.
 * Positive: Automation can treat the taxonomy as a contract, simplifying sync jobs
  and audits.
 * Negative: Additional discipline is required to keep READMEs current and ensure
- large files do not accumulate unchecked.
-* Negative: Two layers of organisation (repos + workspace) may confuse newcomers;
+ large files don't accumulate unchecked.
+* Negative: Two layers of organisation (repositories + workspace) may confuse newcomers;
  onboarding docs must highlight the relationship.
 == Implementation Notes
 
 * Each directory contains a README describing ownership, expected contents, and
  references.
+// vale Vale.Terms = NO
 * `07-Platform-Ops/erpnext/` maintains deployment playbooks, configuration
  templates, and open tasks for self-hosting ERPNext.
+// vale Vale.Terms = YES
 * Nightly automation should checksum ERPNext exports before writing into
  `90-Archive/erpnext-exports/`.
 * Update onboarding material in `1. Cerebrum Docs/README.md` and

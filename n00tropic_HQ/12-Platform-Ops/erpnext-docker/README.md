@@ -1,10 +1,10 @@
-# ERPNext Docker Image Cache
+# How to cache ERPNext docker images
 
-The platform team keeps a minimal `docker compose` definition here so we can pull
-and cache the latest ERPNext images before orchestration scripts need them. The
-stack is intentionally inert – every service runs `tail -f /dev/null` by default
-so developers don’t accidentally boot a full bench when they only need fresh
-images.
+The platform team keeps a minimal `docker compose` definition here so operators
+can pull and cache the latest ERPNext images before orchestration scripts need
+them. The stack is intentionally inert; every service runs `tail -f /dev/null`
+by default so engineers don't accidentally boot a full bench when they only
+need fresh images.
 
 ## Usage
 
@@ -23,5 +23,5 @@ The helper script updates `.env` with the latest `frappe/erpnext-*` tag observed
 on Docker Hub and records the result in
 `n00tropic_HQ/12-Platform-Ops/telemetry/docker-sync.log`. Breaking changes are
 handled manually during integration tests, so the automation simply fetches the
-new images and leaves them paused until the bench stack or CI decides to run
+new images and leaves them paused until the bench stack or CI chooses to run
 with them.

@@ -16,8 +16,6 @@ ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 
-from observability import initialize_tracing
-
 DEFAULT_ARTIFACT_PATH = ROOT / "artifacts" / "workspace-health.json"
 
 
@@ -378,6 +376,8 @@ def emit(report: Dict[str, object], args: argparse.Namespace) -> int:
 
 
 def main() -> int:
+    from observability import initialize_tracing
+
     initialize_tracing("workspace-health")
     parser = argparse.ArgumentParser(
         description="Workspace health checker for the federated polyrepo."

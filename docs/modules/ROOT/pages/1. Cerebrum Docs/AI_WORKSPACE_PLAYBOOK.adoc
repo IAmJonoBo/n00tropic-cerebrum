@@ -1,23 +1,25 @@
-= AI & Agent Workspace Playbook
+// vale Microsoft.Terms = NO
+= AI & agent workspace playbook
+// vale Microsoft.Terms = YES
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 
-AI assistants (and ephemeral agent sessions) frequently attach to this
+AI assistants (and ephemeral automation sessions) frequently attach to this
 filesystem after the human operator has already been iterating. The notes below
-make it trivial to recover context, detect the active Repo, and tidy up
+make it trivial to recover context, detect the active repository, and tidy up
 submodules or untracked files before attempting an automation run.
 
-== Workspace Topology
+== Workspace topology
 
-* *Super root*: `/Volumes/APFS Space/n00tropic/` (intentionally not a git Repo).
- It houses the federated `n00tropic-cerebrum/` Repo, the operational archive in
+* *Super root*: `/Volumes/APFS Space/n00tropic/` (intentionally not a git repository).
+ It houses the federated `n00tropic-cerebrum/` repository, the operational archive in
  `n00tropic_HQ/`, and shared automation under `.dev/`.
 * *Primary git workspace*: `/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/`
  with submodules for `n00t/`, `n00-frontiers/`, `n00-cortex/`, etc.
 * *Automation scripts*: tracked inside
  `n00tropic-cerebrum/.dev/automation/scripts/`. Anything under the outer `.dev/`
- directory mirrors to local environments but is not versioned.
-== Identify Your Repo Quickly
+ directory mirrors to local environments but isn't versioned.
+== Identify your repository
 
 ____ ✅ When in doubt, run the script below -- it enumerates the workspace root
 plus every submodule. ____
@@ -27,12 +29,12 @@ plus every submodule. ____
 ./.dev/automation/scripts/workspace-health.sh --publish-artifact
 ----
 
-* Use `git rev-parse --show-toplevel` from any path to confirm which Repo you are
+* Use `git rev-parse --show-toplevel` from any path to confirm which repository you are
  in.
-* The script writes `artifacts/workspace-health.json`, which agents can parse to
+* The script writes `artifacts/workspace-health.json`, which automation clients can parse to
  decide which submodule needs attention and whether the workspace root is
  ahead/behind origin.
-== Sanity Checks & Auto-Remediation
+== Sanity checks & auto remediation
 
 |=== | Need | Command | Notes
 
@@ -40,9 +42,9 @@ plus every submodule. ____
 `./.dev/automation/scripts/workspace-health.sh --publish-artifact --json` | JSON
 goes to stdout *and* `artifacts/workspace-health.json`.
 
-| Clean only-untracked noise (for example generated assets) safely |
+| Clean only-untracked noise (for example generated assets) without touching tracked work |
 `./.dev/automation/scripts/workspace-health.sh --clean-untracked` | Runs `git
-clean -fd` for repos that have no tracked changes.
+ clean -fd` for repositories that have no tracked changes.
 
 | Realign submodule pointers | `./.dev/automation/scripts/workspace-health.sh
 --sync-submodules` | Equivalent to `git submodule sync && git submodule update
@@ -55,16 +57,16 @@ previous two steps.
 | Strict ci-style enforcement | Append `--strict-submodules --strict-root` |
 Causes a non-zero exit when anything is dirty/diverged. |===
 
-== n00t Capability: `workspace.gitDoctor`
+== Workspace git doctor capability
 
-* The capability manifest now exposes the script above at `workspace.gitDoctor`.
- It honours the following payload keys when invoked via `n00t``'s agent runner
+* The capability manifest now exposes the script described earlier at `workspace.gitDoctor`.
+ It honours the following payload keys when invoked via the n00t automation runner
  or MCP host: ** `cleanUntracked` → toggles `--clean-untracked`. **
  `syncSubmodules` → toggles `--sync-submodules`. ** `publishArtifact` → writes
  the JSON file to `artifacts/workspace-health.json`. ** `strict`/`check` →
- mirrors the CLI `--strict` flag for ci checks.
+ mirrors the command-line tool `--strict` flag for ci checks.
 * Results are persisted automatically when the runner sets
- `CAPABILITY_PAYLOAD.output`, so agents always have a JSON artefact to inspect
+ `CAPABILITY_PAYLOAD.output`, so automation clients always have a JSON artefact to inspect
  after the run.
 === Sample MCP payload
 
@@ -75,27 +77,28 @@ Causes a non-zero exit when anything is dirty/diverged. |===
 }
 ----
 
-== Handling Dirty States Before Push
+== Handling dirty states before push
 
 . *Root shows tracked changes to a submodule* (`workspace-health` prints
-`+tracked 1 … n00t+`): ** Inspect the Repo: `git -C n00t status -sb`. **
+`+tracked 1 … n00t+`): ** Inspect the repository: `git -C n00t status -sb`. **
 Commit/push inside the submodule if the change is intentional, then commit the
 pointer change at the root. ** Otherwise run `git submodule update --init
---recursive` to reset to the recorded revision. . *Root shows untracked files
-only*: ** Use `--clean-untracked` (safe, because it skips repos with tracked
-changes). . *Submodule behind/ahead*: ** `git -C <Repo> pull --ff-only` or `git
--C <Repo> push --force-with-lease` depending on the direction.
+--recursive` to reset to the recorded revision.
+. *Root shows untracked files only*: ** Use `--clean-untracked` (safe, because it skips repositories with tracked
+changes).
+. *Submodule behind/ahead*: ** `git -C <repository> pull --ff-only` or `git
+-C <repository> push --force-with-lease` depending on the direction.
 
-TIP: the JSON artifact exposes `tracked` vs `untracked` arrays per Repo, so an
-agent can branch its remediation strategy programmatically.
+TIP: the JSON artifact exposes `tracked` vs `untracked` arrays per repository, so an
+automation run can branch its remediation strategy programmatically.
 
-== Agent-Friendly Checklist
+== Automation-friendly checklist
 
 . `workspace-health.sh --publish-artifact --json`. . Read
-`artifacts/workspace-health.json` to determine the active Repo + remediation
+`artifacts/workspace-health.json` to determine the active repository + remediation
 path. . Run guarded cleaners (`--clean-untracked`) or `--sync-submodules` as
 needed. . When invoked via MCP, prefer `workspace.gitDoctor` so the host
 automatically records the output path.
 
-Following the loop above removes the guesswork around submodules, untracked
+Following the preceding loop removes the guesswork around submodules, untracked
 files, and root vs submodule context before automation tries to run.

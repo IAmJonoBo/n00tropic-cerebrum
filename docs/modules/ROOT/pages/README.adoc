@@ -1,4 +1,6 @@
-= n00tropic Cerebrum Workspace
+// vale Google.Headings = NO
+= n00tropic cerebrum workspace
+// vale Google.Headings = YES
 :page-tags: diataxis:explanation, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 
@@ -8,15 +10,15 @@ curricula, and template generators. Each repository keeps its own release
 cadence and tooling, while this workspace supplies shared automation and
 alignment.
 
-== Ecosystem Map
+== Ecosystem map
 
-[mermaid] … graph TD Cortex["n00-cortex\nSchemas & Docs"] -->
-Frontiers["n00-frontiers\nTemplates, CLI, Renderers"] Cortex -->
-N00t["n00t\nAgent & MCP Surface"] N00t --> Frontiers -->
-N00plicate["n00plicate\nPolyglot Consumer"] Frontiers --> Docs["1. Cerebrum
-Docs\nCross-Repo ADRs"] N00tropic["n00tropic\nOperational Playbooks"] --> Docs
-N00school["n00-school\nTraining Curriculum"] --> N00t N00school --> Frontiers
---> Cortex …
+[mermaid] … graph TD cortex["n00-cortex\nSchemas & Docs"] -->
+frontiers["n00-frontiers\nTemplates, CLI, Renderers"] cortex -->
+n00t_node["n00t\nAgent & MCP surface"] n00t_node --> frontiers -->
+n00plicate_node["n00plicate\nPolyglot consumer"] frontiers --> docs_repo["1. Cerebrum
+Docs\nCross-repo ADRs"] n00tropic_ops["n00tropic\nOperational playbooks"] --> docs_repo
+n00school_node["n00-school\nTraining curriculum"] --> n00t_node n00school_node --> frontiers
+--> cortex …
 
 Schemas published from `n00-cortex` drive automation in `n00-frontiers`, which
 then feeds downstream consumers such as `n00plicate` and the shared
@@ -26,7 +28,7 @@ documentation set. `n00t` orchestrates the automation surface, while doctrine
 ____ Looking for the people-facing handbook? It now lives alongside the
 filesystem in `../n00tropic_HQ/`. ____
 
-== Repository Profiles
+== Repository profiles
 
 === `1. Cerebrum Docs/`
 
@@ -55,7 +57,7 @@ filesystem in `../n00tropic_HQ/`. ____
  distributing them.
 === `n00tropic/`
 
-* *Mandate*: Organisational handbook and flagship generation engine. Houses
+* *Mandate*: Organizational handbook and flagship generation engine. Houses
  briefs, discovery artefacts, and generators that translate context into
  scaffolded projects and assets.
 * *Output*: Context ingestion, directory/project scaffolding, and operational
@@ -64,21 +66,21 @@ filesystem in `../n00tropic_HQ/`. ____
  artefacts comply with `n00-frontiers` and `n00-cortex`.
 === `n00t/`
 
-* *Mandate*: Agent and automation control centre. Discovers capabilities, runs
+* *Mandate*: Agent and automation control center. Discovers capabilities, runs
  workspace scripts, and brokers context between humans, agents, and repos.
 * *Output*: MCP host, capability manifest, orchestration UI/CLI.
 * *Integration*: Invokes automation scripts and propagates telemetry back to
  `n00-cortex` and `n00-frontiers`.
 === `n00plicate/`
 
-* *Mandate*: Platform-agnostic design asset + CDN generator. Converts Penpot/token
+* *Mandate*: Platform-agnostic design asset + CDN generator. Converts design-token
  sources into multi-runtime packages.
 * *Output*: Token orchestrator, UI kernel, framework adapters, and reference apps.
 * *Integration*: Aligns with `n00-frontiers` design rules and feeds packaged
  assets to `n00tropic` deliverables.
 === `n00-school/`
 
-* *Mandate*: Training centre and R&D lab for n00tropic assistants. Develops and
+* *Mandate*: Training center and R&D lab for n00tropic assistants. Develops and
  evaluates pipelines that improve automation quality.
 * *Output*: Training datasets, pipelines, evaluation harnesses, and telemetry.
 * *Integration*: Capabilities surface through `n00t`; insights loop back into
@@ -102,23 +104,23 @@ filesystem in `../n00tropic_HQ/`. ____
 * *Integration*: Shares derived assets with `n00-cortex` taxonomies, feeds
  cookiecutters/templates in `n00-frontiers`, and backfills `n00t` capabilities so
  agents can scaffold projects from curated source material.
-== Cross-Repo Release Flow
+== Cross-repo release flow
 
 [mermaid] … sequenceDiagram participant Dev as Contributor participant Cortex as
 n00-cortex participant Frontiers as n00-frontiers participant Docs as 1.
 Cerebrum Docs participant Automation as .dev/automation
 
-Dev->>Cortex: Update schemas and manifests Cortex-->>Frontiers: Publish new
-toolchain rules Dev->>Frontiers: Regenerate templates and run sanity checks
-Dev->>Automation: Run meta-check and trunk sync Automation-->>Docs: Write
-releases.yaml via workspace-release.sh Docs-->>Dev: Document decisions and ADR
+Dev->>Cortex: update schemas and manifests Cortex-->>Frontiers: publish new
+toolchain rules Dev->>Frontiers: regenerate templates and run sanity checks
+Dev->>Automation: run meta-check and trunk sync Automation-->>Docs: write
+releases.yaml via workspace-release.sh Docs-->>Dev: document decisions and ADR
 updates …
 
 This sequence highlights the typical cadence: adjust policy in `n00-cortex`,
 adapt generators in `n00-frontiers`, validate via automation, and record the
 outcome in shared documentation.
 
-== Automation Toolkit
+== Automation toolkit
 
 Automation scripts live under `.dev/automation/scripts/` and surface through the
 `n00t` capability manifest.
@@ -157,10 +159,8 @@ pins from `n00tropic_HQ/12-Platform-Ops/erpnext-docker/.env`, verifies
 MySQL/Redis, launches the ERPNext UI, logs telemetry, and runs PM/telemetry
 exports once the Docker-managed stack is up.
 
-| `scripts/docker-sync.mjs` | Pulls the latest Penpot + ERPNext docker images,
-updates compose pins, and records the outcome under
-`n00tropic_HQ/12-Platform-Ops/telemetry/docker-sync.log` so operators see when
-new containers arrive.
+| `scripts/docker-sync.mjs` | Pulls the latest ERPNext and design-tool docker images,
+| updates compose pins, and records the outcome under
 
 | `project-preflight-batch.sh` | Executes preflight across every registry entry
 to keep GitHub + ERPNext sync warnings visible.
@@ -177,7 +177,7 @@ Automation executions append telemetry to
 `.dev/automation/artifacts/automation/agent-runs.json`, which powers dashboards
 and agent insights.
 
-== Formatter Guardrails
+== Formatter guardrails
 
 * *Python format flow*: Every Trunk config runs `isort@7.0.0` before `black@25.x`
  so imports settle before layout styling. If a formatter loop appears, run `trunk
@@ -191,7 +191,7 @@ and agent insights.
 * *Automation reminder*: `trunk-upgrade.sh` (and the `python3 CLI.py
  trunk-upgrade` helper) keep formatter versions in lockstep across every Repo, so
  rerun it whenever `isort`/`black` ship compatibility fixes.
-== Operating Guidelines
+== Operating guidelines
 
 * *Plan in public*: Capture cross-Repo decisions in `1. Cerebrum Docs/ADR/` and
  link to repo-specific ADRs.
@@ -209,29 +209,29 @@ and agent insights.
  on `meta-check`) before shipping templates.
 * *Automation discovery*: Use `n00t/capabilities/manifest.json` to discover
  scripted operations for CLI or MCP clients.
-== Workspace Filesystem
+== Workspace filesystem
 
 Operational outputs live in the shared filesystem at `/Volumes/APFS
-Space/n00tropic`, organised as:
+Space/n00tropic`, organized as:
 
-* `01-Leadership/` -- governance, legal, and risk artefacts with links back to
+* `01-Leadership/`: governance, legal, and risk artefacts with links back to
  `n00tropic/01-Leadership`.
-* `02-Revenue/` -- campaign results, CRM exports, and sales intelligence synced
+* `02-Revenue/`: campaign results, CRM exports, and sales intelligence synced
  from ERPNext.
-* `03-Delivery/` -- project deliverables, QA evidence, and support transcripts
+* `03-Delivery/`: project deliverables, QA evidence, and support transcripts
  tied to ERPNext Projects.
-* `04-People/` -- HRMS snapshots, onboarding packs, and n00-school evaluation
+* `04-People/`: HRMS snapshots, onboarding packs, and n00-school evaluation
  summaries.
-* `05-Finance-Procurement/` -- accounting closes, purchasing approvals, and vendor
+* `05-Finance-Procurement/`: accounting closes, purchasing approvals, and vendor
  records.
-* `06-Innovation-Labs/` -- R&D experiment outputs spanning `n00-frontiers`,
+* `06-Innovation-Labs/`: R&D experiment outputs spanning `n00-frontiers`,
  `n00-cortex`, and `n00plicate`.
-* `07-Platform-Ops/` -- automation runbooks, telemetry, and ERPNext self-hosting
+* `07-Platform-Ops/`: automation runbooks, telemetry, and ERPNext self-hosting
  playbooks.
-* `99-Clients/` -- per-client deliverables using the `@slug` naming convention.
-* `90-Archive/` -- immutable exports with checksums for audits.
-* `98-Scratchpad/` -- temporary drafts purged automatically after 30 days.
-== Getting Started Locally
+* `99-Clients/`: per-client deliverables using the `@slug` naming convention.
+* `90-Archive/`: immutable exports with checksums for audits.
+* `98-Scratchpad/`: temporary drafts purged automatically after 30 days.
+== Getting started locally
 
 . Clone the workspace: `+git clone
 https://github.com/IAmJonoBo/n00tropic-cerebrum.git && cd n00tropic-cerebrum+`.
@@ -246,26 +246,26 @@ checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific
 health commands. . Explore `1. Cerebrum Docs/` for ADRs, Renovate setup, and
 onboarding guides.
 
-== Script Index
+== Script index
 
 The `script_index.md` file provides an automatically generated, organized
 catalog of all scripts across the n00tropic polyrepo. This index is optimized
-for agents and developers to quickly locate and understand available scripts.
+for agents and developers to locate and understand available scripts.
 
 === Usage
 
-* *View Index*: Open `script_index.md` to browse scripts by category.
-* *Update Index*: Run `python3 generate_script_index.py` to regenerate the index
+* *View index*: Open `script_index.md` to browse scripts by category.
+* *Update index*: Run `python3 generate_script_index.py` to regenerate the index
  after adding new scripts.
-* *Dynamic Registration*: New scripts are automatically detected and categorized
+* *Dynamic registration*: New scripts are automatically detected and categorized
  when the index is updated.
 The index includes executable files and scripts with common extensions (.sh,
 .py, .js, etc.), organized by their containing directory for easy navigation.
 
-By keeping the repos loosely coupled yet automation-aware, the Cerebrum
+By keeping the repos intentionally decoupled yet automation-aware, the Cerebrum
 workspace lets contributors evolve generators, docs, and agents without tripping
 over each other's toolchains while still sharing a coherent release pulse.
 
-____ ❗️ Do not run `git init` in `/Volumes/APFS Space/n00tropic`. The
-organisational root is intentionally non-versioned; all contributions should
+____ ❗️ Don't run `git init` in `/Volumes/APFS Space/n00tropic`. The
+organizational root is intentionally non-versioned; all contributions should
 originate from this repository or its submodules. ____

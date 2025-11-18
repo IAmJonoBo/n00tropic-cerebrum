@@ -103,7 +103,7 @@ clone_repo() {
 		if [[ -n $TOKEN ]]; then
 			url="https://x-access-token:${TOKEN}@github.com/IAmJonoBo/${repo}.git"
 		fi
-		git clone --depth "$DEPTH" "$url" "$target"
+		git clone --depth "${DEPTH}" "${url}" "${target}"
 	fi
 }
 

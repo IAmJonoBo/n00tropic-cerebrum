@@ -1,50 +1,84 @@
+---
 # This compose file is intentionally lightweight. It keeps the ERPNext images
 # that our automation depends on within reach by pulling them via
 # `docker compose pull`. The containers default to a paused state so the stack
 # will not start accidentally on developer laptops.
+version: "3"
 services:
   erpnext-worker:
     image: frappe/erpnext-worker:${ERPNEXT_VERSION}
-    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
-    profiles: ["pull-only"]
+    entrypoint:
+      - /bin/sh
+      - -c
+      - tail -f /dev/null
+    profiles:
+      - pull-only
 
   erpnext-scheduler:
     image: frappe/erpnext-worker:${ERPNEXT_VERSION}
-    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
-    profiles: ["pull-only"]
+    entrypoint:
+      - /bin/sh
+      - -c
+      - tail -f /dev/null
+    profiles:
+      - pull-only
 
   erpnext-python:
     image: frappe/erpnext-python:${ERPNEXT_VERSION}
-    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
-    profiles: ["pull-only"]
+    entrypoint:
+      - /bin/sh
+      - -c
+      - tail -f /dev/null
+    profiles:
+      - pull-only
 
   erpnext-nginx:
     image: frappe/erpnext-nginx:${ERPNEXT_VERSION}
-    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
+    entrypoint:
+      - /bin/sh
+      - -c
+      - tail -f /dev/null
     ports:
       - 8085:8080
-    profiles: ["pull-only"]
+    profiles:
+      - pull-only
 
   mariadb:
     image: mariadb:10.11
     environment:
       - MYSQL_ROOT_PASSWORD=${ERP_DB_ROOT_PASSWORD:-dev}
-    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
-    profiles: ["pull-only"]
+    entrypoint:
+      - /bin/sh
+      - -c
+      - tail -f /dev/null
+    profiles:
+      - pull-only
 
   redis-cache:
     image: redis:7
-    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
-    profiles: ["pull-only"]
+    entrypoint:
+      - /bin/sh
+      - -c
+      - tail -f /dev/null
+    profiles:
+      - pull-only
 
   redis-queue:
     image: redis:7
-    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
-    profiles: ["pull-only"]
+    entrypoint:
+      - /bin/sh
+      - -c
+      - tail -f /dev/null
+    profiles:
+      - pull-only
 
   redis-socketio:
     image: redis:7
-    entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
-    profiles: ["pull-only"]
+    entrypoint:
+      - /bin/sh
+      - -c
+      - tail -f /dev/null
+    profiles:
+      - pull-only
 # To pull the latest versions run:
 #   docker compose -f docker-compose.yml pull

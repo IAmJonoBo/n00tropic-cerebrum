@@ -5,7 +5,6 @@ n00 Docs MCP Server
 Provides read-only access to n00 Cerebrum documentation via MCP tools.
 """
 
-import json
 import re
 import sys
 from functools import lru_cache
@@ -25,9 +24,14 @@ REPO_ROOT = Path(__file__).parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.append(str(REPO_ROOT))
 
-from observability import initialize_tracing
 
-initialize_tracing("n00-docs-mcp")
+def _bootstrap_tracing() -> None:
+    from observability import initialize_tracing
+
+    initialize_tracing("n00-docs-mcp")
+
+
+_bootstrap_tracing()
 IGNORE_PARTS = {".git", "node_modules", "build", "vendor", "dist", "tmp", "artifacts"}
 DOCS_ROOT = REPO_ROOT / "docs"
 BUILD_SITE = REPO_ROOT / "build" / "site"
