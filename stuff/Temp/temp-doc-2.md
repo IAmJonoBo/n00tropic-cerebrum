@@ -2,7 +2,7 @@
 
 ## Copilot, perform an E2E docs migration to Antora (multi-repo, tagged, searchable)\*\*
 
-You are an expert repo-migration assistant. Execute the following tasks exactly, opening PRs as needed. Use concise commits with conventional prefixes (e.g., **docs:**, **ci:**). Assume this repo is the **root** (**n00-cerebrum**) and may reference sibling repos in the **IAmJonoBo** org.
+You are an expert repo-migration assistant. Execute the following tasks exactly, opening PRs as needed. Use concise commits with conventional prefixes (e.g., **docs:**, **ci:**). Assume this repo is the **root** (**n00-cerebrum**) and may reference sibling repos in the `n00tropic` org.
 
 ## **0) Preconditions**
 
@@ -81,11 +81,11 @@ site:
 content:
   sources:
     # One entry per repo; prefer 'start_paths: docs' once each repo is migrated
-    - url: https://github.com/IAmJonoBo/n00-cerebrum.git
+    - url: https://github.com/n00tropic/n00-cerebrum.git
       branches: [ main ]
       start_paths: [ docs ]
     # Add more repos discovered by pattern (fill automatically)
-    # - url: https://github.com/IAmJonoBo/<other-repo>.git
+    # - url: https://github.com/n00tropic/<other-repo>.git
     #   branches: [ main ]
     #   start_paths: [ docs ]
 ui:

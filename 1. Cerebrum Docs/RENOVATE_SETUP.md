@@ -4,7 +4,7 @@ All repositories now inherit dependency policy from the shared preset published 
 
 1. **Self-hosted or GitHub App**
    - Ensure the bot has read access to `n00tropic-cerebrum`.
-   - Update the global configuration (or onboarding preset) to extend `github>IAmJonoBo/n00tropic-cerebrum//renovate/presets/workspace.json`.
+   - Update the global configuration (or onboarding preset) to extend `github>n00tropic/n00-cerebrum//renovate/presets/workspace.json`.
    - Remove legacy `config:base` or workspace-specific overrides unless they are still required.
 2. **Enterprise mirrors**
    - If outbound GitHub downloads are blocked, mirror `n00tropic-cerebrum/renovate/presets/workspace.json` to an internal repository.

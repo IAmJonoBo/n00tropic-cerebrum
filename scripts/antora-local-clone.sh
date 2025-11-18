@@ -89,6 +89,11 @@ echo "Preparing local Antora environment in ${TMP_DIR}"
 clone_repo() {
 	local repo="$1"
 	local target="${TMP_DIR}/${repo}"
+	# Map workspace folder names to GitHub remote repo names when they differ
+	local remote_repo="$repo"
+	if [[ ${repo} == "n00tropic-cerebrum" ]]; then
+		remote_repo="n00-cerebrum"
+	fi
 	if [[ ${USE_WORKSPACE} == true ]]; then
 		local src
 		if [[ ${repo} == "n00tropic-cerebrum" ]]; then
@@ -103,10 +108,10 @@ clone_repo() {
 		echo "Cloning local workspace ${src} -> ${target}"
 		git clone --local --no-hardlinks "${src}" "${target}"
 	else
-		local url="https://github.com/IAmJonoBo/${repo}.git"
+		local url="https://github.com/n00tropic/${remote_repo}.git"
 		echo "Cloning ${url} -> ${target} (depth: ${DEPTH})"
 		if [[ -n ${TOKEN} ]]; then
-			url="https://x-access-token:${TOKEN}@github.com/IAmJonoBo/${repo}.git"
+			url="https://x-access-token:${TOKEN}@github.com/n00tropic/${remote_repo}.git"
 		fi
 		git clone --depth "${DEPTH}" "${url}" "${target}"
 	fi
