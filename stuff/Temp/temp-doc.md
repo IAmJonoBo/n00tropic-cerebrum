@@ -103,7 +103,7 @@ Run nightly via `n00t school.trainingRun planner-v1`; use agent-runs.json for re
 
 ### YOUR ORDERS
 
-1. Fork `n00tropic/n00-cerebrum` → branch `codex/planning-injection`.
+1. Fork `n00tropic/n00tropic-cerebrum` → branch `codex/planning-injection`.
 2. Execute the blueprint above — **no placeholders**; wire to mapped pipelines (e.g., invoke project-lifecycle-radar.sh in resolver for adaptive gap analysis).
 3. Run `meta-check.sh`, `workspace-health.py --autofix`, and all preflights; validate adaptability with synthetic tests (e.g., simulate scope change).
 4. Open PR with title:`[Codex] Planning Engine v1 — MCP-native, air-gapped, self-training, adaptive PM`.

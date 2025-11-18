@@ -9,7 +9,7 @@
  the docs playbook command documented in xref:README.adoc[]. Confirm
  `build/site/search-index.js` exists.
 * **Production (Algolia DocSearch)**: Option A is active. The DocSearch crawler
- targets the GitHub Pages deployment for `n00-cerebrum`. Keep the
+ targets the GitHub Pages deployment for `n00tropic-cerebrum`. Keep the
  `docsearch.json` configuration in the Algolia dashboard in sync with any
  navigation changes.
 [#Algolia]
@@ -17,7 +17,7 @@
 
 . Push doc changes to `main` (or a release branch) and wait for `ci/docs.yml`
  to finish so GitHub Pages is up-to-date.
-. Sign in to Algolia DocSearch, select the `n00-cerebrum` index, and trigger a
+. Sign in to Algolia DocSearch, select the `n00tropic-cerebrum` index, and trigger a
  **manual crawl**. (Automated crawling can be scheduled once the domain
  stabilizes.)
 . Verify the new documents via the DocSearch preview, then smoke test the

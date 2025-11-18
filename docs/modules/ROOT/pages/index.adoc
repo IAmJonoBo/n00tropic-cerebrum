@@ -18,7 +18,7 @@ The snapshot below highlights immediate focus:
 |===
 | Component | Status | Next action
 
-| n00-cerebrum
+| n00tropic-cerebrum
 | ✅ Baseline scaffold merged
 | Finalize page tagging + CI (this branch)
 

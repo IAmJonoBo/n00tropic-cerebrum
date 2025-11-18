@@ -92,7 +92,7 @@ clone_repo() {
 	# Map workspace folder names to GitHub remote repo names when they differ
 	local remote_repo="$repo"
 	if [[ ${repo} == "n00tropic-cerebrum" ]]; then
-		remote_repo="n00-cerebrum"
+		remote_repo="n00tropic-cerebrum"
 	fi
 	if [[ ${USE_WORKSPACE} == true ]]; then
 		local src
@@ -172,7 +172,7 @@ PLAYBOOK="${TMP_DIR}/antora-playbook.local.yml"
 cat >"${PLAYBOOK}" <<EOF
 site:
   title: n00 Docs (local)
-  start_page: n00-cerebrum::index.adoc
+  start_page: n00tropic-cerebrum::index.adoc
 content:
   sources:
 EOF

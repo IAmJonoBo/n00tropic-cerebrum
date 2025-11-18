@@ -1,6 +1,6 @@
 site:
   title: n00 Docs
-  start_page: n00-cerebrum::index.adoc
+  start_page: n00tropic-cerebrum::index.adoc
 content:
   sources:
     - url: .

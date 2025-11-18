@@ -10,7 +10,7 @@ aligned:
 . *Self-hosted or GitHub App*
 .. Ensure the bot has read access to `n00tropic-cerebrum`.
 .. Update the global configuration (or onboarding preset) to extend
- `github>n00tropic/n00-cerebrum//renovate/presets/workspace.json`.
+ `github>n00tropic/n00tropic-cerebrum//renovate/presets/workspace.json`.
 .. Remove legacy `config:base` or workspace-specific overrides unless they're
  still required.
 . *Enterprise mirrors*
