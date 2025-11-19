@@ -1,0 +1,33 @@
+# Next Steps
+
+## Tasks
+- [ ] Audit repos and migrate docs per instructions (owner: codex, due: 2025-02-05)
+- [ ] Restore pnpm workspace install (pnpm install → ERR_PNPM_WORKSPACE_PKG_NOT_FOUND for @n00plicate/design-tokens) (owner: codex)
+- [ ] Authenticate and sync required submodules (git submodule update --init --recursive prompts for GitHub credentials) (owner: codex)
+- [ ] Add CODEOWNERS coverage for workspace root paths touched in this change (owner: codex)
+
+## Steps
+1. Establish baseline per repo instructions.
+2. Plan migration tasks and update docs references.
+3. Run full QC suite before commits.
+
+## Deliverables
+- Updated docs across repos.
+- Updated nav entries and playbook.
+- Passing CI workflows.
+
+## Quality Gates
+- tests: pass
+- linters/formatters: clean
+- type-checks: clean
+- security scan: clean
+- coverage: ≥ baseline
+- build: success
+- docs updated
+
+## Links
+- PRs: TBD
+- Files/lines: TBD
+
+## Risks/Notes
+- Pending baseline runs and repo-specific CI alignment.
