@@ -1,0 +1,46 @@
+= Adaptive Planning & Typesense Rollout
+:page-tags: diataxis:reference, domain:platform, audience:operator, stability:beta
+:reviewed: 2025-11-19
+
+[abstract]
+This page captures the Codex planning initiative status, the split between workstreams, and pointers to operational docs (ADR-005, `docs/PLANNING.md`, search instructions, and PM templates).
+
+== Decision Log
+
+* Workspace ADR: xref:++1. Cerebrum Docs/ADR/ADR-005-adaptive-planning-and-typesense.md++ clarifies scope, guardrails, and follow-up questions.
+* Planner outputs must exist before merging any brief/issue PR; CI enforces DRY/YAGNI thresholds via `.github/workflows/planner.yml`.
+* Typesense replaces Algolia as the primary search backend (OSS container preferred, hosted endpoints optional via env overrides).
+
+== Workstreams
+
+[%autowidth,cols="1,1,2"]
+|===
+| Workstream | Lead | Focus
+| Planning runtime | n00t maintainers | `n00t/planning/`, MCP capability, `.plan.md` artefacts, automation scripts
+| PM + telemetry | Horizons + School | Experiment templates (`[[PLAN]]`), AGENT_E2E updates, planner pipeline (`pipelines/planner-v1.yml`)
+| Docs + search | Docs guild | Antora migration, Typesense README/config, docsearch workflow, nav + MCP server updates
+|===
+
+== Local Typesense recipe
+
+. Install Docker/Podman locally.
+. Copy `docs/search/docsearch.typesense.env.example` (ships with the Typesense rollout) to `.env` and adjust API key + port.
+. Run `docker compose -f docs/search/typesense-compose.yml up -d` once the compose file lands (see xref:++../search/README.adoc++[] for details).
+. Execute `pnpm exec antora antora-playbook.yml && pnpm exec node scripts/check-attrs.mjs`.
+. Trigger the scraper (`pnpm exec docsearch <config>`) or run GitHub Action `search-reindex.yml`.
+. Tear down with `docker compose -f docs/search/typesense-compose.yml down`.
+
+Remote deployments can override `TYPESENSE_HOST/TYPESENSE_PROTOCOL` via secrets without changing the compose file.
+
+== Progress tracker
+
+* Status table: xref:migration-status.adoc[] for repo-by-repo Antora coverage.
+* Planning backlog: `docs/PLANNING.md` enumerates milestones + checklist.
+* PM integration: n00-horizons templates (xref:++n00-horizons/docs/templates/experiment-brief.md++[]) expose the `[[PLAN]]` anchor for planners.
+
+== Next steps
+
+. Land planner runtime + capability manifest.
+. Wire planner telemetry to n00-school datasets and schedule nightly training run.
+. Publish Typesense configs + workflow, validate with local container run.
+. Update AGENT_E2E runbook with planning + Typesense validation steps.

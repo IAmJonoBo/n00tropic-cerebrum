@@ -1,0 +1,24 @@
+{
+  "index_name": "n00-docs",
+  "start_urls": ["http://127.0.0.1:8080"],
+  "sitemap_urls": [],
+  "selectors": {
+    "lvl0": {
+      "selector": ".nav-breadcrumbs > li:last-child",
+      "default_value": "Documentation"
+    },
+    "lvl1": "article h1",
+    "lvl2": "article h2",
+    "lvl3": "article h3",
+    "lvl4": "article h4",
+    "text": "article p, article li"
+  },
+  "custom_settings": {
+    "attributesForFaceting": ["page-tags", "component"]
+  },
+  "typesense": {
+    "server": "${TYPESENSE_PROTOCOL:-http}://${TYPESENSE_HOST:-127.0.0.1}:${TYPESENSE_PORT:-8108}",
+    "api_key": "${TYPESENSE_API_KEY:-tskey-example}",
+    "collection_name": "${TYPESENSE_COLLECTION:-n00-docs}"
+  }
+}

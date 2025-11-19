@@ -1,0 +1,5 @@
+= Typesense Search Runbook
+:page-tags: diataxis:howto, domain:platform, audience:operator, stability:beta
+:reviewed: 2025-11-19
+
+include::../../../../search/README.adoc[]

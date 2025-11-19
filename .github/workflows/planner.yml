@@ -1,0 +1,55 @@
+name: planner
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "n00-horizons/**"
+      - "stuff/Temp/**"
+      - ".dev/automation/scripts/plan-exec.sh"
+      - "n00t/planning/**"
+      - "n00-school/**"
+
+permissions:
+  contents: read
+
+jobs:
+  plan-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Gather planning targets
+        id: targets
+        env:
+          BASE: ${{ github.base_ref }}
+        run: |
+          if [ -z "$BASE" ]; then
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git fetch origin "$BASE" --depth=1 || true
+          git diff --name-only "origin/$BASE"...HEAD > all-changes.txt
+          grep -E '(^n00-horizons/.*\.md$|^docs/.*\.md$|^stuff/Temp/.*\.md$)' all-changes.txt > plan-targets.txt || true
+          if ! [ -s plan-targets.txt ]; then
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          count=$(wc -l < plan-targets.txt | tr -d ' ')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+      - name: Run planner
+        if: steps.targets.outputs.count != '0'
+        env:
+          PYTHONPATH: ${{ github.workspace }}/n00t
+        run: |
+          while IFS= read -r file; do
+            if [ -n "$file" ]; then
+              echo "Planning $file"
+              .dev/automation/scripts/plan-exec.sh --brief "$file" --check --airgapped --yagni-threshold 0.3 --conflict-limit 0 || exit 1
+            fi
+          done < plan-targets.txt
+      - name: No-op
+        if: steps.targets.outputs.count == '0'
+        run: echo "No planner-eligible files changed"

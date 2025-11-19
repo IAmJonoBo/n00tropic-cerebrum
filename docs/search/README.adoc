@@ -1,0 +1,50 @@
+= Typesense Search Operations
+:page-tags: diataxis:howto, domain:platform, audience:operator, stability:beta
+:reviewed: 2025-11-19
+
+This playbook explains how to run the OSS-first search stack for the Cerebrum docs site.
+
+== Modes
+
+* **Offline** – Antora + Lunr (already enabled via `antora-playbook.yml`).
+* **Local Typesense** – Preferred for development. Launch a container (see below) and run the DocSearch scraper to populate the index.
+* **Remote Typesense** – Optional shared cluster. Override `TYPESENSE_HOST`, `TYPESENSE_PROTOCOL`, and `TYPESENSE_PORT` via secrets when using GitHub Actions or CI.
+
+== Prerequisites
+
+. Docker / Podman.
+. Node 20+ (DocSearch scraper) and pnpm-installed Antora dependencies.
+. `docs/search/docsearch.typesense.env.example` copied to `.env` with a generated API key (e.g., `tskey-<uuid>`).
+
+== Local container steps
+
+```bash
+cp docs/search/docsearch.typesense.env.example docs/search/.env
+# Edit docs/search/.env with API key + collection name if desired
+npm install --global @typesense/docsearch-scraper || pnpm exec npx @typesense/docsearch-scraper --version
+# Launch Typesense
+cd docs/search
+TYPESENSE_API_KEY=$(grep TYPESENSE_API_KEY .env | cut -d= -f2-)
+docker compose -f typesense-compose.yml up -d
+cd -
+pnpm exec antora antora-playbook.yml
+pnpm exec docsearch ./docsearch.config.json
+cd docs/search && docker compose -f typesense-compose.yml down
+```
+
+Artifacts go to `build/site/` (Lunr) and the live Typesense collection defined in the env file.
+
+== GitHub Actions integration
+
+`.github/workflows/search-reindex.yml` builds the docs, launches a short-lived Typesense container, runs the DocSearch scraper with the env secrets, and tears everything down. Override the endpoint by setting repository secrets (`TYPESENSE_HOST`, etc.).
+
+== Troubleshooting
+
+* `docsearch` fails with 401 – make sure the API key environment variable matches the Typesense config.
+* Missing documents – ensure every AsciiDoc page includes `:page-tags:` and `:reviewed:` (checked by `scripts/check-attrs.mjs`).
+* Remote host unreachable – rerun with the local compose file to sanity-check config, then revisit firewall/VPC rules.
+
+== References
+
+* ADR-005 – Adaptive Planning & Typesense.
+* `docs/modules/ROOT/pages/planning.adoc` – Initiative overview + local recipe.

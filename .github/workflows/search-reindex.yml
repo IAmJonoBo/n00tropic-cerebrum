@@ -1,0 +1,71 @@
+name: search-reindex
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - docs/**
+      - docsearch.config.json
+      - docs/search/**
+      - antora-playbook.yml
+
+permissions:
+  contents: read
+
+jobs:
+  reindex:
+    runs-on: ubuntu-latest
+    env:
+      TYPESENSE_API_KEY: ${{ secrets.TYPESENSE_API_KEY || 'tskey-ci' }}
+      TYPESENSE_PROTOCOL: ${{ secrets.TYPESENSE_PROTOCOL || 'http' }}
+      TYPESENSE_HOST: ${{ secrets.TYPESENSE_HOST || '127.0.0.1' }}
+      TYPESENSE_PORT: ${{ secrets.TYPESENSE_PORT || '8108' }}
+      TYPESENSE_COLLECTION: ${{ secrets.TYPESENSE_COLLECTION || 'n00-docs' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.22.0
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build Antora site
+        run: pnpm exec antora antora-playbook.yml
+      - name: Serve Antora output
+        run: |
+          npx http-server build/site -p 8080 &
+          echo $! > server.pid
+      - name: Start Typesense
+        working-directory: docs/search
+        env:
+          TYPESENSE_API_KEY: ${{ env.TYPESENSE_API_KEY }}
+        run: |
+          echo "TYPESENSE_API_KEY=${TYPESENSE_API_KEY}" > .env
+          echo "TYPESENSE_PROTOCOL=${TYPESENSE_PROTOCOL}" >> .env
+          echo "TYPESENSE_HOST=${TYPESENSE_HOST}" >> .env
+          echo "TYPESENSE_PORT=${TYPESENSE_PORT}" >> .env
+          echo "TYPESENSE_COLLECTION=${TYPESENSE_COLLECTION}" >> .env
+          docker compose -f typesense-compose.yml up -d
+      - name: Run Typesense DocSearch scraper
+        env:
+          TYPESENSE_API_KEY: ${{ env.TYPESENSE_API_KEY }}
+          TYPESENSE_PROTOCOL: ${{ env.TYPESENSE_PROTOCOL }}
+          TYPESENSE_HOST: ${{ env.TYPESENSE_HOST }}
+          TYPESENSE_PORT: ${{ env.TYPESENSE_PORT }}
+          TYPESENSE_COLLECTION: ${{ env.TYPESENSE_COLLECTION }}
+        run: npx @typesense/docsearch-scraper docsearch.config.json
+      - name: Stop HTTP server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+          fi
+      - name: Stop Typesense
+        if: always()
+        working-directory: docs/search
+        run: docker compose -f typesense-compose.yml down

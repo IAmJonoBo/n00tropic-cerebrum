@@ -148,6 +148,37 @@ To view traces locally, launch an OpenTelemetry collector (or Docker `otel/opent
 
 1. **Agent run telemetry:** Confirm `.dev/automation/artifacts/automation/agent-run-*.json` is written after invoking MCP Tools.
 
+## Planning + Typesense validation
+
+1. **Planner invocation**
+
+   ```bash
+   n00t plan docs/experiments/sample-brief.md --airgapped --force
+   ```
+
+   - Verifies the new `workspace.plan` capability via `.dev/automation/scripts/plan-exec.sh`.
+   - Produces `<brief>.plan.md` plus telemetry under `.dev/automation/artifacts/plans/`. Confirm DRY/YAGNI scores meet thresholds (see `docs/PLANNING.md`).
+
+1. **Conflict gate**
+
+   ```bash
+   .dev/automation/scripts/plan-resolve-conflicts.py --telemetry .dev/automation/artifacts/plans/<file>.json --allow 0
+   ```
+
+   Ensures no unresolved `[[RESOLVE]]` anchors remain before PR merge.
+
+1. **Typesense container smoke test**
+
+   ```bash
+   cp docs/search/docsearch.typesense.env.example docs/search/.env
+   docker compose -f docs/search/typesense-compose.yml up -d
+   pnpm exec antora antora-playbook.yml
+   pnpm exec docsearch ./docsearch.config.json
+   docker compose -f docs/search/typesense-compose.yml down
+   ```
+
+   Confirms the OSS search stack (Lunr + Typesense) works locally prior to CI. See `docs/modules/ROOT/pages/planning.adoc` and `docs/search/README.adoc` for details.
+
 ## Residual risks
 
 - Capabilities that point outside this repo (one level up) require the super-root to exist locally; CI agents must mount `/Volumes/APFS Space/n00tropic/.dev/automation`. Fallback: override entrypoints via environment variables when running in isolated clones.

@@ -8,20 +8,23 @@
 * **Offline / local builds**: Antora emits Lunr indexes automatically when you run
  the docs playbook command documented in xref:README.adoc[]. Confirm
  `build/site/search-index.js` exists.
-* **Production (Algolia DocSearch)**: Option A is active. The DocSearch crawler
- targets the GitHub Pages deployment for `n00tropic-cerebrum`. Keep the
- `docsearch.json` configuration in the Algolia dashboard in sync with any
- navigation changes.
-[#Algolia]
-== Re-index steps
+* **Typesense (preferred)**: Launch the local container via
+ `docs/search/typesense-compose.yml` or target a remote Typesense cluster.
+ Run the DocSearch scraper (`docsearch.config.json`) to seed collections with
+ page metadata (see `docs/search/README.adoc`).
+* **Algolia (legacy)**: Historical crawler remains available but is no longer the
+ default; keep configuration in sync only if you still serve the previous index.
 
-. Push doc changes to `main` (or a release branch) and wait for `ci/docs.yml`
- to finish so GitHub Pages is up-to-date.
-. Sign in to Algolia DocSearch, select the `n00tropic-cerebrum` index, and trigger a
- **manual crawl**. (Automated crawling can be scheduled once the domain
- stabilizes.)
-. Verify the new documents via the DocSearch preview, then smoke test the
- in-site search UI.
+[#Typesense]
+== Re-index steps (Typesense)
+
+. Build docs: `pnpm exec antora antora-playbook.yml`.
+. Serve `build/site` locally (`npx http-server build/site -p 8080`).
+. Export environment variables from `docs/search/.env` and run the Typesense
+ compose stack.
+. Execute `pnpm exec docsearch ./docsearch.config.json` (or trigger
+ `.github/workflows/search-reindex.yml`).
+. Stop the HTTP server + Typesense container when complete.
 
 == Troubleshooting
 
