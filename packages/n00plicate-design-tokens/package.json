@@ -1,0 +1,12 @@
+{
+  "name": "@n00plicate/design-tokens",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "node ./src/index.js > /dev/null",
+    "test": "echo 'placeholder tests for design tokens'",
+    "lint": "echo 'placeholder lint for design tokens'",
+    "typecheck": "echo 'placeholder typecheck for design tokens'"
+  }
+}
