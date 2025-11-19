@@ -7130,7 +7130,7 @@ No description available
 
 #### `n00tropic-cerebrum/n00plicate/scripts/setup-dx.sh`
 
-🚀 Mimic Development Setup Script
+🚀 n00plicate Development Setup Script
 - **Size:** 1.3 KB
 - **Modified:** 2025-11-12T03:18:30.038855
 - **Repository:** `n00tropic-cerebrum`
