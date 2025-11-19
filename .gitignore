@@ -30,3 +30,5 @@ env/
 *.env
 *.bak
 n00tropic_HQ/12-Platform-Ops/erpnext-docker/local.env
+docs/search/.env
+.venv-planner/

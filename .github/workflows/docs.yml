@@ -74,6 +74,11 @@ jobs:
             'docs/**/*.md' '**/*.html'
       - name: Attr checks
         run: node scripts/check-attrs.mjs
+      - name: Run Danger
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DANGER_JS_USE_TS_NODE: "1"
+        run: pnpm exec danger ci
       - name: Vale triage artifacts
         run: pnpm run docs:vale-triage || true
       - name: Spelling counts

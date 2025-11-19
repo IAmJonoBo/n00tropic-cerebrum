@@ -24,6 +24,36 @@ content:
       worktrees:
         - path: ./n00t
           branches: [doc]
+    - url: ./.git/modules/n00-horizons
+      branches: [main]
+      start_paths: [docs]
+      worktrees:
+        - path: ./n00-horizons
+          branches: [main]
+    - url: ./.git/modules/n00-school
+      branches: [main]
+      start_paths: [docs]
+      worktrees:
+        - path: ./n00-school
+          branches: [main]
+    - url: ./.git/modules/n00plicate
+      branches: [chore/migrate-node-24]
+      start_paths: [docs]
+      worktrees:
+        - path: ./n00plicate
+          branches: [chore/migrate-node-24]
+    - url: ./.git/modules/n00tropic
+      branches: [main]
+      start_paths: [docs]
+      worktrees:
+        - path: ./n00tropic
+          branches: [main]
+    - url: ./.git/modules/n00clear-fusion
+      branches: [main]
+      start_paths: [docs]
+      worktrees:
+        - path: ./n00clear-fusion
+          branches: [main]
     # TODO(n00tropic): Add n00-horizons, n00-school, n00plicate, n00tropic, and
     # n00clear-fusion once their Antora scaffolding ships (track via
     # docs/modules/ROOT/pages/migration-status.adoc).
