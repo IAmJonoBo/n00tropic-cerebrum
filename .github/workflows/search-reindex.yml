@@ -57,8 +57,18 @@ jobs:
           TYPESENSE_PROTOCOL: ${{ env.TYPESENSE_PROTOCOL }}
           TYPESENSE_HOST: ${{ env.TYPESENSE_HOST }}
           TYPESENSE_PORT: ${{ env.TYPESENSE_PORT }}
-          TYPESENSE_COLLECTION: ${{ env.TYPESENSE_COLLECTION }}
-        run: npx @typesense/docsearch-scraper docsearch.config.json
+        run: |
+          mkdir -p docs/search/logs
+          LOG_PATH="docs/search/logs/typesense-reindex-${GITHUB_RUN_ID}.log"
+          CONFIG=$(node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('docsearch.config.json','utf8'));process.stdout.write(JSON.stringify(c));")
+          docker run --rm --network host \
+            -e CONFIG="$CONFIG" \
+            -e TYPESENSE_API_KEY="$TYPESENSE_API_KEY" \
+            -e TYPESENSE_HOST="$TYPESENSE_HOST" \
+            -e TYPESENSE_PORT="$TYPESENSE_PORT" \
+            -e TYPESENSE_PROTOCOL="$TYPESENSE_PROTOCOL" \
+            typesense/docsearch-scraper:0.9.0 | tee "$LOG_PATH"
+          node docs/search/scripts/save-typesense-summary.mjs "$LOG_PATH"
       - name: Stop HTTP server
         if: always()
         run: |

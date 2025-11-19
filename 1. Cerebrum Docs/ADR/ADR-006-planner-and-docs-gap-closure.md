@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed – 2025-11-19
+Accepted – 2025-11-19
 
 ## Context
 
@@ -28,6 +28,13 @@ Close the directive gaps with the following projects:
 
 3. **Control-Panel Enhancements**
    - Aggregate planner metrics, Typesense validation status, and docs migration progress into the control-panel doc for PM visibility.
+
+## Implementation
+
+- n00-horizons now tracks the three workstreams via dedicated Antora experiment pages (planner telemetry, Antora + Typesense completion, control panel upgrade) referenced from xref:++docs/modules/ROOT/pages/closing-gaps.adoc++[].
+- The control panel doc includes planner metric tables, Typesense log references, and an inline migration scoreboard so PMs see the same telemetry as automation.
+- Remote Typesense validation logs live under `docs/search/logs/` and the learning log entry confirms planner telemetry + formatter fixes.
+- n00tropic/n00plicate policy and quality/security/testing docs are converted to Antora pages, allowing Typesense + MCP search to index them.
 
 ## Consequences
 

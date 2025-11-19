@@ -15,9 +15,21 @@ content:
     - url: https://github.com/n00tropic/n00t.git
       branches: [main]
       start_paths: [docs]
-    # TODO(n00tropic): Include n00-horizons, n00-school, n00plicate, n00tropic, and
-    # n00clear-fusion once their Antora scaffolding reaches parity (see
-    # docs/modules/ROOT/pages/migration-status.adoc).
+    - url: https://github.com/n00tropic/n00-horizons.git
+      branches: [main]
+      start_paths: [docs]
+    - url: https://github.com/n00tropic/n00-school.git
+      branches: [main]
+      start_paths: [docs]
+    - url: https://github.com/n00tropic/n00plicate.git
+      branches: [main]
+      start_paths: [docs]
+    - url: https://github.com/n00tropic/n00tropic.git
+      branches: [main]
+      start_paths: [docs]
+    - url: https://github.com/n00tropic/n00clear-fusion.git
+      branches: [main]
+      start_paths: [docs]
 ui:
   bundle:
     url: ./vendor/antora/ui-bundle.zip

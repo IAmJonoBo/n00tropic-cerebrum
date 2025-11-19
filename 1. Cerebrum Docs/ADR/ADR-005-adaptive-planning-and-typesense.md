@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed – 2025-11-19
+Accepted – 2025-11-19
 
 ## Context
 
@@ -28,6 +28,13 @@ Executing piecemeal risks drift: planners could emit non-compliant plans, or doc
 - **Governance & Documentation**
   - Publish `docs/PLANNING.md` (3-minute guide) and `docs/modules/ROOT/pages/planning.adoc` referencing this ADR.
   - Update n00-horizons experiment templates with `[[PLAN]]` anchors; AGENT_E2E runbook enumerates validation steps (planner run, Antora build, Typesense index, MCP docs sanity).
+
+## Implementation
+
+- Planner CI (`.github/workflows/planner.yml`) and Danger rules now gate `.plan.md` files, ensuring DRY/YAGNI/conflict metrics block PRs when thresholds are exceeded.
+- `n00-school/pipelines/planner-v1.yml` ingests plan telemetry; the learning log entry dated 2025-11-19 captures the dataset wiring.
+- Typesense now ships with a repeatable workflow: `docs/search/README.adoc` documents the dockerised scraper, `.github/workflows/search-reindex.yml` uses `typesense/docsearch-scraper:0.9.0`, and logs live under `docs/search/logs/` (latest: `typesense-reindex-20251119.log`).
+- Antora navs reference the migrated policy/quality/testing pages so Typesense indexes their attributes.
 
 ## Consequences
 

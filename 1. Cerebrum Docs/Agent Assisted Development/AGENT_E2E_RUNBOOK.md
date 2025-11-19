@@ -171,13 +171,23 @@ To view traces locally, launch an OpenTelemetry collector (or Docker `otel/opent
 
    ```bash
    cp docs/search/docsearch.typesense.env.example docs/search/.env
-   docker compose -f docs/search/typesense-compose.yml up -d
    pnpm exec antora antora-playbook.yml
-   pnpm exec docsearch ./docsearch.config.json
+   npx http-server build/site -p 8080 & echo $! > docs/search/logs/http.pid
+   docker compose -f docs/search/typesense-compose.yml up -d
+   CONFIG=$(node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('docsearch.config.json','utf8'));process.stdout.write(JSON.stringify(c));")
+   docker run --rm --network host \
+   -e CONFIG="$CONFIG" \
+   -e TYPESENSE_API_KEY=$(grep TYPESENSE_API_KEY docs/search/.env | cut -d= -f2-) \
+   -e TYPESENSE_HOST=127.0.0.1 \
+   -e TYPESENSE_PORT=8108 \
+   -e TYPESENSE_PROTOCOL=http \
+   typesense/docsearch-scraper:0.9.0 | tee docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+   node docs/search/scripts/save-typesense-summary.mjs docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+   kill $(cat docs/search/logs/http.pid) && rm docs/search/logs/http.pid
    docker compose -f docs/search/typesense-compose.yml down
    ```
 
-   Confirms the OSS search stack (Lunr + Typesense) works locally prior to CI. See `docs/modules/ROOT/pages/planning.adoc` and `docs/search/README.adoc` for details.
+   Confirms the OSS search stack (Lunr + Typesense) works locally prior to CI. Archive the log under `docs/search/logs/` (latest: `typesense-reindex-20251119.log`) and its generated JSON summary so reviewers can verify record counts without rerunning the scraper. See `docs/modules/ROOT/pages/planning.adoc` and `docs/search/README.adoc` for details.
 
 ## Residual risks
 

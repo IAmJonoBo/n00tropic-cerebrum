@@ -11,11 +11,11 @@ include::partial$diataxis-blurb.adoc[]
 | n00tropic-cerebrum | `docs/antora-migration` | ✅ Base component descriptor, nav, and CI added.
 | n00-frontiers | `docs/antora-migration` | 🔄 Nav now routes to Antora-first pages and the `overview/` landing was added. Convert the linked Markdown guides next.
 | n00-cortex | `docs/antora-migration` | 🔄 Automation overview landed in `modules/ROOT/pages`; continue migrating `docs/overview/*.md`.
-| n00-horizons | `docs/antora-migration` | 🔄 Antora scaffold + templates migrated; convert remaining experiment docs next.
-| n00-school | `docs/antora-migration` | 🔄 Antora scaffold + Start Here/overview converted; migrate ADRs & learning journeys next.
+| n00-horizons | `docs/antora-migration` | 🔄 Playbooks/templates converted to Antora; experiments (planner telemetry, Typesense, control panel) now live under `modules/ROOT/pages/experiments/`. Remaining legacy Markdown tied to automation exports.
+| n00-school | `docs/antora-migration` | 🔄 Antora scaffold + Start Here/overview converted; learning log now in Antora but ADR backlog still pending.
 | n00t | `docs/antora-migration` | ✅ Minimal Antora component scaffold added; migration in progress.
-| n00plicate | `docs/antora-migration` | 🔄 Antora scaffold + overview/start-here added; migrate deep-dives next.
-| n00tropic | `docs/antora-migration` | 🔄 Antora scaffold + overview/start-here added; migrate departmental docs next.
+| n00plicate | `docs/antora-migration` | 🔄 Antora scaffold + overview/start-here added; quality/security/testing guides now mirrored under `modules/ROOT/pages/`, remaining departmental docs still Markdown.
+| n00tropic | `docs/antora-migration` | 🔄 Antora scaffold + overview/start-here added; policies moved to `modules/ROOT/pages/policies/*`, departmental READMEs still Markdown.
 | n00clear-fusion | `docs/antora-migration` | ✅ Antora scaffold plus ingestion/export guide added.
 |===
 

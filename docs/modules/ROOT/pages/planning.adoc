@@ -24,11 +24,22 @@ This page captures the Codex planning initiative status, the split between works
 == Local Typesense recipe
 
 . Install Docker/Podman locally.
-. Copy `docs/search/docsearch.typesense.env.example` (ships with the Typesense rollout) to `.env` and adjust API key + port.
-. Run `docker compose -f docs/search/typesense-compose.yml up -d` once the compose file lands (see xref:++../search/README.adoc++[] for details).
-. Execute `pnpm exec antora antora-playbook.yml && pnpm exec node scripts/check-attrs.mjs`.
-. Trigger the scraper (`pnpm exec docsearch <config>`) or run GitHub Action `search-reindex.yml`.
-. Tear down with `docker compose -f docs/search/typesense-compose.yml down`.
+. Copy `docs/search/docsearch.typesense.env.example` to `.env`, edit the API key, then run `pnpm exec antora antora-playbook.yml`.
+. Serve the docs (`npx http-server build/site -p 8080 & echo $! > docs/search/logs/http.pid`) and bring up Typesense via `docker compose -f docs/search/typesense-compose.yml up -d`.
+. Execute the scraper via Docker (Linux can use `--network host`; macOS/WSL should reuse the compose network and add `host.docker.internal`):
+
+```bash
+CONFIG=$(node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('docsearch.config.json','utf8'));process.stdout.write(JSON.stringify(c));")
+docker run --rm --network host \
+  -e CONFIG="$CONFIG" \
+  -e TYPESENSE_API_KEY=$(grep TYPESENSE_API_KEY docs/search/.env | cut -d= -f2-) \
+  -e TYPESENSE_HOST=127.0.0.1 \
+  -e TYPESENSE_PORT=8108 \
+  -e TYPESENSE_PROTOCOL=http \
+  typesense/docsearch-scraper:0.9.0 | tee docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+```
+
+. Stop the HTTP server (`kill $(cat docs/search/logs/http.pid)`) and tear down the compose stack. Repeat inside CI via `search-reindex.yml` when secrets exist.
 
 Remote deployments can override `TYPESENSE_HOST/TYPESENSE_PROTOCOL` via secrets without changing the compose file.
 
@@ -36,11 +47,14 @@ Remote deployments can override `TYPESENSE_HOST/TYPESENSE_PROTOCOL` via secrets 
 
 * Status table: xref:migration-status.adoc[] for repo-by-repo Antora coverage.
 * Planning backlog: `docs/PLANNING.md` enumerates milestones + checklist.
-* PM integration: n00-horizons templates (xref:++n00-horizons/docs/templates/experiment-brief.md++[]) expose the `[[PLAN]]` anchor for planners.
+* PM integration: n00-horizons templates (xref:++n00-horizons/docs/modules/ROOT/pages/templates/experiment-brief.adoc++[]) expose the `[[PLAN]]` anchor for planners.
+* Typesense runs: `docs/search/logs/typesense-reindex-20251119.log` (and `.log.json` summary) archives the latest Dockerised scrape (37 indexed records).
+* Learning log: xref:++n00-school/docs/modules/ROOT/pages/learning-log.adoc++[] documents planner telemetry + formatter fixes for audits.
+* Deterministic plan artefacts: `n00-horizons/scripts/generate-experiment-plans.sh` regenerates `.plan.md` files committed under `n00-horizons/docs/experiments/`.
 
 == Next steps
 
-. Land planner runtime + capability manifest.
-. Wire planner telemetry to n00-school datasets and schedule nightly training run.
-. Publish Typesense configs + workflow, validate with local container run.
-. Update AGENT_E2E runbook with planning + Typesense validation steps.
+. Call `n00-horizons/scripts/generate-experiment-plans.sh` from automation (e.g., `project-control-panel.sh`) so `.plan.md` artefacts refresh alongside telemetry snapshots.
+. Schedule nightly `n00t school.trainingRun planner-v1 --dataset planner-v1` once the telemetry backlog grows and publish the DRY/YAGNI trend to the control panel.
+. Consume the generated `docs/search/logs/*.log.json` files so dashboards/control panel can display search freshness without manual edits.
+. Replace the remaining Markdown-only references with Antora-native shims to close out the migration tracker ✅ column.

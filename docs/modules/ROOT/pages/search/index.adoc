@@ -1,6 +1,6 @@
 = Search operations
 :page-tags: diataxis:howto, domain:platform, audience:operator, stability:beta
-:reviewed: 2025-11-18
+:reviewed: 2025-11-19
 // vale Vale.Terms = NO
 
 == Modes
@@ -10,8 +10,9 @@
  `build/site/search-index.js` exists.
 * **Typesense (preferred)**: Launch the local container via
  `docs/search/typesense-compose.yml` or target a remote Typesense cluster.
- Run the DocSearch scraper (`docsearch.config.json`) to seed collections with
- page metadata (see `docs/search/README.adoc`).
+ Run the Typesense-maintained DocSearch scraper (`typesense/docsearch-scraper`
+ Docker image) to seed collections with page metadata (see
+ `docs/search/README.adoc`).
 * **Algolia (legacy)**: Historical crawler remains available but is no longer the
  default; keep configuration in sync only if you still serve the previous index.
 
@@ -22,8 +23,22 @@
 . Serve `build/site` locally (`npx http-server build/site -p 8080`).
 . Export environment variables from `docs/search/.env` and run the Typesense
  compose stack.
-. Execute `pnpm exec docsearch ./docsearch.config.json` (or trigger
- `.github/workflows/search-reindex.yml`).
+. Execute the scraper via Docker:
+
+```bash
+CONFIG=$(node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('docsearch.config.json','utf8'));process.stdout.write(JSON.stringify(c));")
+docker run --rm --network host \
+  -e CONFIG="$CONFIG" \
+  -e TYPESENSE_API_KEY=$TYPESENSE_API_KEY \
+  -e TYPESENSE_HOST=$TYPESENSE_HOST \
+  -e TYPESENSE_PORT=$TYPESENSE_PORT \
+  -e TYPESENSE_PROTOCOL=$TYPESENSE_PROTOCOL \
+  typesense/docsearch-scraper:0.9.0 | tee docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+node docs/search/scripts/save-typesense-summary.mjs docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+```
+
+Linux can rely on `--network host`. On macOS/WSL use the network from the compose stack plus `--add-host host.docker.internal:host-gateway` so the scraper reaches the HTTP server.
+. Trigger `.github/workflows/search-reindex.yml` for CI validation once secrets are present.
 . Stop the HTTP server + Typesense container when complete.
 
 [#remote]
@@ -37,7 +52,7 @@ When targeting a shared Typesense cluster, set the following repository secrets 
 * `TYPESENSE_PROTOCOL`
 * `TYPESENSE_COLLECTION`
 
-Trigger the workflow manually (`Actions → search-reindex → Run workflow`) after updating secrets. The job spins up a local HTTP server, runs the scraper with the remote endpoint, and reports success/failure in the job summary.
+Trigger the workflow manually (`Actions → search-reindex → Run workflow`) after updating secrets. The job spins up a local HTTP server, runs the Dockerised scraper with the remote endpoint, and reports success/failure in the job summary. Each run archives logs under `docs/search/logs/` plus machine-readable summaries (`.log.json`); see `docs/search/logs/typesense-reindex-20251119.log` and its `.json` twin for the latest evidence (37 indexed records).
 
 == Troubleshooting
 

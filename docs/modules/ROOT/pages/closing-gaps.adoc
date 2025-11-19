@@ -9,15 +9,15 @@ xref:++../1. Cerebrum Docs/ADR/ADR-006-planner-and-docs-gap-closure.md++ capture
 [cols="1,2,1",options="header"]
 |===
 | Workstream | Deliverables | Tracking
-| Planner telemetry surfaces | Publish n00-school planner dataset + dashboards, auto-attach plans to briefs, update AGENT_E2E + control panel with planner status. | Experiment: `docs/experiments/planner-telemetry.md` (to create) + job card once scoped.
-| Antora & Typesense completion | Convert remaining Markdown (n00tropic policies, n00-school learning logs, n00clear-fusion pipelines, n00plicate legacy guides), document remote Typesense reindex, mark tracker ✅. | Add jobs per repo once scope defined; log remote reindex run in learning log.
-| Control-panel upgrade | Surface planner metrics, Typesense validation status, migration progress in control-panel doc and dashboards. | Update `n00-horizons/docs/control-panel.adoc` + associated automation.
+| Planner telemetry surfaces | Publish n00-school planner dataset + dashboards, auto-attach plans to briefs, update AGENT_E2E + control panel with planner status. | xref:++n00-horizons/docs/modules/ROOT/pages/experiments/planner-telemetry.adoc++[] (see `n00-horizons/scripts/generate-experiment-plans.sh` for deterministic `.plan.md` artefacts).
+| Antora & Typesense completion | Convert remaining Markdown (n00tropic policies, n00-school learning logs, n00plicate quality/security/testing guides), document remote Typesense reindex, mark tracker ✅. | xref:++n00-horizons/docs/modules/ROOT/pages/experiments/antora-typesense-completion.adoc++[] (logs + JSON summaries under `docs/search/logs/typesense-reindex-*.log[.json]`).
+| Control-panel upgrade | Surface planner metrics, Typesense validation status, migration progress in control-panel doc and dashboards. | xref:++n00-horizons/docs/modules/ROOT/pages/experiments/control-panel-upgrade.adoc++[] (new sections in xref:++n00-horizons/docs/modules/ROOT/pages/control-panel.adoc++[]).
 |===
 
 == Next actions
 
-. Create n00-horizons experiment + job entries for each workstream (see template at `n00-horizons/docs/templates/experiment-brief.md`).
-. Schedule remote Typesense reindex with secrets configured and record the run (link from docs/search/README.adoc once executed).
-. Draft planner telemetry dashboard design and dataset schema (n00-school learning log update).
+. Hook `n00-horizons/scripts/generate-experiment-plans.sh` into `project-control-panel.sh` so plan refreshes happen automatically during telemetry snapshots.
+. Teach the control-panel/dashboard automation to consume `docs/search/logs/*.log.json` and display search freshness without manual edits.
+. Wire planner metric rollups (DRY/YAGNI/conflict trends) into the dashboard automation output in addition to the manual tables.
 
 Update this page as milestones complete.

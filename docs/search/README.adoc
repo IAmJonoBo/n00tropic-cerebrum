@@ -21,30 +21,52 @@ This playbook explains how to run the OSS-first search stack for the Cerebrum do
 ```bash
 cp docs/search/docsearch.typesense.env.example docs/search/.env
 # Edit docs/search/.env with API key + collection name if desired
-npm install --global @typesense/docsearch-scraper || pnpm exec npx @typesense/docsearch-scraper --version
-# Launch Typesense
-cd docs/search
-TYPESENSE_API_KEY=$(grep TYPESENSE_API_KEY .env | cut -d= -f2-)
-docker compose -f typesense-compose.yml up -d
-cd -
 pnpm exec antora antora-playbook.yml
-pnpm exec docsearch ./docsearch.config.json
+npx http-server build/site -p 8080 & echo $! > docs/search/logs/http.pid
+cd docs/search
+source .env && docker compose -f typesense-compose.yml up -d
+cd -
+CONFIG=$(node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('docsearch.config.json','utf8'));c.start_urls=['http://host.docker.internal:8080'];process.stdout.write(JSON.stringify(c));")
+docker run --rm --network search_default \
+  --add-host host.docker.internal:host-gateway \
+  -e CONFIG="$CONFIG" \
+  -e TYPESENSE_API_KEY=$(grep TYPESENSE_API_KEY docs/search/.env | cut -d= -f2-) \
+  -e TYPESENSE_HOST=typesense \
+  -e TYPESENSE_PORT=8108 \
+  -e TYPESENSE_PROTOCOL=http \
+  typesense/docsearch-scraper:0.9.0 | tee docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+node docs/search/scripts/save-typesense-summary.mjs docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+kill $(cat docs/search/logs/http.pid) && rm docs/search/logs/http.pid
 cd docs/search && docker compose -f typesense-compose.yml down
 ```
 
-Artifacts go to `build/site/` (Lunr) and the live Typesense collection defined in the env file.
+Artifacts go to `build/site/` (Lunr), Typesense collections, the log under `docs/search/logs/`, and a JSON summary (`.log.json`) that downstream dashboards can ingest.
+
+[TIP]
+====
+On macOS/WSL, `host.docker.internal` routes containers back to the host HTTP server. On Linux runners you can replace the `--network` flag with `--network host` and keep `start_urls` set to `http://127.0.0.1:8080`.
+====
 
 == GitHub Actions integration
 
-`.github/workflows/search-reindex.yml` builds the docs, launches a short-lived Typesense container, runs the DocSearch scraper with the env secrets, and tears everything down. Override the endpoint by setting repository secrets (`TYPESENSE_HOST`, etc.).
+`.github/workflows/search-reindex.yml` builds the docs, launches a short-lived Typesense container, runs the Typesense-maintained Docker image for the DocSearch scraper (`typesense/docsearch-scraper:0.9.0`), and tears everything down. Override the endpoint by setting repository secrets (`TYPESENSE_HOST`, etc.).
 
-== Remote clusters
+== Remote clusters & validation log
 
 For hosted Typesense deployments:
 
 1. Store `TYPESENSE_API_KEY`, `TYPESENSE_HOST`, `TYPESENSE_PORT`, `TYPESENSE_PROTOCOL`, and `TYPESENSE_COLLECTION` as repository secrets.
 2. Run `search-reindex.yml` manually after updating docs to validate the remote index.
 3. Confirm the workflow summary shows successful scraping; investigate logs if the remote cluster rejects connections.
+4. Inspect the uploaded log + JSON summary in the workflow artifacts to capture record counts inside dashboards/control panels.
+
+Each run should drop a timestamped log in `docs/search/logs/`. The current validation evidence:
+
+[%autowidth,cols="1,2"]
+|===
+| Date (UTC) | Evidence
+| 2025-11-19 | `docs/search/logs/typesense-reindex-20251119.log` — 37 pages indexed via `typesense/docsearch-scraper:0.9.0` against the local compose stack + published Typesense alias `n00-docs`.
+|===
 
 == Troubleshooting
 

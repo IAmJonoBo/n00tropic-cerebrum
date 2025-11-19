@@ -38,11 +38,11 @@ _Last updated: 2025-11-19_
 - [x] `n00t/planning/` passes unit tests and integrates with `n00t plan`.
 - [x] Planner capability published + `.dev/automation/scripts/plan-exec.sh` accessible via MCP + CLI.
 - [x] `docs/modules/ROOT/pages/planning.adoc` + this file stay in sync (link from nav + AGENT_E2E Runbook).
-- [ ] Experiment briefs/template adopt `[[PLAN]]` anchor and conflict resolution guidance.
-- [ ] `n00-school/pipelines/planner-v1.yml` live with telemetry ingestion + nightly `n00t school.trainingRun planner-v1` job scheduled.
-- [ ] Typesense container compose + remote override documented; `search-reindex.yml` succeeding with OSS image.
-- [ ] Antora tracker rows updated for every repo once their PRs land.
-- [ ] Planner CI + Danger gating (YAGNI < 0.3, no stale `:reviewed:`) enforced on all doc/brief PRs.
+- [x] Experiment briefs/template adopt `[[PLAN]]` anchor and conflict resolution guidance.
+- [ ] `n00-school/pipelines/planner-v1.yml` live with telemetry ingestion + nightly `n00t school.trainingRun planner-v1` job scheduled (pipeline ready; scheduling pending).
+- [x] Typesense container compose + remote override documented; `search-reindex.yml` succeeding with OSS image (see `docs/search/logs/typesense-reindex-20251119.log`).
+- [x] Antora tracker rows updated for every repo once their PRs land.
+- [x] Planner CI + Danger gating (YAGNI < 0.3, no stale `:reviewed:`) enforced on all doc/brief PRs.
 
 ## References
 
