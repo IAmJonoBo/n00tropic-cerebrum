@@ -35,6 +35,16 @@ pip install -r requirements.txt
 pip install agent-framework-azure-ai --pre
 ```
 
+1. Bootstrap shared workspace dependencies (PyYAML, jsonschema, docs MCP helpers):
+
+```bash
+cd /Volumes/APFS\ Space/n00tropic/n00tropic-cerebrum
+scripts/bootstrap-python.sh
+source .venv-workspace/bin/activate  # repeat in new shells before running automation
+```
+
+The script installs everything defined in `requirements.workspace.txt`, ensuring automation like `project-control-panel.sh` and docs MCP services never fail with `ModuleNotFoundError`.
+
 ## Editor configuration for Copilot workflows
 
 `.vscode/settings.json` now points the `ai-workflow` server at `n00tropic/.dev/automation/mcp-server/index.js`, ensuring Copilot Chat can load the Tools without path errors. The `cortex` server path already resolves to `n00-cortex/mcp-server/index.js`.
@@ -117,6 +127,58 @@ print(result.output)
 - The helper falls back when `agent_framework` is missing, so existing scripts keep functioning without the dependency.
 
 To view traces locally, launch an OpenTelemetry collector (or Docker `otel/opentelemetry-collector`) pointing at Honeycomb/Jaeger, then run `cli.py` commands—the spans are emitted before any sub-command logic executes.
+
+## Model entrypoints
+
+### LM Studio (local OpenAI-compatible server)
+
+1. Launch LM Studio → **Local Server** tab → start the HTTP server (default `http://127.0.0.1:1234/v1`).
+2. Verify the endpoint:
+
+   ```bash
+   curl http://127.0.0.1:1234/v1/models | jq '.data[].id'
+   curl http://127.0.0.1:1234/v1/chat/completions \
+     -H 'Content-Type: application/json' \
+     -d '{"model":"deepseek/deepseek-r1-0528-qwen3-8b","messages":[{"role":"system","content":"You are a concise assistant."},{"role":"user","content":"State the workspace name."}]}'
+   ```
+
+3. `n00-cortex/data/llms.yaml` now ships the `litellm/lmstudio-deepseek` provider (air-gapped, pointing at the LM Studio server). Run planners or other tooling with:
+
+   ```bash
+   n00t plan docs/experiments/sample-brief.adoc \
+     --model litellm/lmstudio-deepseek --airgapped --force
+   ```
+
+4. To keep telemetry consistent, set `LITELLM_BASE_URL=http://127.0.0.1:1234/v1` and `LITELLM_API_KEY=dummy` before invoking any scripts that load `litellm`.
+
+### GitHub Models / Codex
+
+_Preferred remote fallback when LM Studio/ollama are unavailable._
+
+```bash
+export GITHUB_TOKEN=<fine-grained token with "codespace" scope>
+curl https://models.inference.ai.azure.com/chat/completions \
+  -H "Authorization: Bearer $GITHUB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "model": "gpt-4.1-mini",
+        "messages": [
+          {"role":"system","content":"You are Codex, the workspace planner."},
+          {"role":"user","content":"Summarise docs/modules/ROOT/pages/planning.adoc"}
+        ]
+      }'
+```
+
+Add a matching provider entry in `n00-cortex/data/llms.yaml` (transport `litellm`, `api_base: https://models.inference.ai.azure.com`, `airgapped: false`) when you want planners to target Codex/GitHub Models directly.
+
+### GitHub Copilot / VS Code surface
+
+1. Install the Copilot Chat + MCP Preview extensions in VS Code.
+2. Point `.vscode/settings.json` at the same MCP servers described earlier (ai-workflow/cortex/n00-docs). Copilot will expose them as `/mcp` slash-commands.
+3. Inside Copilot Chat run `/model gpt-4o-mini` (for hosted Codex) or `/model local` (once the VS Code Copilot agent supports LM Studio via OpenAI-compatible endpoints).
+4. Use Copilot to orchestrate workspace entrypoints exactly like CLI agents: ask it to call `run_workflow_phase`, `n00t plan`, or to read docs via the MCP resources.
+
+This combination keeps local LM Studio inference, GitHub-hosted Codex, and Copilot Chat aligned so the planned root application + editor tooling stay in lock-step.
 
 ## Verification steps
 

@@ -1,0 +1,5 @@
+# Aggregated Python requirements for the Cerebrum workspace
+-r n00tropic/requirements.txt
+-r n00-school/requirements.txt
+-r n00-frontiers/requirements.txt
+-r mcp/docs_server/requirements.txt
