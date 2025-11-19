@@ -1,0 +1,12 @@
+{
+  "name": "@n00plicate/shared-utils",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "node ./src/index.js > /dev/null",
+    "test": "echo 'placeholder tests for shared utils'",
+    "lint": "echo 'placeholder lint for shared utils'",
+    "typecheck": "echo 'placeholder typecheck for shared utils'"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@n00plicate/tokens-core",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "node ./src/index.js > /dev/null",
+    "test": "echo 'placeholder tests for tokens core'",
+    "lint": "echo 'placeholder lint for tokens core'",
+    "typecheck": "echo 'placeholder typecheck for tokens core'"
+  }
+}

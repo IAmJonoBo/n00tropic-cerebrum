@@ -1,0 +1,31 @@
+= pnpm migration guide
+:page-tags: diataxis:howto, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-19
+
+This document explains pnpm migration steps for maintainers.
+
+Scripts included in this repo under `scripts/`: `find-npm-usages.mjs`, `replace-npx-with-pnpm.mjs`, and `replace-npm-commands-with-pnpm.mjs`. Use them to find and apply safe pnpm CLI replacements in docs and scripts.
+
+== Recommended steps
+
+. Run the scan scripts to identify candidate files (see xref:++docs/pnpm-migration/npm-candidates.json++[npm-candidates.json]).
+. For each submodule that contains candidates, create a PR in that repo to apply safe conversions (docs-only).
+. Add per-repo editors or owners as reviewers before merging.
+
+== Command examples
+
+[source,shell]
+----
+# Inspect Markdown + shell scripts for npm usage
+pnpm -s exec node scripts/find-npm-usages.mjs --output docs/pnpm-migration/npm-candidates.json
+
+# Propose automated replacements for npx invocations
+pnpm -s exec node scripts/replace-npx-with-pnpm.mjs --apply --yes
+
+# Convert common npm run invocations to pnpm run
+pnpm -s exec node scripts/replace-npm-commands-with-pnpm.mjs --dry-run
+----
+
+* Always review generated patches before committing.
+* Update repo READMEs to describe pnpm workflows (install, test, lint, build).
+* Capture any blockers (for example, CI runners missing pnpm) in xref:migration-status.adoc[] so they stay visible.
