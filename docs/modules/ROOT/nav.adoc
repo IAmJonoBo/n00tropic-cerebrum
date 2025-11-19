@@ -1,6 +1,7 @@
 * xref:index.adoc[Home]
 * xref:migration-status.adoc[Migration Tracker]
 * xref:planning.adoc[Planning & Typesense]
+** xref:closing-gaps.adoc[Gap Closure Plan]
 * xref:README.adoc[Legacy README]
 * xref:contributing.adoc[Docs Contribution Playbook]
 * xref:search/index.adoc[Search & MCP]

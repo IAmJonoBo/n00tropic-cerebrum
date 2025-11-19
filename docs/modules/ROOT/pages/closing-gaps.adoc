@@ -1,0 +1,23 @@
+= Planner & Docs Gap Closure Plan
+:page-tags: diataxis:howto, domain:pm, audience:contrib, stability:beta
+:reviewed: 2025-11-19
+
+xref:++../1. Cerebrum Docs/ADR/ADR-006-planner-and-docs-gap-closure.md++ captures the decision to finish the remaining work from temp-doc and temp-doc-2. This page tracks execution status and links the workstreams to n00-horizons experiments/jobs.
+
+== Workstreams
+
+[cols="1,2,1",options="header"]
+|===
+| Workstream | Deliverables | Tracking
+| Planner telemetry surfaces | Publish n00-school planner dataset + dashboards, auto-attach plans to briefs, update AGENT_E2E + control panel with planner status. | Experiment: `docs/experiments/planner-telemetry.md` (to create) + job card once scoped.
+| Antora & Typesense completion | Convert remaining Markdown (n00tropic policies, n00-school learning logs, n00clear-fusion pipelines, n00plicate legacy guides), document remote Typesense reindex, mark tracker ✅. | Add jobs per repo once scope defined; log remote reindex run in learning log.
+| Control-panel upgrade | Surface planner metrics, Typesense validation status, migration progress in control-panel doc and dashboards. | Update `n00-horizons/docs/control-panel.adoc` + associated automation.
+|===
+
+== Next actions
+
+. Create n00-horizons experiment + job entries for each workstream (see template at `n00-horizons/docs/templates/experiment-brief.md`).
+. Schedule remote Typesense reindex with secrets configured and record the run (link from docs/search/README.adoc once executed).
+. Draft planner telemetry dashboard design and dataset schema (n00-school learning log update).
+
+Update this page as milestones complete.
