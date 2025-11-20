@@ -176,6 +176,12 @@ Any repo that needs an asset from a sibling must reference the published artifac
 
 ## Trunk control vs. subrepo autonomy
 
+The workspace no longer vendors a root-level `.trunk/` directory. Canonical
+definitions now live under `n00-cortex/data/trunk/base/.trunk/` (plus each
+subrepo's own `.trunk/`). Copy or sync those configs before running Trunk (for
+example via `scripts/sync-trunk-defs.mjs`) and install the CLI outside this
+repo, exposing it through `TRUNK_BIN` or `PATH`.
+
 To validate all subrepos centrally while preserving subrepo autonomy, the workspace CI runs the root helper script (`pnpm run trunk:check-all`) that executes `trunk check` in each subrepo. Each subrepo's `.trunk/trunk.yaml` still governs behavior for developer workflows and PR-bottom checks. This avoids conflicts and ensures CI-level uniformity.
 
 - Root CI behavior: `pnpm run trunk:check-all` iterates over repo folders and runs `trunk check` in each, capturing JSON artifacts in `artifacts/trunk-results/`.

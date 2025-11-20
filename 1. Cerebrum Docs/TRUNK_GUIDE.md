@@ -2,6 +2,15 @@
 
 This workspace keeps Trunk for developer ergonomics, but we lean on system runtimes and CI caching rather than hermetic downloads.
 
+> **Note:** The repository no longer ships a top-level `.trunk/` directory. Canonical Trunk configs live under `n00-cortex/data/trunk/base/.trunk/` and the individual subrepositories. Runners should copy/overlay those configs into place (for example via `scripts/sync-trunk-defs.mjs` or subrepo-specific automation) before invoking the CLI.
+
+## Sourcing configuration
+
+1. Update `n00-cortex/data/trunk/base/.trunk/trunk.yaml` when policy changes are required.
+2. Run `scripts/sync-trunk-defs.mjs` (or `.dev/automation/scripts/run-trunk-subrepos.sh --sync-only`) so subrepos receive the refreshed definitions.
+3. Ensure CI creates a writable cache location (for example `~/.cache/trunk`) and symlinks/copies the canonical config into each repo that still depends on Trunk.
+4. Set `TRUNK_BIN` (or add Trunk to `PATH`) on runners because there is no repo-local launcher anymore.
+
 ## Runtimes
 
 Trunk configuration (`n00-frontiers/.trunk/trunk.yaml`) allows the system Node.js, Python, and Go installs. Make sure your CI image already includes the versions declared in `n00-cortex/data/toolchain-manifest.json`.

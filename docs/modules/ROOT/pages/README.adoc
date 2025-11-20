@@ -203,6 +203,26 @@ Automation executions append telemetry to
 `.dev/automation/artifacts/automation/agent-runs.json`, which powers dashboards
 and agent insights.
 
+== Trunk control vs. subrepo autonomy
+
+The workspace no longer vendors a root-level `.trunk/` directory. Canonical
+definitions now live under `n00-cortex/data/trunk/base/.trunk/` together with
+each subrepo's `.trunk/`. Copy or sync those configs before running Trunk (for
+example via `scripts/sync-trunk-defs.mjs`) and install the CLI outside this
+repo, exposing it through `TRUNK_BIN` or `PATH`.
+
+* *Root CI behaviour*: `pnpm run trunk:check-all` iterates over repo folders
+    and runs `trunk check` in each, capturing JSON artefacts in
+    `artifacts/trunk-results/`.
+* *Subrepo behaviour*: Each subrepo provides its own `.trunk/trunk.yaml`. If a
+    subrepo lacks a `.trunk` directory, the workspace runner still runs
+    `trunk check` with default settings and records findings.
+
+TIP: If you see “unsupported linter” errors locally for Trunk checks, run
+`pnpm run trunk:sync-defs` to copy the workspace-standard definitions into each
+subrepo (only when the subrepo needs the definitions locally). This avoids
+hand-editing and stays reversible.
+
 == Formatter guardrails
 
 * *Python format flow*: Every Trunk config runs `isort@7.0.0` before `black@25.x`
