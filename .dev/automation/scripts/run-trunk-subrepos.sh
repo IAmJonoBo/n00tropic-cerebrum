@@ -14,7 +14,7 @@ if ! command -v pnpm >/dev/null 2>&1; then
 fi
 
 # Resolve trunk binary if TRUNK_BIN path is not present
-if [[ ! -x "${TRUNK_BIN}" ]]; then
+if [[ ! -x ${TRUNK_BIN} ]]; then
 	if command -v trunk >/dev/null 2>&1; then
 		TRUNK_BIN="$(command -v trunk)"
 		echo "Resolved trunk binary via PATH: ${TRUNK_BIN}"

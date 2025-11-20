@@ -33,7 +33,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="n00-dashboard helper CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    build_parser = subparsers.add_parser("build", help="Run swift build for the dashboard.")
+    build_parser = subparsers.add_parser(
+        "build", help="Run swift build for the dashboard."
+    )
     build_parser.add_argument("--tests", action="store_true", help="Also build tests.")
 
     subparsers.add_parser("test", help="Execute the swift test suite.")

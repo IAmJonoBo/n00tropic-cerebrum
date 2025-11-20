@@ -27,13 +27,12 @@
 
 ## Steps
 
-
-1) Bootstrap toolchain (pnpm via corepack; trunk CLI install; python venv via `scripts/bootstrap-python.sh`).
-2) Sync submodules and artifacts (`scripts/check-superrepo.sh`, `.dev/automation/scripts/workspace-health.py --sync-submodules --publish-artifact`).
-3) Restore linters/formatters (`pnpm -w exec biome check scripts`, `.dev/automation/scripts/run-trunk-subrepos.sh --fmt` once the external `TRUNK_BIN` is available).
-4) Rebuild docs and search (`pnpm exec antora antora-playbook.yml`; rerun `docsearch.config.json` workflow if search is enabled).
-5) Run security + health (`osv-scanner --config osv-scanner.toml .`, confirm GHSA items cleared).
-6) Mirror Antora/Vale/Lychee + Markdown→AsciiDoc migrations across repos listed in `docs/modules/ROOT/pages/migration-status.adoc` when private submodules are reachable.
+1. Bootstrap toolchain (pnpm via corepack; trunk CLI install; python venv via `scripts/bootstrap-python.sh`).
+2. Sync submodules and artifacts (`scripts/check-superrepo.sh`, `.dev/automation/scripts/workspace-health.py --sync-submodules --publish-artifact`).
+3. Restore linters/formatters (`pnpm -w exec biome check scripts`, `.dev/automation/scripts/run-trunk-subrepos.sh --fmt` once the external `TRUNK_BIN` is available).
+4. Rebuild docs and search (`pnpm exec antora antora-playbook.yml`; rerun `docsearch.config.json` workflow if search is enabled).
+5. Run security + health (`osv-scanner --config osv-scanner.toml .`, confirm GHSA items cleared).
+6. Mirror Antora/Vale/Lychee + Markdown→AsciiDoc migrations across repos listed in `docs/modules/ROOT/pages/migration-status.adoc` when private submodules are reachable.
 
 ## Deliverables
 

@@ -2,9 +2,7 @@
   "timestamp": "2025-11-10T14:04:10Z",
   "added": [],
   "removed": [],
-  "modified": [
-    "checksums.json"
-  ],
+  "modified": ["checksums.json"],
   "fileCount": 11,
   "manifestPath": "90-Archive/erpnext-exports/checksums.json",
   "alert": false,

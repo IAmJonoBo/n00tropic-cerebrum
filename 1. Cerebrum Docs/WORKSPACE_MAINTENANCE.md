@@ -17,13 +17,13 @@ This guide keeps the federated workspace healthy whether you are preparing a pul
 
 ## 2. Fix Drift (if needed)
 
-| Scenario | Action |
-| --- | --- |
+| Scenario                                            | Action                                                                                        |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | Submodule has untracked changes you want to discard | `git -C <repo> checkout -- .` or run `workspace-health --repo-cmd <repo>:"git checkout -- ."` |
-| Submodule is behind | `git -C <repo> pull --ff-only` |
-| Tooling configs diverged | `./.dev/automation/scripts/sync-trunk.py --pull` (automatically included in `--fix-all`) |
-| Only untracked files remain (root or submodule) | `./.dev/automation/scripts/workspace-health.sh --clean-untracked` |
-| Workspace root dirty | Commit or stash before release automation |
+| Submodule is behind                                 | `git -C <repo> pull --ff-only`                                                                |
+| Tooling configs diverged                            | `./.dev/automation/scripts/sync-trunk.py --pull` (automatically included in `--fix-all`)      |
+| Only untracked files remain (root or submodule)     | `./.dev/automation/scripts/workspace-health.sh --clean-untracked`                             |
+| Workspace root dirty                                | Commit or stash before release automation                                                     |
 
 ## 3. Run Cross-Repo Checks
 

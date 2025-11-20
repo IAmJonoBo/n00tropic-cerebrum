@@ -5,10 +5,7 @@
       "label": "workspace: trunk upgrade (all repos)",
       "type": "shell",
       "command": "python3",
-      "args": [
-        "cli.py",
-        "trunk-upgrade"
-      ],
+      "args": ["cli.py", "trunk-upgrade"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -33,10 +30,7 @@
       "label": "swift: build (prompted target)",
       "type": "shell",
       "command": "swift",
-      "args": [
-        "build",
-        "--build-tests"
-      ],
+      "args": ["build", "--build-tests"],
       "options": {
         "cwd": "${input:workspaceSwiftTarget}",
         "env": {

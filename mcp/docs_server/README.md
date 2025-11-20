@@ -53,6 +53,7 @@ Lists all unique tags found across documentation pages.
 **Returns:** `list[str]` - Sorted list of unique tags
 
 **Example:**
+
 ```python
 tags = list_tags()
 # Returns: ['diataxis:reference', 'domain:platform', 'audience:contrib', ...]
@@ -63,16 +64,19 @@ tags = list_tags()
 Searches documentation pages for the given query string.
 
 **Parameters:**
+
 - `query` (str): Search query string
 
 **Returns:** `list[dict]` - List of matching pages with:
-  - `id` - Page identifier
-  - `title` - Page title
-  - `url` - Relative URL
-  - `tags` - List of page tags
-  - `score` - Match score
+
+- `id` - Page identifier
+- `title` - Page title
+- `url` - Relative URL
+- `tags` - List of page tags
+- `score` - Match score
 
 **Example:**
+
 ```python
 results = search("antora migration")
 # Returns pages containing the search terms, sorted by relevance
@@ -83,16 +87,19 @@ results = search("antora migration")
 Retrieves a documentation page by its ID.
 
 **Parameters:**
+
 - `id` (str): Page identifier (relative path without extension, e.g., "index" or "search/index")
 
 **Returns:** `dict` - Page data:
-  - `id` - Page identifier
-  - `format` - Content format ("html" or "asciidoc")
-  - `content` - Page content
-  - `title` - Page title (asciidoc format only)
-  - `tags` - Page tags (asciidoc format only)
+
+- `id` - Page identifier
+- `format` - Content format ("html" or "asciidoc")
+- `content` - Page content
+- `title` - Page title (asciidoc format only)
+- `tags` - Page tags (asciidoc format only)
 
 **Example:**
+
 ```python
 page = get_page("index")
 # Returns the index page content and metadata
@@ -101,6 +108,7 @@ page = get_page("index")
 ## Allowed Paths
 
 The server only accesses:
+
 - `docs/` - AsciiDoc source files
 - `build/site/` - Built HTML files
 

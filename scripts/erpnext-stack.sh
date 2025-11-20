@@ -4,7 +4,7 @@ set -euo pipefail
 # Single entrypoint for provisioning, updating, and running a local ERPNext stack.
 # Requires: pnpm (via corepack), MariaDB, Redis, and python3.12+ available on PATH.
 
-COMMAND=${1:-}
+COMMAND=${1-}
 STACK_ROOT=${STACK_ROOT:-"${HOME}/.local/share/erpnext-stack"}
 BENCH_NAME=${BENCH_NAME:-"erpnext-bench"}
 BENCH_PATH="${STACK_ROOT}/${BENCH_NAME}"
@@ -35,7 +35,7 @@ ensure_directories() {
 }
 
 ensure_bench_cli() {
-	if [[ ! -x "${BENCH_BIN}" ]]; then
+	if [[ ! -x ${BENCH_BIN} ]]; then
 		"${PYTHON_BIN}" -m venv "${BENCH_VENV}"
 		"${BENCH_VENV}/bin/pip" install --upgrade pip
 		"${BENCH_VENV}/bin/pip" install frappe-bench==5.27.0
@@ -44,7 +44,7 @@ ensure_bench_cli() {
 
 ensure_yarn_wrapper() {
 	local wrapper="${HELPERS_BIN}/yarn"
-	if [[ ! -x "${wrapper}" ]]; then
+	if [[ ! -x ${wrapper} ]]; then
 		cat >"${wrapper}" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -113,17 +113,17 @@ bench_env() {
 
 bench_cmd() {
 	bench_env
-	( cd "${BENCH_PATH}" && "${BENCH_BIN}" "$@" )
+	(cd "${BENCH_PATH}" && "${BENCH_BIN}" "$@")
 }
 
 setup_stack() {
 	ensure_directories
 	bench_env
 
-	if [[ ! -d "${BENCH_PATH}" ]]; then
+	if [[ ! -d ${BENCH_PATH} ]]; then
 		local legacy_candidates=("${PWD}/${BENCH_NAME}" "${HOME}/${BENCH_NAME}")
 		for candidate in "${legacy_candidates[@]}"; do
-			if [[ -d "${candidate}" && "${candidate}" != "${BENCH_PATH}" ]]; then
+			if [[ -d ${candidate} && ${candidate} != "${BENCH_PATH}" ]]; then
 				local backup="${candidate}.bak-$(date +%Y%m%d%H%M%S)"
 				echo "Found existing bench at ${candidate}; moving to ${backup} before reinitialising." >&2
 				mv "${candidate}" "${backup}"
@@ -136,7 +136,7 @@ setup_stack() {
 		)
 	fi
 
-	if [[ ! -d "${BENCH_PATH}" ]]; then
+	if [[ ! -d ${BENCH_PATH} ]]; then
 		echo "Bench initialisation failed: ${BENCH_PATH} not found." >&2
 		exit 1
 	fi
@@ -157,7 +157,7 @@ setup_stack() {
 }
 
 assert_stack_exists() {
-	if [[ ! -d "${BENCH_PATH}" ]]; then
+	if [[ ! -d ${BENCH_PATH} ]]; then
 		echo "Bench directory ${BENCH_PATH} not found. Run '${0##*/} setup' first." >&2
 		exit 1
 	fi
@@ -175,7 +175,7 @@ repos_need_update() {
 	fi
 	local behind
 	behind=$(git -C "${repo_path}" rev-list --count "HEAD..origin/${branch}" || echo 0)
-	[[ "${behind}" -gt 0 ]]
+	[[ ${behind} -gt 0 ]]
 }
 
 maybe_upgrade() {
@@ -232,47 +232,47 @@ EOF
 }
 
 case "${COMMAND}" in
-	setup)
-		ensure_prereqs
-		ensure_directories
-		ensure_bench_cli
-		ensure_yarn_wrapper
-		setup_stack
-		;;
-	update)
-		ensure_prereqs
-		ensure_directories
-		ensure_bench_cli
-		ensure_yarn_wrapper
-		assert_stack_exists
-		maybe_upgrade
-		;;
-	start)
-		ensure_prereqs
-		ensure_directories
-		ensure_bench_cli
-		ensure_yarn_wrapper
-		assert_stack_exists
-		maybe_upgrade
-		start_stack
-		;;
-	run)
-		ensure_prereqs
-		ensure_directories
-		ensure_bench_cli
-		ensure_yarn_wrapper
-		setup_stack
-		start_stack
-		;;
-	stop)
-		assert_stack_exists
-		stop_stack
-		;;
-	status)
-		status_stack
-		;;
-	*)
-		usage
-		exit 1
-		;;
- esac
+setup)
+	ensure_prereqs
+	ensure_directories
+	ensure_bench_cli
+	ensure_yarn_wrapper
+	setup_stack
+	;;
+update)
+	ensure_prereqs
+	ensure_directories
+	ensure_bench_cli
+	ensure_yarn_wrapper
+	assert_stack_exists
+	maybe_upgrade
+	;;
+start)
+	ensure_prereqs
+	ensure_directories
+	ensure_bench_cli
+	ensure_yarn_wrapper
+	assert_stack_exists
+	maybe_upgrade
+	start_stack
+	;;
+run)
+	ensure_prereqs
+	ensure_directories
+	ensure_bench_cli
+	ensure_yarn_wrapper
+	setup_stack
+	start_stack
+	;;
+stop)
+	assert_stack_exists
+	stop_stack
+	;;
+status)
+	status_stack
+	;;
+*)
+	usage
+	exit 1
+	;;
+esac

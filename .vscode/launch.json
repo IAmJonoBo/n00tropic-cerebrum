@@ -1,24 +1,24 @@
 {
-    "configurations": [
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:n00tropic-cerebrum}/n00-dashboard",
-            "name": "Debug DashboardApp (n00-dashboard)",
-            "target": "DashboardApp",
-            "configuration": "debug",
-            "preLaunchTask": "swift: Build Debug DashboardApp (n00-dashboard)"
-        },
-        {
-            "type": "swift",
-            "request": "launch",
-            "args": [],
-            "cwd": "${workspaceFolder:n00tropic-cerebrum}/n00-dashboard",
-            "name": "Release DashboardApp (n00-dashboard)",
-            "target": "DashboardApp",
-            "configuration": "release",
-            "preLaunchTask": "swift: Build Release DashboardApp (n00-dashboard)"
-        }
-    ]
+  "configurations": [
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:n00tropic-cerebrum}/n00-dashboard",
+      "name": "Debug DashboardApp (n00-dashboard)",
+      "target": "DashboardApp",
+      "configuration": "debug",
+      "preLaunchTask": "swift: Build Debug DashboardApp (n00-dashboard)"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:n00tropic-cerebrum}/n00-dashboard",
+      "name": "Release DashboardApp (n00-dashboard)",
+      "target": "DashboardApp",
+      "configuration": "release",
+      "preLaunchTask": "swift: Build Release DashboardApp (n00-dashboard)"
+    }
+  ]
 }

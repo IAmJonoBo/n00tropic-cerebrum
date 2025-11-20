@@ -2,8 +2,14 @@
   "timestamp": "2025-11-10T14:04:09Z",
   "format": "json",
   "page_limit": "500",
-  "modules": ["accounting","crm","hr","projects","support"],
-  "details": [{"module":"accounting","status":"success","notes":"written"},{"module":"crm","status":"success","notes":"written"},{"module":"hr","status":"success","notes":"written"},{"module":"projects","status":"success","notes":"written"},{"module":"support","status":"success","notes":"written"}],
+  "modules": ["accounting", "crm", "hr", "projects", "support"],
+  "details": [
+    { "module": "accounting", "status": "success", "notes": "written" },
+    { "module": "crm", "status": "success", "notes": "written" },
+    { "module": "hr", "status": "success", "notes": "written" },
+    { "module": "projects", "status": "success", "notes": "written" },
+    { "module": "support", "status": "success", "notes": "written" }
+  ],
   "status": "success",
   "telemetry_path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic_HQ/12-Platform-Ops/telemetry/erpnext-export-2025-11-10.json"
 }

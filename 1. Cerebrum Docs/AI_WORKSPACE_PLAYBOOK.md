@@ -21,13 +21,13 @@ AI assistants (and ephemeral agent sessions) frequently attach to this filesyste
 
 ## Sanity Checks & Auto-Remediation
 
-| Need | Command | Notes |
-| --- | --- | --- |
-| Snapshot workspace + publish machine-readable status | `./.dev/automation/scripts/workspace-health.sh --publish-artifact --json` | JSON goes to stdout **and** `artifacts/workspace-health.json`. |
-| Clean only-untracked noise (e.g. generated assets) safely | `./.dev/automation/scripts/workspace-health.sh --clean-untracked` | Runs `git clean -fd` for repos that have _no_ tracked changes. |
-| Realign submodule pointers | `./.dev/automation/scripts/workspace-health.sh --sync-submodules` | Equivalent to `git submodule sync && git submodule update --init --recursive`. |
-| Run everything (submodules + trunk sync) | `./.dev/automation/scripts/workspace-health.sh --fix-all` | Alias for the previous two steps. |
-| Strict CI-style enforcement | Append `--strict-submodules --strict-root` | Causes a non-zero exit when anything is dirty/diverged. |
+| Need                                                      | Command                                                                   | Notes                                                                          |
+| --------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Snapshot workspace + publish machine-readable status      | `./.dev/automation/scripts/workspace-health.sh --publish-artifact --json` | JSON goes to stdout **and** `artifacts/workspace-health.json`.                 |
+| Clean only-untracked noise (e.g. generated assets) safely | `./.dev/automation/scripts/workspace-health.sh --clean-untracked`         | Runs `git clean -fd` for repos that have _no_ tracked changes.                 |
+| Realign submodule pointers                                | `./.dev/automation/scripts/workspace-health.sh --sync-submodules`         | Equivalent to `git submodule sync && git submodule update --init --recursive`. |
+| Run everything (submodules + trunk sync)                  | `./.dev/automation/scripts/workspace-health.sh --fix-all`                 | Alias for the previous two steps.                                              |
+| Strict CI-style enforcement                               | Append `--strict-submodules --strict-root`                                | Causes a non-zero exit when anything is dirty/diverged.                        |
 
 ## n00t Capability: `workspace.gitDoctor`
 
