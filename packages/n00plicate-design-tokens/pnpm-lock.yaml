@@ -1,0 +1,13 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@n00plicate/shared-utils':
+        specifier: workspace:*
+        version: link:../n00plicate-shared-utils
