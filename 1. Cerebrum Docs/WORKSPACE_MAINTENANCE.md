@@ -33,6 +33,14 @@ This guide keeps the federated workspace healthy whether you are preparing a pul
 
 This script runs schema validation, Renovate preset verification, CVE scans, and other repo-specific linters.
 
+For a fast human-friendly snapshot of the workspace state while you are iterating locally, you can also run:
+
+```bash
+./.dev/automation/scripts/workspace-status.sh
+```
+
+This prints a short root `git status`, submodule summary, and (when installed) a Trunk summary for the root repo.
+
 ## 4. Validate Delivery Artefacts
 
 For any metadata-bearing document (ideas, jobs, projects):

@@ -1,0 +1,28 @@
+{
+  "folders": [
+    { "name": "cerebrum-root", "path": "." },
+    { "name": "n00-cortex", "path": "n00-cortex" },
+    { "name": "n00-frontiers", "path": "n00-frontiers" },
+    { "name": "n00t", "path": "n00t" },
+    { "name": "n00-school", "path": "n00-school" },
+    { "name": "n00plicate", "path": "n00plicate" },
+    { "name": "n00tropic", "path": "n00tropic" },
+    { "name": "n00clear-fusion", "path": "n00clear-fusion" },
+    { "name": "n00-horizons", "path": "n00-horizons" }
+  ],
+  "settings": {
+    "git.detectSubmodules": true,
+    "git.openRepositoryInParentFolders": "always",
+    "git.submoduleCheckoutMode": "recursive",
+    "search.useIgnoreFiles": true,
+    "files.exclude": {
+      "**/.git": true,
+      "**/.venv-*": true,
+      "**/.pnpm": true,
+      "**/node_modules": true,
+      "**/.ruff_cache": true,
+      "**/.pytest_cache": true,
+      "**/.mypy_cache": true
+    }
+  }
+}
