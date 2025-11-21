@@ -7,15 +7,41 @@ from __future__ import annotations
 
 import csv
 import json
-import os
 from pathlib import Path
-from typing import Optional
 
 ROOT = Path(__file__).resolve().parents[3]
 CENTRAL_EXTEND_GITHUB = (
     "github>n00tropic/n00tropic-cerebrum//renovate-presets/workspace.json"
 )
 CENTRAL_EXTEND_LOCAL = "local>renovate-presets/workspace.json"
+
+
+def _check_renovate_extend(renovate: Path) -> bool:
+    try:
+        cfg = json.loads(renovate.read_text(encoding="utf-8"))
+        extends = cfg.get("extends") or []
+        if isinstance(extends, str):
+            extends = [extends]
+        for e in extends:
+            if CENTRAL_EXTEND_GITHUB in e or CENTRAL_EXTEND_LOCAL in e:
+                return True
+    except Exception:
+        return False
+    return False
+
+
+def _check_file_exists(repo: Path, name: str) -> bool:
+    return (repo / name).exists()
+
+
+def _check_trunk_has_renovate(trunk: Path) -> bool:
+    try:
+        payload = trunk.read_text(encoding="utf-8")
+        if "renovate@" in payload or "renovate:" in payload or "renovate" in payload:
+            return True
+    except Exception:
+        return False
+    return False
 
 
 def examine_repo(repo: Path) -> dict:
@@ -30,32 +56,18 @@ def examine_repo(repo: Path) -> dict:
         "templates_present": False,
     }
     renovate = repo / "renovate.json"
-    if renovate.exists():
+    if _check_file_exists(repo, "renovate.json"):
         data["has_renovate_json"] = True
-        try:
-            cfg = json.loads(renovate.read_text(encoding="utf-8"))
-            extends = cfg.get("extends") or []
-            if isinstance(extends, str):
-                extends = [extends]
-            for e in extends:
-                if CENTRAL_EXTEND_GITHUB in e or CENTRAL_EXTEND_LOCAL in e:
-                    data["extends_contains_central"] = True
-                    break
-        except Exception:
-            data["extends_contains_central"] = False
-    if (repo / "package.json").exists():
-        data["has_package_json"] = True
-    if (repo / "pyproject.toml").exists():
-        data["has_pyproject"] = True
-    if (repo / "requirements.txt").exists():
-        data["has_requirements"] = True
+        data["extends_contains_central"] = _check_renovate_extend(renovate)
+    data["has_package_json"] = _check_file_exists(repo, "package.json")
+    data["has_pyproject"] = _check_file_exists(repo, "pyproject.toml")
+    data["has_requirements"] = _check_file_exists(repo, "requirements.txt")
     trunk = repo / ".trunk" / "trunk.yaml"
     if trunk.exists():
-        payload = trunk.read_text(encoding="utf-8")
-        if "renovate@" in payload or "renovate:" in payload or "renovate" in payload:
-            data["trunk_has_renovate"] = True
-    if (repo / "templates").exists() or (repo / "exports").exists():
-        data["templates_present"] = True
+        data["trunk_has_renovate"] = _check_trunk_has_renovate(trunk)
+    data["templates_present"] = _check_file_exists(
+        repo, "templates"
+    ) or _check_file_exists(repo, "exports")
     return data
 
 
@@ -80,13 +92,20 @@ def main() -> int:
             continue
         out.append(examine_repo(p))
 
-    w = csv.DictWriter(
-        open(".dev/automation/artifacts/subrepo-state.csv", "w", encoding="utf-8"),
-        fieldnames=list(out[0].keys()),
-    )
-    w.writeheader()
-    for row in out:
-        w.writerow(row)
+    try:
+        if not out:
+            print("No repositories discovered; no report generated.")
+            return 0
+        with open(
+            ".dev/automation/artifacts/subrepo-state.csv", "w", encoding="utf-8"
+        ) as fh:
+            w = csv.DictWriter(fh, fieldnames=list(out[0].keys()))
+            w.writeheader()
+            for row in out:
+                w.writerow(row)
+    except Exception as e:
+        print(f"Failed to generate report: {e}")
+        return 1
     print("Report written to .dev/automation/artifacts/subrepo-state.csv")
     return 0
 
