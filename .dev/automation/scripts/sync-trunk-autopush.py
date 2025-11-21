@@ -8,6 +8,7 @@ for repos whose `.trunk/trunk.yaml` changed. It is intentionally opt-in via
 from __future__ import annotations
 
 import argparse
+import logging
 import re
 import shutil
 import subprocess
@@ -26,6 +27,7 @@ def _runcmd(cmd: List[str], cwd: Path | None = None) -> subprocess.CompletedProc
     The function maps command names to absolute binaries found on PATH (where applicable)
     to reduce bandit warnings about partial executable names.
     """
+    logging.debug("_runcmd: %s (cwd=%s)", cmd, cwd)
     # Map common binaries to absolute path where available
     if cmd and cmd[0] in ("git", "gh"):
         path = shutil.which(cmd[0])
@@ -59,6 +61,7 @@ def _apply_changes_for_repo(repo: str) -> None:
         raise RuntimeError(f"Invalid repo name: {repo}")
     path = ROOT / repo
     branch = f"chore/sync-trunk/{datetime.now(timezone.utc).strftime('%Y%m%d%H%M')}"
+    logging.info("Creating branch %s in repo %s", branch, repo)
     rc = _runcmd(["git", "-C", str(path), "checkout", "-b", branch])
     if rc.returncode != 0:
         raise RuntimeError(
@@ -78,7 +81,9 @@ def _apply_changes_for_repo(repo: str) -> None:
         ],
     )
     if rc.returncode != 0:
-        print(f"Warning: commit may have failed (repo={repo}): {rc.stderr}")
+        logging.warning(
+            "Warning: commit may have failed (repo=%s): %s", repo, rc.stderr
+        )
     rc = _runcmd(["git", "-C", str(path), "push", "--set-upstream", "origin", branch])
     if rc.returncode != 0:
         raise RuntimeError(
@@ -87,7 +92,7 @@ def _apply_changes_for_repo(repo: str) -> None:
     title = "chore(trunk): sync trunk.yaml from canonical"
     body = "Automated trunk sync from canonical trunk.yaml (n00-cortex) via `sync-trunk.py`."
     if not shutil.which("gh"):
-        print("gh CLI not found; skipping PR creation for", repo)
+        logging.warning("gh CLI not found; skipping PR creation for %s", repo)
         return
     rc = _runcmd(
         [
@@ -108,7 +113,7 @@ def _apply_changes_for_repo(repo: str) -> None:
     )
     if rc.returncode != 0:
         raise RuntimeError(f"Failed to create PR for {repo}: {rc.stderr}")
-    print(f"Created PR for {repo}: {title}")
+    logging.info("Created PR for %s: %s", repo, title)
 
 
 def run_sync(repos: Optional[List[str]] = None, apply_changes: bool = False) -> int:

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 from pathlib import Path
 from typing import Iterable
 
@@ -25,6 +26,7 @@ def find_renovate_files() -> Iterable[Path]:
 
 
 def ensure_extend(path: Path, required_extend: str, apply: bool = False) -> bool:
+    logging.debug(f"Reading renovate file: {path}")
     payload = json.loads(path.read_text(encoding="utf-8"))
     extends = payload.get("extends") or []
     if isinstance(extends, str):
@@ -52,6 +54,9 @@ def main() -> int:
         help="Glob pattern to find renovate.json files to update",
     )
     args = parser.parse_args()
+    logging.basicConfig(level=logging.INFO)
+    if "VERBOSE" in logging.root.manager.loggerDict:
+        logging.getLogger().setLevel(logging.DEBUG)
 
     changed = []
     for path in ROOT.glob(args.pattern):
@@ -62,7 +67,7 @@ def main() -> int:
             else:
                 print(f"Already extends central preset: {path}")
         except Exception as e:
-            print(f"Failed to process {path}: {e}")
+            logging.exception(f"Failed to process {path}: {e}")
 
     if args.apply and changed:
         print("Updated:")

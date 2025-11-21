@@ -42,9 +42,19 @@ const rgArgs = [
 ];
 
 for (const pattern of excludePatterns) {
-  const normalized = pattern.endsWith("/**")
-    ? pattern
-    : `${pattern.replace(/\/$/, "")}/**`;
+  // If the pattern is a file (e.g. scripts/setup-pnpm.sh) or explicitly
+  // contains a glob or extension, leave it as-is. Otherwise, treat it as a
+  // directory and append '/**' to exclude all files under it.
+  let normalized;
+  if (pattern.endsWith("/**")) {
+    normalized = pattern;
+  } else if (pattern.endsWith("/")) {
+    normalized = `${pattern}**`;
+  } else if (path.extname(pattern) || pattern.includes("*")) {
+    normalized = pattern; // file or explicit glob
+  } else {
+    normalized = `${pattern.replace(/\/$/, "")}/**`;
+  }
   rgArgs.push("--glob");
   rgArgs.push(`!${normalized}`);
 }
