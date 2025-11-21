@@ -3,19 +3,19 @@
 :reviewed: 2025-11-11
 
 All repositories now inherit dependency policy from the shared preset published
-in `n00tropic-cerebrum/renovate/presets/workspace.json`. To keep hosted Renovate
+in `n00tropic-cerebrum/renovate-presets/workspace.json`. To keep hosted Renovate
 aligned:
 
 // vale Vale.Terms = NO
 . *Self-hosted or GitHub App*
 .. Ensure the bot has read access to `n00tropic-cerebrum`.
 .. Update the global configuration (or onboarding preset) to extend
- `github>n00tropic/n00tropic-cerebrum//renovate/presets/workspace.json`.
+ `github>n00tropic/n00tropic-cerebrum//renovate-presets/workspace.json`.
 .. Remove legacy `config:base` or workspace-specific overrides unless they're
  still required.
 . *Enterprise mirrors*
 .. If outbound GitHub downloads are blocked, mirror
- `n00tropic-cerebrum/renovate/presets/workspace.json` to an internal repository.
+ `n00tropic-cerebrum/renovate-presets/workspace.json` to an internal repository.
 .. Replace the `github>` reference with your internal mirror (for example,
  `local>renovate-presets/workspace.json`).
 . *Verification*

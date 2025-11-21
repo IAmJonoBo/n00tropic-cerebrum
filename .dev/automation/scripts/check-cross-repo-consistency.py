@@ -42,20 +42,36 @@ CORTEX_FRONTIERS_ASSETS = (
 CORTEX_FRONTIERS_EXPORT_DIR = (
     ROOT / "n00-cortex" / "data" / "exports" / "frontiers" / "templates"
 )
-RENOVATE_FILES: Dict[str, Tuple[Path, str]] = {
+from typing import Union
+
+RENOVATE_FILES: Dict[str, Tuple[Path, Union[str, list[str]]]] = {
     "n00-cortex": (
         ROOT / "n00-cortex" / "renovate.json",
         "local>renovate-presets/workspace.json",
     ),
     "n00-frontiers": (
         ROOT / "n00-frontiers" / "renovate.json",
-        "github>IAmJonoBo/n00-cortex//renovate-presets/workspace.json",
+        [
+            "github>n00tropic/n00tropic-cerebrum//renovate-presets/workspace.json",
+            "github>IAmJonoBo/n00-cortex//renovate-presets/workspace.json",
+        ],
     ),
     "n00plicate": (
         ROOT / "n00plicate" / "renovate.json",
-        "github>IAmJonoBo/n00-cortex//renovate-presets/workspace.json",
+        [
+            "github>n00tropic/n00tropic-cerebrum//renovate-presets/workspace.json",
+            "github>IAmJonoBo/n00-cortex//renovate-presets/workspace.json",
+        ],
     ),
 }
+
+# Discover any additional renovate.json files and validate they extend the canonical
+# workspace preset (local or via the central GitHub path). This helps ensure the
+# repo stays ergonomic and consistent without having to update this script each
+# time we add a new repo.
+CANONICAL_GITHUB_PRESET = (
+    "github>n00tropic/n00tropic-cerebrum//renovate-presets/workspace.json"
+)
 TRUNK_LINTER_COMMENT = re.compile(r"\s+#.*$")
 
 
@@ -474,6 +490,16 @@ def main() -> int:
                         f"but catalog reports {current}."
                     )
 
+    # Discover additional downstream renovate.json files and add them to the
+    # list of files to verify if they aren't already explicitly covered.
+    for discovered in ROOT.glob("*/renovate.json"):
+        repo = discovered.parent.name
+        if repo not in RENOVATE_FILES:
+            RENOVATE_FILES[repo] = (
+                discovered,
+                ["local>renovate-presets/workspace.json", CANONICAL_GITHUB_PRESET],
+            )
+
     for repo, (path, expected_extend) in RENOVATE_FILES.items():
         if not path.exists():
             errors.append(f"{repo} missing renovate.json at {path}.")
@@ -481,7 +507,20 @@ def main() -> int:
         config = _load_json(path)
         extends = config.get("extends", [])
         if expected_extend not in extends:
-            errors.append(f"{repo} renovate.json does not extend '{expected_extend}'.")
+            if isinstance(expected_extend, (list, tuple)):
+                match_any = False
+                for candidate in expected_extend:
+                    if candidate in extends:
+                        match_any = True
+                        break
+                if not match_any:
+                    errors.append(
+                        f"{repo} renovate.json does not extend any of {expected_extend}."
+                    )
+            else:
+                errors.append(
+                    f"{repo} renovate.json does not extend '{expected_extend}'."
+                )
 
     report(errors, json_path, metadata)
     return 1 if errors else 0

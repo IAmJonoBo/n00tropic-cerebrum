@@ -1,0 +1,46 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate preset for the n00tropic workspace repositories.",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "dependencyDashboard": true,
+  "rangeStrategy": "replace",
+  "timezone": "UTC",
+  "schedule": ["after 02:00 on monday"],
+  "labels": ["dependencies", "renovate"],
+  "prHourlyLimit": 4,
+  "prConcurrentLimit": 12,
+  "regexManagers": [
+    {
+      "fileMatch": [".trunk/trunk.yaml"],
+      "matchStrings": [
+        "cli:\\s*\\n\\s*version:\\s*(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "depNameTemplate": "trunk-io/trunk",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "fileMatch": [".trunk/trunk.yaml"],
+      "matchStrings": ["-\\s*\\python@(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      "depNameTemplate": "python/cpython",
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "fileMatch": [".trunk/trunk.yaml"],
+      "matchStrings": ["-\\s*node@(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      "depNameTemplate": "nodejs/node",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["regex"],
+      "groupName": "Trunk ecosystem",
+      "labels": ["ci", "dependencies"],
+      "separateMajorMinor": true
+    }
+  ]
+}
