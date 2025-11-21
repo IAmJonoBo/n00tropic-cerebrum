@@ -1,0 +1,93 @@
+repos:
+  workspace:
+    path: .
+    required:
+      - docs
+      - cli
+      - scripts
+      - env
+      - tests
+      - artifacts
+      - automation
+  n00-cortex:
+    path: n00-cortex
+    required:
+      - cli
+      - scripts
+      - env
+      - tests
+      - artifacts
+      - automation
+      - docs
+  n00-frontiers:
+    path: n00-frontiers
+    required:
+      - cli
+      - scripts
+      - env
+      - tests
+      - artifacts
+      - automation
+      - docs
+      - ".dev/n00-frontiers/scripts"
+  n00-horizons:
+    path: n00-horizons
+    required:
+      - cli
+      - scripts
+      - env
+      - tests
+      - artifacts
+      - automation
+      - docs
+      - ".dev/n00-horizons/scripts"
+  n00-school:
+    path: n00-school
+    required:
+      - cli
+      - scripts
+      - env
+      - tests
+      - artifacts
+      - automation
+      - docs
+  n00clear-fusion:
+    path: n00clear-fusion
+    required:
+      - cli
+      - scripts
+      - env
+      - tests
+      - artifacts
+      - automation
+      - docs
+  n00plicate:
+    path: n00plicate
+    required:
+      - cli
+      - scripts
+      - env
+      - tests
+      - artifacts
+      - automation
+      - docs
+  n00t:
+    path: n00t
+    required:
+      - cli
+      - scripts
+      - env
+      - tests
+      - artifacts
+      - automation
+      - docs
+  n00tropic:
+    path: n00tropic
+    required:
+      - cli
+      - scripts
+      - env
+      - tests
+      - artifacts
+      - automation
+      - docs
