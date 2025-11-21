@@ -31,13 +31,23 @@ process_one() {
 		ds=$(echo "${ds}" | tr ' ' '-' | tr '[:upper:]' '[:lower:]')
 	fi
 
-	echo "[fusion] embed ${ds}"
-	python3 "${FUSION_DIR}/pipelines/embed_chunks.py" --dataset "${ds}" --backend auto
+	# pick backend: env override wins
+	backend="${FUSION_EMBED_BACKEND:-auto}"
+	echo "[fusion] embed ${ds} (backend=${backend})"
+	python3 "${FUSION_DIR}/pipelines/embed_chunks.py" --dataset "${ds}" --backend "${backend}"
 
 	echo "[fusion] generate assets ${ds}"
 	python3 "${FUSION_DIR}/cli.py" generate --dataset "${ds}"
 
 	mv "${pdf}" "${processed_dir}/" || true
+
+	# write processed manifest entry
+	if [[ -f "${FUSION_DIR}/exports/${ds}/summary.json" ]]; then
+		checksum=$(jq -r '.checksum // empty' "${FUSION_DIR}/exports/${ds}/summary.json")
+		mapfile -t assets < <(find "${FUSION_DIR}/exports/${ds}/generated" -type f -maxdepth 1 2>/dev/null || true)
+		python3 "${FUSION_DIR}/scripts/write-processed-manifest.py" --source "${pdf}" --dataset-id "${ds}" --checksum "${checksum}" --assets "${assets[@]}"
+		python3 "${FUSION_DIR}/scripts/register-outputs.py" --dataset-id "${ds}" --assets "${assets[@]}"
+	fi
 }
 
 if [[ -d "${INPUT_PATH}" ]]; then

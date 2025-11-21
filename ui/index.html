@@ -18,6 +18,13 @@
     <form id="upload-form">
       <input type="file" id="file" accept="application/pdf" required />
       <input type="text" id="dataset" placeholder="Optional dataset id" />
+      <label style="display:block;margin-top:0.5rem;">Embedding backend</label>
+      <select id="backend">
+        <option value="auto">Auto</option>
+        <option value="openai">OpenAI</option>
+        <option value="openai-compatible">OpenAI-compatible (LM Studio/HF)</option>
+        <option value="hashed">Hashed</option>
+      </select>
       <button type="submit">Run fusion.pipeline</button>
     </form>
     <pre id="log">Waiting…</pre>

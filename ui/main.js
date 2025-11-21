@@ -9,6 +9,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const fileInput = document.getElementById("file");
   const dataset = document.getElementById("dataset").value.trim();
+  const backend = document.getElementById("backend").value;
   if (!fileInput.files.length) {
     log("Select a PDF first.");
     return;
@@ -17,6 +18,7 @@ form.addEventListener("submit", async (e) => {
   const formData = new FormData();
   formData.append("pdf", file);
   if (dataset) formData.append("dataset", dataset);
+  if (backend) formData.append("backend", backend);
   log("Uploading and processing…");
   try {
     const res = await fetch("/upload", { method: "POST", body: formData });
@@ -24,7 +26,8 @@ form.addEventListener("submit", async (e) => {
     if (!res.ok) {
       throw new Error(data.error || res.statusText);
     }
-    log(JSON.stringify(data, null, 2));
+    const links = data.assets?.map((a) => `- ${a}`).join("\n") || "n/a";
+    log(`${JSON.stringify(data, null, 2)}\nAssets:\n${links}`);
   } catch (err) {
     log(`Error: ${err.message}`);
   }

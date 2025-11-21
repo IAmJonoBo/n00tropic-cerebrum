@@ -30,6 +30,7 @@ function handleUpload(req, res) {
   mkdirSync(uploadsDir, { recursive: true });
   let dataset = "";
   let filePath = "";
+  let backend = "";
   busboy.on("file", (_name, file, info) => {
     const saveTo = path.join(uploadsDir, info.filename);
     filePath = saveTo;
@@ -37,6 +38,7 @@ function handleUpload(req, res) {
   });
   busboy.on("field", (name, val) => {
     if (name === "dataset") dataset = val;
+    if (name === "backend") backend = val;
   });
   busboy.on("close", () => {
     if (!filePath) {
@@ -46,14 +48,20 @@ function handleUpload(req, res) {
     }
     const args = [pipelineScript, filePath];
     if (dataset) args.push(dataset);
-    const proc = spawn("bash", args.slice(0), { cwd: root });
+    const env = { ...process.env };
+    if (backend) env["FUSION_EMBED_BACKEND"] = backend;
+    const proc = spawn("bash", args.slice(0), { cwd: root, env });
     let output = "";
+    let assets = [];
     proc.stdout.on("data", (d) => (output += d.toString()));
     proc.stderr.on("data", (d) => (output += d.toString()));
     proc.on("close", (code) => {
       const status = code === 0 ? "ok" : "error";
+      // naive asset extraction
+      const matches = output.match(/generated\/[^\s]+/g) || [];
+      assets = matches;
       res.writeHead(code === 0 ? 200 : 500, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status, output }));
+      res.end(JSON.stringify({ status, output, assets }));
     });
   });
   req.pipe(busboy);
