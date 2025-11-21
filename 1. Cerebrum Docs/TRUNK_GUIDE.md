@@ -4,6 +4,8 @@ This workspace keeps Trunk for developer ergonomics, but we lean on system runti
 
 > **Note:** The repository no longer ships a top-level `.trunk/` directory. Canonical Trunk configs live under `n00-cortex/data/trunk/base/.trunk/` and the individual subrepositories. Runners should copy/overlay those configs into place (for example via `scripts/sync-trunk-defs.mjs` or subrepo-specific automation) before invoking the CLI.
 
+> **Install policy:** Workspace automation no longer auto-installs the Trunk CLI on developer machines. Run `trunk upgrade --no-progress` (or `TRUNK_INSTALL=1 .dev/automation/scripts/trunk-upgrade.sh`) when you explicitly want the binary locally. CI/ephemeral runners should set `TRUNK_INSTALL=1` so they can self-bootstrap without polluting personal caches.
+
 ## Sourcing configuration
 
 1. Update `n00-cortex/data/trunk/base/.trunk/trunk.yaml` when policy changes are required.

@@ -58,7 +58,6 @@
     "trunk:sync-defs": "node scripts/sync-trunk-defs.mjs",
     "tools:scan-npm": "node scripts/find-npm-usages.mjs",
     "tools:replace-npx": "node scripts/replace-npx-with-pnpm.mjs",
-    "ci:autoapply": "bash scripts/ci-autoapply.sh",
     "ui:serve": "node ui/fusion-ui-server.mjs"
   },
   "pnpm": {

@@ -199,6 +199,8 @@ To validate all subrepos centrally while preserving subrepo autonomy, the worksp
 
 Tip: If you see 'unsupported linter' errors locally for `trunk` checks, run `pnpm run trunk:sync-defs` to copy the workspace standard definitions into each subrepo's `.trunk/trunk.yaml` (only when the subrepo needs the definitions locally). This avoids having to hand-edit each repo and remains reversible.
 
+CLI installs are opt-in for developers: by default the automation scripts skip downloading the Trunk binary when it is missing. Run `trunk upgrade --no-progress` (or `TRUNK_INSTALL=1 .dev/automation/scripts/trunk-upgrade.sh`) when you explicitly want a local install; CI/ephemeral runners should set `TRUNK_INSTALL=1` so they can bootstrap without touching your home cache.
+
 ## Dependency placement and storage guidance
 
 - Keep shared developer tooling at the workspace root (`pnpm install` at the root) to avoid installing the same tool multiple times in each subrepo. For example, `@biomejs/biome` is a workspace-level dev-dependency. Use `pnpm -w exec biome` to run the workspace-installed Biome from a subrepo.
