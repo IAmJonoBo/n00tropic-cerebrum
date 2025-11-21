@@ -9,6 +9,8 @@ on:
 jobs:
   check-renovate-extends:
     name: Check that subrepos extend the central Renovate preset
+    permissions: # Minimal permissions to avoid write-all permissions flagged by some security checks
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,7 +21,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
+          python-version: 3.x
 
       - name: Run renovate-extends check
         run: |
