@@ -1,0 +1,7 @@
+{
+  "name": "n00menon-ui",
+  "version": "1.0.0",
+  "title": "N00menon UI",
+  "start_path": "index.html",
+  "files": ["./*"]
+}

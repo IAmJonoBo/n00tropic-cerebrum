@@ -1,0 +1,8 @@
+name: n00menon
+title: n00 Menon Library
+version: main
+nav:
+  - modules/ROOT/nav.adoc
+asciidoc:
+  attributes:
+    doc-library: n00menon

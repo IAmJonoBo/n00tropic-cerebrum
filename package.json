@@ -23,7 +23,8 @@
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vite": "^7.2.4",
-    "vitest": "^4.0.12"
+    "vitest": "^4.0.12",
+    "cspell": "^6.18.0"
   },
   "dependencies": {
     "@n00plicate/design-tokens": "workspace:*",
@@ -53,6 +54,8 @@
     "docs:vale-terms-test": "bash scripts/run-vale-terms-candidates-test.sh",
     "docker:sync": "node scripts/docker-sync.mjs",
     "validate-docs": "node scripts/validate-docs.mjs",
+    "cleanup:contrib": "node scripts/cleanup-contrib.mjs",
+    "antora:ci": "pnpm exec antora antora-playbook.ci.yml --stacktrace",
     "ci:validate:cortex": "pnpm -C n00-cortex validate:schemas",
     "trunk:check-all": "auto_dir=.dev/auto; auto_dir=\"${auto_dir}mation\"; bash ${auto_dir}/scripts/run-trunk-subrepos.sh",
     "trunk:sync-defs": "node scripts/sync-trunk-defs.mjs",

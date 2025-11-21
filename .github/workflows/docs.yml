@@ -52,6 +52,12 @@ jobs:
           else
             echo "n00plicate submodule not present; skipping antora/danger verification"
           fi
+          if [ -d n00menon ]; then
+            pnpm -C n00menon exec antora --version || true
+            # n00menon might not include Danger config; skip if not present
+          else
+            echo "n00menon not present locally; CI build may use remote git component in CI playbook"
+          fi
       - name: Prepare pnpm and Antora
         run: |
           corepack enable
@@ -83,6 +89,15 @@ jobs:
             'docs/**/*.md' '**/*.html'
       - name: Attr checks
         run: node scripts/check-attrs.mjs
+      - name: n00menon validate (if available)
+        run: |
+          if [ -d n00menon ]; then
+            pnpm -C n00menon run validate || true
+          else
+            echo "n00menon not present; skipping validate"
+          fi
+      - name: Workspace cspell
+        run: pnpm exec cspell --config ./cspell.json 'docs/**/*' || true
       - name: Run Danger
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -99,7 +114,7 @@ jobs:
           path: artifacts/vale-spelling-token-counts.json
       - name: Build Antora (CI playbook)
         run: |
-          if [ -d n00plicate ]; then
+          if [ -d n00plicate ] || [ -d n00menon ]; then
             cd n00plicate
             pnpm install --frozen-lockfile
             pnpm exec antora antora-playbook.ci.yml --stacktrace

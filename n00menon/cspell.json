@@ -1,0 +1,20 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "n00menon",
+    "n00plicate",
+    "Antora",
+    "kramdoc",
+    "pnpm",
+    "n00tropic",
+    "n00t"
+  ],
+  "ignorePaths": [
+    "vendor/**",
+    "ui/**",
+    "node_modules/**",
+    "**/*.yml",
+    "**/*.yaml"
+  ]
+}

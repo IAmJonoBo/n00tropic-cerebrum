@@ -14,7 +14,7 @@ KEEP=false
 TOKEN=${GITHUB_TOKEN-}
 UI_PATH=""
 REMOTE_UI=""
-COMPONENTS=(n00tropic-cerebrum n00-frontiers n00-cortex n00t)
+COMPONENTS=(n00tropic-cerebrum n00-frontiers n00-cortex n00t n00menon)
 USE_WORKSPACE=false
 STUB_UI=false
 

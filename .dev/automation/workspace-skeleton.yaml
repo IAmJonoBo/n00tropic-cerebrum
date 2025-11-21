@@ -107,3 +107,9 @@ repos:
       - automation
       - docs
       - ".dev/n00tropic/scripts"
+  n00menon:
+    path: n00menon
+    required:
+      - docs
+      - scripts
+      - "modules/ROOT/pages"

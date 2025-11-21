@@ -1,0 +1,40 @@
+name: Merge to minimal set
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (shallow)
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Install GitHub CLI
+        run: |
+          set -eux
+          if command -v gh >/dev/null 2>&1; then
+            echo "gh already installed"
+          else
+            if command -v apt-get >/dev/null 2>&1; then
+              sudo apt-get update
+              sudo apt-get install -y gh
+            else
+              echo "No apt-get available; installing gh from release tarball"
+              curl -fsSL https://github.com/cli/cli/releases/download/v2.34.0/gh_2.34.0_linux_amd64.tar.gz -o /tmp/gh.tar.gz
+              tar -xf /tmp/gh.tar.gz -C /tmp
+              sudo mv /tmp/gh_2.34.0_linux_amd64/bin/gh /usr/local/bin/gh
+            fi
+          fi
+
+      - name: Merge automerge PRs
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth status || gh auth login --with-token <<< "$REPO_TOKEN"
+          bash .dev/automation/scripts/merge-to-minimal-set.sh || true

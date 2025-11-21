@@ -1,0 +1,10 @@
+
+= N00menon
+
+Welcome to the N00menon documentation library. This is the canonical documentation library for shared components and templates across the n00tropic workspace.
+
+This repository provides a central place for templates, guidelines, and reusable docs assets.
+
+== Contributing
+
+See <<contributing,contributing>> for contribution guidelines and templates.

@@ -88,6 +88,15 @@ validate: ## Run all validation checks
 	fi
 	@echo "Checking page attributes..."
 	node scripts/check-attrs.mjs
+	@echo "Running workspace cspell checks..."
+	@if command -v cspell >/dev/null 2>&1; then \
+		pnpm exec cspell --config ./cspell.json 'docs/**/*' || true; \
+	else \
+		echo "cspell not installed, skipping spellcheck..."; \
+	fi
+	@if [ -d n00menon ]; then \
+		pnpm -C n00menon run lint:spell || true; \
+	fi
 
 validate-docs: ## Run docs validation checks (Vale + Lychee + check-attrs). Use SKIP_VALE=1 to skip Vale locally
 	@echo "Validating docs..."

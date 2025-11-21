@@ -1,0 +1,22 @@
+{
+  "name": "n00menon",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Centralized documentation library for the n00tropic workspace",
+  "scripts": {
+    "ui:build": "bash ./scripts/build-ui.sh",
+    "docs:build": "pnpm install && pnpm exec antora antora-playbook.yml --stacktrace",
+    "docs:verify": "pnpm exec --no-install node ./scripts/verify-docs.mjs",
+    "docs:lint": "pnpm exec vale --minAlertLevel 'warning' docs || true",
+    "lint:spell": "pnpm exec vale --minAlertLevel 'warning' docs || true && pnpm exec cspell --config ./cspell.json 'docs/**/*' || true",
+    "validate": "pnpm run lint:spell && pnpm run docs:lint && pnpm run docs:verify",
+    "docs:ci": "pnpm run validate && pnpm run docs:build"
+  },
+  "devDependencies": {
+    "@antora/cli": "3.1.14",
+    "@antora/site-generator": "3.1.14",
+    "@antora/lunr-extension": "1.0.0-alpha.12",
+    "vale": ">=2.14.0",
+    "cspell": "^6.18.0"
+  }
+}

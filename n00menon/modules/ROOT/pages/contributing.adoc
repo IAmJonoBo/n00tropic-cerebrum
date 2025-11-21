@@ -1,0 +1,9 @@
+== Contributing
+
+Thanks for contributing to `N00menon`! Follow the workspace guidelines:
+
+* Keep language consistent, use `vale` and `lychee` for spelling and link checks.
+* Use `antora` component layout and prefer `modules/ROOT/pages` for pages.
+* When adding new sections ensure nav links are added to `nav.adoc`.
+
+See `CONTRIBUTING.md` for details and templates.
