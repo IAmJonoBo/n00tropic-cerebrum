@@ -30,9 +30,12 @@ form.addEventListener("submit", async (e) => {
     const lines = [
       `Status: ${data.status}`,
       data.output || "",
+      data.dataset ? `Dataset: ${data.dataset}` : "",
       "Assets:",
-      ...(assets.length ? assets.map((a) => `- ${a}`) : ["- n/a"]),
-    ];
+      ...(assets.length
+        ? assets.map((a) => `- ${new URL(a, window.location.href).href}`)
+        : ["- n/a"]),
+    ].filter(Boolean);
     log(lines.join("\n"));
   } catch (err) {
     log(`Error: ${err.message}`);

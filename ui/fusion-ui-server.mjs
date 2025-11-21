@@ -24,6 +24,16 @@ function serveStatic(req, res) {
   return true;
 }
 
+function serveExport(req, res) {
+  if (!req.url.startsWith("/exports/")) return false;
+  const target = path.join(root, req.url);
+  if (!existsSync(target)) return false;
+  const content = readFileSync(target);
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end(content);
+  return true;
+}
+
 function handleUpload(req, res) {
   const busboy = Busboy({ headers: req.headers });
   const uploadsDir = path.join(fusionDir, "corpora");
@@ -53,15 +63,37 @@ function handleUpload(req, res) {
     const proc = spawn("bash", args.slice(0), { cwd: root, env });
     let output = "";
     let assets = [];
+    let dataset = "";
     proc.stdout.on("data", (d) => (output += d.toString()));
     proc.stderr.on("data", (d) => (output += d.toString()));
     proc.on("close", (code) => {
       const status = code === 0 ? "ok" : "error";
       // naive asset extraction
-      const matches = output.match(/generated\/[^\s]+/g) || [];
-      assets = matches;
+      const matchLine = output.split("\n").find((line) => line.startsWith("PIPELINE_RESULT"));
+      if (matchLine) {
+        const parts = Object.fromEntries(
+          matchLine
+            .replace("PIPELINE_RESULT", "")
+            .trim()
+            .split(" ")
+            .map((kv) => kv.split("="))
+        );
+        dataset = parts.dataset || "";
+        assets = parts.assets ? parts.assets.split(",").filter(Boolean) : [];
+      } else {
+        assets = output.match(/generated\/[^\s]+/g) || [];
+      }
+      // Best-effort list from filesystem when dataset is known
+      if (dataset) {
+        const genDir = path.join(fusionDir, "exports", dataset, "generated");
+        if (existsSync(genDir)) {
+          const found = fs.readdirSync(genDir).map((name) => path.join("exports", dataset, "generated", name));
+          assets = assets.concat(found);
+        }
+      }
+
       res.writeHead(code === 0 ? 200 : 500, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status, output, assets }));
+      res.end(JSON.stringify({ status, output, assets, dataset }));
     });
   });
   req.pipe(busboy);
@@ -70,6 +102,9 @@ function handleUpload(req, res) {
 const server = http.createServer((req, res) => {
   if (req.method === "POST" && req.url === "/upload") {
     return handleUpload(req, res);
+  }
+  if (serveExport(req, res)) {
+    return;
   }
   if (!serveStatic(req, res)) {
     res.writeHead(404, { "Content-Type": "application/json" });

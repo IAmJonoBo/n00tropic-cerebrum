@@ -46,7 +46,8 @@ process_one() {
 		checksum=$(jq -r '.checksum // empty' "${FUSION_DIR}/exports/${ds}/summary.json")
 		mapfile -t assets < <(find "${FUSION_DIR}/exports/${ds}/generated" -type f -maxdepth 1 2>/dev/null || true)
 		python3 "${FUSION_DIR}/scripts/write-processed-manifest.py" --source "${pdf}" --dataset-id "${ds}" --checksum "${checksum}" --assets "${assets[@]}"
-		python3 "${FUSION_DIR}/scripts/register-outputs.py" --dataset-id "${ds}" --assets "${assets[@]}"
+		python3 "${FUSION_DIR}/scripts/register-outputs.py" --dataset-id "${ds}"
+		echo "PIPELINE_RESULT dataset=${ds} assets=${assets[*]}"
 	fi
 }
 

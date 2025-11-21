@@ -2,13 +2,13 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
-cd "$ROOT_DIR"
+cd "${ROOT_DIR}"
 
-printf "[workspace-status] Root repo: %s\n" "$ROOT_DIR"
+printf "[workspace-status] Root repo: %s\n" "${ROOT_DIR}"
 
 git status --short --branch
 
-if [ -f .gitmodules ]; then
+if [[ -f .gitmodules ]]; then
 	echo
 	echo "[workspace-status] Submodule summary:"
 	git submodule status || true
