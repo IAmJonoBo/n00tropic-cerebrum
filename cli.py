@@ -22,22 +22,84 @@ GIT_BIN = which("git") or "git"
 if not GIT_BIN:
     raise SystemExit("git executable not found in PATH")
 
-SUBREPO_MAP = {
-    "workspace": WORKSPACE_ROOT,
-    "n00-cortex": WORKSPACE_ROOT / "n00-cortex",
-    "n00-dashboard": WORKSPACE_ROOT / "n00-dashboard",
-    "n00-frontiers": WORKSPACE_ROOT / "n00-frontiers",
-    "n00-horizons": WORKSPACE_ROOT / "n00-horizons",
-    "n00-school": WORKSPACE_ROOT / "n00-school",
-    "n00clear-fusion": WORKSPACE_ROOT / "n00clear-fusion",
-    "n00plicate": WORKSPACE_ROOT / "n00plicate",
-    "n00t": WORKSPACE_ROOT / "n00t",
-    "n00tropic": WORKSPACE_ROOT / "n00tropic",
+SUBREPO_CONTEXT = {
+    "workspace": {
+        "path": WORKSPACE_ROOT,
+        "language": "mixed",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / ".venv-workspace",
+        "cli": "python3 cli.py",
+    },
+    "n00-cortex": {
+        "path": WORKSPACE_ROOT / "n00-cortex",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00-cortex" / ".venv",
+        "cli": "python3 cli/main.py",
+    },
+    "n00-dashboard": {
+        "path": WORKSPACE_ROOT / "n00-dashboard",
+        "language": "node",
+        "pkg": "pnpm",
+        "venv": None,
+        "cli": "pnpm exec ts-node cli/index.ts",
+    },
+    "n00-frontiers": {
+        "path": WORKSPACE_ROOT / "n00-frontiers",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00-frontiers" / ".venv-frontiers",
+        "cli": "python3 cli/main.py",
+    },
+    "n00-horizons": {
+        "path": WORKSPACE_ROOT / "n00-horizons",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00-horizons" / ".venv-horizons",
+        "cli": "python3 cli/main.py",
+    },
+    "n00-school": {
+        "path": WORKSPACE_ROOT / "n00-school",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00-school" / ".venv-school",
+        "cli": "python3 cli/main.py",
+    },
+    "n00clear-fusion": {
+        "path": WORKSPACE_ROOT / "n00clear-fusion",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00clear-fusion" / ".venv-fusion",
+        "cli": "python3 cli/main.py",
+    },
+    "n00plicate": {
+        "path": WORKSPACE_ROOT / "n00plicate",
+        "language": "node",
+        "pkg": "pnpm",
+        "venv": None,
+        "cli": "pnpm exec ts-node cli/index.ts",
+    },
+    "n00t": {
+        "path": WORKSPACE_ROOT / "n00t",
+        "language": "node",
+        "pkg": "pnpm",
+        "venv": None,
+        "cli": "pnpm exec ts-node cli/index.ts",
+    },
+    "n00tropic": {
+        "path": WORKSPACE_ROOT / "n00tropic",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00tropic" / ".venv",
+        "cli": "python3 cli/main.py",
+    },
 }
+
+SUBREPO_MAP = {name: meta["path"] for name, meta in SUBREPO_CONTEXT.items()}
 
 
 def iter_repos(selected: Optional[Iterable[str]] = None) -> List[Tuple[str, Path]]:
-    names = list(selected) if selected else list(SUBREPO_MAP.keys())
+    names = list(selected) if selected else list(SUBREPO_CONTEXT.keys())
     repos: List[Tuple[str, Path]] = []
     for name in names:
         path = SUBREPO_MAP.get(name)
@@ -272,6 +334,7 @@ def build_parser() -> argparse.ArgumentParser:
     doctor_parser.add_argument(
         "--strict", action="store_true", help="Fail on advisory findings."
     )
+    subparsers.add_parser("repo-context", help="Generate workspace repo context artifact.")
 
     upgrade_parser = subparsers.add_parser(
         "upgrade-tools", help="Check for latest tool versions."
@@ -375,6 +438,11 @@ def handle_project_command(args: argparse.Namespace) -> None:
 def handle_doctor(args: argparse.Namespace) -> None:
     flags: List[str] = ["--strict"] if args.strict else []
     run_workspace_script("workspace-gitdoctor-capability.sh", *flags)
+    skeleton_flags: List[str] = []
+    if args.strict:
+        skeleton_flags.append("--apply")
+    run_script("check-workspace-skeleton.py", *skeleton_flags)
+    generate_repo_context_artifact()
 
 
 def handle_upgrade_tools(args: argparse.Namespace) -> None:
@@ -408,6 +476,26 @@ def handle_remotes(args: argparse.Namespace) -> None:
         ensure_repo_remote(name, path, args.apply)
 
 
+def generate_repo_context_artifact() -> Path:
+    artifacts_dir = WORKSPACE_ROOT / "artifacts"
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    ctx_path = artifacts_dir / "workspace-repo-context.json"
+    serialisable = []
+    for name, meta in SUBREPO_CONTEXT.items():
+        serialisable.append(
+            {
+                "name": name,
+                "path": str(meta.get("path")),
+                "language": meta.get("language"),
+                "packageManager": meta.get("pkg"),
+                "venv": str(meta.get("venv")) if meta.get("venv") else None,
+                "cli": meta.get("cli"),
+            }
+        )
+    ctx_path.write_text(json.dumps(serialisable, indent=2) + "\n", encoding="utf-8")
+    return ctx_path
+
+
 COMMAND_HANDLERS = {
     "radar": handle_radar,
     "preflight": handle_preflight,
@@ -424,6 +512,7 @@ COMMAND_HANDLERS = {
     "trunk-upgrade": handle_trunk_upgrade,
     "trunk": handle_trunk_alias,
     "remotes": handle_remotes,
+    "repo-context": lambda _: generate_repo_context_artifact(),
 }
 
 
