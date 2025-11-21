@@ -29,6 +29,8 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": WORKSPACE_ROOT / ".venv-workspace",
         "cli": "python3 cli.py",
+        "tooling": WORKSPACE_ROOT / "tooling",
+        "scripts_dir": WORKSPACE_ROOT / ".dev" / "automation" / "scripts",
     },
     "n00-cortex": {
         "path": WORKSPACE_ROOT / "n00-cortex",
@@ -36,6 +38,12 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": WORKSPACE_ROOT / "n00-cortex" / ".venv",
         "cli": "python3 cli/main.py",
+        "tooling": WORKSPACE_ROOT / "n00-cortex" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-cortex"
+        / ".dev"
+        / "n00-cortex"
+        / "scripts",
     },
     "n00-dashboard": {
         "path": WORKSPACE_ROOT / "n00-dashboard",
@@ -43,6 +51,12 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": None,
         "cli": "pnpm exec ts-node cli/index.ts",
+        "tooling": WORKSPACE_ROOT / "n00-dashboard" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-dashboard"
+        / ".dev"
+        / "n00-dashboard"
+        / "scripts",
     },
     "n00-frontiers": {
         "path": WORKSPACE_ROOT / "n00-frontiers",
@@ -50,6 +64,12 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": WORKSPACE_ROOT / "n00-frontiers" / ".venv-frontiers",
         "cli": "python3 cli/main.py",
+        "tooling": WORKSPACE_ROOT / "n00-frontiers" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-frontiers"
+        / ".dev"
+        / "n00-frontiers"
+        / "scripts",
     },
     "n00-horizons": {
         "path": WORKSPACE_ROOT / "n00-horizons",
@@ -57,6 +77,12 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": WORKSPACE_ROOT / "n00-horizons" / ".venv-horizons",
         "cli": "python3 cli/main.py",
+        "tooling": WORKSPACE_ROOT / "n00-horizons" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-horizons"
+        / ".dev"
+        / "n00-horizons"
+        / "scripts",
     },
     "n00-school": {
         "path": WORKSPACE_ROOT / "n00-school",
@@ -64,6 +90,12 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": WORKSPACE_ROOT / "n00-school" / ".venv-school",
         "cli": "python3 cli/main.py",
+        "tooling": WORKSPACE_ROOT / "n00-school" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-school"
+        / ".dev"
+        / "n00-school"
+        / "scripts",
     },
     "n00clear-fusion": {
         "path": WORKSPACE_ROOT / "n00clear-fusion",
@@ -71,6 +103,12 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": WORKSPACE_ROOT / "n00clear-fusion" / ".venv-fusion",
         "cli": "python3 cli/main.py",
+        "tooling": WORKSPACE_ROOT / "n00clear-fusion" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00clear-fusion"
+        / ".dev"
+        / "n00clear-fusion"
+        / "scripts",
     },
     "n00plicate": {
         "path": WORKSPACE_ROOT / "n00plicate",
@@ -78,6 +116,12 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": None,
         "cli": "pnpm exec ts-node cli/index.ts",
+        "tooling": WORKSPACE_ROOT / "n00plicate" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00plicate"
+        / ".dev"
+        / "n00plicate"
+        / "scripts",
     },
     "n00t": {
         "path": WORKSPACE_ROOT / "n00t",
@@ -85,6 +129,8 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": None,
         "cli": "pnpm exec ts-node cli/index.ts",
+        "tooling": WORKSPACE_ROOT / "n00t" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT / "n00t" / ".dev" / "n00t" / "scripts",
     },
     "n00tropic": {
         "path": WORKSPACE_ROOT / "n00tropic",
@@ -92,6 +138,8 @@ SUBREPO_CONTEXT = {
         "pkg": "pnpm",
         "venv": WORKSPACE_ROOT / "n00tropic" / ".venv",
         "cli": "python3 cli/main.py",
+        "tooling": WORKSPACE_ROOT / "n00tropic" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT / "n00tropic" / ".dev" / "n00tropic" / "scripts",
     },
 }
 
@@ -141,6 +189,11 @@ def run_workspace_script(script_name: str, *args: str) -> None:
     if not script_path.exists():
         raise SystemExit(f"Workspace script not found: {script_path}")
     run([str(script_path), *args], cwd=WORKSPACE_ROOT)
+
+
+def venv_executable(venv: Path, exe: str) -> Path:
+    suffix = "Scripts" if os.name == "nt" else "bin"
+    return venv / suffix / exe
 
 
 def status_report() -> None:
@@ -334,7 +387,9 @@ def build_parser() -> argparse.ArgumentParser:
     doctor_parser.add_argument(
         "--strict", action="store_true", help="Fail on advisory findings."
     )
-    subparsers.add_parser("repo-context", help="Generate workspace repo context artifact.")
+    subparsers.add_parser(
+        "repo-context", help="Generate workspace repo context artifact."
+    )
 
     upgrade_parser = subparsers.add_parser(
         "upgrade-tools", help="Check for latest tool versions."
@@ -399,6 +454,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="Add the missing remote alias using the origin URL when needed.",
     )
 
+    bootstrap_parser = subparsers.add_parser(
+        "bootstrap", help="Bootstrap dependencies for a given repo (venv or pnpm)."
+    )
+    bootstrap_parser.add_argument(
+        "repo", help="Target repo key from SUBREPO_CONTEXT (e.g., n00-frontiers)."
+    )
+    bootstrap_parser.add_argument(
+        "--no-install",
+        action="store_true",
+        help="Skip dependency installation after venv/pnpm setup.",
+    )
+
     return parser
 
 
@@ -441,7 +508,7 @@ def handle_doctor(args: argparse.Namespace) -> None:
     skeleton_flags: List[str] = []
     if args.strict:
         skeleton_flags.append("--apply")
-    run_script("check-workspace-skeleton.py", *skeleton_flags)
+    run_workspace_script("check-superrepo-skeleton.sh", *skeleton_flags)
     generate_repo_context_artifact()
 
 
@@ -476,6 +543,47 @@ def handle_remotes(args: argparse.Namespace) -> None:
         ensure_repo_remote(name, path, args.apply)
 
 
+def handle_bootstrap(args: argparse.Namespace) -> None:
+    name = args.repo
+    meta = SUBREPO_CONTEXT.get(name)
+    if not meta:
+        raise SystemExit(
+            f"Unknown repo '{name}'. Valid options: {', '.join(SUBREPO_CONTEXT.keys())}"
+        )
+
+    repo_root = meta.get("path")
+    if not repo_root or not repo_root.exists():
+        raise SystemExit(f"Repo path missing for '{name}': {repo_root}")
+
+    language = meta.get("language")
+    if language == "python":
+        venv_path = meta.get("venv")
+        if not venv_path:
+            raise SystemExit(
+                f"No venv configured for '{name}'. Update SUBREPO_CONTEXT."
+            )
+        python_bin = sys.executable
+        run([python_bin, "-m", "venv", str(venv_path)], cwd=repo_root, check=True)
+        pip_bin = venv_executable(venv_path, "pip")
+        if not pip_bin.exists():
+            raise SystemExit(f"Expected pip inside venv but not found at {pip_bin}")
+        run(
+            [str(pip_bin), "install", "-U", "pip", "setuptools", "wheel"], cwd=repo_root
+        )
+        reqs = repo_root / "requirements.txt"
+        if reqs.exists() and not args.no_install:
+            run([str(pip_bin), "install", "-r", str(reqs)], cwd=repo_root)
+    else:
+        # Default to pnpm bootstrap for non-Python repos.
+        cmd = ["pnpm", "install", "--frozen-lockfile"]
+        if args.no_install:
+            cmd.append("--ignore-scripts")
+        run(cmd, cwd=repo_root)
+
+    generate_repo_context_artifact()
+    print(f"[bootstrap] {name} ready at {repo_root}")
+
+
 def generate_repo_context_artifact() -> Path:
     artifacts_dir = WORKSPACE_ROOT / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
@@ -490,6 +598,10 @@ def generate_repo_context_artifact() -> Path:
                 "packageManager": meta.get("pkg"),
                 "venv": str(meta.get("venv")) if meta.get("venv") else None,
                 "cli": meta.get("cli"),
+                "toolingDir": str(meta.get("tooling")) if meta.get("tooling") else None,
+                "scriptsDir": (
+                    str(meta.get("scripts_dir")) if meta.get("scripts_dir") else None
+                ),
             }
         )
     ctx_path.write_text(json.dumps(serialisable, indent=2) + "\n", encoding="utf-8")
@@ -512,6 +624,7 @@ COMMAND_HANDLERS = {
     "trunk-upgrade": handle_trunk_upgrade,
     "trunk": handle_trunk_alias,
     "remotes": handle_remotes,
+    "bootstrap": handle_bootstrap,
     "repo-context": lambda _: generate_repo_context_artifact(),
 }
 
