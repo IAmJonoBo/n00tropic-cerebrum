@@ -26,7 +26,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11.14"
+          python-version: 3.11.14
       - name: Validate horizons metadata
         run: |
           python3 .dev/automation/scripts/validate-project-metadata.py --paths "n00-horizons/jobs/**/*.md" "n00-horizons/ideas/**/*.md" "n00-horizons/learning-log/**/*.md" || true

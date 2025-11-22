@@ -25,7 +25,12 @@ This page captures the Codex planning initiative status, the split between works
 
 . Install Docker/Podman locally.
 . Copy `docs/search/docsearch.typesense.env.example` to `.env`, edit the API key, then run `pnpm exec antora antora-playbook.yml`.
-. Serve the docs (`pnpm dlx http-server build/site -p 8080 & echo $! > docs/search/logs/http.pid`) and bring up Typesense via `docker compose -f docs/search/typesense-compose.yml up -d`.
+. Serve the docs, capture the HTTP server PID, and bring up Typesense via `docker compose -f docs/search/typesense-compose.yml up -d`:
++
+[source,bash]
+----
+pnpm dlx http-server build/site -p 8080 & echo $! > docs/search/logs/http.pid
+----
 . Execute the scraper via Docker (Linux can use `--network host`; macOS/WSL should reuse the compose network and add `host.docker.internal`):
 
 ```bash

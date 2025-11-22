@@ -20,7 +20,12 @@
 == Re-index steps for Typesense
 
 . Build docs: `pnpm exec antora antora-playbook.yml`.
-. Serve `build/site` locally (`pnpm dlx http-server build/site -p 8080`).
+. Serve `build/site` locally:
++
+[source,bash]
+----
+pnpm dlx http-server build/site -p 8080
+----
 . Export environment variables from `docs/search/.env` and run the Typesense
  compose stack.
 . Execute the scraper via Docker:

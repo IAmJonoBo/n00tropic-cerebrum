@@ -4,7 +4,7 @@
 
 == Status
 
-Accepted—2025-11-06
+Accepted - 2025-11-06
 
 == Context
 
@@ -51,7 +51,7 @@ Accepted—2025-11-06
 
 * Positive: Contributors have a single navigable workspace that mirrors ERPNext
  domains without polluting individual repositories.
-* Positive: Data lineage improves—each export or deliverable points back to both
+* Positive: Data lineage improves: each export or deliverable points back to both
  the ERPNext module and the originating repository artefact.
 * Positive: Automation can treat the taxonomy as a contract, simplifying sync jobs
  and audits.

@@ -7,9 +7,9 @@ set -euo pipefail
 # Repos listed in OVERRIDES can carry an explicit .nvmrc if they intentionally lead.
 
 ROOT_DIR=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-WORKSPACE_NVMRC="$ROOT_DIR/.nvmrc"
-if [[ ! -f $WORKSPACE_NVMRC ]]; then
-	echo "error: workspace .nvmrc not found at $WORKSPACE_NVMRC" >&2
+WORKSPACE_NVMRC="${ROOT_DIR}/.nvmrc"
+if [[ ! -f ${WORKSPACE_NVMRC} ]]; then
+	echo "error: workspace .nvmrc not found at ${WORKSPACE_NVMRC}" >&2
 	exit 1
 fi
 
@@ -49,7 +49,7 @@ done
 is_override() {
 	local name="$1"
 	for item in "${OVERRIDES[@]}"; do
-		if [[ $item == "$name" ]]; then
+		if [[ ${item} == "${name}" ]]; then
 			return 0
 		fi
 	done
@@ -57,20 +57,22 @@ is_override() {
 }
 
 for repo in "${REPOS[@]}"; do
-	repo_path="$ROOT_DIR/$repo"
-	if [[ ! -d $repo_path ]]; then
-		echo "skip $repo (directory not found)"
+	repo_path="${ROOT_DIR}/${repo}"
+	if [[ ! -d ${repo_path} ]]; then
+		echo "skip ${repo} (directory not found)"
 		continue
 	fi
-	target="$repo_path/.nvmrc"
+	target="${repo_path}/.nvmrc"
 	rel="../.nvmrc"
 
-	if is_override "$repo" && [[ $force_flag -eq 0 ]]; then
-		echo "skip $repo (override repo retains its own .nvmrc)"
-		continue
+	if is_override "${repo}"; then
+		if [[ ${force_flag} -eq 0 ]]; then
+			echo "skip ${repo} (override repo retains its own .nvmrc)"
+			continue
+		fi
 	fi
 
-	ln -sfn "$rel" "$target"
-	echo "linked $target -> $rel"
+	ln -sfn "${rel}" "${target}"
+	echo "linked ${target} -> ${rel}"
 
 done

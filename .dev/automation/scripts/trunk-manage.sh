@@ -2,9 +2,9 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
-PY_SYNC="$ROOT/.dev/automation/scripts/sync-trunk.py"
-TRUNK_UPGRADE="$ROOT/.dev/automation/scripts/trunk-upgrade.sh"
-RUN_TRUNK_SUBREPOS="$ROOT/.dev/automation/scripts/run-trunk-subrepos.sh"
+PY_SYNC="${ROOT}/.dev/automation/scripts/sync-trunk.py"
+TRUNK_UPGRADE="${ROOT}/.dev/automation/scripts/trunk-upgrade.sh"
+RUN_TRUNK_SUBREPOS="${ROOT}/.dev/automation/scripts/run-trunk-subrepos.sh"
 
 usage() {
 	cat <<'USAGE'
@@ -32,27 +32,27 @@ fi
 cmd="$1"
 shift || true
 
-case "$cmd" in
+case "${cmd}" in
 sync-check | check)
-	exec python3 "$PY_SYNC" --check "$@"
+	exec python3 "${PY_SYNC}" --check "$@"
 	;;
 sync-pull | pull | write)
-	exec python3 "$PY_SYNC" --pull "$@"
+	exec python3 "${PY_SYNC}" --pull "$@"
 	;;
 sync-push | push)
-	exec python3 "$PY_SYNC" --push "$@"
+	exec python3 "${PY_SYNC}" --push "$@"
 	;;
 upgrade)
-	exec "$TRUNK_UPGRADE" "$@"
+	exec "${TRUNK_UPGRADE}" "$@"
 	;;
 fmt | format)
-	exec "$RUN_TRUNK_SUBREPOS" --fmt "$@"
+	exec "${RUN_TRUNK_SUBREPOS}" --fmt "$@"
 	;;
 help | -h | --help)
 	usage
 	;;
 *)
-	echo "Unknown command: $cmd" >&2
+	echo "Unknown command: ${cmd}" >&2
 	usage
 	exit 1
 	;;

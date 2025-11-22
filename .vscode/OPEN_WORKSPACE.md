@@ -1,13 +1,13 @@
-Why open the workspace file?
+# Why open the workspace file?
 
 This project is organized as a multi-root workspace and contains several folders such as `n00t`, `n00plicate`, `n00-cortex` and `n00-frontiers`. If you open the repository folder directly in VS Code you may not see the multi-root layout or folders listed as separate root entries.
 
-How to open the workspace file
+## How to open the workspace file
 
 1. In VS Code: File -> Open Workspace... -> choose `n00tropic-cerebrum.code-workspace` at the repository root.
 2. Alternatively, from the Command Palette: `File: Open Workspace` and select the same file.
 
-Reloading
+## Reloading
 
 If Explorer still looks different after opening the workspace, use Developer: Reload Window to ensure styles and settings are reloaded.
 
@@ -15,16 +15,16 @@ Tip: Avoid adding the repository root (`.` / `cerebrum-root`) and the submodule 
 
 If you prefer the workspace to show everything exactly as the OS folder (no filters):
 
-- `explorer.excludeGitIgnore: false` — show files in Explorer even if they are in `.gitignore`.
-- `search.useIgnoreFiles: false` — include files that are normally gitignored in search.
+- `explorer.excludeGitIgnore: false`: show files in Explorer even if they are in `.gitignore`.
+- `search.useIgnoreFiles: false`: include files that are normally gitignored in search.
 - `files.exclude` is set only to hide `**/.git` by default; change this if you prefer other folders hidden.
 
-If you still don't see `n00t` or `n00plicate` in the Explorer after opening this workspace file, please verify the folder exists on disk and tell me how VS Code was opened (e.g., `Open Folder` or `Open Workspace`).
+If `n00t` or `n00plicate` still fail to appear in the Explorer after opening this workspace file, verify the folder exists on disk and note how VS Code was opened (for example, `Open Folder` or `Open Workspace`).
 
 Pro tip to match repos & branches visually
 
-- Install GitLens (`eamodio.gitlens`) for the most helpful overlays in Explorer and the status bar. It shows branch and remote info next to repositories and files.
-- Or use Git Graph (`mhutchie.git-graph`) to open a graphical view of remotes and branches.
+- Install GitLens (`eamodio.gitlens`) for helpful overlays in Explorer and the status bar. It shows branch and remote info next to repositories and files.
+- Use Git Graph (`mhutchie.git-graph`) to open a graphical view of remotes and branches.
 - Ensure `git.autoRepositoryDetection` is enabled (workspace setting) so submodule repositories are discovered and listed in the Source Control view.
 
 How to get branches and remotes visible in Explorer and Source Control

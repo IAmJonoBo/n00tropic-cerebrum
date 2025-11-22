@@ -9,7 +9,6 @@ set -euo pipefail
 # canonical pnpm version used in the workspace.
 
 PNPM_VERSION=""
-CWD=$(pwd)
 DRY_RUN=0
 FORCE=0
 INSTALL_WORKSPACE=0
@@ -58,17 +57,17 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Find canonical PNPM version from n00-cortex
-if [ -f "n00-cortex/data/toolchain-manifest.json" ]; then
+if [[ -f "n00-cortex/data/toolchain-manifest.json" ]]; then
 	PNPM_VERSION=$(jq -r '.toolchains.pnpm.version' n00-cortex/data/toolchain-manifest.json)
 fi
-if [ -z "$PNPM_VERSION" ] || [ "$PNPM_VERSION" == "null" ]; then
+if [[ -z ${PNPM_VERSION} || ${PNPM_VERSION} == "null" ]]; then
 	PNPM_VERSION="10.23.0"
 fi
 
 echo "Using PNPM_VERSION=${PNPM_VERSION}"
 
 # Default dirs if none provided
-if [ ${#DIRS[@]} -eq 0 ]; then
+if [[ ${#DIRS[@]} -eq 0 ]]; then
 	DIRS=(
 		"n00-frontiers/applications/scaffolder/build/template-renders"
 		"n00-frontiers/applications/scaffolder/examples"
@@ -83,37 +82,37 @@ fi
 # Activate corepack / pnpm
 ACTIVATE_CMD="corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate"
 echo "Activating pnpm ${PNPM_VERSION} via corepack: ${ACTIVATE_CMD}"
-if [ $DRY_RUN -eq 0 ]; then
-	eval ${ACTIVATE_CMD}
+if [[ ${DRY_RUN} -eq 0 ]]; then
+	eval "${ACTIVATE_CMD}"
 fi
 
 # Helper to run in Python-safe directories for spaces
 normalize_dir() {
-	DIR="$1"
-	if [ ! -d "$DIR" ]; then
-		echo "Skipping missing directory: $DIR"
+	local dir="$1"
+	if [[ ! -d ${dir} ]]; then
+		echo "Skipping missing directory: ${dir}"
 		return
 	fi
 
-	echo "Processing: $DIR"
+	echo "Processing: ${dir}"
 
-	pushd "$DIR" >/dev/null
+	pushd "${dir}" >/dev/null
 
 	# Check for package.json; if not, just remove node_modules
-	if [ -f package.json ] || [ -f pnpm-workspace.yaml ]; then
-		if [ -d node_modules ] || [ -d .pnpm ] || [ $FORCE -eq 1 ]; then
-			echo "  -> Cleaning node_modules and .pnpm from $DIR"
-			if [ $DRY_RUN -eq 0 ]; then
+	if [[ -f package.json || -f pnpm-workspace.yaml ]]; then
+		if [[ -d node_modules || -d .pnpm || ${FORCE} -eq 1 ]]; then
+			echo "  -> Cleaning node_modules and .pnpm from ${dir}"
+			if [[ ${DRY_RUN} -eq 0 ]]; then
 				rm -rf node_modules .pnpm
 			fi
 			echo "  -> Installing using pnpm@${PNPM_VERSION}"
-			if [ $DRY_RUN -eq 0 ]; then
+			if [[ ${DRY_RUN} -eq 0 ]]; then
 				# Prefer frozen lockfile, but fall back to non-frozen if it fails
 				set +e
 				pnpm install --frozen-lockfile
-				RC=$?
+				local rc=$?
 				set -e
-				if [ $RC -ne 0 ]; then
+				if [[ ${rc} -ne 0 ]]; then
 					echo "  -> frozen lockfile install failed; retrying without frozen lockfile"
 					pnpm install --no-frozen-lockfile
 				fi
@@ -123,9 +122,9 @@ normalize_dir() {
 		fi
 	else
 		# No package.json; remove node_modules/.pnpm only
-		if [ -d node_modules ] || [ -d .pnpm ]; then
+		if [[ -d node_modules || -d .pnpm ]]; then
 			echo "  -> Cleaning node_modules and .pnpm (no package.json found)"
-			if [ $DRY_RUN -eq 0 ]; then
+			if [[ ${DRY_RUN} -eq 0 ]]; then
 				rm -rf node_modules .pnpm
 			fi
 		else
@@ -139,7 +138,7 @@ normalize_dir() {
 # Expand directories via globbing and call normalize
 for base in "${DIRS[@]}"; do
 	# If the base matches a directory containing subdirectories with package.json, find them
-	if [ -d "$base" ]; then
+	if [[ -d ${base} ]]; then
 		# Find all directories that contain a package.json, pnpm-lock.yaml, or pnpm-workspace.yaml
 		# Use portable find compatible with macOS (BSD) - extract parent directories
 		while IFS= read -r dir; do
@@ -151,9 +150,9 @@ for base in "${DIRS[@]}"; do
 	fi
 done
 
-if [ $INSTALL_WORKSPACE -eq 1 ]; then
+if [[ ${INSTALL_WORKSPACE} -eq 1 ]]; then
 	echo "Running workspace pnpm install (-w) to reduce symlink conflicts..."
-	if [ $DRY_RUN -eq 0 ]; then
+	if [[ ${DRY_RUN} -eq 0 ]]; then
 		pnpm -w install --no-frozen-lockfile
 	fi
 fi

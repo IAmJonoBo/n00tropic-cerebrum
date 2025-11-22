@@ -14,20 +14,20 @@ work and allows fast iteration.
 
 Quick commands
 
-- vale sync — Refresh installed style packs and ensure local vocabulary is loaded
-- VALE_LOCAL=1 make validate-docs — Run the lightweight \`n00\` checks (recommended while authoring)
-- vale --output=JSON --ignore-syntax docs > artifacts/vale-full.json — Run a full CI-like check and write JSON to
+- vale sync - Refresh installed style packs and ensure local vocabulary is loaded
+- VALE_LOCAL=1 make validate-docs - Run the lightweight \`n00\` checks (recommended while authoring)
+- vale --output=JSON --ignore-syntax docs > artifacts/vale-full.json - Run a full CI-like check and write JSON to
   artifacts/vale-full.json
 
 Developer helpers
 
-- pnpm -s docs:vale-triage — Parse the full run JSON and create a triage report grouped by file and check. The
+- pnpm -s docs:vale-triage - Parse the full run JSON and create a triage report grouped by file and check. The
   triage report is written to artifacts/vale-triage.json.
-- pnpm -s docs:fix-style — Apply a small set of safe editorial normalizations to \`.adoc\` files (commas, spacing,
+- pnpm -s docs:fix-style - Apply a small set of safe editorial normalizations to \`.adoc\` files (commas, spacing,
   ellipses and other low-risk normalizations).
-- pnpm -s docs:generate-spelling-counts — Produce a JSON with Vale.Spelling token counts to guide whitelist
+- pnpm -s docs:generate-spelling-counts - Produce a JSON with Vale.Spelling token counts to guide whitelist
   decisions.
-- pnpm -s docs:vale-whitelist-candidates — Produce a shortlist of high-frequency tokens for review (candidates
+- pnpm -s docs:vale-whitelist-candidates - Produce a shortlist of high-frequency tokens for review (candidates
   for whitelisting).
 
 Notes

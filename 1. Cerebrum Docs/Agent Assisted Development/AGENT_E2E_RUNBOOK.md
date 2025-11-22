@@ -120,9 +120,9 @@ print(result.output)
 
 ## Key workspace capabilities
 
-- `workspace.plan` – generate DRY/YAGNI-scored plans (runs `.dev/automation/scripts/plan-exec.sh`).
-- `planner.refreshPlans` – regenerate deterministic `.plan.md` artefacts + telemetry by calling `n00-horizons/scripts/generate-experiment-plans.sh`.
-- `docs.captureTypesenseSummary` – parse the latest `docs/search/logs/typesense-reindex-*.log` and produce the `.log.json` summary that Danger/dashboard automation requires.
+- `workspace.plan` - generate DRY/YAGNI-scored plans (runs `.dev/automation/scripts/plan-exec.sh`).
+- `planner.refreshPlans` - regenerate deterministic `.plan.md` artefacts + telemetry by calling `n00-horizons/scripts/generate-experiment-plans.sh`.
+- `docs.captureTypesenseSummary` - parse the latest `docs/search/logs/typesense-reindex-*.log` and produce the `.log.json` summary that Danger/dashboard automation requires.
 
 Run these via `run_workflow_phase` whenever you need to refresh planner collateral or prove Typesense freshness before merging docs.
 
@@ -134,7 +134,7 @@ Run these via `run_workflow_phase` whenever you need to refresh planner collater
 - Toggle instrumentation with `N00_DISABLE_TRACING=1` if the automation runs where OTLP collectors are unavailable.
 - The helper falls back when `agent_framework` is missing, so existing scripts keep functioning without the dependency.
 
-To view traces locally, launch an OpenTelemetry collector (or Docker `otel/opentelemetry-collector`) pointing at Honeycomb/Jaeger, then run `cli.py` commands—the spans are emitted before any sub-command logic executes.
+To view traces locally, launch an OpenTelemetry collector (or Docker `otel/opentelemetry-collector`) pointing at Honeycomb/Jaeger, then run `cli.py` commands; the spans are emitted before any sub-command logic executes.
 
 ## Model entrypoints
 

@@ -2,14 +2,14 @@
 
 ## Status
 
-Accepted – 2025-11-19
+Accepted - 2025-11-19
 
 ## Context
 
 Two directives landed simultaneously:
 
-1. **Codex Planning Directive (temp-doc.md)** — requires every brief/issue to start with a DRY/YAGNI-scored plan emitted as an MCP packet, powered by a new `n00t/planning/` runtime, automation hooks, and n00-school telemetry.
-2. **Antora migration + search blueprint (temp-doc-2.md)** — finishes the multi-repo docs migration and mandates an OSS-first search stack with Lunr offline support and Typesense (local container-preferred, remote optional) for production indexing.
+1. **Codex Planning Directive (temp-doc.md)** - requires every brief/issue to start with a DRY/YAGNI-scored plan emitted as an MCP packet, powered by a new `n00t/planning/` runtime, automation hooks, and n00-school telemetry.
+2. **Antora migration + search blueprint (temp-doc-2.md)** - finishes the multi-repo docs migration and mandates an OSS-first search stack with Lunr offline support and Typesense (local container-preferred, remote optional) for production indexing.
 
 Executing piecemeal risks drift: planners could emit non-compliant plans, or docs might ship without search/index validation. We need a unified decision so every team understands scope, boundaries, and guardrails.
 

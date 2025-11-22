@@ -38,7 +38,7 @@
         }
       },
       "group": "build",
-      "detail": "White-label Swift builder – defaults to n00-dashboard but can point to any future app."
+      "detail": "White-label Swift builder - defaults to n00-dashboard but can point to any future app."
     }
   ],
   "inputs": [

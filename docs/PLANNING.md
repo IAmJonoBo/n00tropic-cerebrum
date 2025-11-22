@@ -31,7 +31,7 @@ _Last updated: 2025-11-19_
    - Finish Antora conversions in remaining repos, update `antora-playbook.yml`, and verify Lunr + Typesense indexes locally.
 4. **System validation** (Week 4)
    - Run `.dev/automation/scripts/meta-check.sh`, `workspace-health`, planner CI, Typesense re-index, and create sample `.plan.md` for PR showcase.
-   - Capture M1 benchmark + dataset snippets for PR body and cut `[Codex] Planning Engine v1 — MCP-native, air-gapped, self-training, adaptive PM`.
+   - Capture M1 benchmark + dataset snippets for PR body and cut `[Codex] Planning Engine v1 - MCP-native, air-gapped, self-training, adaptive PM`.
 
 ## Readiness Checklist
 

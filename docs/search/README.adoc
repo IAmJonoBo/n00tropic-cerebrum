@@ -6,9 +6,9 @@ This playbook explains how to run the OSS-first search stack for the Cerebrum do
 
 == Modes
 
-* **Offline** – Antora + Lunr (already enabled via `antora-playbook.yml`).
-* **Local Typesense** – Preferred for development. Launch a container (see below) and run the DocSearch scraper to populate the index.
-* **Remote Typesense** – Optional shared cluster. Override `TYPESENSE_HOST`, `TYPESENSE_PROTOCOL`, and `TYPESENSE_PORT` via secrets when using GitHub Actions or CI.
+* **Offline:** Antora + Lunr (already enabled via `antora-playbook.yml`).
+* **Local Typesense:** Preferred for development. Launch a container (see below) and run the DocSearch scraper to populate the index.
+* **Remote Typesense:** Optional shared cluster. Override `TYPESENSE_HOST`, `TYPESENSE_PROTOCOL`, and `TYPESENSE_PORT` via secrets when using GitHub Actions or CI.
 
 == Prerequisites
 
@@ -65,16 +65,16 @@ Each run should drop a timestamped log in `docs/search/logs/`. The current valid
 [%autowidth,cols="1,2"]
 |===
 | Date (UTC) | Evidence
-| 2025-11-19 | `docs/search/logs/typesense-reindex-20251119.log` — 37 pages indexed via `typesense/docsearch-scraper:0.9.0` against the local compose stack + published Typesense alias `n00-docs`.
+| 2025-11-19 | `docs/search/logs/typesense-reindex-20251119.log` - 37 pages indexed via `typesense/docsearch-scraper:0.9.0` against the local compose stack + published Typesense alias `n00-docs`.
 |===
 
 == Troubleshooting
 
-* `docsearch` fails with 401 – make sure the API key environment variable matches the Typesense config.
-* Missing documents – ensure every AsciiDoc page includes `:page-tags:` and `:reviewed:` (checked by `scripts/check-attrs.mjs`).
-* Remote host unreachable – rerun with the local compose file to sanity-check config, then revisit firewall/VPC rules.
+* `docsearch` fails with 401: make sure the API key environment variable matches the Typesense config.
+* Missing documents: ensure every AsciiDoc page includes `:page-tags:` and `:reviewed:` (checked by `scripts/check-attrs.mjs`).
+* Remote host unreachable: rerun with the local compose file to sanity-check config, then revisit firewall/VPC rules.
 
 == References
 
-* ADR-005 – Adaptive Planning & Typesense.
-* `docs/modules/ROOT/pages/planning.adoc` – Initiative overview + local recipe.
+* ADR-005: Adaptive Planning & Typesense.
+* `docs/modules/ROOT/pages/planning.adoc`: Initiative overview + local recipe.

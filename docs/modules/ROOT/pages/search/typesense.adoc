@@ -6,9 +6,9 @@ This page summarises the OSS-first Typesense deployment. See `docs/search/README
 
 == Modes
 
-* **Offline** – Antora + Lunr (already enabled via `antora-playbook.yml`).
-* **Local Typesense** – Preferred for development; launch a container with the compose file in `docs/search` and run the DocSearch scraper.
-* **Remote Typesense** – Optional shared cluster; override `TYPESENSE_HOST`, `TYPESENSE_PROTOCOL`, and `TYPESENSE_PORT` via secrets in CI.
+* **Offline:** Antora + Lunr (already enabled via `antora-playbook.yml`).
+* **Local Typesense:** Preferred for development; launch a container with the compose file in `docs/search` and run the DocSearch scraper.
+* **Remote Typesense:** Optional shared cluster; override `TYPESENSE_HOST`, `TYPESENSE_PROTOCOL`, and `TYPESENSE_PORT` via secrets in CI.
 
 == Prerequisites
 
@@ -47,11 +47,11 @@ If your host supports `--network host` (GitHub Actions runners, native Linux), y
 [%autowidth,cols="1,2"]
 |===
 | Date | Notes
-| 2025-11-19 | `docs/search/logs/typesense-reindex-20251119.log[.json]` — 37 records indexed via the compose stack; evidence for ADR-005/ADR-006 close-out.
+| 2025-11-19 | `docs/search/logs/typesense-reindex-20251119.log[.json]` - 37 records indexed via the compose stack; evidence for ADR-005/ADR-006 close-out.
 |===
 
 == Troubleshooting
 
-* 401 from DocSearch – verify API key matches the Typesense config.
-* Missing documents – ensure each AsciiDoc page declares `:page-tags:` and `:reviewed:`; `scripts/check-attrs.mjs` enforces this.
-* Remote host unreachable – rerun with the local compose stack, then revisit firewall/VPC rules.
+* 401 from DocSearch: verify API key matches the Typesense config.
+* Missing documents: ensure each AsciiDoc page declares `:page-tags:` and `:reviewed:`; `scripts/check-attrs.mjs` enforces this.
+* Remote host unreachable: rerun with the local compose stack, then revisit firewall/VPC rules.
