@@ -1,0 +1,38 @@
+name: toolchain-verify
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  toolchain-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node (LTS from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+          run_install: false
+
+      - name: Install dependencies (no scripts)
+        env:
+          ALLOW_SUBREPO_PNPM_INSTALL: "1"
+          PNPM_SKIP_RECURSIVE_CACHE: "1"
+          PNPM_ENABLE_PRELPOSTSCRIPTS: "false"
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Verify toolchain pins
+        run: node scripts/check-toolchain-pins.mjs --json
