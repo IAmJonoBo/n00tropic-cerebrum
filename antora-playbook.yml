@@ -7,23 +7,23 @@ content:
       branches: [HEAD]
       start_paths: [docs]
     - url: ./.git/modules/n00-frontiers
-      branches: [doc]
+      branches: [docs]
       start_paths: [docs]
       worktrees:
         - path: ./n00-frontiers
-          branches: [doc]
+          branches: [docs]
     - url: ./.git/modules/n00-cortex
-      branches: [doc]
+      branches: [docs]
       start_paths: [docs]
       worktrees:
         - path: ./n00-cortex
-          branches: [doc]
+          branches: [docs]
     - url: ./.git/modules/n00t
-      branches: [doc]
+      branches: [docs]
       start_paths: [docs]
       worktrees:
         - path: ./n00t
-          branches: [doc]
+          branches: [docs]
     - url: ./.git/modules/n00-horizons
       branches: [main]
       start_paths: [docs]
@@ -56,7 +56,7 @@ content:
           branches: [main]
     - url: ./n00menon
       branches: [main]
-      start_paths: [modules/ROOT]
+      start_paths: [.]
     # TODO(n00tropic): Add n00-horizons, n00-school, n00plicate, n00tropic, and
     # n00clear-fusion once their Antora scaffolding ships (track via
     # docs/modules/ROOT/pages/migration-status.adoc).
