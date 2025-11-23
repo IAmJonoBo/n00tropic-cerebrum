@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import path from "node:path";
+
 const cwd = process.cwd();
 const args = process.argv.slice(2);
 // Default excludes: scripts that bootstrap pnpm via npm are allowed

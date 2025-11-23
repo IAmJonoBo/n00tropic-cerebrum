@@ -35,3 +35,11 @@
 - [x] Bootstrap `n00menon` as a runnable TS package with tests.
   - notes: added `package.json`, `vitest.config.ts`, README, refreshed `pnpm-lock.yaml`, and kept `tsconfig` on Node 24 profile.
   - checks: `pnpm -C n00menon test` (pass).
+
+## 2025-11-23 (branch: main, actor: Codex)
+
+- [x] Restore workspace pnpm install and sanitize npm vulnerabilities
+  - notes: ran `scripts/setup-pnpm.sh` + `pnpm install`, added pnpm overrides for `esbuild@0.25.0`, `fast-json-patch@3.1.1`, and `tmp@0.2.4` to close OSV findings; reran `osv-scanner --config osv-scanner.toml .` (clean).
+  - checks: osv-scanner=clean; biome scripts=pass.
+- [x] Regenerate workspace health artifact
+  - notes: `.dev/automation/scripts/workspace-health.py --publish-artifact` recorded clean state across submodules.

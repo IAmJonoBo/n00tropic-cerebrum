@@ -8,11 +8,11 @@
   - Run `scripts/setup-pnpm.sh` (corepack prepare pnpm@10.23.0; npm global fallback added) and `pnpm install` at workspace root.
   - Install trunk CLI v1.25.4 to `~/.cache/trunk/bin/trunk` (or another runner-level location) and export `TRUNK_BIN`; the workspace no longer ships `.trunk/trunk.yaml`, so runners must source lint configs from `n00-cortex/data/trunk/base/.trunk/` or downstream repos directly.
   - Trunk defs sync script restored at `scripts/sync-trunk-defs.mjs`; invoked automatically by `.dev/automation/scripts/run-trunk-subrepos.sh` against the canonical configs under `n00-cortex/data/trunk/base/.trunk/`.
-- [ ] Repair Biome script lint path (owner: codex)
+- [x] Repair Biome script lint path (owner: codex)
   - After pnpm is present, re-run `pnpm -w exec biome check scripts` (avoid quoting the glob) to validate scripts linting.
-- [ ] Remediate OSV scanner alerts for `mcp` (GHSA-3qhf-m339-9g5v, GHSA-j975-95f5-7wqh) (owner: codex)
+- [x] Remediate OSV scanner alerts for `mcp` (GHSA-3qhf-m339-9g5v, GHSA-j975-95f5-7wqh) (owner: codex)
   - Dependency bumped to `mcp>=1.10.0` in `mcp/docs_server/requirements.txt`; rerun `osv-scanner` to verify closure.
-- [ ] Restore superrepo health artifact (owner: codex)
+- [x] Restore superrepo health artifact (owner: codex)
   - Clean local-only submodule changes (`n00-horizons` untracked jobs, `n00t` tracked `capabilities/manifest.json`), then rerun `.dev/automation/scripts/workspace-health.py --publish-artifact`.
 - [ ] Repair workspace health sync for ephemeral agents (owner: codex)
   - Document bootstrap order for runners: `GH_SUBMODULE_TOKEN` → `scripts/bootstrap-workspace.sh` → `pnpm install` → `scripts/bootstrap-python.sh` → `pnpm exec antora antora-playbook.yml` (skip if private sources unavailable).

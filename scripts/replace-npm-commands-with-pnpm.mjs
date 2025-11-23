@@ -139,4 +139,6 @@ if (!options.apply) {
 }
 
 console.log("Applied to files:");
-results.forEach((r) => console.log(" -", r.filePath));
+for (const r of results) {
+  console.log(" -", r.filePath);
+}
