@@ -133,6 +133,11 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 
 - `.trunk/` is tracked with linters/actions disabled to avoid hook overhead. Run `trunk check` manually if desired; hooks remain off by default.
 
+### Environment files
+
+- Populate secrets in the workspace root `.env` (ignored) using `.env.example` as a template; run `scripts/sync-env-templates.sh` to copy the template to each subrepo as `.env.example` (and stub `.env`).
+- Common keys: `GH_TOKEN`, `GITHUB_TOKEN`, `DISCORD_WEBHOOK`, `REQUIRED_RUNNER_LABELS`.
+
 ## Quick start (fusion UI + graph)
 
 - Serve graph for agents: `pnpm -C n00-cortex graph:serve` (port 7090).
