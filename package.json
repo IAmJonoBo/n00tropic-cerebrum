@@ -58,6 +58,7 @@
     "antora:ci": "pnpm exec antora antora-playbook.ci.yml --stacktrace",
     "ci:validate:cortex": "pnpm -C n00-cortex validate:schemas",
     "trunk:check-all": "auto_dir=.dev/auto; auto_dir=\"${auto_dir}mation\"; bash ${auto_dir}/scripts/run-trunk-subrepos.sh",
+    "trunk:upgrade": "bash scripts/trunk-upgrade-workspace.sh --check",
     "trunk:sync-defs": "node scripts/sync-trunk-defs.mjs",
     "tools:scan-npm": "node scripts/find-npm-usages.mjs",
     "tools:replace-npx": "node scripts/replace-npx-with-pnpm.mjs",

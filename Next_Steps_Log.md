@@ -43,3 +43,6 @@
   - checks: osv-scanner=clean; biome scripts=pass.
 - [x] Regenerate workspace health artifact
   - notes: `.dev/automation/scripts/workspace-health.py --publish-artifact` recorded clean state across submodules.
+- [x] Stabilize Trunk bootstrap across subrepos
+  - notes: added `scripts/trunk-upgrade-workspace.sh` (wraps trunk upgrade + config sync + optional checks), exported git metadata in `run-trunk-subrepos.sh`, pinned trunk runtimes in canonical config; trunk checks now pass across all subrepos.
+  - checks: `TRUNK_BIN=/usr/local/bin/trunk .dev/automation/scripts/run-trunk-subrepos.sh` (pass).
