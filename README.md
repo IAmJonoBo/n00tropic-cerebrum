@@ -121,6 +121,7 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 | `check-runners.mjs`               | Lists GitHub self-hosted runners for the superrepo + submodules (uses `GH_TOKEN`); nightly workflow alerts if coverage drops to zero.                                                      |
 | `normalize-workspace-pnpm.sh`     | Canonical entry for re-installing JS deps in templates/examples; now fails if Node pins drift (override with `--allow-mismatch`).                                                          |
 | `guard-subrepo-pnpm-install.mjs`  | Wired as `preinstall` in JS subrepos; blocks installs from the wrong directory/workspace context.                                                                                         |
+| `cli.py health-*`                 | Front door commands wrapping health checks: toolchain, runners, Python lock, and JS normalization with consistent logging.                                                                |
 
 ### Alerts (Discord)
 

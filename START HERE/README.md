@@ -30,6 +30,7 @@
 6. **Python deps** – locked with `uv`; verify via `pnpm run python:lock:check`.
 7. **Alerts** – set `DISCORD_WEBHOOK` (and optional `REQUIRED_RUNNER_LABELS`) for runner and Python lock notifications.
 8. **Secrets** – copy `.env.example` to `.env` in the workspace root; run `scripts/sync-env-templates.sh` to fan out `.env.example` stubs to subrepos. Keys: `GH_TOKEN`, `GITHUB_TOKEN`, `DISCORD_WEBHOOK`, `REQUIRED_RUNNER_LABELS`.
+9. **CLI shortcuts** – prefer `python3 cli.py health-toolchain|health-runners|health-python-lock|normalize-js` for common checks; they wrap the canonical scripts with logging.
 
 These scripts back the `workspace.*` capabilities exposed through `n00t/capabilities/manifest.json`.
 

@@ -4,6 +4,7 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { log } from "./lib/log.mjs";
 
 function gh(args) {
   return execSync(`gh ${args}`, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
@@ -49,16 +50,19 @@ function checkRepo(repo) {
 
 const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
 if (!token) {
-  console.error("GH_TOKEN/GITHUB_TOKEN not set; skipping runner check");
+  log("error", "GH_TOKEN/GITHUB_TOKEN not set; skipping runner check");
   process.exit(1);
 }
 
 const results = listRepos().map(checkRepo);
 results.forEach((r) => {
   if (r.status) {
-    console.log(`${r.repo}: ${r.status}`);
+    log("error", `${r.repo}: ${r.status}`);
   } else {
-    console.log(`${r.repo}: ${r.total} runners [${r.labels.join(", ")}]`);
+    log("info", `${r.repo}: ${r.total} runners`, { repo: r.repo, total: r.total, labels: r.labels });
+    if (r.missing?.length) {
+      log("warn", `${r.repo} missing required labels`, { missing: r.missing });
+    }
   }
 });
 
@@ -66,10 +70,10 @@ const missingCount = results.filter((r) => !r.status && r.total === 0);
 const missingLabels = results.filter((r) => !r.status && r.total > 0 && r.missing?.length);
 if (missingCount.length || missingLabels.length) {
   if (missingCount.length)
-    console.error("Repos missing self-hosted runners: " + missingCount.map((m) => m.repo).join(", "));
+    log("error", "Repos missing self-hosted runners", { repos: missingCount.map((m) => m.repo) });
   if (missingLabels.length)
-    missingLabels.forEach((r) =>
-      console.error(`${r.repo} missing required labels: ${r.missing.join(", ")}`),
-    );
+    missingLabels.forEach((r) => log("error", `${r.repo} missing required labels`, { missing: r.missing }));
   process.exit(1);
 }
+
+log("info", "Runner check passed", { repos: results.length });

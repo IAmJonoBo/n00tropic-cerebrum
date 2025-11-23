@@ -3,6 +3,7 @@
 // and that subrepos agree with the workspace versions.
 import fs from "node:fs";
 import path from "node:path";
+import { log } from "./lib/log.mjs";
 
 const root = process.cwd();
 const manifestPath = path.join(
@@ -72,10 +73,11 @@ for (const p of paths) {
 }
 
 if (issues.length) {
-	console.error(
-		"Toolchain pin mismatches detected:\n" +
-			issues.map((i) => `- ${i}`).join("\n"),
-	);
+	log("error", "Toolchain pin mismatches detected", { issues });
 	process.exit(1);
 }
-console.log(`Toolchain pins OK (Node ${expectedNode}, pnpm ${expectedPnpm})`);
+
+log("info", `Toolchain pins OK (Node ${expectedNode}, pnpm ${expectedPnpm})`, {
+	node: expectedNode,
+	pnpm: expectedPnpm,
+});

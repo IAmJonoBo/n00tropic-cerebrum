@@ -165,6 +165,7 @@ def run(
     capture_output: bool = False,
     text: bool = True,
     check: bool = True,
+    env: Optional[dict] = None,
 ) -> subprocess.CompletedProcess[str]:
     """Execute trusted workspace commands with consistent subprocess defaults."""
 
@@ -174,6 +175,7 @@ def run(
         cwd=cwd,
         capture_output=capture_output,
         text=text,
+        env=env,
     )
 
 
@@ -439,6 +441,36 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional subset of repo names to include when running the trunk subcommand.",
     )
 
+    subparsers.add_parser(
+        "health-toolchain", help="Check Node/pnpm pins across workspace and subrepos."
+    )
+
+    health_runners = subparsers.add_parser(
+        "health-runners", help="Check self-hosted runner coverage/labels."
+    )
+    health_runners.add_argument(
+        "--required-labels",
+        default=os.environ.get("REQUIRED_RUNNER_LABELS", "self-hosted,linux,x64,pnpm,uv"),
+        help="Comma-separated labels that must be present on runners.",
+    )
+    health_runners.add_argument(
+        "--webhook",
+        help="Optional Discord webhook to notify (mirrors DISCORD_WEBHOOK env).",
+    )
+
+    subparsers.add_parser(
+        "health-python-lock", help="Verify uv lock freshness for workspace Python deps."
+    )
+
+    normalize_js = subparsers.add_parser(
+        "normalize-js", help="Run normalize-workspace-pnpm.sh with pin enforcement."
+    )
+    normalize_js.add_argument(
+        "--allow-mismatch",
+        action="store_true",
+        help="Allow Node pin mismatch (otherwise fails).",
+    )
+
     remote_parser = subparsers.add_parser(
         "remotes",
         help="Verify that each repo has a remote alias that matches its directory name.",
@@ -537,6 +569,29 @@ def handle_trunk_alias(args: argparse.Namespace) -> None:
     run_trunk_upgrade(args.repos)
 
 
+def handle_health_toolchain(_: argparse.Namespace) -> None:
+    run(["pnpm", "run", "tools:check-toolchain"], cwd=WORKSPACE_ROOT)
+
+
+def handle_health_runners(args: argparse.Namespace) -> None:
+    env = os.environ.copy()
+    env["REQUIRED_RUNNER_LABELS"] = args.required_labels
+    if args.webhook:
+        env["DISCORD_WEBHOOK"] = args.webhook
+    run(["pnpm", "run", "tools:check-runners"], cwd=WORKSPACE_ROOT, env=env)
+
+
+def handle_health_python_lock(_: argparse.Namespace) -> None:
+    run(["pnpm", "run", "python:lock:check"], cwd=WORKSPACE_ROOT)
+
+
+def handle_normalize_js(args: argparse.Namespace) -> None:
+    cmd = [".dev/automation/scripts/normalize-workspace-pnpm.sh"]
+    if args.allow_mismatch:
+        cmd.append("--allow-mismatch")
+    run(cmd, cwd=WORKSPACE_ROOT)
+
+
 def handle_remotes(args: argparse.Namespace) -> None:
     targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
     for name, path in iter_repos(targets):
@@ -623,6 +678,10 @@ COMMAND_HANDLERS = {
     "capabilities": handle_capabilities,
     "trunk-upgrade": handle_trunk_upgrade,
     "trunk": handle_trunk_alias,
+    "health-toolchain": handle_health_toolchain,
+    "health-runners": handle_health_runners,
+    "health-python-lock": handle_health_python_lock,
+    "normalize-js": handle_normalize_js,
     "remotes": handle_remotes,
     "bootstrap": handle_bootstrap,
     "repo-context": lambda _: generate_repo_context_artifact(),
