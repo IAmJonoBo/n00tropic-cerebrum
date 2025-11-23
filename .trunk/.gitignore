@@ -1,4 +1,3 @@
-logs
-out
-plugins
-cache
+*
+!/trunk.yaml
+!/.gitignore
