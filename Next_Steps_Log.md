@@ -26,3 +26,12 @@
     - Loki 0.35.1 targets (`@loki/target-*`) depend on `aws-sdk@2.1692.0`, `gm@1.25.1`, `querystring@0.2.0`, `uuid@3.4.0`, and `@ferocia-oss/osnap@1.3.5` (which also brings `tempfile@3.0.0`).
     - Madge 8.0.0 → `dependency-tree@11.2.0` → `module-lookup-amd@9.0.5` continues to install `glob@7.2.3`.
   - checks: tests=not-run, lint=not-run, type=not-run, sec=warn (upstream issues), build=not-run
+
+## 2025-11-23 (branch: main, actor: Codex)
+
+- [x] Resolve merge markers in `n00plicate/README.md` to align toolchain badges with Node 25.2.1 / pnpm 10.23.0.
+  - notes: conflict markers removed; file now clean for downstream docs/site renders.
+  - checks: not required (docs-only).
+- [x] Bootstrap `n00menon` as a runnable TS package with tests.
+  - notes: added `package.json`, `vitest.config.ts`, README, refreshed `pnpm-lock.yaml`, and kept `tsconfig` on Node 24 profile.
+  - checks: `pnpm -C n00menon test` (pass).
