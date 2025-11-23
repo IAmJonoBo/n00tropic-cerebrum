@@ -22,6 +22,13 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: 3.11.14
+      - name: Install uv (fast Python installer)
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Sync Python deps with uv lock
+        run: |
+          uv pip sync requirements.workspace.lock
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:

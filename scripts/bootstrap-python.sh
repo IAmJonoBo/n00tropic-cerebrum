@@ -10,16 +10,39 @@ fi
 
 PYTHON_BIN=${PYTHON_BIN:-python3}
 VENV_PATH=${WORKSPACE_VENV:-"$ROOT_DIR/.venv-workspace"}
+LOCK_FILE="$ROOT_DIR/requirements.workspace.lock"
 
-if [[ ! -d $VENV_PATH ]]; then
-	echo "[bootstrap-python] creating virtual environment at $VENV_PATH"
-	"$PYTHON_BIN" -m venv "$VENV_PATH"
+use_uv() {
+	command -v uv >/dev/null 2>&1
+}
+
+if use_uv; then
+	echo "[bootstrap-python] using uv to provision venv + sync dependencies"
+	uv venv "$VENV_PATH"
+	. "$VENV_PATH/bin/activate"
+	if [[ -f $LOCK_FILE ]]; then
+		echo "[bootstrap-python] syncing from lock: $LOCK_FILE"
+		uv pip sync "$LOCK_FILE"
+	else
+		echo "[bootstrap-python] lock file missing; syncing from $REQUIREMENTS_FILE"
+		uv pip sync "$REQUIREMENTS_FILE"
+	fi
+else
+	echo "[bootstrap-python] uv not found; falling back to python venv + pip (install uv for faster, reproducible sync)"
+	if [[ ! -d $VENV_PATH ]]; then
+		echo "[bootstrap-python] creating virtual environment at $VENV_PATH"
+		"$PYTHON_BIN" -m venv "$VENV_PATH"
+	fi
+	# shellcheck disable=SC1090
+	source "$VENV_PATH/bin/activate"
+	python -m pip install --upgrade pip
+	if [[ -f $LOCK_FILE ]]; then
+		echo "[bootstrap-python] installing from lock: $LOCK_FILE"
+		python -m pip install --upgrade -r "$LOCK_FILE"
+	else
+		python -m pip install --upgrade -r "$REQUIREMENTS_FILE"
+	fi
 fi
-
-# shellcheck disable=SC1090
-source "$VENV_PATH/bin/activate"
-python -m pip install --upgrade pip
-python -m pip install --upgrade -r "$REQUIREMENTS_FILE"
 
 echo "[bootstrap-python] workspace dependencies installed. Activate via:"
 echo "source $VENV_PATH/bin/activate"
