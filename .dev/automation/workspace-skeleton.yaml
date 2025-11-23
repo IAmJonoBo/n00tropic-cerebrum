@@ -13,6 +13,7 @@ repos:
       - ".dev/automation/scripts"
   n00-cortex:
     path: n00-cortex
+    branches: ["main", "docs"]
     required:
       - cli
       - tooling
@@ -25,6 +26,7 @@ repos:
       - ".dev/n00-cortex/scripts"
   n00-frontiers:
     path: n00-frontiers
+    branches: ["main", "docs"]
     required:
       - cli
       - tooling
@@ -37,6 +39,7 @@ repos:
       - ".dev/n00-frontiers/scripts"
   n00-horizons:
     path: n00-horizons
+    branches: ["main", "docs"]
     required:
       - cli
       - tooling
@@ -49,6 +52,7 @@ repos:
       - ".dev/n00-horizons/scripts"
   n00-school:
     path: n00-school
+    branches: ["main", "docs"]
     required:
       - cli
       - tooling
@@ -61,6 +65,7 @@ repos:
       - ".dev/n00-school/scripts"
   n00clear-fusion:
     path: n00clear-fusion
+    branches: ["main", "docs"]
     required:
       - cli
       - tooling
@@ -73,6 +78,7 @@ repos:
       - ".dev/n00clear-fusion/scripts"
   n00plicate:
     path: n00plicate
+    branches: ["main", "docs"]
     required:
       - cli
       - tooling
@@ -85,6 +91,7 @@ repos:
       - ".dev/n00plicate/scripts"
   n00t:
     path: n00t
+    branches: ["main", "docs"]
     required:
       - cli
       - tooling
@@ -97,6 +104,7 @@ repos:
       - ".dev/n00t/scripts"
   n00tropic:
     path: n00tropic
+    branches: ["main", "docs"]
     required:
       - cli
       - tooling
@@ -109,6 +117,7 @@ repos:
       - ".dev/n00tropic/scripts"
   n00menon:
     path: n00menon
+    branches: ["main"]
     required:
       - docs
       - scripts
