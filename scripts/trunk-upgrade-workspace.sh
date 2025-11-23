@@ -57,7 +57,7 @@ echo "Using trunk binary: ${TRUNK_BIN}"
 pushd "${ROOT}" >/dev/null
 
 echo "Upgrading trunk plugins/linters..."
-"${TRUNK_BIN}" upgrade --yes || {
+TRUNK_NONINTERACTIVE=1 "${TRUNK_BIN}" upgrade || {
 	echo "trunk upgrade failed; aborting." >&2
 	exit 1
 }
