@@ -9,6 +9,11 @@ on:
 jobs:
   toolchain-verify:
     runs-on: ubuntu-latest
+    env:
+      PNPM_VERIFY_STORE_INTEGRITY: "true"
+      PNPM_SKIP_RECURSIVE_CACHE: "1"
+      PNPM_ENABLE_PRELPOSTSCRIPTS: "false"
+      ALLOW_SUBREPO_PNPM_INSTALL: "1"
     steps:
       - name: Checkout repo (with submodules)
         uses: actions/checkout@v4
@@ -28,11 +33,10 @@ jobs:
           run_install: false
 
       - name: Install dependencies (no scripts)
-        env:
-          ALLOW_SUBREPO_PNPM_INSTALL: "1"
-          PNPM_SKIP_RECURSIVE_CACHE: "1"
-          PNPM_ENABLE_PRELPOSTSCRIPTS: "false"
         run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Prune pnpm store
+        run: pnpm store prune || true
 
       - name: Verify toolchain pins
         run: node scripts/check-toolchain-pins.mjs --json
