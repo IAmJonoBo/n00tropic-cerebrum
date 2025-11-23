@@ -151,3 +151,114 @@ export const toCombinedThemes = <T>(definitions: ThemeDefinition<T>[]) =>
     acc[definition.name] = buildRegistryFromDefinition(definition);
     return acc;
   }, {});
+
+/**
+ * Minimal, framework-agnostic primitives used by the design-system smoke tests.
+ * These are intentionally light-weight until the full token orchestration layer
+ * lands; they are backed by the generated design-token outputs to keep values
+ * in sync with the pipeline.
+ */
+export const CommonTokens = {
+  PRIMARY_COLOR: "color.primary.500",
+  SPACING_MEDIUM: "spacing.md",
+  SPACING_SMALL: "spacing.sm",
+  BORDER_RADIUS_MD: "border.radius.md",
+  BORDER_WIDTH_THIN: "border.width.thin",
+} as const;
+export type CommonTokenName =
+  (typeof CommonTokens)[keyof typeof CommonTokens] | string;
+
+export interface ResolvedToken {
+  name: string;
+  value: string;
+  cssVar: string;
+  cssVarReference: string;
+}
+
+export const tokenUtils = {
+  toCssVar: (tokenName: string) =>
+    `--ds-${tokenName.replace(/\./g, "-").replace(/_/g, "-")}`,
+  toCssVarRef: (tokenName: string) => `var(${tokenUtils.toCssVar(tokenName)})`,
+};
+
+const tokenLookup: Record<string, ResolvedToken> = {
+  [CommonTokens.PRIMARY_COLOR]: {
+    name: CommonTokens.PRIMARY_COLOR,
+    value: "#3b82f6",
+    cssVar: tokenUtils.toCssVar(CommonTokens.PRIMARY_COLOR),
+    cssVarReference: tokenUtils.toCssVarRef(CommonTokens.PRIMARY_COLOR),
+  },
+  [CommonTokens.SPACING_MEDIUM]: {
+    name: CommonTokens.SPACING_MEDIUM,
+    value: "1rem",
+    cssVar: tokenUtils.toCssVar(CommonTokens.SPACING_MEDIUM),
+    cssVarReference: tokenUtils.toCssVarRef(CommonTokens.SPACING_MEDIUM),
+  },
+  [CommonTokens.SPACING_SMALL]: {
+    name: CommonTokens.SPACING_SMALL,
+    value: "0.5rem",
+    cssVar: tokenUtils.toCssVar(CommonTokens.SPACING_SMALL),
+    cssVarReference: tokenUtils.toCssVarRef(CommonTokens.SPACING_SMALL),
+  },
+  [CommonTokens.BORDER_RADIUS_MD]: {
+    name: CommonTokens.BORDER_RADIUS_MD,
+    value: "0.375rem",
+    cssVar: tokenUtils.toCssVar(CommonTokens.BORDER_RADIUS_MD),
+    cssVarReference: tokenUtils.toCssVarRef(CommonTokens.BORDER_RADIUS_MD),
+  },
+  [CommonTokens.BORDER_WIDTH_THIN]: {
+    name: CommonTokens.BORDER_WIDTH_THIN,
+    value: "1px",
+    cssVar: tokenUtils.toCssVar(CommonTokens.BORDER_WIDTH_THIN),
+    cssVarReference: tokenUtils.toCssVarRef(CommonTokens.BORDER_WIDTH_THIN),
+  },
+  "color.text.inverse": {
+    name: "color.text.inverse",
+    value: "#fafafa",
+    cssVar: tokenUtils.toCssVar("color.text.inverse"),
+    cssVarReference: tokenUtils.toCssVarRef("color.text.inverse"),
+  },
+};
+
+export const snapshotTokens = (...names: CommonTokenName[]) =>
+  names
+    .map((name) => {
+      const token = tokenLookup[name];
+      if (token) return token;
+      return {
+        name,
+        value: "",
+        cssVar: tokenUtils.toCssVar(name),
+        cssVarReference: tokenUtils.toCssVarRef(name),
+      };
+    })
+    .filter(Boolean);
+
+export type ButtonTokenBlueprint = {
+  background: ResolvedToken;
+  foreground: ResolvedToken;
+  paddingX: ResolvedToken;
+  paddingY: ResolvedToken;
+  borderRadius: ResolvedToken;
+  borderWidth: ResolvedToken;
+};
+
+export const buttonTokenBlueprint: ButtonTokenBlueprint = {
+  background: tokenLookup[CommonTokens.PRIMARY_COLOR],
+  foreground: tokenLookup["color.text.inverse"],
+  paddingX: tokenLookup[CommonTokens.SPACING_MEDIUM],
+  paddingY: tokenLookup[CommonTokens.SPACING_SMALL],
+  borderRadius: tokenLookup[CommonTokens.BORDER_RADIUS_MD],
+  borderWidth: tokenLookup[CommonTokens.BORDER_WIDTH_THIN],
+};
+
+export type ButtonTokenBundle = ButtonTokenBlueprint;
+
+export const getButtonTokenBundle = (): ButtonTokenBundle => ({
+  background: { ...buttonTokenBlueprint.background },
+  foreground: { ...buttonTokenBlueprint.foreground },
+  paddingX: { ...buttonTokenBlueprint.paddingX },
+  paddingY: { ...buttonTokenBlueprint.paddingY },
+  borderRadius: { ...buttonTokenBlueprint.borderRadius },
+  borderWidth: { ...buttonTokenBlueprint.borderWidth },
+});

@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "packageManager": "pnpm@10.23.0",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.23.0"
+  },
   "devDependencies": {
     "@antora/cli": "3.1.14",
     "@antora/lunr-extension": "1.0.0-alpha.12",
@@ -74,9 +78,9 @@
   },
   "pnpm": {
     "overrides": {
-      "eslint-plugin-ft-flow": "3.0.11",
-      "eslint-plugin-react-native": "5.0.0",
-      "esbuild": "0.25.0",
+    "eslint-plugin-ft-flow": "3.0.11",
+    "eslint-plugin-react-native": "5.0.0",
+      "esbuild": "0.27.0",
       "fast-json-patch": "3.1.1",
       "tmp": "0.2.4"
     }

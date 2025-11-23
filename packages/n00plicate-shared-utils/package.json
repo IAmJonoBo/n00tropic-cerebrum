@@ -22,6 +22,6 @@
     "typecheck": "tsc --project tsconfig.json --emitDeclarationOnly --pretty false"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=24.0.0"
   }
 }

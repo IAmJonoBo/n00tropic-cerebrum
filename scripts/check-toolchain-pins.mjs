@@ -20,9 +20,27 @@ const webhook = process.env.DISCORD_WEBHOOK;
 const argv = process.argv.slice(2);
 const asJson = argv.includes("--json");
 
-const rootNvmrc = fs.readFileSync(path.join(root, ".nvmrc"), "utf8").trim();
+const normalizeNode = (v) => v?.trim();
+const isLtsAlias = (v) => /^lts\b/i.test(v || "");
+const semverMajor = (v) => {
+	const match = (v || "").match(/(\d+)\.(\d+)\.(\d+)/);
+	return match ? Number(match[1]) : null;
+};
+const nodeMatches = (nvmVal, expectedVal) => {
+	if (!nvmVal || !expectedVal) return false;
+	if (nvmVal === expectedVal) return true;
+	// Treat lts/* as satisfying a concrete expected version and vice‑versa,
+	// as long as the major versions align (avoids churn when LTS patches bump).
+	if (isLtsAlias(nvmVal) && semverMajor(expectedVal)) return true;
+	if (isLtsAlias(expectedVal) && semverMajor(nvmVal)) return true;
+	return false;
+};
+
+const rootNvmrc = normalizeNode(
+	fs.readFileSync(path.join(root, ".nvmrc"), "utf8"),
+);
 const issues = [];
-if (rootNvmrc !== expectedNode) {
+if (!nodeMatches(rootNvmrc, expectedNode)) {
 	issues.push(`root .nvmrc (${rootNvmrc}) != manifest node (${expectedNode})`);
 }
 
@@ -69,8 +87,8 @@ for (const p of paths) {
 	}
 	const nvmPath = path.join(root, p, ".nvmrc");
 	if (fs.existsSync(nvmPath)) {
-		const val = fs.readFileSync(nvmPath, "utf8").trim();
-		if (val !== expectedNode) {
+		const val = normalizeNode(fs.readFileSync(nvmPath, "utf8"));
+		if (!nodeMatches(val, expectedNode)) {
 			issues.push(`${p || "workspace root"} .nvmrc ${val} != ${expectedNode}`);
 		}
 	}

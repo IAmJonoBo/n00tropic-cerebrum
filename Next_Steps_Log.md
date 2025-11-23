@@ -29,7 +29,7 @@
 
 ## 2025-11-23 (branch: main, actor: Codex)
 
-- [x] Resolve merge markers in `n00plicate/README.md` to align toolchain badges with Node 25.2.1 / pnpm 10.23.0.
+- [x] Resolve merge markers in `n00plicate/README.md` to align toolchain badges with Node 24.11.1 / pnpm 10.23.0.
   - notes: conflict markers removed; file now clean for downstream docs/site renders.
   - checks: not required (docs-only).
 - [x] Bootstrap `n00menon` as a runnable TS package with tests.

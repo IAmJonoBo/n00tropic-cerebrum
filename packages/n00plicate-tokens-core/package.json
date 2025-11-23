@@ -26,6 +26,6 @@
     "@n00plicate/shared-utils": "workspace:*"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=24.0.0"
   }
 }

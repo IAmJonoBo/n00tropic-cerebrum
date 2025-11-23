@@ -18,5 +18,5 @@ Deprecated in favor of `pnpm-migrate`:
 
 Notes:
 
-- Scripts assume toolchain pins tracked in `.nvmrc` (currently Node 25.2.1), pnpm 10.23.0, Python 3.11.14, and Go/Trunk 1.25.4. Update `.nvmrc` + `n00-cortex/data/toolchain-manifest.json` together so local shells and CI stay aligned.
+- Scripts assume toolchain pins tracked in `.nvmrc` (currently Node 24.11.1), pnpm 10.23.0, Python 3.11.14, and Go/Trunk 1.25.4. Update `.nvmrc` + `n00-cortex/data/toolchain-manifest.json` together so local shells and CI stay aligned.
 - Avoid editing under `node_modules`, `.pnpm`, `dist`, or `artifacts`; most scripts skip these directories already.
