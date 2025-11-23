@@ -13,6 +13,7 @@ DRY_RUN=0
 FORCE=0
 INSTALL_WORKSPACE=0
 DIRS=()
+ALLOW_MISMATCH=0
 
 show_help() {
 	cat <<EOF
@@ -47,6 +48,9 @@ while [[ $# -gt 0 ]]; do
 	--install-workspace)
 		INSTALL_WORKSPACE=1
 		;;
+	--allow-mismatch)
+		ALLOW_MISMATCH=1
+		;;
 	*)
 		echo "Unknown arg: $1" >&2
 		show_help
@@ -69,7 +73,13 @@ if [[ -f .nvmrc ]]; then
 	NVMRC=$(cat .nvmrc)
 	MANIFEST_NODE=$(jq -r '.toolchains.node.version' n00-cortex/data/toolchain-manifest.json 2>/dev/null || true)
 	if [[ -n ${MANIFEST_NODE} && ${MANIFEST_NODE} != "null" && ${NVMRC} != ${MANIFEST_NODE} ]]; then
-		echo "[normalize-workspace-pnpm] warning: .nvmrc=${NVMRC} differs from manifest node=${MANIFEST_NODE}" >&2
+		msg="[normalize-workspace-pnpm] .nvmrc=${NVMRC} differs from manifest node=${MANIFEST_NODE}"
+		if [[ ${ALLOW_MISMATCH} -eq 1 ]]; then
+			echo "${msg} (allowed via --allow-mismatch)" >&2
+		else
+			echo "${msg} (use --allow-mismatch to override)" >&2
+			exit 1
+		fi
 	fi
 fi
 

@@ -29,6 +29,8 @@ jobs:
       - name: Sync Python deps with uv lock
         run: |
           uv pip sync requirements.workspace.lock
+      - name: Verify Python lock freshness
+        run: pnpm run python:lock:check
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:

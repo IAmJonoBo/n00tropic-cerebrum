@@ -32,6 +32,7 @@
     "@n00plicate/tokens-core": "workspace:*"
   },
   "scripts": {
+    "preinstall": "node scripts/guard-root-pnpm-install.mjs",
     "build:design-tokens": "TOK_SUFFIX=tokens; pnpm --filter @n00plicate/design-${TOK_SUFFIX} build",
     "build:shared-utils": "pnpm --filter @n00plicate/shared-utils build",
     "build:tokens-core": "pnpm --filter @n00plicate/tokens-core build",
