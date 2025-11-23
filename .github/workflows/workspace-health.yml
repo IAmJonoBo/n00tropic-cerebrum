@@ -12,12 +12,12 @@ jobs:
   health:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (no submodules by default)
+      - name: Checkout (include submodules)
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-          submodules: false
+          submodules: recursive
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -32,6 +32,8 @@ jobs:
           version: 10.23.0
       - name: Verify pnpm
         run: pnpm -v
+      - name: Verify toolchain pins
+        run: pnpm run tools:check-toolchain
       - name: Install OS packages (ripgrep)
         run: |
           sudo apt-get update
@@ -41,6 +43,13 @@ jobs:
         run: |
           set -eux
           pnpm install --frozen-lockfile
+      - name: Fail on conflict markers
+        run: |
+          set -eux
+          if git grep -n "^<<<<<<< " -- ":!node_modules"; then
+            echo "Conflict markers detected" >&2
+            exit 1
+          fi
       - name: Scan for npm usage (fail if found)
         run: pnpm run tools:scan-npm -- --exclude=templates,examples,stuff,vendor,scripts/setup-pnpm.sh && echo "No npm usage found"
       - name: Run Biome checks for scripts
