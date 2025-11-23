@@ -1,4 +1,4 @@
-= Typesense Search Operations
+= Typesense search operations
 :page-tags: diataxis:howto, domain:platform, audience:operator, stability:beta
 :reviewed: 2025-11-19
 
@@ -14,7 +14,7 @@ This playbook explains how to run the OSS-first search stack for the Cerebrum do
 
 . Docker / Podman.
 . Node 20+ (DocSearch scraper) and pnpm-installed Antora dependencies.
-. `docs/search/docsearch.typesense.env.example` copied to `.env` with a generated API key (e.g., `tskey-<uuid>`).
+. `docs/search/docsearch.typesense.env.example` copied to `.env` with a generated API key (for example, `tskey-<uuid>`).
 
 == Local container steps
 
@@ -40,7 +40,7 @@ kill $(cat docs/search/logs/http.pid) && rm docs/search/logs/http.pid
 cd docs/search && docker compose -f typesense-compose.yml down
 ```
 
-Artifacts go to `build/site/` (Lunr), Typesense collections, the log under `docs/search/logs/`, and a JSON summary (`.log.json`) that downstream dashboards can ingest.
+Artifacts go to `build/site/` (Lunr), Typesense collections, the log under `docs/search/logs/`, and a JSON summary (`.log.json`) that downstream dashboards can import.
 
 [TIP]
 ====

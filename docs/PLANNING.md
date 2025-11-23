@@ -1,4 +1,4 @@
-# Adaptive Planning & Antora Migration Plan
+# Adaptive planning & Antora migration plan
 
 _Last updated: 2025-11-19_
 
@@ -9,9 +9,9 @@ _Last updated: 2025-11-19_
 - Finish the multi-repo Antora migration and light up a Typesense-powered search stack (local container by default, remote OSS-friendly endpoint optional).
 - Enforce CI/automation hooks: planner workflow, attr/Danger guardrails, Typesense re-index, and nightly planner training runs.
 
-## Workstreams & Leads
+## Workstreams and leads
 
-| Workstream       | Lead(s)                  | Key Outputs                                                                                                |
+| Workstream       | Leads                    | Key Outputs                                                                                                |
 | ---------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------- |
 | Planning runtime | Codex + n00t maintainers | `n00t/planning/` package, planner capability manifest, CLI entrypoints, `.plan.md` artefacts               |
 | PM + telemetry   | Horizons + School        | Updated experiment templates, AGENT_E2E updates, `n00-school/pipelines/planner-v1.yml`, agent-runs dataset |
@@ -24,20 +24,20 @@ _Last updated: 2025-11-19_
    - Scaffold `n00t/planning/` (engine, agents, adapters, tests) and publish `docs/modules/ROOT/pages/planning.adoc`.
    - Register `plan-exec.sh` + `plan-resolve-conflicts.py`, update `n00t/capabilities/manifest.json`, and add CLI verb + Danger hooks.
 2. **Telemetry & training** (Week 2)
-   - Extend n00-horizons templates with `[[PLAN]]`, link AGENT_E2E runbook updates, and land `docs/PLANNING.md` walkthrough.
+   - Extend n00-horizons templates with `[[PLAN]]`, link AGENT_E2E runbook updates, and land `docs/PLANNING.md` walk-through.
    - Add `n00-school/pipelines/planner-v1.yml`, handlers, dataset plumbing, and planner CI workflow gating YAGNI/conflicts.
 3. **Typesense + Antora** (Week 3)
-   - Deliver `docs/search/README.adoc`, `docsearch.config.json`, env examples, and GitHub Actions `search-reindex.yml` that spins a local container.
+   - Deliver `docs/search/README.adoc`, `docsearch.config.json`, environment examples, and GitHub Actions `search-reindex.yml` that spins a local container.
    - Finish Antora conversions in remaining repos, update `antora-playbook.yml`, and verify Lunr + Typesense indexes locally.
 4. **System validation** (Week 4)
    - Run `.dev/automation/scripts/meta-check.sh`, `workspace-health`, planner CI, Typesense re-index, and create sample `.plan.md` for PR showcase.
    - Capture M1 benchmark + dataset snippets for PR body and cut `[Codex] Planning Engine v1 - MCP-native, air-gapped, self-training, adaptive PM`.
 
-## Readiness Checklist
+## Readiness checklist
 
 - [x] `n00t/planning/` passes unit tests and integrates with `n00t plan`.
 - [x] Planner capability published + `.dev/automation/scripts/plan-exec.sh` accessible via MCP + CLI.
-- [x] `docs/modules/ROOT/pages/planning.adoc` + this file stay in sync (link from nav + AGENT_E2E Runbook).
+- [x] `docs/modules/ROOT/pages/planning.adoc` + this file stay in sync (link from nav + AGENT_E2E runbook).
 - [x] Experiment briefs/template adopt `[[PLAN]]` anchor and conflict resolution guidance.
 - [ ] `n00-school/pipelines/planner-v1.yml` live with telemetry ingestion + nightly `n00t school.trainingRun planner-v1` job scheduled (pipeline ready; scheduling pending).
 - [x] Typesense container compose + remote override documented; `search-reindex.yml` succeeding with OSS image (see `docs/search/logs/typesense-reindex-20251119.log`).

@@ -13,7 +13,7 @@ individual subrepositories. Copy or overlay those configs onto runners (via
 `scripts/sync-trunk-defs.mjs` or repo-specific automation) before invoking the
 CLI, and export `TRUNK_BIN` because there is no repo-local launcher anymore.
 
-Workspace automation no longer auto-installs the Trunk CLI on developer
+Workspace automation no longer auto installs the Trunk CLI on developer
 machines. Run `trunk upgrade --no-progress` (or
 `TRUNK_INSTALL=1 .dev/automation/scripts/trunk-upgrade.sh`) when you explicitly
 want the binary locally. CI/ephemeral runners should set `TRUNK_INSTALL=1` so

@@ -1,4 +1,4 @@
-= Typesense Search Runbook
+= Typesense search runbook
 :page-tags: diataxis:howto, domain:platform, audience:operator, stability:beta
 :reviewed: 2025-11-19
 
@@ -16,7 +16,7 @@ This page summarises the OSS-first Typesense deployment. See `docs/search/README
 . Node 20+ (DocSearch scraper) plus pnpm-installed Antora dependencies.
 . `docs/search/docsearch.typesense.env.example` copied to `.env` with a generated API key.
 
-== Local Container Steps
+== Local container steps
 
 ```bash
 cp docs/search/docsearch.typesense.env.example docs/search/.env
@@ -38,7 +38,7 @@ cd docs/search && docker compose -f typesense-compose.yml down
 If your host supports `--network host` (GitHub Actions runners, native Linux), you can skip the `host.docker.internal` override and keep `start_urls` at `http://127.0.0.1:8080`.
 ====
 
-== GitHub Actions
+== GitHub Actions workflow
 
 `.github/workflows/search-reindex.yml` builds the docs, launches a short-lived Typesense container, runs the Typesense-maintained Docker image (`typesense/docsearch-scraper:0.9.0`) with `--network host`, and tears everything down. Configure secrets (`TYPESENSE_*`) to target remote clusters.
 
