@@ -64,6 +64,15 @@ if [[ -z ${PNPM_VERSION} || ${PNPM_VERSION} == "null" ]]; then
 	PNPM_VERSION="10.23.0"
 fi
 
+# Sanity check Node pin vs workspace .nvmrc so we don't reinstall with mismatched runtime
+if [[ -f .nvmrc ]]; then
+	NVMRC=$(cat .nvmrc)
+	MANIFEST_NODE=$(jq -r '.toolchains.node.version' n00-cortex/data/toolchain-manifest.json 2>/dev/null || true)
+	if [[ -n ${MANIFEST_NODE} && ${MANIFEST_NODE} != "null" && ${NVMRC} != ${MANIFEST_NODE} ]]; then
+		echo "[normalize-workspace-pnpm] warning: .nvmrc=${NVMRC} differs from manifest node=${MANIFEST_NODE}" >&2
+	fi
+fi
+
 echo "Using PNPM_VERSION=${PNPM_VERSION}"
 
 # Default dirs if none provided
