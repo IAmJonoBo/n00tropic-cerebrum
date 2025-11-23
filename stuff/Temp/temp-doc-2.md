@@ -212,7 +212,7 @@ jobs:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0, submodules: recursive }
       - uses: actions/setup-node@v6
-        with: { node-version: 25.2.1 }
+        with: { node-version: 24.11.1 }
       - name: Install Antora + extensions
         run: |
           # Install Antora tooling locally via pnpm and run using pnpm exec
