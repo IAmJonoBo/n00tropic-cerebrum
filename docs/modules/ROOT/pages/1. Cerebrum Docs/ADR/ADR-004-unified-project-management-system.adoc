@@ -45,7 +45,7 @@ scripts in `.dev/automation`. . Create a *tag taxonomy* maintained in
 `n00-cortex/data/catalog/project-tags.yaml` with mirrored aliases in GitHub
 labels, ERPNext tags, and workspace directories; tags are hierarchical
 (`innovation/design-system/ui-accessibility`).
-// vale Vale.Terms = NO
+// vale.Terms = NO
 . Extend `n00t` with a *Project Orchestration capability*: ** `project.capture`
  -- import a document path or address, validate metadata, and register the
  artefact in the unified catalog. ** `project.sync.github` -- create/update
@@ -58,7 +58,7 @@ labels, ERPNext tags, and workspace directories; tags are hierarchical
  initiative introduces cross-repository conventions. ** A project charter in
  `n00tropic_HQ/98. Internal-Projects/IP-*/`. ** A GitHub Project draft and
  ERPNext Project/Task stubs.
-// vale Vale.Terms = YES
+// vale.Terms = YES
 . Leverage n00-frontiers for *quality assurance of project artefacts* by adding
  validation schemas and unit tests to `test_imports.py` (ensuring metadata
  compliance and lifecycle integrity).

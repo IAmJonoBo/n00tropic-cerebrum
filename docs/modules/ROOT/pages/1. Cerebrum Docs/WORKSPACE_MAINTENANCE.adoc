@@ -14,7 +14,7 @@ pull request or refreshing a long-lived clone.
 
 * *Goal*: ensure every submodule is clean and aligned with its upstream.
 * `--publish-artifact` writes the JSON snapshot to
- `artifacts/workspace-health.json` so agents and CI can import it without
+ `artifacts/workspace-health.json` so agents and ci can import it without
  rerunning the script.
 * Add `--sync-submodules` when reviving a stale clone, or `--fix-all` to run
  submodule + trunk sync together.
@@ -69,7 +69,7 @@ and review cadence before you share updates.
 and push. . Run `./.dev/automation/scripts/workspace-release.sh` when tagging a
 coordinated drop so release manifests stay in sync.
 
-TIP: wire the workflow described earlier into automation pipelines (Trunk, CI) to fail fast
+TIP: wire the workflow described earlier into automation pipelines (Trunk, ci) to fail fast
 whenever the workspace drifts.
 
 == Automation and agent quick reference

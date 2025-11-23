@@ -1,7 +1,7 @@
 = Search operations
 :page-tags: diataxis:howto, domain:platform, audience:operator, stability:beta
 :reviewed: 2025-11-19
-// vale Vale.Terms = NO
+// vale.Terms = NO
 
 == Modes
 
@@ -19,7 +19,7 @@
 [#Typesense]
 == Re-index steps for Typesense
 
-. Build docs: `pnpm exec antora antora-playbook.yml`.
+. Build docs: `pnpm exec antora-playbook.yml`.
 . Serve `build/site` locally:
 +
 [source,bash]
@@ -33,17 +33,17 @@ pnpm dlx http-server build/site -p 8080
 ```bash
 CONFIG=$(node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('docsearch.config.json','utf8'));process.stdout.write(JSON.stringify(c));")
 docker run --rm --network host \
-  -e CONFIG="$CONFIG" \
-  -e TYPESENSE_API_KEY=$TYPESENSE_API_KEY \
-  -e TYPESENSE_HOST=$TYPESENSE_HOST \
-  -e TYPESENSE_PORT=$TYPESENSE_PORT \
-  -e TYPESENSE_PROTOCOL=$TYPESENSE_PROTOCOL \
-  typesense/docsearch-scraper:0.9.0 | tee docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+ -e CONFIG="$CONFIG" \
+ -e TYPESENSE_API_KEY=$TYPESENSE_API_KEY \
+ -e TYPESENSE_HOST=$TYPESENSE_HOST \
+ -e TYPESENSE_PORT=$TYPESENSE_PORT \
+ -e TYPESENSE_PROTOCOL=$TYPESENSE_PROTOCOL \
+ typesense/docsearch-scraper:0.9.0 | tee docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
 node docs/search/scripts/save-typesense-summary.mjs docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
 ```
 
-Linux can rely on `--network host`. On macOS/WSL use the network from the compose stack plus `--add-host host.docker.internal:host-gateway` so the scraper reaches the HTTP server.
-. Trigger `.github/workflows/search-reindex.yml` for CI validation once secrets are present.
+Linux can rely on `--network host`. On macOS/WSL use the network from the compose stack plus `--add-host.docker.internal:host-gateway` so the scraper reaches the HTTP server.
+. Trigger `.github/workflows/search-reindex.yml` for ci validation once secrets are present.
 . Stop the HTTP server + Typesense container when complete.
 
 [#remote]
@@ -73,4 +73,4 @@ Trigger the workflow manually (`Actions → search-reindex → Run workflow`) af
  * For hackable offline experiments, point your browser at `build/site/index.html`
  and inspect the `window.antoraLunrIndex` payload.
 
-// vale Vale.Terms = YES
+// vale.Terms = YES

@@ -6,7 +6,7 @@ All repositories now inherit dependency policy from the shared preset published
 in `n00tropic-cerebrum/renovate-presets/workspace.json`. To keep hosted Renovate
 aligned:
 
-// vale Vale.Terms = NO
+// vale.Terms = NO
 . *Self-hosted or GitHub App*
 .. Ensure the bot has read access to `n00tropic-cerebrum`.
 .. Update the global configuration (or onboarding preset) to extend
@@ -22,7 +22,7 @@ aligned:
 .. After updating the preset, trigger Renovate manually on `n00-frontiers` and
  `n00plicate`.
 .. Confirm the dashboard PR reflects the new preset and grouped rules.
-// vale Vale.Terms = YES
+// vale.Terms = YES
 
 Downstream repositories shouldn't redefine high-level scheduling or semantic
 commit behaviour; keep adjustments minimal (for example, package-specific
@@ -30,7 +30,7 @@ automerge rules).
 
 == Integrating additional tooling
 
-// vale Vale.Terms = NO
+// vale.Terms = NO
 * *pip-Tools (`pip-compile`)* -- Generate deterministic `requirements.txt`
  files; configure Renovate `postUpgradeTasks` to run `pip-compile` for Python
  projects.
@@ -40,4 +40,4 @@ automerge rules).
  so Renovate upgrades stay reproducible.
 * *Custom dashboards* -- Use Renovate's dependency dashboard or consume data
  from the Renovate API to track stale upgrades across repositories.
-// vale Vale.Terms = YES
+// vale.Terms = YES

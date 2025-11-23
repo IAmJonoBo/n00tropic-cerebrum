@@ -5,6 +5,8 @@ on:
       - main
     paths:
       - docs/**
+      - n00menon/docs/**
+      - n00menon/modules/**/*.adoc
       - n00-frontiers/docs/**
       - n00-cortex/docs/**
       - n00t/docs/**
@@ -15,6 +17,8 @@ on:
   pull_request:
     paths:
       - docs/**
+      - n00menon/docs/**
+      - n00menon/modules/**/*.adoc
       - n00-frontiers/docs/**
       - n00-cortex/docs/**
       - n00t/docs/**
@@ -43,6 +47,9 @@ jobs:
           node-version-file: .nvmrc
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Check n00menon docs sync
+        run: pnpm run docs:sync-n00menon:check
 
       - name: Verify Antora + Danger availability
         run: |

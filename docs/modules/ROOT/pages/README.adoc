@@ -13,18 +13,16 @@ alignment.
 == Ecosystem map
 
 [mermaid]
-....
+…
 graph TD
 cortex["n00-cortex\\nSchemas & Docs"] --> frontiers["n00-frontiers\\nTemplates, CLI, Renderers"]
 cortex --> n00t_node["n00t\\nAgent & MCP surface"]
-n00t_node --> frontiers
-frontiers --> n00plicate_node["n00plicate\\nPolyglot consumer"]
+n00t_node --> frontiers --> n00plicate_node["n00plicate\\nPolyglot consumer"]
 frontiers --> docs_repo["1. Cerebrum Docs\\nCross-repo ADRs"]
 n00tropic_ops["n00tropic\\nOperational playbooks"] --> docs_repo
 n00school_node["n00-school\\nTraining curriculum"] --> n00t_node
-n00school_node --> frontiers
-frontiers --> cortex
-....
+n00school_node --> frontiers --> cortex
+…
 
 Schemas published from `n00-cortex` drive automation in `n00-frontiers`, which
 then feeds downstream consumers such as `n00plicate` and the shared
@@ -114,21 +112,21 @@ filesystem in `../n00tropic_HQ/`. ____
 == Cross-repo release flow
 
 [mermaid]
-....
+…
 sequenceDiagram
-    participant Dev as Contributor
-    participant Cortex as n00-cortex
-    participant Frontiers as n00-frontiers
-    participant Docs as 1. Cerebrum Docs
-    participant Automation as .dev/automation
+ participant Dev as Contributor
+ participant Cortex as n00-cortex
+ participant Frontiers as n00-frontiers
+ participant Docs as 1. Cerebrum Docs
+ participant Automation as .dev/automation
 
-    Dev->>Cortex: update schemas and manifests
-    Cortex-->>Frontiers: publish new toolchain rules
-    Dev->>Frontiers: regenerate templates and run sanity checks
-    Dev->>Automation: run meta-check and trunk sync
-    Automation-->>Docs: write releases.yaml via workspace-release.sh
-    Docs-->>Dev: document decisions and ADR updates
-....
+ Dev->>Cortex: update schemas and manifests
+ Cortex-->>Frontiers: publish new toolchain rules
+ Dev->>Frontiers: regenerate templates and run sanity checks
+ Dev->>Automation: run meta-check and trunk sync
+ Automation-->>Docs: write releases.yaml via workspace-release.sh
+ Docs-->>Dev: document decisions and ADR updates
+…
 
 This sequence highlights the typical cadence: adjust policy in `n00-cortex`,
 adapt generators in `n00-frontiers`, validate via automation, and record the
@@ -211,12 +209,12 @@ each subrepo's `.trunk/`. Copy or sync those configs before running Trunk (for
 example via `scripts/sync-trunk-defs.mjs`) and install the CLI outside this
 repo, exposing it through `TRUNK_BIN` or `PATH`.
 
-* *Root CI behaviour*: `pnpm run trunk:check-all` iterates over repo folders
-    and runs `trunk check` in each, capturing JSON artefacts in
-    `artifacts/trunk-results/`.
+* *Root ci behaviour*: `pnpm run trunk:check-all` iterates over repo folders
+ and runs `trunk check` in each, capturing JSON artefacts in
+ `artifacts/trunk-results/`.
 * *Subrepo behaviour*: Each subrepo provides its own `.trunk/trunk.yaml`. If a
-    subrepo lacks a `.trunk` directory, the workspace runner still runs
-    `trunk check` with default settings and records findings.
+ subrepo lacks a `.trunk` directory, the workspace runner still runs
+ `trunk check` with default settings and records findings.
 
 TIP: If you see “unsupported linter” errors locally for Trunk checks, run
 `pnpm run trunk:sync-defs` to copy the workspace-standard definitions into each
@@ -282,7 +280,7 @@ Space/n00tropic`, organized as:
 
 . Clone the workspace: `git clone git@github.com:n00tropic/n00tropic-cerebrum.git && cd n00tropic-cerebrum`.
 . Initialise submodules: `git submodule update --init --recursive`.
-. Run `.dev/automation/scripts/workspace-health.sh --sync-submodules --publish-artifact --json` (optionally `--clean-untracked`) to ensure submodules are aligned and to snapshot git state for agents/CI.
+. Run `.dev/automation/scripts/workspace-health.sh --sync-submodules --publish-artifact --json` (optionally `--clean-untracked`) to ensure submodules are aligned and to snapshot git state for agents/ci.
 . Install toolchains per repo (Python venv for `n00-frontiers`, Node for `n00-cortex` and `n00t`, pnpm for `n00plicate`).
 . Open the multi-root VS Code workspace (`n00-cortex/generators/n00tropic-cerebrum.code-workspace`).
 . Run baseline checks: `./.dev/automation/scripts/meta-check.sh` followed by repo-specific health commands.

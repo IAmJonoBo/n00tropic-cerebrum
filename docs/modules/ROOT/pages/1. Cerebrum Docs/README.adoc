@@ -36,11 +36,11 @@ here and update the Toolchain manifest at
 ** Additional indices as they're introduced
 * Model curriculum: `../n00-school/README.md`
 * Renovate governance: xref:++1. Cerebrum Docs/RENOVATE_SETUP.adoc++[]
-* Trunk CI guidance: xref:++1. Cerebrum Docs/TRUNK_GUIDE.adoc++[]
+* Trunk ci guidance: xref:++1. Cerebrum Docs/TRUNK_GUIDE.adoc++[]
 
 == Current workspace ADRs
 
-// vale Vale.Terms = NO
+// vale.Terms = NO
 // vale Microsoft.Terms = NO
 * xref:++1. Cerebrum Docs/ADR/ADR-001-workspace-federation.adoc++[ADR-001:
  Federated Generator Workspace]
@@ -50,7 +50,7 @@ here and update the Toolchain manifest at
 * xref:++1. Cerebrum
  Docs/ADR/ADR-003-operational-workspace-taxonomy-and-erpnext-integration.adoc++[ADR-003:
  Operational Workspace Taxonomy & ERPNext Integration]
-// vale Vale.Terms = YES
+// vale.Terms = YES
 // vale Microsoft.Terms = YES
 
 Keep the documentation concise and avoid duplicating material maintained inside

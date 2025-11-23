@@ -42,10 +42,10 @@ Accepted - 2025-11-06
 . Keep repositories as systems of record for process, templates, and automation
  logic; the new directories store immutable outputs, approvals, and
  cross-cutting governance.
-// vale Vale.Terms = NO
+// vale.Terms = NO
 . Document ERPNext self-hosting procedures in `07-Platform-Ops/erpnext/` and
  require automation to emit telemetry and exports into the new taxonomy.
-// vale Vale.Terms = YES
+// vale.Terms = YES
 
 == Consequences
 
@@ -63,10 +63,10 @@ Accepted - 2025-11-06
 
 * Each directory contains a README describing ownership, expected contents, and
  references.
-// vale Vale.Terms = NO
+// vale.Terms = NO
 * `07-Platform-Ops/erpnext/` maintains deployment playbooks, configuration
  templates, and open tasks for self-hosting ERPNext.
-// vale Vale.Terms = YES
+// vale.Terms = YES
 * Nightly automation should checksum ERPNext exports before writing into
  `90-Archive/erpnext-exports/`.
 * Update onboarding material in `1. Cerebrum Docs/README.md` and

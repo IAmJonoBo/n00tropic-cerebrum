@@ -6,7 +6,7 @@ xref:++../1. Cerebrum Docs/ADR/ADR-006-planner-and-docs-gap-closure.md++ capture
 
 == Workstreams
 
-[cols="1,2,1",options="header"]
+[cols="1,2,1,"options="header"]
 |===
 | Workstream | deliverables | Tracking
 | Planner telemetry surfaces | Publish n00-school planner dataset + dashboards, automatically attach plans to briefs, update AGENT_E2E + control panel with planner status. | xref:++n00-horizons/docs/modules/ROOT/pages/experiments/planner-telemetry.adoc++[] (project-control-panel capability now runs `scripts/generate-experiment-plans.sh` and renders DRY/YAGNI tables from `.dev/automation/artifacts/plans/horizons-*.json`).
@@ -19,7 +19,7 @@ xref:++../1. Cerebrum Docs/ADR/ADR-006-planner-and-docs-gap-closure.md++ capture
 . Track the remaining work via n00-horizons jobs:
 .. `job-control-panel-dashboard-sync`: mirror control-panel telemetry inside the dashboard UI.
 .. `job-planner-trend-export`: export DRY/YAGNI trend dataset to n00-school.
-.. `job-search-freshness-guard`: enforce Typesense freshness via Danger/CI.
+.. `job-search-freshness-guard`: enforce Typesense freshness via Danger/ci.
 . Schedule nightly `n00t school.trainingRun planner-v1 --dataset planner-v1` once the telemetry backlog grows and publish the DRY/YAGNI trend to dashboards.
 
 Update this page as milestones complete.

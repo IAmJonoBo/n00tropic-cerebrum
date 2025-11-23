@@ -18,11 +18,13 @@ fi
 echo "Installing workspace dependencies"
 pnpm install --no-frozen-lockfile || true
 
+echo "Synchronizing n00menon docs"
+pnpm -C n00menon run docs:sync || true
+
 echo "Running docs validation for n00menon"
 pnpm -C n00menon run validate || true
 
-echo "Running build and UI tasks for n00menon"
-pnpm -C n00menon run ui:build || true
+echo "Regenerating Typedoc HTML for n00menon"
 pnpm -C n00menon run docs:build || true
 
 echo "Detecting repo changes"

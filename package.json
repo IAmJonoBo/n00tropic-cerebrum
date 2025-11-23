@@ -45,6 +45,8 @@
     "docs:vale-triage": "node scripts/vale-triage.mjs",
     "docs:generate-spelling-counts": "node scripts/generate-spelling-counts.mjs",
     "docs:vale-whitelist-candidates": "node scripts/vale-whitelist-candidates.mjs",
+    "docs:sync-n00menon": "node scripts/sync-n00menon-docs.mjs --write",
+    "docs:sync-n00menon:check": "node scripts/sync-n00menon-docs.mjs --check",
     "lint:python": "node scripts/lint-python.mjs",
     "lint:python:fix": "node scripts/lint-python.mjs --fix --fix-ruff",
     "docs:md-reflow": "node scripts/fix-docs-style.mjs",

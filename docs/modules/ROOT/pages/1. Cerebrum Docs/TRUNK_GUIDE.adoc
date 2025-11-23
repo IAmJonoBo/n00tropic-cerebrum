@@ -1,4 +1,4 @@
-= Trunk CI playbook
+= Trunk ci playbook
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 
@@ -16,7 +16,7 @@ CLI, and export `TRUNK_BIN` because there is no repo-local launcher anymore.
 Workspace automation no longer auto installs the Trunk CLI on developer
 machines. Run `trunk upgrade --no-progress` (or
 `TRUNK_INSTALL=1 .dev/automation/scripts/trunk-upgrade.sh`) when you explicitly
-want the binary locally. CI/ephemeral runners should set `TRUNK_INSTALL=1` so
+want the binary locally. ci/ephemeral runners should set `TRUNK_INSTALL=1` so
 they can self-bootstrap without polluting personal caches.
 ====
 
@@ -27,7 +27,7 @@ they can self-bootstrap without polluting personal caches.
 . Run `scripts/sync-trunk-defs.mjs` (or
 	`.dev/automation/scripts/run-trunk-subrepos.sh --sync-only`) so subrepos pick
 	up the refreshed definitions.
-. Ensure CI prepares a writable cache (for example `~/.cache/trunk`) and copies
+. Ensure ci prepares a writable cache (for example `~/.cache/trunk`) and copies
 	the canonical config into each repo that depends on Trunk.
 . Set `TRUNK_BIN` or add the Trunk binary to `PATH` on every runner because the
 	workspace no longer vendors the launcher.

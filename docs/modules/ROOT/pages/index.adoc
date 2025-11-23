@@ -14,13 +14,13 @@ location.
 xref:migration-status.adoc[Open the migration tracker] for task-level detail.
 The snapshot below highlights immediate focus:
 
-[cols="1,1,2",options="header"]
+[cols="1,1,2,"options="header"]
 |===
 | Component | Status | Next action
 
 | n00tropic-cerebrum
 | ✅ Baseline scaffold merged
-| Finalize page tagging + CI (this branch)
+| Finalize page tagging + ci (this branch)
 
 | n00-frontiers
 | ⏳ Awaiting repo migration
@@ -37,7 +37,7 @@ The snapshot below highlights immediate focus:
 
 == Diátaxis cheatsheet
 
-[cols="1,3",options="header"]
+[cols="1,3,"options="header"]
 |===
 | Mode | When to choose it
 
@@ -73,4 +73,4 @@ Because snippets are tagged in-source they stay evergreen whenever tests update 
 
 Converted guides live under directories that mirror their original Markdown paths, for example
 xref:++1. Cerebrum Docs/README.adoc++[]. Continue editing Markdown until each team is
-ready to fully author in AsciiDoc.
+ready to fully author in asciidoc.

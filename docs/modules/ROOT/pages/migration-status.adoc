@@ -4,11 +4,11 @@
 
 include::partial$diataxis-blurb.adoc[]
 
-[cols="1,1,2",options="header"]
+[cols="1,1,2,"options="header"]
 |===
 | Repo | Branch | Notes / TODO
 
-| n00tropic-cerebrum | `docs/antora-migration` | ✅ Base component descriptor, nav, and CI added.
+| n00tropic-cerebrum | `docs/antora-migration` | ✅ Base component descriptor, nav, and ci added.
 | n00-frontiers | `docs/antora-migration` | 🔄 Nav now routes to Antora-first pages and the `overview/` landing was added. Convert the linked Markdown guides next.
 | n00-cortex | `docs/antora-migration` | 🔄 Automation overview landed in `modules/ROOT/pages`; continue migrating `docs/overview/*.md`.
 | n00-horizons | `docs/antora-migration` | 🔄 Playbooks/templates converted to Antora; experiments (planner telemetry, Typesense, control panel) now live under `modules/ROOT/pages/experiments/`. Remaining legacy Markdown tied to automation exports.

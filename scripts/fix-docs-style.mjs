@@ -2,20 +2,25 @@ import { readFileSync, writeFileSync } from "node:fs";
 import process from "node:process";
 import { glob } from "glob";
 
-// Accept an optional pattern and a dry-run flag
+// Accept an optional pattern (or comma-separated patterns) and a dry-run flag
 const args = process.argv.slice(2);
-let pattern = "docs/**/*.adoc";
+let patterns = ["docs/**/*.adoc", "n00menon/modules/**/*.adoc"];
 let dryRun = false;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === "--pattern" && args[i + 1]) {
-    pattern = args[i + 1];
+    patterns = args[i + 1]
+      .split(",")
+      .map((p) => p.trim())
+      .filter(Boolean);
     i++;
   }
   if (args[i] === "--dry-run") {
     dryRun = true;
   }
 }
-const files = await glob(pattern);
+const globPattern =
+  patterns.length === 1 ? patterns[0] : `{${patterns.join(",")}}`;
+const files = await glob(globPattern);
 let changed = 0;
 for (const f of files) {
   let s = readFileSync(f, "utf8");

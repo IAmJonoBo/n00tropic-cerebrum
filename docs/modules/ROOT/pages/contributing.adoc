@@ -148,7 +148,7 @@ pnpm install --frozen-lockfile
 pnpm exec antora --version
 
 # Build the site
-pnpm exec antora antora-playbook.yml
+pnpm exec antora-playbook.yml
 
 # View the output
 open build/site/index.html

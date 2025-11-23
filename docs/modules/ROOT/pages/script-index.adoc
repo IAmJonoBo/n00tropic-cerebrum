@@ -1,7 +1,7 @@
 = Script index
 :page-tags: diataxis:reference, domain:platform, audience:operator, stability:beta
 :reviewed: 2025-11-19
-// vale Vale.Terms = NO
+// vale.Terms = NO
 
 This page summarises 4021 scripts across 5 repositories and 1257 categories.
 For the exhaustive Markdown export, open `script_index.md` at the workspace root.
@@ -285,9 +285,9 @@ For the exhaustive Markdown export, open `script_index.md` at the workspace root
 * `n00plicate/apps/web/src/routes`: 2 scripts
 * `n00plicate/apps/web/src/styles`: 1 scripts
 * `n00plicate/apps/web/tmp`: 1 scripts
-* `n00plicate/n00plicate-token-cli`: 5 scripts
-* `n00plicate/n00plicate-token-cli/src`: 1 scripts
-* `n00plicate/n00plicate-token-cli/src/commands`: 8 scripts
+* `n00plicate/n00plicate-token-CLI`: 5 scripts
+* `n00plicate/n00plicate-token-CLI/src`: 1 scripts
+* `n00plicate/n00plicate-token-CLI/src/commands`: 8 scripts
 * `n00plicate/packages/design-system`: 1 scripts
 * `n00plicate/packages/design-system/.loki`: 1 scripts
 * `n00plicate/packages/design-system/.storybook`: 6 scripts

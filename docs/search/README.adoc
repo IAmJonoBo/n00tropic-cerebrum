@@ -8,7 +8,7 @@ This playbook explains how to run the OSS-first search stack for the Cerebrum do
 
 * **Offline:** Antora + Lunr (already enabled via `antora-playbook.yml`).
 * **Local Typesense:** Preferred for development. Launch a container (see below) and run the DocSearch scraper to populate the index.
-* **Remote Typesense:** Optional shared cluster. Override `TYPESENSE_HOST`, `TYPESENSE_PROTOCOL`, and `TYPESENSE_PORT` via secrets when using GitHub Actions or CI.
+* **Remote Typesense:** Optional shared cluster. Override `TYPESENSE_HOST`, `TYPESENSE_PROTOCOL`, and `TYPESENSE_PORT` via secrets when using GitHub Actions or ci.
 
 == Prerequisites
 
@@ -21,20 +21,20 @@ This playbook explains how to run the OSS-first search stack for the Cerebrum do
 ```bash
 cp docs/search/docsearch.typesense.env.example docs/search/.env
 # Edit docs/search/.env with API key + collection name if desired
-pnpm exec antora antora-playbook.yml
+pnpm exec antora-playbook.yml
 pnpm dlx http-server build/site -p 8080 & echo $! > docs/search/logs/http.pid
 cd docs/search
 source .env && docker compose -f typesense-compose.yml up -d
 cd -
 CONFIG=$(node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('docsearch.config.json','utf8'));c.start_urls=['http://host.docker.internal:8080'];process.stdout.write(JSON.stringify(c));")
 docker run --rm --network search_default \
-  --add-host host.docker.internal:host-gateway \
-  -e CONFIG="$CONFIG" \
-  -e TYPESENSE_API_KEY=$(grep TYPESENSE_API_KEY docs/search/.env | cut -d= -f2-) \
-  -e TYPESENSE_HOST=typesense \
-  -e TYPESENSE_PORT=8108 \
-  -e TYPESENSE_PROTOCOL=http \
-  typesense/docsearch-scraper:0.9.0 | tee docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+ --add-host.docker.internal:host-gateway \
+ -e CONFIG="$CONFIG" \
+ -e TYPESENSE_API_KEY=$(grep TYPESENSE_API_KEY docs/search/.env | cut -d= -f2-) \
+ -e TYPESENSE_HOST=typesense \
+ -e TYPESENSE_PORT=8108 \
+ -e TYPESENSE_PROTOCOL=http \
+ typesense/docsearch-scraper:0.9.0 | tee docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
 node docs/search/scripts/save-typesense-summary.mjs docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
 kill $(cat docs/search/logs/http.pid) && rm docs/search/logs/http.pid
 cd docs/search && docker compose -f typesense-compose.yml down
@@ -71,7 +71,7 @@ Each run should drop a timestamped log in `docs/search/logs/`. The current valid
 == Troubleshooting
 
 * `docsearch` fails with 401: make sure the API key environment variable matches the Typesense config.
-* Missing documents: ensure every AsciiDoc page includes `:page-tags:` and `:reviewed:` (checked by `scripts/check-attrs.mjs`).
+* Missing documents: ensure every asciidoc page includes `:page-tags:` and `:reviewed:` (checked by `scripts/check-attrs.mjs`).
 * Remote host unreachable: rerun with the local compose file to sanity-check config, then revisit firewall/VPC rules.
 
 == References
