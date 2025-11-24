@@ -76,6 +76,7 @@
     "python:lock:check": "bash scripts/refresh-python-lock.sh --check",
     "tools:sync-python-version": "bash scripts/sync-python-version.sh",
     "tools:check-runners": "node scripts/check-runners.mjs",
+    "tsconfig:check": "node scripts/check-tsconfig-consistency.mjs",
     "penpot:smoke": "node n00plicate/scripts/update-penpot-images.mjs --dry-run",
     "ui:serve": "node ui/fusion-ui-server.mjs"
   },
