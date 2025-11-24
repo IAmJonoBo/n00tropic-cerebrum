@@ -6,6 +6,9 @@ help: ## Show this help message
 	@echo "Available targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 
+tidy-submodules: ## Sync and update submodules, run manifest gate and skeleton check (dry-run)
+	@bash scripts/tidy-submodules.sh
+
 docs: ## Build Antora documentation
 	@echo "Building Antora documentation..."
 	@pnpm -v >/dev/null 2>&1 || (corepack prepare pnpm@10.23.0 --activate)
