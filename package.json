@@ -79,7 +79,7 @@
     "tsconfig:check": "node scripts/check-tsconfig-consistency.mjs",
     "penpot:smoke": "node n00plicate/scripts/update-penpot-images.mjs --dry-run",
     "ui:serve": "node ui/fusion-ui-server.mjs"
-    ,"sync:ecosystem": "(cd n00-frontiers && python3 tools/export_cortex_assets.py) && (cd n00clear-fusion && python3 scripts/export_cortex.py || true) && pnpm -C n00-cortex run ingest:frontiers && pnpm -C n00-cortex run export:assets && pnpm -C n00-cortex run graph:build && pnpm -C n00-cortex test"
+    ,"sync:ecosystem": "bash scripts/sync-ecosystem.sh"
   },
   "pnpm": {
     "overrides": {
