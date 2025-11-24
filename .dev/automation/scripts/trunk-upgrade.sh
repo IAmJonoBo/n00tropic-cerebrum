@@ -7,11 +7,11 @@ DEFAULT_CMD_TIMEOUT="${TRUNK_CMD_TIMEOUT:-300}"
 TRUNK_INSTALL_ALLOWED="${TRUNK_INSTALL:-${CI:-0}}"
 
 log() {
-  printf '[trunk-upgrade] %s\n' "$1"
+	printf '[trunk-upgrade] %s\n' "$1"
 }
 
 usage() {
-  cat <<'USAGE'
+	cat <<'USAGE'
 Usage: trunk-upgrade.sh [--repo <name>]...
 
 Runs `trunk upgrade --no-progress` in every repository that contains a `.trunk/trunk.yaml`
@@ -26,90 +26,90 @@ USAGE
 }
 
 ensure_trunk() {
-  export PATH="$HOME/.trunk/bin:$PATH"
-  if command -v trunk >/dev/null 2>&1; then
-    return 0
-  fi
+	export PATH="$HOME/.trunk/bin:$PATH"
+	if command -v trunk >/dev/null 2>&1; then
+		return 0
+	fi
 
-  if [[ "${TRUNK_INSTALL_ALLOWED}" != "1" ]]; then
-    log "Trunk CLI not found. Set TRUNK_INSTALL=1 (or CI=1) to allow a one-time install, or run 'trunk upgrade --no-progress' manually."
-    return 1
-  fi
+	if [[ ${TRUNK_INSTALL_ALLOWED} != "1" ]]; then
+		log "Trunk CLI not found. Set TRUNK_INSTALL=1 (or CI=1) to allow a one-time install, or run 'trunk upgrade --no-progress' manually."
+		return 1
+	fi
 
-  if [[ "${TRUNK_INSTALL_SKIP:-0}" == "1" ]]; then
-    log "Trunk CLI not found and TRUNK_INSTALL_SKIP=1; aborting."
-    return 1
-  fi
+	if [[ ${TRUNK_INSTALL_SKIP:-0} == "1" ]]; then
+		log "Trunk CLI not found and TRUNK_INSTALL_SKIP=1; aborting."
+		return 1
+	fi
 
-  if ! command -v curl >/dev/null 2>&1; then
-    log "Trunk CLI not found and curl is unavailable; cannot install automatically."
-    return 1
-  fi
+	if ! command -v curl >/dev/null 2>&1; then
+		log "Trunk CLI not found and curl is unavailable; cannot install automatically."
+		return 1
+	fi
 
-  log "Installing Trunk CLI (not detected in PATH)."
-  local installer
-  installer=$(mktemp)
-  if ! curl -fsSL https://get.trunk.io -o "$installer"; then
-    log "Failed to download Trunk installer script."
-    rm -f "$installer"
-    return 1
-  fi
+	log "Installing Trunk CLI (not detected in PATH)."
+	local installer
+	installer=$(mktemp)
+	if ! curl -fsSL https://get.trunk.io -o "$installer"; then
+		log "Failed to download Trunk installer script."
+		rm -f "$installer"
+		return 1
+	fi
 
-  if ! bash "$installer" -y >/dev/null 2>&1; then
-    log "Primary installer invocation failed; retrying without -y flag."
-    if ! bash "$installer" >/dev/null 2>&1; then
-      log "Trunk installer execution failed."
-      rm -f "$installer"
-      return 1
-    fi
-  fi
+	if ! bash "$installer" -y >/dev/null 2>&1; then
+		log "Primary installer invocation failed; retrying without -y flag."
+		if ! bash "$installer" >/dev/null 2>&1; then
+			log "Trunk installer execution failed."
+			rm -f "$installer"
+			return 1
+		fi
+	fi
 
-  rm -f "$installer"
+	rm -f "$installer"
 
-  if command -v trunk >/dev/null 2>&1; then
-    log "Trunk CLI installed successfully."
-    return 0
-  fi
+	if command -v trunk >/dev/null 2>&1; then
+		log "Trunk CLI installed successfully."
+		return 0
+	fi
 
-  log "Trunk CLI still unavailable after installation attempt."
-  return 1
+	log "Trunk CLI still unavailable after installation attempt."
+	return 1
 }
 
 discover_repos() {
-  find "$ROOT" -maxdepth 3 -type f -path "*/.trunk/trunk.yaml" -print | while read -r trunk_file; do
-    local repo
-    repo=$(basename "$(dirname "$(dirname "$trunk_file")")")
-    printf '%s\n' "$repo"
-  done | sort -u
+	find "$ROOT" -maxdepth 3 -type f -path "*/.trunk/trunk.yaml" -print | while read -r trunk_file; do
+		local repo
+		repo=$(basename "$(dirname "$(dirname "$trunk_file")")")
+		printf '%s\n' "$repo"
+	done | sort -u
 }
 
 contains_repo() {
-  local needle="$1"
-  shift || true
-  for candidate in "$@"; do
-    if [[ "$candidate" == "$needle" ]]; then
-      return 0
-    fi
-  done
-  return 1
+	local needle="$1"
+	shift || true
+	for candidate in "$@"; do
+		if [[ $candidate == "$needle" ]]; then
+			return 0
+		fi
+	done
+	return 1
 }
 
 run_with_timeout() {
-  local timeout="$1"
-  shift
-  if [[ "$timeout" -le 0 ]]; then
-    "$@"
-    return $?
-  fi
-  if command -v gtimeout >/dev/null 2>&1; then
-    gtimeout "$timeout" "$@"
-    return $?
-  elif command -v timeout >/dev/null 2>&1; then
-    timeout "$timeout" "$@"
-    return $?
-  fi
+	local timeout="$1"
+	shift
+	if [[ $timeout -le 0 ]]; then
+		"$@"
+		return $?
+	fi
+	if command -v gtimeout >/dev/null 2>&1; then
+		gtimeout "$timeout" "$@"
+		return $?
+	elif command -v timeout >/dev/null 2>&1; then
+		timeout "$timeout" "$@"
+		return $?
+	fi
 
-  python3 - "$timeout" "$@" <<'PY'
+	python3 - "$timeout" "$@" <<'PY'
 import shlex
 import subprocess
 import sys
@@ -129,10 +129,11 @@ PY
 STARTED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 REQUESTED=()
-if [[ -n ${TRUNK_UPGRADE_REPOS:-} ]]; then
-  while IFS= read -r repo; do
-    [[ -n "$repo" ]] && REQUESTED+=("$repo")
-  done < <(python3 - <<'PY'
+if [[ -n ${TRUNK_UPGRADE_REPOS-} ]]; then
+	while IFS= read -r repo; do
+		[[ -n $repo ]] && REQUESTED+=("$repo")
+	done < <(
+		python3 - <<'PY'
 import json
 import os
 import sys
@@ -159,81 +160,82 @@ else:
     parts = raw.replace(",", " ").split()
     emit(parts)
 PY
-)
+	)
 fi
 while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --repo)
-      if [[ $# -lt 2 ]]; then
-        log "--repo expects a repository name"
-        usage
-        exit 2
-      fi
-      REQUESTED+=("$2")
-      shift 2
-      ;;
-    --help)
-      usage
-      exit 0
-      ;;
-    *)
-      log "Unknown argument: $1"
-      usage
-      exit 2
-      ;;
-  esac
+	case "$1" in
+	--repo)
+		if [[ $# -lt 2 ]]; then
+			log "--repo expects a repository name"
+			usage
+			exit 2
+		fi
+		REQUESTED+=("$2")
+		shift 2
+		;;
+	--help)
+		usage
+		exit 0
+		;;
+	*)
+		log "Unknown argument: $1"
+		usage
+		exit 2
+		;;
+	esac
 done
 
 ALL_REPOS=()
 while IFS= read -r repo; do
-  [[ -n "$repo" ]] && ALL_REPOS+=("$repo")
+	[[ -n $repo ]] && ALL_REPOS+=("$repo")
 done < <(discover_repos)
 
 if [[ ${#ALL_REPOS[@]} -eq 0 ]]; then
-  log "No repositories with .trunk/trunk.yaml discovered."
-  exit 0
+	log "No repositories with .trunk/trunk.yaml discovered."
+	exit 0
 fi
 
 TARGET_REPOS=()
 if [[ ${#REQUESTED[@]} -eq 0 ]]; then
-  TARGET_REPOS=("${ALL_REPOS[@]}")
+	TARGET_REPOS=("${ALL_REPOS[@]}")
 else
-  for repo in "${REQUESTED[@]}"; do
-    if contains_repo "$repo" "${ALL_REPOS[@]}"; then
-      TARGET_REPOS+=("$repo")
-    else
-      log "Requested repo '$repo' not found or lacks .trunk/trunk.yaml."
-    fi
-  done
+	for repo in "${REQUESTED[@]}"; do
+		if contains_repo "$repo" "${ALL_REPOS[@]}"; then
+			TARGET_REPOS+=("$repo")
+		else
+			log "Requested repo '$repo' not found or lacks .trunk/trunk.yaml."
+		fi
+	done
 fi
 
 if [[ ${#TARGET_REPOS[@]} -eq 0 ]]; then
-  log "No matching repositories to process."
-  exit 1
+	log "No matching repositories to process."
+	exit 1
 fi
 
 if ! ensure_trunk; then
-  STATUS="failed"
-  SUMMARY="Trunk CLI unavailable"
-  COMPLETED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-  if [[ -f "$SCRIPTS_DIR/record-capability-run.py" ]]; then
-    python3 "$SCRIPTS_DIR/record-capability-run.py" \
-      --capability "workspace.trunkUpgrade" \
-      --status "$STATUS" \
-      --summary "$SUMMARY" \
-      --started "$STARTED_AT" \
-      --completed "$COMPLETED_AT"
-  fi
-  exit 1
+	STATUS="failed"
+	SUMMARY="Trunk CLI unavailable"
+	COMPLETED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+	if [[ -f "$SCRIPTS_DIR/record-capability-run.py" ]]; then
+		python3 "$SCRIPTS_DIR/record-capability-run.py" \
+			--capability "workspace.trunkUpgrade" \
+			--status "$STATUS" \
+			--summary "$SUMMARY" \
+			--started "$STARTED_AT" \
+			--completed "$COMPLETED_AT"
+	fi
+	exit 1
 fi
 
 log "Discovered repositories: ${TARGET_REPOS[*]}"
 
 EXTRA_FLAGS=()
-if [[ -n ${TRUNK_UPGRADE_FLAGS:-} ]]; then
-  while IFS= read -r flag; do
-  [[ -n "$flag" ]] && EXTRA_FLAGS+=("$flag")
-  done < <(python3 - <<'PY'
+if [[ -n ${TRUNK_UPGRADE_FLAGS-} ]]; then
+	while IFS= read -r flag; do
+		[[ -n $flag ]] && EXTRA_FLAGS+=("$flag")
+	done < <(
+		python3 - <<'PY'
 import json
 import os
 import sys
@@ -259,57 +261,57 @@ elif isinstance(parsed, (list, tuple)):
 else:
   emit(raw.replace(",", " ").split())
 PY
-)
+	)
 fi
 
 SUCCEEDED=()
 FAILED=()
 
 for repo in "${TARGET_REPOS[@]}"; do
-  local_path="$ROOT/$repo"
-  if [[ ! -d "$local_path" ]]; then
-    log "Skipping $repo (directory missing)"
-    FAILED+=("$repo")
-    continue
-  fi
+	local_path="$ROOT/$repo"
+	if [[ ! -d $local_path ]]; then
+		log "Skipping $repo (directory missing)"
+		FAILED+=("$repo")
+		continue
+	fi
 
-  log "Upgrading Trunk plugins in $repo"
-  if (
-    cd "$local_path" &&
-    run_with_timeout "$DEFAULT_CMD_TIMEOUT" env TRUNK_NO_PROGRESS=1 TRUNK_DISABLE_TELEMETRY=1 \
-      trunk upgrade --no-progress ${EXTRA_FLAGS[@]+"${EXTRA_FLAGS[@]}"}
-  ); then
-    SUCCEEDED+=("$repo")
-  else
-    exit_code=$?
-    log "⚠️  trunk upgrade failed in $repo (exit ${exit_code})"
-    FAILED+=("$repo")
-  fi
+	log "Upgrading Trunk plugins in $repo"
+	if (
+		cd "$local_path" &&
+			run_with_timeout "$DEFAULT_CMD_TIMEOUT" env TRUNK_NO_PROGRESS=1 TRUNK_DISABLE_TELEMETRY=1 \
+				trunk upgrade --no-progress ${EXTRA_FLAGS[@]+"${EXTRA_FLAGS[@]}"}
+	); then
+		SUCCEEDED+=("$repo")
+	else
+		exit_code=$?
+		log "⚠️  trunk upgrade failed in $repo (exit ${exit_code})"
+		FAILED+=("$repo")
+	fi
 done
 
 COMPLETED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 if [[ ${#FAILED[@]} -eq 0 ]]; then
-  STATUS="succeeded"
-  SUMMARY="Trunk upgraded in ${#SUCCEEDED[@]} repositories"
-  log "✅ Trunk upgrades completed successfully"
+	STATUS="succeeded"
+	SUMMARY="Trunk upgraded in ${#SUCCEEDED[@]} repositories"
+	log "✅ Trunk upgrades completed successfully"
 else
-  STATUS="failed"
-  SUMMARY="Failures in ${FAILED[*]}"
-  log "⚠️  Trunk upgrades completed with issues"
+	STATUS="failed"
+	SUMMARY="Failures in ${FAILED[*]}"
+	log "⚠️  Trunk upgrades completed with issues"
 fi
 
 if [[ -f "$SCRIPTS_DIR/record-capability-run.py" ]]; then
-  python3 "$SCRIPTS_DIR/record-capability-run.py" \
-    --capability "workspace.trunkUpgrade" \
-    --status "$STATUS" \
-    --summary "$SUMMARY" \
-    --started "$STARTED_AT" \
-    --completed "$COMPLETED_AT"
+	python3 "$SCRIPTS_DIR/record-capability-run.py" \
+		--capability "workspace.trunkUpgrade" \
+		--status "$STATUS" \
+		--summary "$SUMMARY" \
+		--started "$STARTED_AT" \
+		--completed "$COMPLETED_AT"
 fi
 
 if [[ ${#FAILED[@]} -ne 0 ]]; then
-  exit 1
+	exit 1
 fi
 
 exit 0

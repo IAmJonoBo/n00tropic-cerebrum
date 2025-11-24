@@ -6,12 +6,12 @@ FUSION_DIR="${ROOT_DIR}/n00clear-fusion"
 CORTEX_DIR="${ROOT_DIR}/n00-cortex"
 
 if [[ $# -lt 1 ]]; then
-  echo "Usage: fusion-pipeline.sh <pdf-path|dir> [dataset-id]" >&2
-  exit 1
+	echo "Usage: fusion-pipeline.sh <pdf-path|dir> [dataset-id]" >&2
+	exit 1
 fi
 
 INPUT_PATH="$1"
-DATASET_ID="${2:-}"
+DATASET_ID="${2-}"
 
 export PYTHONPATH="${FUSION_DIR}"
 source "${FUSION_DIR}/.venv/bin/activate" 2>/dev/null || true
@@ -25,7 +25,7 @@ process_one() {
 	echo "[fusion] ingest ${pdf}"
 	python3 "${FUSION_DIR}/pipelines/pdf_ingest.py" --source "${pdf}" ${ds:+--id "${ds}"}
 
-	if [[ -z "${ds}" ]]; then
+	if [[ -z ${ds} ]]; then
 		ds=$(basename "${pdf}")
 		ds="${ds%.*}"
 		ds=$(echo "${ds}" | tr ' ' '-' | tr '[:upper:]' '[:lower:]')
@@ -51,9 +51,9 @@ process_one() {
 	fi
 }
 
-if [[ -d "${INPUT_PATH}" ]]; then
+if [[ -d ${INPUT_PATH} ]]; then
 	for pdf in "${INPUT_PATH}"/*.pdf; do
-		[[ -f "$pdf" ]] || continue
+		[[ -f $pdf ]] || continue
 		process_one "$pdf" "$DATASET_ID"
 	done
 else

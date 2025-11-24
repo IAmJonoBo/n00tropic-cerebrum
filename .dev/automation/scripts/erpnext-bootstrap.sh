@@ -25,7 +25,7 @@ SKIP_AUTH_CHECK=false
 REFRESH_TEMPLATE=false
 
 usage() {
-  cat <<'USAGE'
+	cat <<'USAGE'
 Usage: erpnext-bootstrap.sh [options]
 
 Options:
@@ -51,47 +51,48 @@ USAGE
 }
 
 fail() {
-  printf 'Error: %s\n' "$1" >&2
-  exit 1
+	printf 'Error: %s\n' "$1" >&2
+	exit 1
 }
 
 print_step() {
-  printf '\n==> %s\n' "$1"
+	printf '\n==> %s\n' "$1"
 }
 
 print_info() {
-  printf '    %s\n' "$1"
+	printf '    %s\n' "$1"
 }
 
 sanitize_env_value() {
-  local key="$1"
-  local value="$2"
-  if [[ "$value" == *$'\n'* || "$value" == *$'\r'* ]]; then
-    fail "$key contains newline characters, which are not supported"
-  fi
-  if [[ "$value" == "" ]]; then
-    fail "$key must not be empty"
-  fi
-  if [[ "$value" =~ ^[[:space:]] || "$value" =~ [[:space:]]$ ]]; then
-    fail "$key must not contain leading or trailing whitespace"
-  fi
-  if [[ "$value" =~ [[:space:]] ]]; then
-    fail "$key must not include whitespace characters"
-  fi
-  if [[ "$value" == \#* ]]; then
-    fail "$key must not start with #"
-  fi
+	local key="$1"
+	local value="$2"
+	if [[ $value == *$'\n'* || $value == *$'\r'* ]]; then
+		fail "$key contains newline characters, which are not supported"
+	fi
+	if [[ $value == "" ]]; then
+		fail "$key must not be empty"
+	fi
+	if [[ $value =~ ^[[:space:]] || $value =~ [[:space:]]$ ]]; then
+		fail "$key must not contain leading or trailing whitespace"
+	fi
+	if [[ $value =~ [[:space:]] ]]; then
+		fail "$key must not include whitespace characters"
+	fi
+	if [[ $value == \#* ]]; then
+		fail "$key must not start with #"
+	fi
 }
 
 parse_capability_input() {
-  if [[ -z ${CAPABILITY_INPUT:-} ]]; then
-    return
-  fi
-  if ! command -v python3 >/dev/null 2>&1; then
-    fail "python3 is required to parse CAPABILITY_INPUT"
-  fi
-  local kv_pairs
-  if ! kv_pairs=$(python3 - <<'PY'
+	if [[ -z ${CAPABILITY_INPUT-} ]]; then
+		return
+	fi
+	if ! command -v python3 >/dev/null 2>&1; then
+		fail "python3 is required to parse CAPABILITY_INPUT"
+	fi
+	local kv_pairs
+	if ! kv_pairs=$(
+		python3 - <<'PY'
 import json
 import os
 raw = os.environ.get('CAPABILITY_INPUT')
@@ -114,133 +115,133 @@ for key in (
     if key in config and config[key] is not None:
         print(f"{key}={config[key]}")
 PY
-); then
-    fail "Failed to parse CAPABILITY_INPUT as JSON"
-  fi
-  local entry key value
-  while IFS='=' read -r entry; do
-    [[ -z $entry ]] && continue
-    key="${entry%%=*}"
-    value="${entry#*=}"
-    case "$key" in
-      stackDir) STACK_DIR="$value" ;;
-      projectName) PROJECT_NAME="$value" ;;
-      site) SITE_NAME="$value" ;;
-      httpPort) HTTP_PORT="$value" ;;
-      erpnextVersion) ERP_VERSION="$value" ;;
-      dbPassword) DB_ROOT_PASSWORD="$value" ;;
-      adminPassword) ADMIN_PASSWORD="$value" ;;
-      timeout) TIMEOUT_SECONDS="$value" ;;
-      skipAuthCheck) [[ "$value" =~ ^(1|true|TRUE|yes|YES)$ ]] && SKIP_AUTH_CHECK=true ;;
-      noPull) [[ "$value" =~ ^(1|true|TRUE|yes|YES)$ ]] && PULL_IMAGES=false ;;
-      refreshTemplate) [[ "$value" =~ ^(1|true|TRUE|yes|YES)$ ]] && REFRESH_TEMPLATE=true ;;
-    esac
-  done <<<"$kv_pairs"
+	); then
+		fail "Failed to parse CAPABILITY_INPUT as JSON"
+	fi
+	local entry key value
+	while IFS='=' read -r entry; do
+		[[ -z $entry ]] && continue
+		key="${entry%%=*}"
+		value="${entry#*=}"
+		case "$key" in
+		stackDir) STACK_DIR="$value" ;;
+		projectName) PROJECT_NAME="$value" ;;
+		site) SITE_NAME="$value" ;;
+		httpPort) HTTP_PORT="$value" ;;
+		erpnextVersion) ERP_VERSION="$value" ;;
+		dbPassword) DB_ROOT_PASSWORD="$value" ;;
+		adminPassword) ADMIN_PASSWORD="$value" ;;
+		timeout) TIMEOUT_SECONDS="$value" ;;
+		skipAuthCheck) [[ $value =~ ^(1|true|TRUE|yes|YES)$ ]] && SKIP_AUTH_CHECK=true ;;
+		noPull) [[ $value =~ ^(1|true|TRUE|yes|YES)$ ]] && PULL_IMAGES=false ;;
+		refreshTemplate) [[ $value =~ ^(1|true|TRUE|yes|YES)$ ]] && REFRESH_TEMPLATE=true ;;
+		esac
+	done <<<"$kv_pairs"
 }
 
 parse_cli_args() {
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --stack-dir)
-        STACK_DIR="$2"
-        shift 2
-        ;;
-      --project-name)
-        PROJECT_NAME="$2"
-        shift 2
-        ;;
-      --site)
-        SITE_NAME="$2"
-        shift 2
-        ;;
-      --http-port)
-        HTTP_PORT="$2"
-        shift 2
-        ;;
-      --erpnext-version)
-        ERP_VERSION="$2"
-        shift 2
-        ;;
-      --db-password)
-        DB_ROOT_PASSWORD="$2"
-        shift 2
-        ;;
-      --admin-password)
-        ADMIN_PASSWORD="$2"
-        shift 2
-        ;;
-      --timeout)
-        TIMEOUT_SECONDS="$2"
-        shift 2
-        ;;
-      --skip-auth-check)
-        SKIP_AUTH_CHECK=true
-        shift
-        ;;
-      --no-pull)
-        PULL_IMAGES=false
-        shift
-        ;;
-      --refresh-template)
-        REFRESH_TEMPLATE=true
-        shift
-        ;;
-      --help|-h)
-        usage
-        exit 0
-        ;;
-      *)
-        fail "Unknown option: $1"
-        ;;
-    esac
-  done
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		--stack-dir)
+			STACK_DIR="$2"
+			shift 2
+			;;
+		--project-name)
+			PROJECT_NAME="$2"
+			shift 2
+			;;
+		--site)
+			SITE_NAME="$2"
+			shift 2
+			;;
+		--http-port)
+			HTTP_PORT="$2"
+			shift 2
+			;;
+		--erpnext-version)
+			ERP_VERSION="$2"
+			shift 2
+			;;
+		--db-password)
+			DB_ROOT_PASSWORD="$2"
+			shift 2
+			;;
+		--admin-password)
+			ADMIN_PASSWORD="$2"
+			shift 2
+			;;
+		--timeout)
+			TIMEOUT_SECONDS="$2"
+			shift 2
+			;;
+		--skip-auth-check)
+			SKIP_AUTH_CHECK=true
+			shift
+			;;
+		--no-pull)
+			PULL_IMAGES=false
+			shift
+			;;
+		--refresh-template)
+			REFRESH_TEMPLATE=true
+			shift
+			;;
+		--help | -h)
+			usage
+			exit 0
+			;;
+		*)
+			fail "Unknown option: $1"
+			;;
+		esac
+	done
 }
 
 ensure_prerequisites() {
-  local deps=("docker" "curl" "python3")
-  local missing=()
-  for dep in "${deps[@]}"; do
-    if ! command -v "$dep" >/dev/null 2>&1; then
-      missing+=("$dep")
-    fi
-  done
-  if ((${#missing[@]})); then
-    fail "Missing required tools: ${missing[*]}"
-  fi
-  if ! docker info >/dev/null 2>&1; then
-    fail "Docker daemon is not available"
-  fi
-  if ! docker compose version >/dev/null 2>&1; then
-    fail "docker compose plugin not available"
-  fi
+	local deps=("docker" "curl" "python3")
+	local missing=()
+	for dep in "${deps[@]}"; do
+		if ! command -v "$dep" >/dev/null 2>&1; then
+			missing+=("$dep")
+		fi
+	done
+	if ((${#missing[@]})); then
+		fail "Missing required tools: ${missing[*]}"
+	fi
+	if ! docker info >/dev/null 2>&1; then
+		fail "Docker daemon is not available"
+	fi
+	if ! docker compose version >/dev/null 2>&1; then
+		fail "docker compose plugin not available"
+	fi
 }
 
 prepare_stack_dir() {
-  mkdir -p "$STACK_DIR"
-  local gitignore="$STACK_DIR/.gitignore"
-  if [[ ! -f "$gitignore" ]]; then
-    cat >"$gitignore" <<'EOF'
+	mkdir -p "$STACK_DIR"
+	local gitignore="$STACK_DIR/.gitignore"
+	if [[ ! -f $gitignore ]]; then
+		cat >"$gitignore" <<'EOF'
 *
 !.gitignore
 EOF
-  fi
+	fi
 }
 
 compose_file_path() {
-  printf '%s' "$STACK_DIR/docker-compose.yml"
+	printf '%s' "$STACK_DIR/docker-compose.yml"
 }
 
 env_file_path() {
-  printf '%s' "$STACK_DIR/stack.env"
+	printf '%s' "$STACK_DIR/stack.env"
 }
 
 write_compose_file() {
-  local compose_file
-  compose_file="$(compose_file_path)"
-  if [[ -f "$compose_file" && $REFRESH_TEMPLATE == false ]]; then
-    return
-  fi
-  cat >"$compose_file" <<'EOF'
+	local compose_file
+	compose_file="$(compose_file_path)"
+	if [[ -f $compose_file && $REFRESH_TEMPLATE == false ]]; then
+		return
+	fi
+	cat >"$compose_file" <<'EOF'
 version: "3"
 
 services:
@@ -470,15 +471,15 @@ EOF
 }
 
 write_env_file() {
-  local env_file
-  env_file="$(env_file_path)"
-  sanitize_env_value "HTTP_PORT" "$HTTP_PORT"
-  sanitize_env_value "SITE_NAME" "$SITE_NAME"
-  sanitize_env_value "ERP_VERSION" "$ERP_VERSION"
-  sanitize_env_value "DB_ROOT_PASSWORD" "$DB_ROOT_PASSWORD"
-  sanitize_env_value "ADMIN_PASSWORD" "$ADMIN_PASSWORD"
-  sanitize_env_value "PROJECT_NAME" "$PROJECT_NAME"
-  cat >"$env_file" <<EOF
+	local env_file
+	env_file="$(env_file_path)"
+	sanitize_env_value "HTTP_PORT" "$HTTP_PORT"
+	sanitize_env_value "SITE_NAME" "$SITE_NAME"
+	sanitize_env_value "ERP_VERSION" "$ERP_VERSION"
+	sanitize_env_value "DB_ROOT_PASSWORD" "$DB_ROOT_PASSWORD"
+	sanitize_env_value "ADMIN_PASSWORD" "$ADMIN_PASSWORD"
+	sanitize_env_value "PROJECT_NAME" "$PROJECT_NAME"
+	cat >"$env_file" <<EOF
 ERP_IMAGE=frappe/erpnext:${ERP_VERSION}
 DB_IMAGE=mariadb:10.6
 REDIS_IMAGE=redis:6.2-alpine
@@ -490,14 +491,14 @@ EOF
 }
 
 compose_cmd() {
-  local compose_file env_file
-  compose_file="$(compose_file_path)"
-  env_file="$(env_file_path)"
-  docker compose --project-name "$PROJECT_NAME" --env-file "$env_file" -f "$compose_file" "$@"
+	local compose_file env_file
+	compose_file="$(compose_file_path)"
+	env_file="$(env_file_path)"
+	docker compose --project-name "$PROJECT_NAME" --env-file "$env_file" -f "$compose_file" "$@"
 }
 
 urlencode() {
-  python3 - "${1}" <<'PY'
+	python3 - "${1}" <<'PY'
 import sys
 import urllib.parse
 print(urllib.parse.quote(sys.argv[1], safe=''))
@@ -505,106 +506,106 @@ PY
 }
 
 wait_for_site_creation() {
-  local compose_file container_id status exit_code start now
-  compose_file="$(compose_file_path)"
-  start=$(date +%s)
-  while true; do
-    container_id=$(compose_cmd ps -q create-site || true)
-    if [[ -z $container_id ]]; then
-      if (( $(date +%s) - start > TIMEOUT_SECONDS )); then
-        return 1
-      fi
-      sleep 5
-      continue
-    fi
-    status=$(docker inspect -f '{{.State.Status}}' "$container_id")
-    if [[ $status == "exited" ]]; then
-      exit_code=$(docker inspect -f '{{.State.ExitCode}}' "$container_id")
-      if [[ $exit_code -eq 0 ]]; then
-        return 0
-      fi
-      docker logs "$container_id" | tail -n 50 >&2 || true
-      return 1
-    fi
-    if (( $(date +%s) - start > TIMEOUT_SECONDS )); then
-      docker logs "$container_id" | tail -n 50 >&2 || true
-      return 1
-    fi
-    sleep 5
-  done
+	local compose_file container_id status exit_code start now
+	compose_file="$(compose_file_path)"
+	start=$(date +%s)
+	while true; do
+		container_id=$(compose_cmd ps -q create-site || true)
+		if [[ -z $container_id ]]; then
+			if (($(date +%s) - start > TIMEOUT_SECONDS)); then
+				return 1
+			fi
+			sleep 5
+			continue
+		fi
+		status=$(docker inspect -f '{{.State.Status}}' "$container_id")
+		if [[ $status == "exited" ]]; then
+			exit_code=$(docker inspect -f '{{.State.ExitCode}}' "$container_id")
+			if [[ $exit_code -eq 0 ]]; then
+				return 0
+			fi
+			docker logs "$container_id" | tail -n 50 >&2 || true
+			return 1
+		fi
+		if (($(date +%s) - start > TIMEOUT_SECONDS)); then
+			docker logs "$container_id" | tail -n 50 >&2 || true
+			return 1
+		fi
+		sleep 5
+	done
 }
 
 validate_authentication() {
-  if [[ $SKIP_AUTH_CHECK == true ]]; then
-    print_info "Skipping HTTP authentication check (per flag)."
-    return
-  fi
-  local login_url payload status tmp_file message
-  login_url="http://127.0.0.1:${HTTP_PORT}/api/method/login"
-  payload="usr=Administrator&pwd=$(urlencode "$ADMIN_PASSWORD")"
-  tmp_file=$(mktemp)
-  for attempt in {1..40}; do
-    if status=$(curl -sS -o "$tmp_file" -w '%{http_code}' -X POST -H 'Content-Type: application/x-www-form-urlencoded' "$login_url" --data "$payload" 2>/dev/null); then
-      if [[ $status == "200" ]]; then
-        if grep -q 'Logged In' "$tmp_file"; then
-          rm -f "$tmp_file"
-          print_info "Authentication succeeded for Administrator."
-          return
-        fi
-      fi
-    fi
-    sleep 5
-  done
-  printf '\nAuthentication response (last attempt):\n' >&2
-  cat "$tmp_file" >&2 || true
-  rm -f "$tmp_file"
-  fail "Unable to authenticate Administrator via HTTP"
+	if [[ $SKIP_AUTH_CHECK == true ]]; then
+		print_info "Skipping HTTP authentication check (per flag)."
+		return
+	fi
+	local login_url payload status tmp_file message
+	login_url="http://127.0.0.1:${HTTP_PORT}/api/method/login"
+	payload="usr=Administrator&pwd=$(urlencode "$ADMIN_PASSWORD")"
+	tmp_file=$(mktemp)
+	for attempt in {1..40}; do
+		if status=$(curl -sS -o "$tmp_file" -w '%{http_code}' -X POST -H 'Content-Type: application/x-www-form-urlencoded' "$login_url" --data "$payload" 2>/dev/null); then
+			if [[ $status == "200" ]]; then
+				if grep -q 'Logged In' "$tmp_file"; then
+					rm -f "$tmp_file"
+					print_info "Authentication succeeded for Administrator."
+					return
+				fi
+			fi
+		fi
+		sleep 5
+	done
+	printf '\nAuthentication response (last attempt):\n' >&2
+	cat "$tmp_file" >&2 || true
+	rm -f "$tmp_file"
+	fail "Unable to authenticate Administrator via HTTP"
 }
 
 main() {
-  parse_capability_input
-  parse_cli_args "$@"
-  ensure_prerequisites
-  sanitize_env_value "HTTP_PORT" "$HTTP_PORT"
-  sanitize_env_value "SITE_NAME" "$SITE_NAME"
-  sanitize_env_value "ERP_VERSION" "$ERP_VERSION"
-  sanitize_env_value "PROJECT_NAME" "$PROJECT_NAME"
-  if [[ ! $HTTP_PORT =~ ^[0-9]+$ ]]; then
-    fail "HTTP_PORT must be numeric"
-  fi
-  if [[ ! $TIMEOUT_SECONDS =~ ^[0-9]+$ ]]; then
-    fail "timeout must be numeric"
-  fi
-  HTTP_PORT=$((10#$HTTP_PORT))
-  TIMEOUT_SECONDS=$((10#$TIMEOUT_SECONDS))
-  prepare_stack_dir
-  write_compose_file
-  write_env_file
+	parse_capability_input
+	parse_cli_args "$@"
+	ensure_prerequisites
+	sanitize_env_value "HTTP_PORT" "$HTTP_PORT"
+	sanitize_env_value "SITE_NAME" "$SITE_NAME"
+	sanitize_env_value "ERP_VERSION" "$ERP_VERSION"
+	sanitize_env_value "PROJECT_NAME" "$PROJECT_NAME"
+	if [[ ! $HTTP_PORT =~ ^[0-9]+$ ]]; then
+		fail "HTTP_PORT must be numeric"
+	fi
+	if [[ ! $TIMEOUT_SECONDS =~ ^[0-9]+$ ]]; then
+		fail "timeout must be numeric"
+	fi
+	HTTP_PORT=$((10#$HTTP_PORT))
+	TIMEOUT_SECONDS=$((10#$TIMEOUT_SECONDS))
+	prepare_stack_dir
+	write_compose_file
+	write_env_file
 
-  print_step "Launching ERPNext stack"
-  if $PULL_IMAGES; then
-    print_info "Pulling container images..."
-    compose_cmd pull
-  else
-    print_info "Skipping image pull."
-  fi
+	print_step "Launching ERPNext stack"
+	if $PULL_IMAGES; then
+		print_info "Pulling container images..."
+		compose_cmd pull
+	else
+		print_info "Skipping image pull."
+	fi
 
-  compose_cmd up -d --remove-orphans
-  print_info "Containers started. Awaiting site bootstrap..."
+	compose_cmd up -d --remove-orphans
+	print_info "Containers started. Awaiting site bootstrap..."
 
-  if ! wait_for_site_creation; then
-    fail "create-site job did not complete successfully"
-  fi
-  print_info "Site bootstrap completed."
+	if ! wait_for_site_creation; then
+		fail "create-site job did not complete successfully"
+	fi
+	print_info "Site bootstrap completed."
 
-  print_step "Validating Administrator login"
-  validate_authentication
+	print_step "Validating Administrator login"
+	validate_authentication
 
-  print_step "ERPNext is ready"
-  print_info "URL: http://127.0.0.1:${HTTP_PORT}"
-  print_info "Username: Administrator"
-  print_info "Password: (stored in $(env_file_path))"
-  print_info "To stop the stack: docker compose --project-name ${PROJECT_NAME} --env-file $(env_file_path) -f $(compose_file_path) down"
+	print_step "ERPNext is ready"
+	print_info "URL: http://127.0.0.1:${HTTP_PORT}"
+	print_info "Username: Administrator"
+	print_info "Password: (stored in $(env_file_path))"
+	print_info "To stop the stack: docker compose --project-name ${PROJECT_NAME} --env-file $(env_file_path) -f $(compose_file_path) down"
 }
 
 main "$@"

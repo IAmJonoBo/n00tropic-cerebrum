@@ -12,17 +12,18 @@ TELEMETRY_FILE="$TELEMETRY_DIR/erpnext-export-checksums.json"
 
 mkdir -p "$ARCHIVE_ROOT" "$TELEMETRY_DIR"
 
-if [[ ! -d "$ARCHIVE_ROOT" ]]; then
-  echo "Archive directory not found: $ARCHIVE_ROOT" >&2
-  exit 1
+if [[ ! -d $ARCHIVE_ROOT ]]; then
+	echo "Archive directory not found: $ARCHIVE_ROOT" >&2
+	exit 1
 fi
 
 if ! command -v python3 >/dev/null 2>&1; then
-  echo "python3 is required to verify export checksums" >&2
-  exit 1
+	echo "python3 is required to verify export checksums" >&2
+	exit 1
 fi
 
-SUMMARY=$(ARCHIVE_ROOT="$ARCHIVE_ROOT" MANIFEST_FILE="$MANIFEST_FILE" WORKING_ROOT="$WORKING_ROOT" TELEMETRY_FILE="$TELEMETRY_FILE" python3 <<'PY'
+SUMMARY=$(
+	ARCHIVE_ROOT="$ARCHIVE_ROOT" MANIFEST_FILE="$MANIFEST_FILE" WORKING_ROOT="$WORKING_ROOT" TELEMETRY_FILE="$TELEMETRY_FILE" python3 <<'PY'
 import datetime
 import hashlib
 import json
@@ -80,8 +81,8 @@ echo "$SUMMARY" >"$TELEMETRY_FILE"
 
 printf '%s\n' "$SUMMARY"
 
-if [[ "$SUMMARY" == *'"alert": true'* ]]; then
-  echo "Checksum drift detected; check $TELEMETRY_FILE" >&2
+if [[ $SUMMARY == *'"alert": true'* ]]; then
+	echo "Checksum drift detected; check $TELEMETRY_FILE" >&2
 else
-  echo "Checksums verified (no alert)" >&2
+	echo "Checksums verified (no alert)" >&2
 fi

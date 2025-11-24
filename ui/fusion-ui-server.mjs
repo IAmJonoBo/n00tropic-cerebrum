@@ -1,5 +1,10 @@
 #!/usr/bin/env node
-import { createWriteStream, existsSync, mkdirSync, readFileSync } from "node:fs";
+import {
+  createWriteStream,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+} from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,7 +14,13 @@ import Busboy from "busboy";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const fusionDir = path.join(root, "n00clear-fusion");
-const pipelineScript = path.join(root, ".dev", "automation", "scripts", "fusion-pipeline.sh");
+const pipelineScript = path.join(
+  root,
+  ".dev",
+  "automation",
+  "scripts",
+  "fusion-pipeline.sh",
+);
 
 function serveStatic(req, res) {
   const url = req.url === "/" ? "/index.html" : req.url;
@@ -46,7 +57,9 @@ function serveStatus(req, res) {
   const genDir = path.join(fusionDir, "exports", dataset, "generated");
   let assets = [];
   if (existsSync(genDir)) {
-    assets = fs.readdirSync(genDir).map((name) => path.join("exports", dataset, "generated", name));
+    assets = fs
+      .readdirSync(genDir)
+      .map((name) => path.join("exports", dataset, "generated", name));
   }
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ dataset, assets }));
@@ -88,14 +101,16 @@ function handleUpload(req, res) {
     proc.on("close", (code) => {
       const status = code === 0 ? "ok" : "error";
       // naive asset extraction
-      const matchLine = output.split("\n").find((line) => line.startsWith("PIPELINE_RESULT"));
+      const matchLine = output
+        .split("\n")
+        .find((line) => line.startsWith("PIPELINE_RESULT"));
       if (matchLine) {
         const parts = Object.fromEntries(
           matchLine
             .replace("PIPELINE_RESULT", "")
             .trim()
             .split(" ")
-            .map((kv) => kv.split("="))
+            .map((kv) => kv.split("=")),
         );
         dataset = parts.dataset || "";
         assets = parts.assets ? parts.assets.split(",").filter(Boolean) : [];
@@ -106,12 +121,16 @@ function handleUpload(req, res) {
       if (dataset) {
         const genDir = path.join(fusionDir, "exports", dataset, "generated");
         if (existsSync(genDir)) {
-          const found = fs.readdirSync(genDir).map((name) => path.join("exports", dataset, "generated", name));
+          const found = fs
+            .readdirSync(genDir)
+            .map((name) => path.join("exports", dataset, "generated", name));
           assets = assets.concat(found);
         }
       }
 
-      res.writeHead(code === 0 ? 200 : 500, { "Content-Type": "application/json" });
+      res.writeHead(code === 0 ? 200 : 500, {
+        "Content-Type": "application/json",
+      });
       res.end(JSON.stringify({ status, output, assets, dataset }));
     });
   });

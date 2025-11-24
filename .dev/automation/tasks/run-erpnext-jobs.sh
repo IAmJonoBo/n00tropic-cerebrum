@@ -14,27 +14,27 @@ ENV_FILE="${ERP_ENV_FILE:-$DEFAULT_ENV_FILE}"
 mkdir -p "$LOG_DIR"
 
 log() {
-  local message="$1"
-  printf '%s %s\n' "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" "$message" | tee -a "$LOG_FILE" >&2
+	local message="$1"
+	printf '%s %s\n' "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" "$message" | tee -a "$LOG_FILE" >&2
 }
 
 require_file() {
-  local path="$1"
-  local label="$2"
-  if [[ ! -f "$path" ]]; then
-    log "missing $label at $path"
-    return 1
-  fi
+	local path="$1"
+	local label="$2"
+	if [[ ! -f $path ]]; then
+		log "missing $label at $path"
+		return 1
+	fi
 }
 
-if [[ ! -x "$EXPORT_SCRIPT" || ! -x "$VERIFY_SCRIPT" ]]; then
-  log "ensuring automation scripts are executable"
-  chmod +x "$EXPORT_SCRIPT" "$VERIFY_SCRIPT"
+if [[ ! -x $EXPORT_SCRIPT || ! -x $VERIFY_SCRIPT ]]; then
+	log "ensuring automation scripts are executable"
+	chmod +x "$EXPORT_SCRIPT" "$VERIFY_SCRIPT"
 fi
 
 require_file "$ENV_FILE" "ERPNext environment" || {
-  log "create the file using START HERE wizard or set ERP_ENV_FILE"
-  exit 1
+	log "create the file using START HERE wizard or set ERP_ENV_FILE"
+	exit 1
 }
 
 set -a
@@ -43,23 +43,23 @@ source "$ENV_FILE"
 set +a
 
 for var in ERP_API_BASE_URL ERP_API_KEY ERP_API_SECRET; do
-  if [[ -z "${!var:-}" ]]; then
-    log "variable $var is empty; aborting"
-    exit 1
-  fi
+	if [[ -z ${!var-} ]]; then
+		log "variable $var is empty; aborting"
+		exit 1
+	fi
 done
 
 log "starting ERPNext export"
 if ! EXPORT_OUTPUT=$(ERP_API_BASE_URL="$ERP_API_BASE_URL" ERP_API_KEY="$ERP_API_KEY" ERP_API_SECRET="$ERP_API_SECRET" bash "$EXPORT_SCRIPT" 2>>"$LOG_FILE"); then
-  log "export script failed"
-  exit 1
+	log "export script failed"
+	exit 1
 fi
 printf '%s\n' "$EXPORT_OUTPUT" | tee -a "$LOG_FILE"
 
 log "running checksum verification"
 if ! VERIFY_OUTPUT=$(bash "$VERIFY_SCRIPT" 2>>"$LOG_FILE"); then
-  log "checksum verification failed"
-  exit 1
+	log "checksum verification failed"
+	exit 1
 fi
 printf '%s\n' "$VERIFY_OUTPUT" | tee -a "$LOG_FILE"
 

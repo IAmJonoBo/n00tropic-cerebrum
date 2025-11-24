@@ -25,7 +25,13 @@ const repoRoot = path.resolve(__dirname, "..");
 const componentRoot = path.join(repoRoot, "n00menon");
 const sourcePath = path.join(componentRoot, "docs", "index.md");
 const readmePath = path.join(componentRoot, "README.md");
-const antoraPath = path.join(componentRoot, "modules", "ROOT", "pages", "index.adoc");
+const antoraPath = path.join(
+  componentRoot,
+  "modules",
+  "ROOT",
+  "pages",
+  "index.adoc",
+);
 
 function ensureFileExists(p) {
   if (!fs.existsSync(p)) {
@@ -63,7 +69,8 @@ function convertMarkdownToAsciiDoc(markdown) {
 
     let converted = line;
     if (converted.startsWith("### ")) converted = `=== ${converted.slice(4)}`;
-    else if (converted.startsWith("## ")) converted = `== ${converted.slice(3)}`;
+    else if (converted.startsWith("## "))
+      converted = `== ${converted.slice(3)}`;
     else if (converted.startsWith("# ")) converted = `= ${converted.slice(2)}`;
 
     if (converted.startsWith("- ")) converted = `* ${converted.slice(2)}`;
@@ -82,7 +89,8 @@ function convertMarkdownToAsciiDoc(markdown) {
 }
 
 function buildReadme(markdown) {
-  const banner = "<!-- Synced from docs/index.md via scripts/sync-n00menon-docs.mjs. Edit the source and rerun docs:sync. -->\n\n";
+  const banner =
+    "<!-- Synced from docs/index.md via scripts/sync-n00menon-docs.mjs. Edit the source and rerun docs:sync. -->\n\n";
   const body = markdown.replace(/^#\s+n00menon Docs/m, "# n00menon");
   return normalize(`${banner}${body}`);
 }
@@ -118,7 +126,9 @@ function main() {
     return;
   }
 
-  const prettyList = changed.map((p) => ` - ${path.relative(repoRoot, p)}`).join("\n");
+  const prettyList = changed
+    .map((p) => ` - ${path.relative(repoRoot, p)}`)
+    .join("\n");
 
   if (writeMode) {
     console.log(`Updated synced docs:\n${prettyList}`);

@@ -1,17 +1,24 @@
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath } from 'node:url'
 
-import js from '@eslint/js';
-import globals from 'globals';
-import pluginImport from 'eslint-plugin-import';
-import pluginN from 'eslint-plugin-n';
-import pluginPromise from 'eslint-plugin-promise';
-import tseslint from 'typescript-eslint';
+import js from '@eslint/js'
+import globals from 'globals'
+import pluginImport from 'eslint-plugin-import'
+import pluginN from 'eslint-plugin-n'
+import pluginPromise from 'eslint-plugin-promise'
+import tseslint from 'typescript-eslint'
 
-const projectDir = fileURLToPath(new URL('.', import.meta.url));
+const projectDir = fileURLToPath(new URL('.', import.meta.url))
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'build', 'coverage', 'storybook-static', 'node_modules', 'public/sw.js'],
+    ignores: [
+      'dist',
+      'build',
+      'coverage',
+      'storybook-static',
+      'node_modules',
+      'public/sw.js',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -57,7 +64,13 @@ export default tseslint.config(
       'import/order': [
         'error',
         {
-          groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index'], 'type'],
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            ['parent', 'sibling', 'index'],
+            'type',
+          ],
           'newlines-between': 'always',
         },
       ],
@@ -74,4 +87,4 @@ export default tseslint.config(
       },
     },
   },
-);
+)

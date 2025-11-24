@@ -5,8 +5,16 @@
 import path from "node:path";
 
 const cwd = process.cwd();
-const root = path.resolve(path.join(import.meta.url.startsWith("file:") ? new URL(import.meta.url).pathname : __dirname, ".."));
-const allow = process.env.ALLOW_ROOT_PNPM_INSTALL === "1" || process.env.CI === "1";
+const root = path.resolve(
+  path.join(
+    import.meta.url.startsWith("file:")
+      ? new URL(import.meta.url).pathname
+      : __dirname,
+    "..",
+  ),
+);
+const allow =
+  process.env.ALLOW_ROOT_PNPM_INSTALL === "1" || process.env.CI === "1";
 
 if (path.resolve(cwd) === path.resolve(root) && !allow) {
   console.error(

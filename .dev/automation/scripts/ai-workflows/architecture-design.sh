@@ -12,24 +12,24 @@ trap 'echo "❌ Architecture phase failed at line $LINENO" >&2' ERR
 mkdir -p "$ARTIFACTS_DIR"
 
 log() {
-  echo "[🏗️  ai-architecture] $1"
+	echo "[🏗️  ai-architecture] $1"
 }
 
 error() {
-  echo "[❌ ai-architecture] ERROR: $1" >&2
-  exit 1
+	echo "[❌ ai-architecture] ERROR: $1" >&2
+	exit 1
 }
 
 success() {
-  echo "[✅ ai-architecture] $1"
+	echo "[✅ ai-architecture] $1"
 }
 
 # Progress indicator
 show_progress() {
-  local step=$1
-  local total=$2
-  local desc=$3
-  echo "[📊 Progress: $step/$total] $desc"
+	local step=$1
+	local total=$2
+	local desc=$3
+	echo "[📊 Progress: $step/$total] $desc"
 }
 
 log "🚀 Starting AI-Assisted Architecture & Design"
@@ -75,7 +75,7 @@ show_progress 3 4 "Generating architecture diagram"
 # Generate Mermaid diagram
 DIAGRAM_FILE="$ARTIFACTS_DIR/diagram-$(date +%Y%m%d-%H%M%S).md"
 
-cat > "$DIAGRAM_FILE" << EOF
+cat >"$DIAGRAM_FILE" <<EOF
 # Architecture Diagram - $APP_TYPE
 
 ## 🏛️ System Overview
@@ -219,37 +219,11 @@ echo "   • Python for rapid prototyping"
 COMPLETED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 if [ -f "$RECORD_SCRIPT" ]; then
-    python3 "$RECORD_SCRIPT" \
-        --capability "ai.workflow.architecture" \
-        --status "succeeded" \
-        --summary "Architecture diagram generated for $APP_TYPE" \
-        --started "$STARTED_AT" \
-        --completed "$COMPLETED_AT" \
-        --metadata "{\"diagram\": \"$DIAGRAM_FILE\"}"
+	python3 "$RECORD_SCRIPT" \
+		--capability "ai.workflow.architecture" \
+		--status "succeeded" \
+		--summary "Architecture diagram generated for $APP_TYPE" \
+		--started "$STARTED_AT" \
+		--completed "$COMPLETED_AT" \
+		--metadata "{\"diagram\": \"$DIAGRAM_FILE\"}"
 fi
-
-success "Architecture & Design completed ✅"
-    A[Client] --> B[API]
-    B --> C[Database]
-Skeletons: "$SKELETONS"
-EOF
-
-log "Diagram saved to $DIAGRAM_FILE"
-
-echo "Pro Enhancements: Grok 4 for 512k repo-wide designs; Codex fine-tunes."
-echo "Fit for Python/TS: Codex for TS types; Grok for cross-lang integration."
-echo "Output: Diagrams, stub files. Use Grok's sandbox for early testing."
-
-COMPLETED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-if [ -f "$RECORD_SCRIPT" ]; then
-    python3 "$RECORD_SCRIPT" \
-        --capability "ai.workflow.architecture" \
-        --status "succeeded" \
-        --summary "Architecture diagram generated for $ARCH_FOCUS" \
-        --started "$STARTED_AT" \
-        --completed "$COMPLETED_AT" \
-        --metadata "{\"diagram\": \"$DIAGRAM_FILE\"}"
-fi
-
-log "Architecture & Design completed."

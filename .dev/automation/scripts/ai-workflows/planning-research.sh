@@ -12,24 +12,24 @@ trap 'echo "❌ Planning phase failed at line $LINENO" >&2' ERR
 mkdir -p "$ARTIFACTS_DIR"
 
 log() {
-  echo "[🤖 ai-planning] $1"
+	echo "[🤖 ai-planning] $1"
 }
 
 error() {
-  echo "[❌ ai-planning] ERROR: $1" >&2
-  exit 1
+	echo "[❌ ai-planning] ERROR: $1" >&2
+	exit 1
 }
 
 success() {
-  echo "[✅ ai-planning] $1"
+	echo "[✅ ai-planning] $1"
 }
 
 # Progress indicator
 show_progress() {
-  local step=$1
-  local total=$2
-  local desc=$3
-  echo "[📊 Progress: $step/$total] $desc"
+	local step=$1
+	local total=$2
+	local desc=$3
+	echo "[📊 Progress: $step/$total] $desc"
 }
 
 log "🚀 Starting AI-Assisted Planning & Research"
@@ -50,11 +50,11 @@ read -p "Project description: " PROJECT_DESC || error "Project description requi
 echo "2. 🔍 Grok researches dependencies/trends."
 # Check for API key
 if [ -f "$ROOT/.secrets/grok-api-key" ]; then
-    log "🔑 Grok API key found - research enabled"
-    RESEARCH_NOTES="API research results here"
+	log "🔑 Grok API key found - research enabled"
+	RESEARCH_NOTES="API research results here"
 else
-    log "⚠️  No Grok API key found. Manual research recommended."
-    RESEARCH_NOTES="Manual research required - add .secrets/grok-api-key for automated research"
+	log "⚠️  No Grok API key found. Manual research recommended."
+	RESEARCH_NOTES="Manual research required - add .secrets/grok-api-key for automated research"
 fi
 
 show_progress 2 4 "Gathering project requirements"
@@ -71,7 +71,7 @@ show_progress 3 4 "Generating project specification"
 # Create comprehensive spec
 SPEC_FILE="$ARTIFACTS_DIR/spec-$(date +%Y%m%d-%H%M%S).md"
 
-cat > "$SPEC_FILE" << EOF
+cat >"$SPEC_FILE" <<EOF
 # AI-Assisted Development Project Specification
 
 ## 📋 Project Overview
@@ -144,23 +144,20 @@ echo "   • Export as Markdown; paste into IDE"
 COMPLETED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 if [ -f "$RECORD_SCRIPT" ]; then
-    python3 "$RECORD_SCRIPT" \
-        --capability "ai.workflow.planning" \
-        --status "succeeded" \
-        --summary "Planning spec generated for $PROJECT_DESC" \
-        --started "$STARTED_AT" \
-        --completed "$COMPLETED_AT" \
-        --metadata "{\"spec\": \"$SPEC_FILE\"}"
+	python3 "$RECORD_SCRIPT" \
+		--capability "ai.workflow.planning" \
+		--status "succeeded" \
+		--summary "Planning spec generated for $PROJECT_DESC" \
+		--started "$STARTED_AT" \
+		--completed "$COMPLETED_AT" \
+		--metadata "{\"spec\": \"$SPEC_FILE\"}"
 fi
 
 success "Planning & Research completed ✅"
-    log "No Grok API key found. Manual research recommended."
-    RESEARCH_NOTES="Manual research: Check 2025 trends for $PROJECT_DESC"
-fi
 
 echo "3. Output: High-level spec, stack recommendations, pitfalls."
 SPEC_FILE="$ARTIFACTS_DIR/spec-$(date +%Y%m%d-%H%M%S).md"
-cat > "$SPEC_FILE" <<EOF
+cat >"$SPEC_FILE" <<EOF
 # Project Spec: $PROJECT_DESC
 Generated: $(date)
 Research Notes: $RESEARCH_NOTES
@@ -178,13 +175,13 @@ echo "Transition: Export as Markdown; paste into IDE."
 COMPLETED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 if [ -f "$RECORD_SCRIPT" ]; then
-    python3 "$RECORD_SCRIPT" \
-        --capability "ai.workflow.planning" \
-        --status "succeeded" \
-        --summary "Planning spec generated for $PROJECT_DESC" \
-        --started "$STARTED_AT" \
-        --completed "$COMPLETED_AT" \
-        --metadata "{\"spec\": \"$SPEC_FILE\"}"
+	python3 "$RECORD_SCRIPT" \
+		--capability "ai.workflow.planning" \
+		--status "succeeded" \
+		--summary "Planning spec generated for $PROJECT_DESC" \
+		--started "$STARTED_AT" \
+		--completed "$COMPLETED_AT" \
+		--metadata "{\"spec\": \"$SPEC_FILE\"}"
 fi
 
 log "Planning & Research completed."

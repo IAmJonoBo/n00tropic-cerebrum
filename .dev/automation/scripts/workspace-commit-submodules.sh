@@ -23,7 +23,7 @@ esac
 
 # Stage all submodules as paths in the root repo
 while IFS= read -r path; do
-	if [[ -n "${path}" ]]; then
+	if [[ -n ${path} ]]; then
 		echo "[workspace-commit-submodules] Staging ${path}"
 		git add "${path}"
 	fi

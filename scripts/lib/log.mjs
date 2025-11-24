@@ -13,8 +13,12 @@ function log(level, message, meta = {}) {
   };
   const line = JSON.stringify(entry);
   if (process.env.HUMAN_LOG === "1") {
-    const metaKeys = Object.keys(meta).filter((k) => k !== "ts" && k !== "level");
-    const suffix = metaKeys.length ? ` | ${metaKeys.map((k) => `${k}=${meta[k]}`).join(" ")}` : "";
+    const metaKeys = Object.keys(meta).filter(
+      (k) => k !== "ts" && k !== "level",
+    );
+    const suffix = metaKeys.length
+      ? ` | ${metaKeys.map((k) => `${k}=${meta[k]}`).join(" ")}`
+      : "";
     console.log(`[${entry.ts}] ${lvl.toUpperCase()}: ${message}${suffix}`);
   } else {
     console.log(line);

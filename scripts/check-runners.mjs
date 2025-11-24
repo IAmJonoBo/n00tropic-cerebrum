@@ -8,7 +8,10 @@ import { log } from "./lib/log.mjs";
 import { notifyDiscord } from "./lib/notify-discord.mjs";
 
 function gh(args) {
-  return execSync(`gh ${args}`, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
+  return execSync(`gh ${args}`, {
+    encoding: "utf8",
+    stdio: ["pipe", "pipe", "pipe"],
+  });
 }
 
 function listRepos() {
@@ -22,7 +25,9 @@ function listRepos() {
   return repos;
 }
 
-const requiredLabels = (process.env.REQUIRED_RUNNER_LABELS || "self-hosted,linux,x64,pnpm,uv")
+const requiredLabels = (
+  process.env.REQUIRED_RUNNER_LABELS || "self-hosted,linux,x64,pnpm,uv"
+)
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
@@ -31,12 +36,16 @@ const argv = process.argv.slice(2);
 const opts = {
   json: argv.includes("--json"),
   webhook:
-    process.env.DISCORD_WEBHOOK || argv.find((a) => a.startsWith("--webhook="))?.split("=")[1],
+    process.env.DISCORD_WEBHOOK ||
+    argv.find((a) => a.startsWith("--webhook="))?.split("=")[1],
 };
 
 function checkRepo(repo) {
   // Expect origin to be GitHub and infer org/name from remote URL.
-  const remote = execSync(`git -C ${repo.path} config --get remote.origin.url`, { encoding: "utf8" }).trim();
+  const remote = execSync(
+    `git -C ${repo.path} config --get remote.origin.url`,
+    { encoding: "utf8" },
+  ).trim();
   const m = remote.match(/github.com[:/]([^/]+)\/([^/.]+)(\.git)?$/);
   if (!m) {
     return { repo: repo.name, status: "unknown remote" };
@@ -47,7 +56,9 @@ function checkRepo(repo) {
     const data = JSON.parse(out);
     const total = data.total_count || 0;
     const labels = new Set();
-    (data.runners || []).forEach((r) => (r.labels || []).forEach((l) => labels.add(l.name)));
+    (data.runners || []).forEach((r) =>
+      (r.labels || []).forEach((l) => labels.add(l.name)),
+    );
     const labelList = Array.from(labels).sort();
     const missing = requiredLabels.filter((rl) => !labels.has(rl));
     return { repo: full, total, labels: labelList, missing };
@@ -67,7 +78,11 @@ results.forEach((r) => {
   if (r.status) {
     log("error", `${r.repo}: ${r.status}`);
   } else {
-    log("info", `${r.repo}: ${r.total} runners`, { repo: r.repo, total: r.total, labels: r.labels });
+    log("info", `${r.repo}: ${r.total} runners`, {
+      repo: r.repo,
+      total: r.total,
+      labels: r.labels,
+    });
     if (r.missing?.length) {
       log("warn", `${r.repo} missing required labels`, { missing: r.missing });
     }
@@ -75,19 +90,28 @@ results.forEach((r) => {
 });
 
 const missingCount = results.filter((r) => !r.status && r.total === 0);
-const missingLabels = results.filter((r) => !r.status && r.total > 0 && r.missing?.length);
+const missingLabels = results.filter(
+  (r) => !r.status && r.total > 0 && r.missing?.length,
+);
 const failed = missingCount.length || missingLabels.length;
 if (failed) {
   if (missingCount.length)
-    log("error", "Repos missing self-hosted runners", { repos: missingCount.map((m) => m.repo) });
+    log("error", "Repos missing self-hosted runners", {
+      repos: missingCount.map((m) => m.repo),
+    });
   if (missingLabels.length)
-    missingLabels.forEach((r) => log("error", `${r.repo} missing required labels", { missing: r.missing }));
+    missingLabels.forEach((r) =>
+      log("error", `${r.repo} missing required labels`, { missing: r.missing }),
+    );
 }
 
 log(failed ? "error" : "info", "Runner check completed", {
   repos: results.length,
   missing_runners: missingCount.map((m) => m.repo),
-  missing_labels: missingLabels.map((m) => ({ repo: m.repo, missing: m.missing })),
+  missing_labels: missingLabels.map((m) => ({
+    repo: m.repo,
+    missing: m.missing,
+  })),
 });
 
 if (opts.webhook) {

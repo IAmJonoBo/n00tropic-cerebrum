@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 import { log } from "./log.mjs";
 
-export async function notifyDiscord({ webhook, title, description = "", color = 3066993 }) {
+export async function notifyDiscord({
+  webhook,
+  title,
+  description = "",
+  color = 3066993,
+}) {
   if (!webhook) {
     log("debug", "Discord webhook not provided, skipping");
     return;
