@@ -733,6 +733,8 @@ COMMAND_HANDLERS = {
     "docs-sync": handle_docs_sync,
     "docs-verify": handle_docs_verify,
     "docs-lint": handle_docs_lint,
+    "venv-health": lambda _: run_workspace_script("venv-health.sh"),
+    "runner-doctor": lambda _: run_workspace_script("runner-doctor.sh"),
 }
 
 
