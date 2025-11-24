@@ -13,6 +13,7 @@ Commands:
 - `validate-cortex` – run `pnpm run validate:schemas` inside `n00-cortex`.
 - `graph-live` – rebuild catalog graph with live workspace inputs.
 - `graph-stub` – rebuild graph using only in-repo assets (CI-safe).
+- `sync-n00menon` – run `pnpm run docs:sync-n00menon --write` to pull doc updates into the workspace.
 
 Notes:
 - The binary assumes `n00-cortex` lives at `<workspace-root>/n00-cortex`.

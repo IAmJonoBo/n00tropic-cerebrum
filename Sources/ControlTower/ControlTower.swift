@@ -17,6 +17,7 @@ struct ControlTower {
         "validate-cortex": "Run pnpm schema/data validation in n00-cortex",
         "graph-live": "Rebuild catalog graph with live workspace inputs",
         "graph-stub": "Rebuild catalog graph using in-repo assets only",
+        "sync-n00menon": "Pull docs updates from n00menon into the workspace",
         "help": "Show available commands",
     ]
 
@@ -36,12 +37,19 @@ struct ControlTower {
             runCortex(["node", "scripts/build-graph.mjs"])
         case "graph-stub":
             runCortex(["node", "scripts/build-graph.mjs", "--stub"])
+        case "sync-n00menon":
+            runWorkspace(["pnpm", "run", "docs:sync-n00menon", "--write"])
         case "help", "-h", "--help":
             printUsage()
         default:
             print("Unknown command: \(command)\n")
             printUsage()
         }
+    }
+
+    @discardableResult
+    private static func runWorkspace(_ arguments: [String]) -> Int32 {
+        return runCommand(workingDirectory: packageRoot, arguments: arguments)
     }
 
     private static func printUsage() {
