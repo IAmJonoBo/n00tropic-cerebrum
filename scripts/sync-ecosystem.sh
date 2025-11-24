@@ -27,6 +27,10 @@ run "pnpm -C '$ROOT/n00-cortex' run export:assets"
 run "pnpm -C '$ROOT/n00-cortex' run graph:build"
 run "pnpm -C '$ROOT/n00-cortex' test"
 
+if [ "$status" != "ok" ]; then
+  message="failed step in sync; see logs above"
+fi
+
 end_ts=$(date -u +%s)
 duration=$((end_ts - start_ts))
 cat > "$LOG" <<JSON

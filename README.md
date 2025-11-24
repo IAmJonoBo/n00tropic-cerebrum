@@ -113,6 +113,10 @@ This sequence highlights the typical cadence: adjust policy in `n00-cortex`, ada
 
 Automation scripts live under `.dev/automation/scripts/` and surface through the `n00t` capability manifest.
 
+### Backstage & Sync
+- Backstage actions required for frontiers templates: `fetch:template`, `publish:github`, `catalog:register` (configure GitHub token for publish/register).
+- Scaffolder descriptors live in `n00-frontiers/.backstage/scaffolder-templates/`; regenerate with `python3 tools/generate_scaffolder_descriptors.py`.
+- Ecosystem sync: `pnpm run sync:ecosystem` (wraps `scripts/sync-ecosystem.sh`), telemetry at `.dev/automation/artifacts/automation/sync-ecosystem-<ts>.json`.
 ### ControlTower CLI (Swift)
 
 - Location: `Package.swift` / `Sources/ControlTower/`.
