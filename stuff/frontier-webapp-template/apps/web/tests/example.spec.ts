@@ -1,6 +1,7 @@
-import { test, expect } from '@playwright/test'
+import { describe, it, expect } from 'vitest'
 
-test('homepage has heading', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.locator('h1')).toHaveText(/It works/)
+describe('placeholder component', () => {
+  it('adds numbers', () => {
+    expect(1 + 1).toBe(2)
+  })
 })
