@@ -12,6 +12,7 @@ Canonical entry points (use these first):
 - `penpot:smoke` (root package script): dry-run check for newer Penpot Docker tags; fails on drift without modifying files.
 - `lint:imports` (root → n00plicate): enforces token import policy, rejecting `dist/` token paths.
 - `bootstrap-repo.sh`: scaffold a new workspace repo and append it to `automation/workspace.manifest.json` (docs+scripts stubs, README).
+- `tidy-submodules.sh`: sync/update submodules, run manifest gate, and skeleton check (dry-run); invoked by the local pre-push hook.
 
 Deprecated in favor of `pnpm-migrate`:
 
