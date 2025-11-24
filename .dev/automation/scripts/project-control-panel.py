@@ -44,7 +44,8 @@ def collect_preflight(artifact_dir: Path) -> List[Dict[str, object]]:
             payload["artifactPath"] = str(artifact)
             entries[identifier] = {"payload": payload, "mtime": mtime}
     ordered = sorted(
-        entries.values(), key=lambda item: str(item.get("payload", {}).get("status", "zzz"))
+        entries.values(),
+        key=lambda item: str(item.get("payload", {}).get("status", "zzz")),
     )
     return [entry["payload"] for entry in ordered]
 
@@ -63,7 +64,9 @@ def collect_jobs(jobs_root: Path, org_root: Path) -> List[Dict[str, object]]:
             document = project_metadata.extract_metadata(readme)
         except project_metadata.MetadataLoadError:
             continue
-        errors, _, payload = project_metadata.validate_document(document, validator, canonical_tags, alias_map)
+        errors, _, payload = project_metadata.validate_document(
+            document, validator, canonical_tags, alias_map
+        )
         if errors:
             continue
         jobs.append(
@@ -83,11 +86,16 @@ def render_radar_section(radar: Dict[str, object]) -> str:
     if not radar:
         return "Lifecycle radar artefact not found. Run `project-lifecycle-radar.sh` first."
     lines = []
-    lines.append(f"Generated: {radar.get('generatedAt', 'unknown')} | Documents scanned: {radar.get('documents', 0)}")
+    lines.append(
+        f"Generated: {radar.get('generatedAt', 'unknown')} | Documents scanned: {radar.get('documents', 0)}"
+    )
     lifecycle_totals = cast(Dict[str, int], radar.get("lifecycleTotals", {}) or {})
     if lifecycle_totals:
         header = "| Lifecycle | Count |\n| --- | --- |"
-        rows = [f"| {stage.title()} | {count} |" for stage, count in sorted(lifecycle_totals.items())]
+        rows = [
+            f"| {stage.title()} | {count} |"
+            for stage, count in sorted(lifecycle_totals.items())
+        ]
         lines.append("\n".join([header] + rows))
     buckets = cast(Dict[str, List[object]], radar.get("reviewBuckets", {}) or {})
     if buckets:
@@ -110,16 +118,24 @@ def render_radar_section(radar: Dict[str, object]) -> str:
     return "\n\n".join(lines)
 
 
-def render_preflight_section(preflights: List[Dict[str, object]], org_root: Path) -> str:
+def render_preflight_section(
+    preflights: List[Dict[str, object]], org_root: Path
+) -> str:
     if not preflights:
-        return "No preflight artefacts found. Run `project-preflight.sh` for active jobs."
+        return (
+            "No preflight artefacts found. Run `project-preflight.sh` for active jobs."
+        )
     header = "| ID | Status | Issues | Artefact |\n| --- | --- | --- | --- |"
     rows = []
     for payload in preflights:
-        issues_list = payload.get("preflightIssues") or payload.get("downstreamImpacts") or []
+        issues_list = (
+            payload.get("preflightIssues") or payload.get("downstreamImpacts") or []
+        )
         if not isinstance(issues_list, list):
             issues_list = []
-        issue_text = "<br>".join(issues_list[:3]) + ("<br>…" if len(issues_list) > 3 else "")
+        issue_text = "<br>".join(issues_list[:3]) + (
+            "<br>…" if len(issues_list) > 3 else ""
+        )
         rows.append(
             "| `{id}` | {status} | {issues} | {artifact} |".format(
                 id=payload.get("id", "unknown"),
@@ -152,7 +168,14 @@ def render_jobs_section(jobs: List[Dict[str, object]]) -> str:
 
 def main() -> int:
     frontiers_root, workspace_root, org_root = project_metadata.resolve_roots()
-    radar_path = org_root / ".dev" / "automation" / "artifacts" / "project-sync" / "lifecycle-radar.json"
+    radar_path = (
+        org_root
+        / ".dev"
+        / "automation"
+        / "artifacts"
+        / "project-sync"
+        / "lifecycle-radar.json"
+    )
     preflight_dir = org_root / ".dev" / "automation" / "artifacts" / "project-sync"
     jobs_root = workspace_root / "n00-horizons" / "jobs"
 

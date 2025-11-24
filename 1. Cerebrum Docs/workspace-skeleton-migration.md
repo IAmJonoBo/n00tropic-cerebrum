@@ -32,23 +32,23 @@ This plan threads the enforced repo skeleton + CLI/venv standards across the pol
 
 ## Rollout steps (repeat per repo)
 
-1) **Skeleton enforcement**
+1. **Skeleton enforcement**
    - Run `python3 .dev/automation/scripts/check-workspace-skeleton.py --apply`.
    - Add `.gitkeep` for empty required dirs.
-2) **CLI shim**
+2. **CLI shim**
    - Add `cli/main.py` (Python) or `cli/index.ts` (Node) delegating to shared scripts with commands: `bootstrap`, `lint`, `verify-artifacts`, `publish`.
    - Ensure callable via repo-local env (`.venv-<repo>` or `pnpm exec`).
-3) **Venv bootstrap**
+3. **Venv bootstrap**
    - Add `bootstrap-python.sh` (or repo-specific variant) that creates `.venv-<repo>`, installs `requirements.txt` / `requirements-dev.txt`.
    - Update root `cli.py` to support `python cli.py <repo> bootstrap` (stub to follow once per-repo scripts exist).
-4) **Tooling dir**
+4. **Tooling dir**
    - Create `tooling/` (or `infra/`) with Dockerfiles/devcontainers/runtime manifests; ensure `toolchain-manifest.json` can ingest paths.
-5) **Docs**
+5. **Docs**
    - Add `docs/architecture.md` capturing dependency surface, CLI commands, directory contract; cross-link via Antora where applicable.
-6) **Automation symmetry**
+6. **Automation symmetry**
    - Host repo-specific steps under `.dev/<repo>/scripts/` and publish entrypoints in the workspace script index.
    - Root automation should call `pnpm exec <repo-cli> ...` instead of ad-hoc shell paths.
-7) **Release gate**
+7. **Release gate**
    - Update `workspace-release.sh` to run `check-workspace-skeleton.py` and fail if missing paths.
 
 ## Audit cadence

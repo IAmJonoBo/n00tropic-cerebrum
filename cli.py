@@ -450,7 +450,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     health_runners.add_argument(
         "--required-labels",
-        default=os.environ.get("REQUIRED_RUNNER_LABELS", "self-hosted,linux,x64,pnpm,uv"),
+        default=os.environ.get(
+            "REQUIRED_RUNNER_LABELS", "self-hosted,linux,x64,pnpm,uv"
+        ),
         help="Comma-separated labels that must be present on runners.",
     )
     health_runners.add_argument(

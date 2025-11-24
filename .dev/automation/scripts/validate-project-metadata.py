@@ -48,11 +48,15 @@ def discover_default_documents() -> Set[Path]:
     )
     documents.update(
         discover_documents(
-            workspace_root / "n00-horizons" / "learning-log", ["LL-*.md"], recursive=False
+            workspace_root / "n00-horizons" / "learning-log",
+            ["LL-*.md"],
+            recursive=False,
         )
     )
     documents.update(
-        discover_documents(org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"])
+        discover_documents(
+            org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"]
+        )
     )
     return documents
 
@@ -60,13 +64,21 @@ def discover_default_documents() -> Set[Path]:
 def main() -> int:
     args = parse_args()
     _, workspace_root, org_root = resolve_roots()
-    schema_path = workspace_root / "n00-cortex" / "schemas" / "project-metadata.schema.json"
-    taxonomy_path = workspace_root / "n00-cortex" / "data" / "catalog" / "project-tags.yaml"
+    schema_path = (
+        workspace_root / "n00-cortex" / "schemas" / "project-metadata.schema.json"
+    )
+    taxonomy_path = (
+        workspace_root / "n00-cortex" / "data" / "catalog" / "project-tags.yaml"
+    )
 
     validator = load_schema(schema_path)
     canonical_tags, alias_map = load_tag_taxonomy(taxonomy_path)
 
-    documents = set(path.resolve() for path in args.paths) if args.paths else discover_default_documents()
+    documents = (
+        set(path.resolve() for path in args.paths)
+        if args.paths
+        else discover_default_documents()
+    )
 
     errors: List[str] = []
     warnings: List[str] = []
@@ -137,7 +149,9 @@ def main() -> int:
         print("Warnings encountered:")
         for warning in sorted(set(warnings)):
             print(f"  - {warning}")
-        print("➡️  Run `.dev/automation/scripts/autofix-project-metadata.py --apply` to normalise tags.")
+        print(
+            "➡️  Run `.dev/automation/scripts/autofix-project-metadata.py --apply` to normalise tags."
+        )
     return 0
 
 

@@ -27,15 +27,21 @@ def default_documents() -> List[Path]:
     _, workspace_root, org_root = project_metadata.resolve_roots()
     documents: List[Path] = []
     documents.extend(
-        project_metadata.discover_documents(workspace_root / "n00-horizons" / "ideas", ["README.md"])
-    )
-    documents.extend(
         project_metadata.discover_documents(
-            workspace_root / "n00-horizons" / "learning-log", ["LL-*.md"], recursive=False
+            workspace_root / "n00-horizons" / "ideas", ["README.md"]
         )
     )
     documents.extend(
-        project_metadata.discover_documents(org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"])
+        project_metadata.discover_documents(
+            workspace_root / "n00-horizons" / "learning-log",
+            ["LL-*.md"],
+            recursive=False,
+        )
+    )
+    documents.extend(
+        project_metadata.discover_documents(
+            org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"]
+        )
     )
     return sorted(set(documents))
 
@@ -62,8 +68,12 @@ def relative_to_org(path: Path, org_root: Path) -> str:
 
 def load_documents(paths: List[Path]) -> Tuple[List[Dict[str, object]], Path]:
     _, workspace_root, org_root = project_metadata.resolve_roots()
-    schema_path = workspace_root / "n00-cortex" / "schemas" / "project-metadata.schema.json"
-    taxonomy_path = workspace_root / "n00-cortex" / "data" / "catalog" / "project-tags.yaml"
+    schema_path = (
+        workspace_root / "n00-cortex" / "schemas" / "project-metadata.schema.json"
+    )
+    taxonomy_path = (
+        workspace_root / "n00-cortex" / "data" / "catalog" / "project-tags.yaml"
+    )
 
     validator = project_metadata.load_schema(schema_path)
     canonical_tags, alias_map = project_metadata.load_tag_taxonomy(taxonomy_path)
@@ -104,7 +114,9 @@ def load_documents(paths: List[Path]) -> Tuple[List[Dict[str, object]], Path]:
     return entries, org_root
 
 
-def bucket_review(entry: Dict[str, object], today: date) -> Tuple[str, Dict[str, object]]:
+def bucket_review(
+    entry: Dict[str, object], today: date
+) -> Tuple[str, Dict[str, object]]:
     metadata = entry.get("metadata", {})
     review_raw = metadata.get("review_date") if isinstance(metadata, dict) else None
     item = {
@@ -173,7 +185,9 @@ def build_radar(entries: List[Dict[str, object]]) -> Dict[str, object]:
                 }
             )
 
-        lifecycle_requires_integrations = lifecycle == "deliver" or str(entry.get("id") or "").startswith("job-")
+        lifecycle_requires_integrations = lifecycle == "deliver" or str(
+            entry.get("id") or ""
+        ).startswith("job-")
         if lifecycle_requires_integrations:
             if not metadata.get("github_project"):
                 integration_gaps.append(
@@ -192,15 +206,19 @@ def build_radar(entries: List[Dict[str, object]]) -> Dict[str, object]:
                     }
                 )
 
-    status = "attention" if any(
-        [
-            metadata_errors,
-            integration_gaps,
-            link_gaps,
-            review_buckets["missing"],
-            review_buckets["overdue"],
-        ]
-    ) else "ok"
+    status = (
+        "attention"
+        if any(
+            [
+                metadata_errors,
+                integration_gaps,
+                link_gaps,
+                review_buckets["missing"],
+                review_buckets["overdue"],
+            ]
+        )
+        else "ok"
+    )
 
     return {
         "status": status,
@@ -217,7 +235,9 @@ def build_radar(entries: List[Dict[str, object]]) -> Dict[str, object]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("paths", nargs="*", type=Path, help="Optional explicit documents to analyse.")
+    parser.add_argument(
+        "paths", nargs="*", type=Path, help="Optional explicit documents to analyse."
+    )
     parser.add_argument(
         "--json",
         type=Path,
@@ -235,7 +255,12 @@ def main() -> int:
     report_path = (
         args.json
         if args.json
-        else org_root / ".dev" / "automation" / "artifacts" / "project-sync" / "lifecycle-radar.json"
+        else org_root
+        / ".dev"
+        / "automation"
+        / "artifacts"
+        / "project-sync"
+        / "lifecycle-radar.json"
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report = dict(radar)

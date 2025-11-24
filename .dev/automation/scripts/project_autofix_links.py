@@ -45,15 +45,27 @@ def infer_link_type(identifier: Optional[str]) -> str:
 def discover_metadata_paths() -> List[Path]:
     _, workspace_root, org_root = project_metadata.resolve_roots()
     paths: List[Path] = []
-    paths.extend(project_metadata.discover_documents(workspace_root / "n00-horizons" / "ideas", ["README.md"]))
     paths.extend(
         project_metadata.discover_documents(
-            workspace_root / "n00-horizons" / "learning-log", ["LL-*.md"], recursive=False
+            workspace_root / "n00-horizons" / "ideas", ["README.md"]
         )
     )
-    paths.extend(project_metadata.discover_documents(workspace_root / "n00-horizons" / "jobs", ["README.md"]))
     paths.extend(
-        project_metadata.discover_documents(org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"])
+        project_metadata.discover_documents(
+            workspace_root / "n00-horizons" / "learning-log",
+            ["LL-*.md"],
+            recursive=False,
+        )
+    )
+    paths.extend(
+        project_metadata.discover_documents(
+            workspace_root / "n00-horizons" / "jobs", ["README.md"]
+        )
+    )
+    paths.extend(
+        project_metadata.discover_documents(
+            org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"]
+        )
     )
     return sorted(set(path.resolve() for path in paths))
 
@@ -110,9 +122,16 @@ def normalise_links(
             continue
         link_type = str(entry.get("type") or "doc")
         raw_path = str(entry.get("path") or "")
-        target, reason = canonicalize_link_path(document_path, raw_path, org_root, stem_index)
+        target, reason = canonicalize_link_path(
+            document_path, raw_path, org_root, stem_index
+        )
         if not target:
-            issues.append({"type": "warning", "message": f"unresolved path '{raw_path}' ({reason})"})
+            issues.append(
+                {
+                    "type": "warning",
+                    "message": f"unresolved path '{raw_path}' ({reason})",
+                }
+            )
             # retain original link so intent is preserved
             target = raw_path
         canonical = target
@@ -147,7 +166,9 @@ def build_reverse_link_index(
             if not isinstance(entry, dict):
                 continue
             raw_path = str(entry.get("path") or "")
-            target, reason = canonicalize_link_path(path, raw_path, org_root, stem_index)
+            target, reason = canonicalize_link_path(
+                path, raw_path, org_root, stem_index
+            )
             if not target or reason == "external":
                 continue
             canonical = relative_to_org(target, org_root)
@@ -173,7 +194,9 @@ def autofix_document(
     existing_links = payload.get("links")
     if not isinstance(existing_links, list):
         existing_links = []
-    canonical_links, issues = normalise_links(document.path, existing_links, org_root, stem_index)
+    canonical_links, issues = normalise_links(
+        document.path, existing_links, org_root, stem_index
+    )
 
     referrers = reverse_map.get(relative_to_org(document.path, org_root), [])
     for ref in referrers:
@@ -186,7 +209,9 @@ def autofix_document(
                     "message": f"added reciprocal link to {ref.source_id}",
                 }
             )
-    canonical_links = sorted(canonical_links, key=lambda item: (item["type"], item["path"]))
+    canonical_links = sorted(
+        canonical_links, key=lambda item: (item["type"], item["path"])
+    )
 
     changed = canonical_links != existing_links
     if apply_changes and changed:
@@ -206,7 +231,9 @@ def autofix_document(
 
 
 def write_artifact(result: Dict[str, object], org_root: Path) -> Path:
-    artifact_dir = org_root / ".dev" / "automation" / "artifacts" / "project-autofix-links"
+    artifact_dir = (
+        org_root / ".dev" / "automation" / "artifacts" / "project-autofix-links"
+    )
     artifact_dir.mkdir(parents=True, exist_ok=True)
     artifact_path = artifact_dir / f"{result.get('id', 'unknown')}-autofix_links.json"
     artifact_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
@@ -221,9 +248,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         action="append",
         help="Specific metadata documents to process (repeatable).",
     )
-    parser.add_argument("--all", action="store_true", help="Process every known metadata document.")
     parser.add_argument(
-        "--apply", action="store_true", help="Persist fixes to disk (default is dry-run)."
+        "--all", action="store_true", help="Process every known metadata document."
+    )
+    parser.add_argument(
+        "--apply",
+        action="store_true",
+        help="Persist fixes to disk (default is dry-run).",
     )
     args = parser.parse_args(argv)
 
@@ -256,7 +287,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     for target in targets:
         resolved = target.resolve()
         try:
-            document = documents.get(resolved) or project_metadata.extract_metadata(resolved)
+            document = documents.get(resolved) or project_metadata.extract_metadata(
+                resolved
+            )
         except project_metadata.MetadataLoadError as exc:
             result = {
                 "action": "autofix.links",
@@ -269,7 +302,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             print(json.dumps(result))
             status_counts["error"] += 1
             continue
-        result = autofix_document(resolved, document, org_root, stem_index, reverse_map, args.apply)
+        result = autofix_document(
+            resolved, document, org_root, stem_index, reverse_map, args.apply
+        )
         artifact_path = write_artifact(result, org_root)
         result["artifactPath"] = str(artifact_path)
         print(json.dumps(result))

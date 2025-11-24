@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'n00plicate/packages/token-orchestrator/**'
-      - 'n00plicate/packages/design-tokens/**'
-      - '.github/workflows/penpot-export.yml'
+      - "n00plicate/packages/token-orchestrator/**"
+      - "n00plicate/packages/design-tokens/**"
+      - ".github/workflows/penpot-export.yml"
 
 jobs:
   penpot-export:

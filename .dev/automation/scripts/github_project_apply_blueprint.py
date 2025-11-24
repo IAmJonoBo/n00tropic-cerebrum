@@ -39,7 +39,9 @@ class FieldInfo:
     data: Dict[str, Any]
 
 
-def run_command(command: List[str], *, capture_output: bool = True) -> subprocess.CompletedProcess:
+def run_command(
+    command: List[str], *, capture_output: bool = True
+) -> subprocess.CompletedProcess:
     result = subprocess.run(
         command,
         check=False,
@@ -124,7 +126,9 @@ def graphql(query: str, variables: Optional[Dict[str, Any]] = None) -> Dict[str,
             f"query=@{query_path}",
         ]
         if variables is not None:
-            with tempfile.NamedTemporaryFile("w", delete=False, encoding="utf-8") as var_file:
+            with tempfile.NamedTemporaryFile(
+                "w", delete=False, encoding="utf-8"
+            ) as var_file:
                 json.dump(variables, var_file)
                 var_file.flush()
                 variables_path = var_file.name
@@ -136,7 +140,10 @@ def graphql(query: str, variables: Optional[Dict[str, Any]] = None) -> Dict[str,
 
         payload = json.loads(result.stdout)
         if "errors" in payload and payload["errors"]:
-            messages = ", ".join(error.get("message", "Unknown GraphQL error") for error in payload["errors"])
+            messages = ", ".join(
+                error.get("message", "Unknown GraphQL error")
+                for error in payload["errors"]
+            )
             raise CLIError(messages)
         return payload.get("data", {})
     finally:
@@ -261,11 +268,7 @@ def fetch_fields(project_id: str) -> Dict[str, FieldInfo]:
     }
     """
     data = graphql(query, {"projectId": project_id})
-    nodes = (
-        data.get("projectV2", {})
-        .get("fields", {})
-        .get("nodes", [])
-    )
+    nodes = data.get("projectV2", {}).get("fields", {}).get("nodes", [])
     fields: Dict[str, FieldInfo] = {}
     for node in nodes:
         typename = node.get("__typename", "")
@@ -298,12 +301,16 @@ def normalise_status_options(columns: List[Dict[str, Any]]) -> List[Dict[str, An
     return options
 
 
-def update_status_field(project_id: str, fields: Dict[str, FieldInfo], columns: List[Dict[str, Any]]) -> None:
+def update_status_field(
+    project_id: str, fields: Dict[str, FieldInfo], columns: List[Dict[str, Any]]
+) -> None:
     if not columns:
         return
     status_field = fields.get("Status")
     if not status_field or status_field.typename != "ProjectV2SingleSelectField":
-        raise CLIError("Status field not found or unexpected type; cannot configure columns")
+        raise CLIError(
+            "Status field not found or unexpected type; cannot configure columns"
+        )
 
     existing_options = {
         option.get("name"): option.get("id")
@@ -351,7 +358,9 @@ def update_status_field(project_id: str, fields: Dict[str, FieldInfo], columns: 
         )
 
 
-def ensure_single_select_field(project_id: str, existing: Optional[FieldInfo], name: str, options: List[str]) -> None:
+def ensure_single_select_field(
+    project_id: str, existing: Optional[FieldInfo], name: str, options: List[str]
+) -> None:
     payload_options = [{"name": opt} for opt in options if opt]
     if not payload_options:
         return
@@ -401,7 +410,13 @@ def ensure_single_select_field(project_id: str, existing: Optional[FieldInfo], n
     )
 
 
-def ensure_iteration_field(project_id: str, existing: Optional[FieldInfo], name: str, duration: int, start_day: str) -> None:
+def ensure_iteration_field(
+    project_id: str,
+    existing: Optional[FieldInfo],
+    name: str,
+    duration: int,
+    start_day: str,
+) -> None:
     if existing:
         return  # Iteration field updates are not yet supported; keep existing configuration.
 
@@ -426,7 +441,9 @@ def ensure_iteration_field(project_id: str, existing: Optional[FieldInfo], name:
     )
 
 
-def configure_custom_fields(project_id: str, fields: Dict[str, FieldInfo], blueprint: Dict[str, Any]) -> None:
+def configure_custom_fields(
+    project_id: str, fields: Dict[str, FieldInfo], blueprint: Dict[str, Any]
+) -> None:
     custom_fields = blueprint.get("customFields", [])
     for field in custom_fields:
         name = field.get("name")
@@ -455,9 +472,15 @@ def configure_custom_fields(project_id: str, fields: Dict[str, FieldInfo], bluep
 
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--owner", required=True, help="Login of the user or organization owning the project")
+    parser.add_argument(
+        "--owner",
+        required=True,
+        help="Login of the user or organization owning the project",
+    )
     parser.add_argument("--title", required=True, help="Title for the project board")
-    parser.add_argument("--blueprint", required=True, help="Path to the blueprint JSON file")
+    parser.add_argument(
+        "--blueprint", required=True, help="Path to the blueprint JSON file"
+    )
     return parser.parse_args()
 
 

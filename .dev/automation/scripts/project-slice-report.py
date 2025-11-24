@@ -15,15 +15,21 @@ def default_documents() -> List[Path]:
     _, workspace_root, org_root = project_metadata.resolve_roots()
     documents: Set[Path] = set()
     documents.update(
-        project_metadata.discover_documents(workspace_root / "n00-horizons" / "ideas", ["README.md"])
-    )
-    documents.update(
         project_metadata.discover_documents(
-            workspace_root / "n00-horizons" / "learning-log", ["LL-*.md"], recursive=False
+            workspace_root / "n00-horizons" / "ideas", ["README.md"]
         )
     )
     documents.update(
-        project_metadata.discover_documents(org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"])
+        project_metadata.discover_documents(
+            workspace_root / "n00-horizons" / "learning-log",
+            ["LL-*.md"],
+            recursive=False,
+        )
+    )
+    documents.update(
+        project_metadata.discover_documents(
+            org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"]
+        )
     )
     return sorted(documents)
 
@@ -43,7 +49,10 @@ def infer_slice_type(path: Path) -> str:
 
 def summarise(paths: Sequence[Path]) -> List[Dict[str, object]]:
     schema_validator = project_metadata.load_schema(
-        project_metadata.resolve_roots()[1] / "n00-cortex" / "schemas" / "project-metadata.schema.json"
+        project_metadata.resolve_roots()[1]
+        / "n00-cortex"
+        / "schemas"
+        / "project-metadata.schema.json"
     )
     canonical_tags, alias_map = project_metadata.load_tag_taxonomy(
         project_metadata.resolve_roots()[1]
@@ -120,8 +129,12 @@ def print_table(entries: Sequence[Dict[str, object]]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("paths", nargs="*", type=Path, help="Optional explicit documents to summarise.")
-    parser.add_argument("--json", type=Path, help="Optional file to write JSON summary to.")
+    parser.add_argument(
+        "paths", nargs="*", type=Path, help="Optional explicit documents to summarise."
+    )
+    parser.add_argument(
+        "--json", type=Path, help="Optional file to write JSON summary to."
+    )
     args = parser.parse_args()
 
     documents = args.paths if args.paths else default_documents()
@@ -129,7 +142,9 @@ def main() -> int:
 
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
-        args.json.write_text(json.dumps(summaries, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        args.json.write_text(
+            json.dumps(summaries, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
     else:
         print_table(summaries)
 

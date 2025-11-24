@@ -117,11 +117,11 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 | `workspace-health.py`             | Summarizes root + submodule git status, emits `artifacts/workspace-health.json`, cleans safe untracked files, and syncs submodules on demand.                                              |
 | `fusion-pipeline.sh`              | One-click PDF ingest → embed (auto backend) → generate → graph rebuild; moves processed PDFs to `n00clear-fusion/corpora/Processed/`, logs run envelopes, registers horizons/school stubs. |
 | `guard-root-pnpm-install.mjs`     | Blocks accidental `pnpm install` at workspace root; set `ALLOW_ROOT_PNPM_INSTALL=1` only when you truly need a root install.                                                               |
-| `refresh-python-lock.sh`          | Regenerates or checks `requirements.workspace.lock` using `uv`; CI runs the check to enforce reproducible Python deps.                                                                      |
+| `refresh-python-lock.sh`          | Regenerates or checks `requirements.workspace.lock` using `uv`; CI runs the check to enforce reproducible Python deps.                                                                     |
 | `check-runners.mjs`               | Lists GitHub self-hosted runners for the superrepo + submodules (uses `GH_TOKEN`); nightly workflow alerts if coverage drops to zero.                                                      |
 | `normalize-workspace-pnpm.sh`     | Canonical entry for re-installing JS deps in templates/examples; now fails if Node pins drift (override with `--allow-mismatch`).                                                          |
-| `guard-subrepo-pnpm-install.mjs`  | Wired as `preinstall` in JS subrepos; blocks installs from the wrong directory/workspace context.                                                                                         |
-| `cli.py health-*`                 | Front door commands wrapping health checks: toolchain, runners, Python lock, and JS normalization with consistent logging.                                                                |
+| `guard-subrepo-pnpm-install.mjs`  | Wired as `preinstall` in JS subrepos; blocks installs from the wrong directory/workspace context.                                                                                          |
+| `cli.py health-*`                 | Front door commands wrapping health checks: toolchain, runners, Python lock, and JS normalization with consistent logging.                                                                 |
 
 ### Alerts (Discord)
 

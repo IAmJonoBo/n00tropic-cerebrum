@@ -12,8 +12,12 @@ from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple
 
 import yaml
-from jsonschema import Draft202012Validator  # type: ignore[import-untyped]  # pylint: disable=import-error
-from jsonschema.exceptions import ValidationError  # type: ignore[import-untyped]  # pylint: disable=import-error
+from jsonschema import (
+    Draft202012Validator,  # type: ignore[import-untyped]  # pylint: disable=import-error
+)
+from jsonschema.exceptions import (
+    ValidationError,  # type: ignore[import-untyped]  # pylint: disable=import-error
+)
 
 FRONT_MATTER_PATTERN = re.compile(r"^---\s*\n(.*?)\n---\s*", re.DOTALL)
 DISPLAY_DATE_FMT = "%d-%m-%Y"
@@ -44,7 +48,11 @@ def resolve_roots() -> Tuple[Path, Path, Path]:
     org_root – the organisational root containing repositories and HQ docs
     """
     env_override = os.environ.get("N00_ORG_ROOT")
-    candidate = Path(env_override).expanduser().resolve() if env_override else Path(__file__).resolve().parents[4]
+    candidate = (
+        Path(env_override).expanduser().resolve()
+        if env_override
+        else Path(__file__).resolve().parents[4]
+    )
 
     # If the candidate already points at the workspace root, lift org_root one level up.
     if candidate.name == "n00tropic-cerebrum":
@@ -69,7 +77,10 @@ def extract_metadata(document: Path) -> MetadataDocument:
     if not isinstance(data, dict):
         raise MetadataLoadError(f"{document} metadata must be a mapping object")
     return MetadataDocument(
-        path=document, payload=data, raw_front_matter=raw_front_matter, match_span=match.span()
+        path=document,
+        payload=data,
+        raw_front_matter=raw_front_matter,
+        match_span=match.span(),
     )
 
 
@@ -153,7 +164,9 @@ def validate_document(
     if isinstance(tags, list):
         for tag in tags:
             if not isinstance(tag, str):
-                errors.append(f"{document.path}: tag values must be strings (found {tag!r})")
+                errors.append(
+                    f"{document.path}: tag values must be strings (found {tag!r})"
+                )
                 continue
             if tag in canonical_tags:
                 normalised_tags.append(tag)

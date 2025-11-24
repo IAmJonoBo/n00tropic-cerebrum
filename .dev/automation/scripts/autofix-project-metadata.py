@@ -55,7 +55,9 @@ DISPLAY_DATE_FMT = "%d-%m-%Y"
 DATE_FIELDS = ("review_date", "recorded", "created")
 
 
-def infer_defaults(metadata: Dict[str, object], review_days: int) -> Tuple[Dict[str, object], List[str]]:
+def infer_defaults(
+    metadata: Dict[str, object], review_days: int
+) -> Tuple[Dict[str, object], List[str]]:
     updates: Dict[str, object] = {}
     notes: List[str] = []
     identifier = str(metadata.get("id", ""))
@@ -94,8 +96,12 @@ def infer_defaults(metadata: Dict[str, object], review_days: int) -> Tuple[Dict[
 def main() -> int:
     args = parse_args()
     _, workspace_root, org_root = resolve_roots()
-    schema_path = workspace_root / "n00-cortex" / "schemas" / "project-metadata.schema.json"
-    taxonomy_path = workspace_root / "n00-cortex" / "data" / "catalog" / "project-tags.yaml"
+    schema_path = (
+        workspace_root / "n00-cortex" / "schemas" / "project-metadata.schema.json"
+    )
+    taxonomy_path = (
+        workspace_root / "n00-cortex" / "data" / "catalog" / "project-tags.yaml"
+    )
 
     validator = load_schema(schema_path)
     canonical_tags, alias_map = load_tag_taxonomy(taxonomy_path)
@@ -105,14 +111,28 @@ def main() -> int:
     else:
         documents = sorted(
             set()
-            | set(discover_documents(workspace_root / "n00-horizons" / "ideas", ["README.md"]))
-            | set(discover_documents(workspace_root / "n00-horizons" / "jobs", ["README.md"]))
             | set(
                 discover_documents(
-                    workspace_root / "n00-horizons" / "learning-log", ["LL-*.md"], recursive=False
+                    workspace_root / "n00-horizons" / "ideas", ["README.md"]
                 )
             )
-            | set(discover_documents(org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"]))
+            | set(
+                discover_documents(
+                    workspace_root / "n00-horizons" / "jobs", ["README.md"]
+                )
+            )
+            | set(
+                discover_documents(
+                    workspace_root / "n00-horizons" / "learning-log",
+                    ["LL-*.md"],
+                    recursive=False,
+                )
+            )
+            | set(
+                discover_documents(
+                    org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"]
+                )
+            )
         )
 
     if not documents:
@@ -131,7 +151,9 @@ def main() -> int:
             document, validator, canonical_tags, alias_map
         )
         if errors:
-            print(f"❌ {document_path}: cannot autofix until validation errors are resolved.")
+            print(
+                f"❌ {document_path}: cannot autofix until validation errors are resolved."
+            )
             for error in errors:
                 print(f"   • {error}")
             continue
@@ -145,7 +167,9 @@ def main() -> int:
             for tag in original_tags:
                 canonicalised.append(alias_map.get(tag, tag))
                 if tag in alias_map:
-                    change_log.append(f"canonicalised tag '{tag}' -> '{alias_map[tag]}'")
+                    change_log.append(
+                        f"canonicalised tag '{tag}' -> '{alias_map[tag]}'"
+                    )
             if canonicalised and canonicalised != original_tags:
                 updated_payload["tags"] = canonicalised
 

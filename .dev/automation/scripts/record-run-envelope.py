@@ -62,10 +62,22 @@ def build_envelope(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Record a run envelope for automation telemetry.")
-    parser.add_argument("--capability", required=True, help="Capability identifier (e.g., workspace.metaCheck).")
-    parser.add_argument("--status", default="success", help="Run status (success|failure|timeout|skipped|cancelled).")
-    parser.add_argument("--asset", action="append", default=[], help="Asset IDs or filenames produced.")
+    parser = argparse.ArgumentParser(
+        description="Record a run envelope for automation telemetry."
+    )
+    parser.add_argument(
+        "--capability",
+        required=True,
+        help="Capability identifier (e.g., workspace.metaCheck).",
+    )
+    parser.add_argument(
+        "--status",
+        default="success",
+        help="Run status (success|failure|timeout|skipped|cancelled).",
+    )
+    parser.add_argument(
+        "--asset", action="append", default=[], help="Asset IDs or filenames produced."
+    )
     parser.add_argument("--dataset", help="Dataset identifier when applicable.")
     parser.add_argument("--notes", help="Optional notes for the run.")
     args = parser.parse_args()
@@ -82,7 +94,9 @@ def main() -> int:
     with RUN_LOG.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(envelope) + "\n")
 
-    print(f"[run-envelope] recorded {envelope['run_id']} -> {envelope['telemetry_path']}")
+    print(
+        f"[run-envelope] recorded {envelope['run_id']} -> {envelope['telemetry_path']}"
+    )
     return 0
 
 

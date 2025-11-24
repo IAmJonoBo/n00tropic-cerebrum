@@ -166,7 +166,8 @@ export const CommonTokens = {
   BORDER_WIDTH_THIN: "border.width.thin",
 } as const;
 export type CommonTokenName =
-  (typeof CommonTokens)[keyof typeof CommonTokens] | string;
+  | (typeof CommonTokens)[keyof typeof CommonTokens]
+  | string;
 
 export interface ResolvedToken {
   name: string;

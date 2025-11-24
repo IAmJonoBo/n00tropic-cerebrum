@@ -25,10 +25,10 @@ except ImportError:  # pragma: no cover - surfaced at runtime if missing
 
 from lib.project_metadata import (
     MetadataLoadError,
+    discover_documents,
     ensure_paths_exist,
     extract_metadata,
     find_duplicate_ids,
-    discover_documents,
     load_schema,
     load_tag_taxonomy,
     resolve_roots,
@@ -48,7 +48,9 @@ def format_calendar_date(value: date) -> str:
     return value.strftime(DISPLAY_DATE_FMT)
 
 
-def emit_progress(stage: str, message: str, context: Optional[Dict[str, object]] = None) -> None:
+def emit_progress(
+    stage: str, message: str, context: Optional[Dict[str, object]] = None
+) -> None:
     payload: Dict[str, object] = {
         "timestamp": now(),
         "stage": stage,
@@ -74,10 +76,14 @@ def load_registry(registry_path: Path) -> Dict[str, object]:
 def save_registry(registry_path: Path, registry: Dict[str, object]) -> None:
     registry["last_updated"] = now()
     registry_path.parent.mkdir(parents=True, exist_ok=True)
-    registry_path.write_text(json.dumps(registry, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    registry_path.write_text(
+        json.dumps(registry, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
-def find_registry_entry(registry: Dict[str, object], project_id: str) -> Optional[Dict[str, object]]:
+def find_registry_entry(
+    registry: Dict[str, object], project_id: str
+) -> Optional[Dict[str, object]]:
     projects = registry.get("projects", [])
     if not isinstance(projects, list):
         return None
@@ -104,7 +110,9 @@ def upsert_registry_entry(
     return payload
 
 
-def compute_drift(metadata: Dict[str, object], existing: Optional[Dict[str, object]]) -> List[str]:
+def compute_drift(
+    metadata: Dict[str, object], existing: Optional[Dict[str, object]]
+) -> List[str]:
     if not existing:
         return []
     drift: List[str] = []
@@ -154,7 +162,14 @@ def compute_impacts(metadata: Dict[str, object]) -> Tuple[List[str], List[str]]:
             target_type = str(link.get("type", "")).lower()
             target_path = link.get("path")
             description = f"{target_type or 'link'} -> {target_path}"
-            if target_type in {"idea", "research", "learning-log", "charter", "experiment", "project"}:
+            if target_type in {
+                "idea",
+                "research",
+                "learning-log",
+                "charter",
+                "experiment",
+                "project",
+            }:
                 upstream.append(description)
             elif target_type in {"adr", "runbook", "doc"}:
                 upstream.append(description)
@@ -182,7 +197,9 @@ def parse_review_date(value: Optional[str]) -> Optional[date]:
     return None
 
 
-def evaluate_preflight_requirements(metadata: Dict[str, object]) -> Tuple[List[str], List[str]]:
+def evaluate_preflight_requirements(
+    metadata: Dict[str, object],
+) -> Tuple[List[str], List[str]]:
     issues: List[str] = []
     advisories: List[str] = []
 
@@ -190,9 +207,13 @@ def evaluate_preflight_requirements(metadata: Dict[str, object]) -> Tuple[List[s
     review_raw = review_val if isinstance(review_val, str) else None
     review_dt = parse_review_date(review_raw)
     if not review_raw:
-        issues.append("review_date missing; set a review cadence before delivery work starts.")
+        issues.append(
+            "review_date missing; set a review cadence before delivery work starts."
+        )
     elif not review_dt:
-        issues.append("review_date must use DD-MM-YYYY format; update the metadata block.")
+        issues.append(
+            "review_date must use DD-MM-YYYY format; update the metadata block."
+        )
     elif review_dt < date.today():
         issues.append(
             f"review_date {format_calendar_date(review_dt)} is in the past; extend or archive the artefact."
@@ -200,7 +221,9 @@ def evaluate_preflight_requirements(metadata: Dict[str, object]) -> Tuple[List[s
 
     links = metadata.get("links") or []
     if not links:
-        issues.append("links[] is empty; cite upstream/downstream slices for traceability.")
+        issues.append(
+            "links[] is empty; cite upstream/downstream slices for traceability."
+        )
 
     lifecycle = str(metadata.get("lifecycle_stage") or "").lower()
     identifier = str(metadata.get("id") or "")
@@ -211,27 +234,41 @@ def evaluate_preflight_requirements(metadata: Dict[str, object]) -> Tuple[List[s
 
     if requires_integrations:
         if not github_project:
-            issues.append("github_project missing for delivery-stage work; set the Project board URL.")
+            issues.append(
+                "github_project missing for delivery-stage work; set the Project board URL."
+            )
         if not erpnext_project:
-            issues.append("erpnext_project missing for delivery-stage work; provide the ERPNext Project code.")
+            issues.append(
+                "erpnext_project missing for delivery-stage work; provide the ERPNext Project code."
+            )
     else:
         if not github_project:
-            advisories.append("github_project not set (optional for non-delivery slices).")
+            advisories.append(
+                "github_project not set (optional for non-delivery slices)."
+            )
         if not erpnext_project:
-            advisories.append("erpnext_project not set (optional for non-delivery slices).")
+            advisories.append(
+                "erpnext_project not set (optional for non-delivery slices)."
+            )
 
     return issues, advisories
 
 
 def validate_metadata_document(path: Path):
     _, workspace_root, _ = resolve_roots()
-    schema_path = workspace_root / "n00-cortex" / "schemas" / "project-metadata.schema.json"
-    taxonomy_path = workspace_root / "n00-cortex" / "data" / "catalog" / "project-tags.yaml"
+    schema_path = (
+        workspace_root / "n00-cortex" / "schemas" / "project-metadata.schema.json"
+    )
+    taxonomy_path = (
+        workspace_root / "n00-cortex" / "data" / "catalog" / "project-tags.yaml"
+    )
     validator = load_schema(schema_path)
     canonical_tags, alias_map = load_tag_taxonomy(taxonomy_path)
 
     document = extract_metadata(path)
-    errors, warnings, payload = validate_document(document, validator, canonical_tags, alias_map)
+    errors, warnings, payload = validate_document(
+        document, validator, canonical_tags, alias_map
+    )
     errors.extend(ensure_paths_exist(document))
     if errors:
         raise RuntimeError("\n".join(errors))
@@ -242,14 +279,24 @@ def discover_workspace_metadata() -> List[Path]:
     """Discover known metadata-bearing documents across Horizons and HQ."""
     _, workspace_root, org_root = resolve_roots()
     documents: Set[Path] = set()
-    documents.update(discover_documents(workspace_root / "n00-horizons" / "ideas", ["README.md"]))
-    documents.update(discover_documents(workspace_root / "n00-horizons" / "jobs", ["README.md"]))
+    documents.update(
+        discover_documents(workspace_root / "n00-horizons" / "ideas", ["README.md"])
+    )
+    documents.update(
+        discover_documents(workspace_root / "n00-horizons" / "jobs", ["README.md"])
+    )
     documents.update(
         discover_documents(
-            workspace_root / "n00-horizons" / "learning-log", ["LL-*.md"], recursive=False
+            workspace_root / "n00-horizons" / "learning-log",
+            ["LL-*.md"],
+            recursive=False,
         )
     )
-    documents.update(discover_documents(org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"]))
+    documents.update(
+        discover_documents(
+            org_root / "n00tropic_HQ" / "98. Internal-Projects", ["*.md"]
+        )
+    )
     return sorted(documents)
 
 
@@ -306,7 +353,11 @@ def capture(path: Path, registry_path: Path) -> Dict[str, object]:
     )
     original_tags = document.payload.get("tags")
     normalised_tags = payload.get("tags")
-    if isinstance(original_tags, list) and normalised_tags and original_tags != normalised_tags:
+    if (
+        isinstance(original_tags, list)
+        and normalised_tags
+        and original_tags != normalised_tags
+    ):
         updated_payload = dict(document.payload)
         updated_payload["tags"] = normalised_tags
         write_metadata(document, updated_payload)
@@ -490,7 +541,7 @@ def sync_erpnext(path: Path, registry_path: Path) -> Dict[str, object]:
 
 def yaml_dump(data: Mapping[str, Any]) -> str:
     if yaml is None:
-        raise RuntimeError("PyYAML is required. Install with `pip install pyyaml`." )
+        raise RuntimeError("PyYAML is required. Install with `pip install pyyaml`.")
     return yaml.safe_dump(data, sort_keys=False).strip()
 
 
@@ -630,7 +681,9 @@ def record_job(
             else datetime.now(timezone.utc)
         ).date()
     )
-    tag_set = list(dict.fromkeys((tags or []) + ["delivery/job", "governance/project-management"]))
+    tag_set = list(
+        dict.fromkeys((tags or []) + ["delivery/job", "governance/project-management"])
+    )
 
     metadata = {
         "id": identifier,
@@ -753,7 +806,9 @@ def ingest_markdown(
         payload = {}
 
     review_date = (
-        format_calendar_date((datetime.now(timezone.utc) + timedelta(days=review_days)).date())
+        format_calendar_date(
+            (datetime.now(timezone.utc) + timedelta(days=review_days)).date()
+        )
         if review_days > 0
         else None
     )
@@ -777,13 +832,16 @@ def ingest_markdown(
             "sponsors": sponsors or [],
             "source": source or "ingested",
             "tags": default_tags,
-            "review_date": review_date or format_calendar_date(datetime.now(timezone.utc).date()),
+            "review_date": review_date
+            or format_calendar_date(datetime.now(timezone.utc).date()),
             "erpnext_project": erpnext_project,
             "github_project": github_project,
             "links": [],
         }
         original = resolved.read_text(encoding="utf-8")
-        resolved.write_text(f"---\n{yaml_dump(metadata)}\n---\n" + original, encoding="utf-8")
+        resolved.write_text(
+            f"---\n{yaml_dump(metadata)}\n---\n" + original, encoding="utf-8"
+        )
         emit_progress(
             "ingest.front_matter",
             "Inserted metadata front matter",
@@ -877,8 +935,12 @@ def write_artifact(result: Dict[str, object]) -> None:
     artifact_dir = org_root / ".dev" / "automation" / "artifacts" / "project-sync"
     artifact_dir.mkdir(parents=True, exist_ok=True)
     action_str = str(result.get("action", "run"))
-    artifact_path = artifact_dir / f"{result.get('id')}-{action_str.replace('.', '_')}.json"
-    artifact_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    artifact_path = (
+        artifact_dir / f"{result.get('id')}-{action_str.replace('.', '_')}.json"
+    )
+    artifact_path.write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     result["artifactPath"] = str(artifact_path)
 
 
@@ -919,9 +981,13 @@ def preflight(path: Path, registry_path: Path) -> Dict[str, object]:
         duplicates = find_duplicate_ids(documents)
         if payload.get("id") in duplicates:
             dupe_paths = [
-                str(doc.path) for doc in documents if (doc.payload.get("id") == payload.get("id"))
+                str(doc.path)
+                for doc in documents
+                if (doc.payload.get("id") == payload.get("id"))
             ]
-            issues.append(f"duplicate id '{payload.get('id')}' present in: {', '.join(dupe_paths)}")
+            issues.append(
+                f"duplicate id '{payload.get('id')}' present in: {', '.join(dupe_paths)}"
+            )
     except Exception as exc:  # pragma: no cover - defensive
         advisories.append(f"duplicate detection skipped: {exc}")
 
@@ -971,7 +1037,9 @@ def preflight(path: Path, registry_path: Path) -> Dict[str, object]:
         },
     ]
 
-    status = "attention" if issues or any(run["status"] != "ok" for run in runs) else "ok"
+    status = (
+        "attention" if issues or any(run["status"] != "ok" for run in runs) else "ok"
+    )
 
     result = {
         "action": "preflight",
@@ -990,7 +1058,11 @@ def preflight(path: Path, registry_path: Path) -> Dict[str, object]:
     emit_progress(
         "preflight.complete",
         "Preflight checks complete",
-        {"id": result.get("id"), "status": result.get("status"), "issueCount": len(issues)},
+        {
+            "id": result.get("id"),
+            "status": result.get("status"),
+            "issueCount": len(issues),
+        },
     )
     return result
 
@@ -1025,7 +1097,9 @@ def batch_preflight(paths: Sequence[Path], registry_path: Path) -> Dict[str, obj
     error_count = 0
 
     for path in deduped:
-        emit_progress("batch.preflight.run", "Processing metadata document", {"path": path})
+        emit_progress(
+            "batch.preflight.run", "Processing metadata document", {"path": path}
+        )
         if not path.exists():
             error_count += 1
             summary.append(
@@ -1115,7 +1189,9 @@ def parse_link_spec(spec: str) -> Dict[str, str]:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Project orchestration driver for n00t.")
+    parser = argparse.ArgumentParser(
+        description="Project orchestration driver for n00t."
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     def add_common(subparser: argparse.ArgumentParser) -> None:
@@ -1132,10 +1208,13 @@ def parse_args() -> argparse.Namespace:
             help="Optional override for the registry location.",
         )
 
-    add_common(subparsers.add_parser("capture", help="Validate metadata and register it."))
+    add_common(
+        subparsers.add_parser("capture", help="Validate metadata and register it.")
+    )
     add_common(
         subparsers.add_parser(
-            "sync-github", help="Plan GitHub synchronisation using metadata as the source of truth."
+            "sync-github",
+            help="Plan GitHub synchronisation using metadata as the source of truth.",
         )
     )
     add_common(
@@ -1176,14 +1255,18 @@ def parse_args() -> argparse.Namespace:
         "record-idea", help="Create a new idea stub with metadata and register it."
     )
     record_parser.add_argument("--title", required=True, help="Idea title.")
-    record_parser.add_argument("--owner", required=True, help="Primary owner for the idea.")
+    record_parser.add_argument(
+        "--owner", required=True, help="Primary owner for the idea."
+    )
     record_parser.add_argument(
         "--tags", nargs="*", default=[], help="Optional tags aligned with the taxonomy."
     )
     record_parser.add_argument(
         "--sponsors", nargs="*", default=[], help="Sponsor teams or reviewers."
     )
-    record_parser.add_argument("--source", default="internal", help="Source descriptor.")
+    record_parser.add_argument(
+        "--source", default="internal", help="Source descriptor."
+    )
     record_parser.add_argument(
         "--review-days",
         type=int,
@@ -1202,7 +1285,9 @@ def parse_args() -> argparse.Namespace:
     record_job_parser.add_argument(
         "--sponsors", nargs="*", default=[], help="Sponsor teams or reviewers."
     )
-    record_job_parser.add_argument("--source", default="internal", help="Source descriptor.")
+    record_job_parser.add_argument(
+        "--source", default="internal", help="Source descriptor."
+    )
     record_job_parser.add_argument(
         "--review-days",
         type=int,
@@ -1238,7 +1323,9 @@ def parse_args() -> argparse.Namespace:
         "ingest-markdown",
         help="Attach metadata to an existing markdown document and register it.",
     )
-    ingest_parser.add_argument("--path", type=Path, required=True, help="Document path.")
+    ingest_parser.add_argument(
+        "--path", type=Path, required=True, help="Document path."
+    )
     ingest_parser.add_argument(
         "--kind",
         choices=["idea", "project", "learn", "issue", "job"],
@@ -1246,14 +1333,21 @@ def parse_args() -> argparse.Namespace:
         help="Classification used to derive metadata defaults.",
     )
     ingest_parser.add_argument("--owner", help="Owner override.")
-    ingest_parser.add_argument("--tags", nargs="*", default=[], help="Optional tags list.")
+    ingest_parser.add_argument(
+        "--tags", nargs="*", default=[], help="Optional tags list."
+    )
     ingest_parser.add_argument("--status", help="Status override.")
     ingest_parser.add_argument("--lifecycle", help="Lifecycle stage override.")
     ingest_parser.add_argument(
-        "--review-days", type=int, default=30, help="Review window used when inserting metadata."
+        "--review-days",
+        type=int,
+        default=30,
+        help="Review window used when inserting metadata.",
     )
     ingest_parser.add_argument("--id", help="Explicit metadata identifier.")
-    ingest_parser.add_argument("--sponsors", nargs="*", default=[], help="Sponsor list.")
+    ingest_parser.add_argument(
+        "--sponsors", nargs="*", default=[], help="Sponsor list."
+    )
     ingest_parser.add_argument("--source", help="Source descriptor.")
     ingest_parser.add_argument("--erpnext-project", help="ERPNext project code.")
     ingest_parser.add_argument("--github-project", help="GitHub project URL.")
@@ -1264,7 +1358,9 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     _, workspace_root, _ = resolve_roots()
-    default_registry = workspace_root / "n00-cortex" / "data" / "catalog" / "projects.json"
+    default_registry = (
+        workspace_root / "n00-cortex" / "data" / "catalog" / "projects.json"
+    )
 
     emit_progress(
         "cli.start",
@@ -1273,9 +1369,7 @@ def main() -> int:
     )
     try:
         if args.command in {"capture", "sync-github", "sync-erpnext", "preflight"}:
-            registry = (
-                args.registry if args.registry else default_registry
-            )
+            registry = args.registry if args.registry else default_registry
             path = args.path.resolve()
             if args.command == "capture":
                 result = capture(path, registry)
@@ -1345,16 +1439,22 @@ def main() -> int:
             title = args.title or from_title
             owner = args.owner or from_owner
             if not title or not owner:
-                raise SystemExit("record-job requires --title/--owner or a --from brief providing them.")
+                raise SystemExit(
+                    "record-job requires --title/--owner or a --from brief providing them."
+                )
             result = record_job(
                 registry_path=default_registry,
                 title=title,
                 owner=owner,
                 tags=list(dict.fromkeys((args.tags or []) + (from_tags or []))),
-                sponsors=list(dict.fromkeys((args.sponsors or []) + (from_sponsors or []))),
+                sponsors=list(
+                    dict.fromkeys((args.sponsors or []) + (from_sponsors or []))
+                ),
                 source=args.source or from_source or "internal",
                 review_days=args.review_days,
-                review_date_override=str(from_review_date) if from_review_date else None,
+                review_date_override=(
+                    str(from_review_date) if from_review_date else None
+                ),
                 status=args.status,
                 lifecycle=args.lifecycle,
                 erpnext_project=args.erpnext_project or from_erp,
@@ -1381,7 +1481,9 @@ def main() -> int:
             raise RuntimeError(f"Unsupported command: {args.command}")
     except (MetadataLoadError, RuntimeError) as exc:
         print(f"ERROR: {exc}")
-        emit_progress("cli.error", "Command failed", {"command": args.command, "error": str(exc)})
+        emit_progress(
+            "cli.error", "Command failed", {"command": args.command, "error": str(exc)}
+        )
         return 1
 
     write_artifact(result)
