@@ -123,6 +123,15 @@ SUBREPO_CONTEXT = {
         / "n00plicate"
         / "scripts",
     },
+    "n00menon": {
+        "path": WORKSPACE_ROOT / "n00menon",
+        "language": "node",
+        "pkg": "pnpm",
+        "venv": None,
+        "cli": "pnpm -C n00menon run validate",
+        "tooling": None,
+        "scripts_dir": WORKSPACE_ROOT / "scripts",
+    },
     "n00t": {
         "path": WORKSPACE_ROOT / "n00t",
         "language": "node",
@@ -336,6 +345,27 @@ PROJECT_COMMAND_SCRIPTS = {
 }
 
 
+def handle_docs_sync(_: argparse.Namespace) -> None:
+    """Run the superproject docs sync (submodule refresh + n00menon sync/build)."""
+
+    script = SCRIPTS_ROOT / "docs-sync-super.sh"
+    if not script.exists():
+        raise SystemExit(f"Docs sync script missing: {script}")
+    run([str(script)], cwd=ORG_ROOT)
+
+
+def handle_docs_verify(_: argparse.Namespace) -> None:
+    """Run docs verification (Vale/Lychee/attrs) via n00menon and workspace helpers."""
+
+    run_workspace_script("docs-verify.sh")
+
+
+def handle_docs_lint(_: argparse.Namespace) -> None:
+    """Run docs linting (cspell + Vale + Lychee) across workspace."""
+
+    run_workspace_script("docs-lint.sh")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="n00tropic cerebrum orchestrator")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -356,6 +386,19 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser(
         "control-panel", help="Regenerate the control panel snapshot."
+    )
+
+    subparsers.add_parser(
+        "docs-sync",
+        help="Refresh docs: update submodules, sync n00menon surfaces, build, format.",
+    )
+    subparsers.add_parser(
+        "docs-verify",
+        help="Run fast docs verification (sync check + attrs + link checks).",
+    )
+    subparsers.add_parser(
+        "docs-lint",
+        help="Run spell/style/link linting across docs surfaces (workspace + n00menon).",
     )
 
     autofix_parser = subparsers.add_parser(
@@ -687,6 +730,9 @@ COMMAND_HANDLERS = {
     "remotes": handle_remotes,
     "bootstrap": handle_bootstrap,
     "repo-context": lambda _: generate_repo_context_artifact(),
+    "docs-sync": handle_docs_sync,
+    "docs-verify": handle_docs_verify,
+    "docs-lint": handle_docs_lint,
 }
 
 
