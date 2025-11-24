@@ -341,6 +341,8 @@ def build_report(args: argparse.Namespace) -> Dict[str, object]:
         logs.extend(run_meta_check(ROOT))
     if args.repo_cmd:
         logs.extend(run_repo_commands(args.repo_cmd, modules))
+    if args.auto_remediate:
+        run_auto_remediate(modules, logs)
     root_status, submodule_statuses = snapshot_workspace(modules)
     if args.clean_untracked:
         logs.extend(clean_untracked_entries([root_status, *submodule_statuses]))
@@ -349,6 +351,7 @@ def build_report(args: argparse.Namespace) -> Dict[str, object]:
         "root": root_status,
         "submodules": submodule_statuses,
         "logs": logs,
+        "fix_plan": logs[-10:] if logs else [],
         "manifest": {
             "meta": manifest_payload.get("meta", {}),
             "repos": modules,
@@ -455,6 +458,36 @@ def apply_payload_overrides(args: argparse.Namespace) -> argparse.Namespace:
         _apply_bool_override(args, overrides, "publishArtifact", "publish_artifact")
         _apply_bool_override(args, overrides, "strict", "strict")
     return args
+
+
+def run_auto_remediate(modules: List[Dict[str, str]], logs: List[str]) -> None:
+    """Perform safe, opinionated fixes when requested."""
+
+    # 1) Apply skeleton fixes (creates required dirs/stubs, backfills manifest)
+    skeleton_script = ROOT / ".dev" / "automation" / "scripts" / "check-workspace-skeleton.py"
+    if skeleton_script.exists():
+        logs.append("[auto] skeleton apply")
+        _run_command(["python3", str(skeleton_script), "--apply"], ROOT)
+
+    # 2) Sync submodules
+    logs.extend(sync_submodules(ROOT))
+
+    # 3) Safe clean untracked in root/submodules (allowlist via clean_untracked_entries)
+    root_status, submodule_statuses = snapshot_workspace(modules)
+    logs.extend(clean_untracked_entries([root_status, *submodule_statuses]))
+
+    # 4) Optionally ensure default branches exist (best-effort)
+    for module in modules:
+        repo_path = ROOT / module.get("path", module.get("name"))
+        for branch in (module.get("branches") or []):
+            if not branch:
+                continue
+            res = run_git(["show-ref", f"refs/heads/{branch}"], repo_path)
+            if res.returncode != 0:
+                logs.append(f"[auto] creating missing branch {branch} in {repo_path}")
+                run_git(["branch", branch], repo_path)
+
+    logs.append("[auto] remediation complete")
 
 
 def publish_json_artifact(payload: Dict[str, object], args: argparse.Namespace) -> None:
@@ -657,6 +690,11 @@ def main() -> int:
         "--publish-artifact",
         action="store_true",
         help="Persist workspace-health.json under artifacts/ for AI/agent consumers.",
+    )
+    parser.add_argument(
+        "--auto-remediate",
+        action="store_true",
+        help="Apply safe fixes (skeleton apply, submodule sync, safe clean, branch ensure)",
     )
     parser.add_argument(
         "--diagnostic",
