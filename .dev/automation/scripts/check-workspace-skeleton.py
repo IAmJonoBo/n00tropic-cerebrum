@@ -58,10 +58,35 @@ def ensure_dir(path: Path, apply: bool) -> bool:
     return True
 
 
+def scaffold_stub(path: Path, apply: bool) -> List[str]:
+    """Create minimal stub files for commonly-required dirs (docs, scripts)."""
+
+    created: List[str] = []
+    if not apply:
+        return created
+
+    if path.name == "docs":
+        readme = path / "README.md"
+        if not readme.exists():
+            readme.write_text("# Docs\n\nWorkspace docs placeholder.\n", encoding="utf-8")
+            created.append(str(readme))
+
+    if path.name == "scripts":
+        runner = path / "README.md"
+        if not runner.exists():
+            runner.write_text(
+                "# Scripts\n\nAdd automation entrypoints here; surfaced via n00t capabilities.\n",
+                encoding="utf-8",
+            )
+            created.append(str(runner))
+
+    return created
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--apply", action="store_true", help="Create missing directories + .gitkeep."
+        "--apply", action="store_true", help="Create missing directories + stubs and backfill manifest entries."
     )
     parser.add_argument(
         "--bootstrap",
@@ -115,10 +140,19 @@ def main() -> int:
     }
 
     missing_manifest: List[str] = []
+    generated_manifest_entries: List[dict] = []
 
     for mod_name in set(present_gitmodules.keys()) | set(present_git_roots.keys()):
         if mod_name not in repos_obj:
             missing_manifest.append(mod_name)
+            if args.apply:
+                repos_obj[mod_name] = {
+                    "path": present_gitmodules.get(mod_name, mod_name),
+                    "required": manifest_defaults.get("required", []),
+                    "branches": manifest_defaults.get("branches", []),
+                    "role": "unknown",
+                }
+                generated_manifest_entries.append(repos_obj[mod_name] | {"name": mod_name})
 
     summary: Dict[str, object] = {"status": "ok", "repos": []}
     missing_total = 0
@@ -133,10 +167,12 @@ def main() -> int:
             continue
         repo_root = (org_root / str(rel_path)).resolve()
         repo_missing: List[str] = []
+        created_stubs: List[str] = []
         for req in required:
             req_path = repo_root / req
             if ensure_dir(req_path, args.apply):
                 repo_missing.append(str(req_path))
+            created_stubs.extend(scaffold_stub(req_path, args.apply))
 
         branch_missing: List[str] = []
         if expected_branches:
@@ -170,12 +206,28 @@ def main() -> int:
                 "missing": repo_missing,
                 "missing_branches": branch_missing,
                 "role": spec.get("role"),
+                "created_stubs": created_stubs,
             }
         )
 
     if missing_manifest:
         summary["status"] = "attention"
         summary["missing_manifest_entries"] = sorted(missing_manifest)
+        if args.apply and generated_manifest_entries:
+            summary["generated_manifest_entries"] = generated_manifest_entries
+            try:
+                payload = load_manifest() or {}
+                repos = payload.get("repos") or []
+                repos.extend(generated_manifest_entries)
+                payload["repos"] = repos
+                MANIFEST_PATH.write_text(
+                    json.dumps(payload, indent=2, sort_keys=False) + "\n",
+                    encoding="utf-8",
+                )
+            except Exception as exc:  # pragma: no cover - defensive write
+                summary.setdefault("errors", []).append(
+                    f"failed to write manifest: {exc}"
+                )
 
     print(json.dumps(summary, indent=2))
 
