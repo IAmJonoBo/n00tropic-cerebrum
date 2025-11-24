@@ -12,6 +12,23 @@ from typing import Dict, List
 
 import yaml
 
+
+def parse_gitmodules(path: Path) -> List[Dict[str, str]]:
+    modules: List[Dict[str, str]] = []
+    if not path.exists():
+        return modules
+    current: Dict[str, str] | None = None
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        raw = raw.strip()
+        if raw.startswith("[submodule"):
+            name = raw.split('"')[1]
+            current = {"name": name}
+            modules.append(current)
+        elif "=" in raw and current is not None:
+            key, value = [item.strip() for item in raw.split("=", maxsplit=1)]
+            current[key] = value
+    return modules
+
 MANIFEST_PATH = Path(__file__).resolve().parents[3] / "automation" / "workspace.manifest.json"
 
 
@@ -58,6 +75,7 @@ def main() -> int:
     # Prefer JSON manifest; fall back to YAML skeleton for required paths/branches.
     manifest_payload = load_manifest()
     manifest_repos = manifest_payload.get("repos") or []
+    manifest_defaults = (manifest_payload.get("meta") or {}).get("defaults", {})
 
     skeleton_path = org_root / ".dev" / "automation" / "workspace-skeleton.yaml"
     skeleton_payload = load_skeleton(skeleton_path)
@@ -73,16 +91,34 @@ def main() -> int:
             continue
         repos_obj[name] = {
             "path": entry.get("path"),
-            "required": [],
-            "branches": entry.get("branches", []),
+            "required": entry.get("required") if "required" in entry else manifest_defaults.get("required") or [],
+            "branches": entry.get("branches") if "branches" in entry else manifest_defaults.get("branches") or [],
+            "role": entry.get("role"),
         }
 
     for name, spec in skeleton_repos.items():
         merged = repos_obj.setdefault(name, {})
         if "path" not in merged and spec.get("path"):
             merged["path"] = spec.get("path")
-        merged["required"] = spec.get("required") or merged.get("required") or []
-        merged["branches"] = spec.get("branches") or merged.get("branches") or []
+        merged["required"] = spec.get("required") if "required" in spec else merged.get("required") or manifest_defaults.get("required") or []
+        merged["branches"] = spec.get("branches") if "branches" in spec else merged.get("branches") or manifest_defaults.get("branches") or []
+
+    # detect repos present on disk or in gitmodules but missing from manifest
+    present_gitmodules = {
+        mod.get("name"): mod.get("path", mod.get("name"))
+        for mod in parse_gitmodules(org_root / ".gitmodules")
+    }
+    present_git_roots = {
+        p.name: p
+        for p in org_root.iterdir()
+        if (p / ".git").exists() and p.is_dir()
+    }
+
+    missing_manifest: List[str] = []
+
+    for mod_name in set(present_gitmodules.keys()) | set(present_git_roots.keys()):
+        if mod_name not in repos_obj:
+            missing_manifest.append(mod_name)
 
     summary: Dict[str, object] = {"status": "ok", "repos": []}
     missing_total = 0
@@ -133,8 +169,13 @@ def main() -> int:
                 "path": str(repo_root),
                 "missing": repo_missing,
                 "missing_branches": branch_missing,
+                "role": spec.get("role"),
             }
         )
+
+    if missing_manifest:
+        summary["status"] = "attention"
+        summary["missing_manifest_entries"] = sorted(missing_manifest)
 
     print(json.dumps(summary, indent=2))
 

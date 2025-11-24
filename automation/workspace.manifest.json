@@ -4,8 +4,16 @@
     "docs_ssot": "n00menon",
     "schemas_enforcer": "n00-cortex",
     "notes": [
-      "n00-frontiers is the canonical source for standards/templates; n00-cortex enforces schemas derived from it; n00menon is the docs SSoT."
-    ]
+      "n00-frontiers is the canonical source for standards/templates; n00-cortex enforces schemas derived from it; n00menon is the docs SSoT.",
+      "All new repos should declare their role, required directories, and default branches here to stay evergreen."
+    ],
+    "defaults": {
+      "required": [
+        "docs",
+        "scripts"
+      ],
+      "branches": ["main", "docs"]
+    }
   },
   "repos": [
     {
@@ -55,7 +63,8 @@
       "cli": "pnpm exec ts-node cli/index.ts",
       "tooling": "tooling",
       "scripts_dir": "n00-dashboard/.dev/n00-dashboard/scripts",
-      "role": "dashboard-ui"
+      "role": "dashboard-ui",
+      "required": []
     },
     {
       "name": "n00-horizons",

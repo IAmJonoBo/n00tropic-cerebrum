@@ -203,25 +203,36 @@ def parse_gitmodules(path: Path) -> List[Dict[str, str]]:
     return modules
 
 
-def load_manifest_repos() -> List[Dict[str, str]]:
+def load_manifest_payload() -> Dict[str, object]:
     if not MANIFEST_PATH.exists():
-        return []
+        return {}
     try:
-        payload = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
-        repos = payload.get("repos", [])
-        result: List[Dict[str, str]] = []
-        for entry in repos:
-            if not isinstance(entry, dict):
-                continue
-            name = entry.get("name")
-            path = entry.get("path")
-            if not name or not path:
-                continue
-            result.append({"name": name, "path": path})
-        return result
+        return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     except Exception as exc:  # pragma: no cover - defensive init
-        logging.debug("failed to load manifest repos: %s", exc)
-        return []
+        logging.debug("failed to load manifest: %s", exc)
+        return {}
+
+
+def load_manifest_repos() -> List[Dict[str, str]]:
+    payload = load_manifest_payload()
+    repos = payload.get("repos", []) if isinstance(payload, dict) else []
+    result: List[Dict[str, str]] = []
+    for entry in repos:
+        if not isinstance(entry, dict):
+            continue
+        name = entry.get("name")
+        path = entry.get("path")
+        if not name or not path:
+            continue
+        result.append(
+            {
+                "name": name,
+                "path": path,
+                "role": entry.get("role"),
+                "ssot_for": entry.get("ssot_for", []),
+            }
+        )
+    return result
 
 
 def _run_command(cmd: Sequence[str], cwd: Path) -> List[str]:
@@ -304,7 +315,17 @@ def run_repo_commands(
 
 
 def build_report(args: argparse.Namespace) -> Dict[str, object]:
+    manifest_payload = load_manifest_payload()
     modules = load_manifest_repos() or parse_gitmodules(ROOT / ".gitmodules")
+    manifest_names = {m.get("name") for m in modules if isinstance(m, dict)}
+    present_git_roots = {
+        p.name: str(p)
+        for p in ROOT.iterdir()
+        if (p / ".git").exists() and p.is_dir()
+    }
+    missing_manifest_entries = sorted(
+        name for name in present_git_roots.keys() if name not in manifest_names
+    )
     logs: List[str] = []
     if args.fix_all or args.sync_submodules:
         logs.extend(sync_submodules(ROOT))
@@ -322,6 +343,11 @@ def build_report(args: argparse.Namespace) -> Dict[str, object]:
         "root": root_status,
         "submodules": submodule_statuses,
         "logs": logs,
+        "manifest": {
+            "meta": manifest_payload.get("meta", {}),
+            "repos": modules,
+            "missing_entries": missing_manifest_entries,
+        },
     }
     # Add a summary field for simple diagnostic checks
     # short string used to detect run failures in logs
