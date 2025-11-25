@@ -65,6 +65,7 @@
     "docs:tag-enforce": "node scripts/enforce-doc-tags.mjs",
     "docs:tag-enforce:dry": "node scripts/enforce-doc-tags.mjs --dry-run",
     "docs:tag-summary": "node scripts/tag-summary.mjs",
+    "docs:tag-suggest": "node scripts/generate-doc-tags.mjs",
     "docker:sync": "node scripts/docker-sync.mjs",
     "validate-docs": "node scripts/validate-docs.mjs",
     "docs:lint": "pnpm run docs:tag-enforce && pnpm run validate-docs && pnpm run docs:asciidoc-lint",
