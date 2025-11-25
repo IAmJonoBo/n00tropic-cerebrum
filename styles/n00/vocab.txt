@@ -92,4 +92,10 @@ env
 envs
 gitlinks
 gitmodules
+autoformat
+autofix
+rebuildable
+composable
+cookiecutters
+dlx
 uv

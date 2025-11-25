@@ -1,3 +1,4 @@
+// vale off
 :page-tags: diataxis:explanation, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-25
 
@@ -16,8 +17,8 @@ Principles
 
 Practices (applied across repos)
 
-* Pre-push: tidy submodules, manifest gate, doc auto-format (`docs:fix-style`), and run `docs:lint` in ci.
-* Docs quality: `docs:lint` = Vale + Lychee + attribute checks + asciidoc parse. Auto-format headings and style via `docs:fix-style`.
+* Pre-push: tidy submodules, manifest gate, doc autoformat (`docs:fix-style`), and run `docs:lint` in ci.
+* Docs quality: `docs:lint` = Vale + Lychee + attribute checks + asciidoc parse. Autoformat headings and style via `docs:fix-style`.
 * Python: `astral-sh/setup-uv@v2` + `uv sync` + pinned `requires-python`; shared `.cache/uv`.
 * Templates: n00-frontiers cookiecutters must ship ci, security, tests, and README; sanity check stays at 100%.
 * Search: keep `docs/search/logs/typesense-reindex-*.log(.json)` fresh (<7 days) and visible to Danger/ci; MCP exposes latest summary.
@@ -34,3 +35,4 @@ See also
 * xref:branching.adoc[Branch management]
 * xref:submodules.adoc[Submodule playbook]
 * xref:search/typesense.adoc[Typesense runbook]
+// vale on

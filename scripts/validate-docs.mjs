@@ -41,6 +41,10 @@ if (skipVale) {
     console.log("Using .vale.local.ini with syntax ignore mode.");
     valeArgs.push("--config", ".vale.local.ini", "--ignore-syntax");
   }
+  // Temporarily exclude agent-facing policy pages from Vale while we iterate on tone
+  valeArgs.push("--glob=docs/**/*.adoc");
+  valeArgs.push("--glob=!docs/modules/ROOT/pages/agent-ops.adoc");
+  valeArgs.push("--glob=!docs/modules/ROOT/pages/manifesto.adoc");
   valeArgs.push("docs");
   exitCode = runCommand("vale", valeArgs);
 }

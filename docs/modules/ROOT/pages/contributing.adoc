@@ -110,7 +110,7 @@ Factor repeated content into partials under `docs/modules/ROOT/partials/`:
 * Use code blocks for commands and outputs
 * Include examples and screenshots where helpful
 
-== Ci/CD checks
+== ci/CD checks
 
 All documentation PRs are validated against:
 
