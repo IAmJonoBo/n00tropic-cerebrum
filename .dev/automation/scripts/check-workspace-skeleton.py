@@ -70,6 +70,10 @@ def scaffold_stub(path: Path, apply: bool) -> List[str]:
         if not readme.exists():
             readme.write_text("# Docs\n\nWorkspace docs placeholder.\n", encoding="utf-8")
             created.append(str(readme))
+        tags = path / "TAGS.md"
+        if not tags.exists():
+            tags.write_text("<!-- Tag propagation placeholder -->\n", encoding="utf-8")
+            created.append(str(tags))
 
     if path.name == "scripts":
         runner = path / "README.md"
@@ -79,6 +83,14 @@ def scaffold_stub(path: Path, apply: bool) -> List[str]:
                 encoding="utf-8",
             )
             created.append(str(runner))
+        hook = path / "install-hooks.sh"
+        if not hook.exists():
+            hook.write_text(
+                "#!/usr/bin/env bash\ncd \"$(dirname \"$0\")/..\" && bash scripts/install-hooks.sh\n",
+                encoding="utf-8",
+            )
+            hook.chmod(0o755)
+            created.append(str(hook))
 
     return created
 

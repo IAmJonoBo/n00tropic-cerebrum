@@ -21,6 +21,11 @@ git -C "$ROOT_DIR" submodule sync --recursive
 log "Updating submodules"
 git -C "$ROOT_DIR" submodule update --init --recursive --jobs "$SUBMODULE_JOBS"
 
+log "Enforcing skeleton and hooks"
+python3 "$ROOT_DIR/.dev/automation/scripts/check-workspace-skeleton.py" --apply
+bash "$ROOT_DIR/scripts/install-hooks.sh"
+bash "$ROOT_DIR/scripts/tag-propagate.sh"
+
 log "Verifying superrepo layout"
 "$ROOT_DIR/scripts/check-superrepo.sh"
 

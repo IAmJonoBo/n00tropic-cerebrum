@@ -119,8 +119,9 @@ repos:
       - ".dev/n00tropic/scripts"
   n00menon:
     path: n00menon
-    branches: ["main"]
+    branches: ["main", "docs"]
     required:
       - docs
       - scripts
       - "modules/ROOT/pages"
+      - "modules/ROOT/nav.adoc"

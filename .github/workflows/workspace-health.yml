@@ -102,6 +102,10 @@ jobs:
           pnpm run trunk:sync-defs || true
           chmod +x .dev/automation/scripts/run-trunk-subrepos.sh
           .dev/automation/scripts/run-trunk-subrepos.sh --fmt || true
+      - name: Enforce doc tags across all repos
+        run: bash scripts/tag-propagate.sh
+      - name: Typesense freshness (info)
+        run: pnpm run search:freshness-check || true
       - name: Install Python linters
         run: |
           python -m pip install --upgrade pip

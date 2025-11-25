@@ -17,7 +17,10 @@ if ! bash "$ROOT_DIR/.dev/automation/scripts/manifest-gate.sh"; then
   exit 1
 fi
 
-echo "[tidy] running skeleton check (dry-run)" >&2
-python3 "$ROOT_DIR/.dev/automation/scripts/check-workspace-skeleton.py" || true
+echo "[tidy] running skeleton check (apply stubs + hooks)" >&2
+python3 "$ROOT_DIR/.dev/automation/scripts/check-workspace-skeleton.py" --apply || true
+
+echo "[tidy] enforcing doc tags across repos" >&2
+bash "$ROOT_DIR/scripts/tag-propagate.sh"
 
 echo "[tidy] done" >&2

@@ -8,11 +8,20 @@
 import { globSync } from "glob";
 import fs from "node:fs";
 
-const dryRun = process.argv.includes("--dry-run");
+const args = process.argv.slice(2);
+const dryRun = args.includes("--dry-run");
+const rootArg = args.find((a) => a.startsWith("--root="));
+const root = rootArg ? rootArg.split("=")[1] : ".";
 const today = new Date().toISOString().slice(0, 10);
 
-const files = globSync("docs/**/*.adoc", {
-  ignore: ["**/partials/**", "**/build/**", "**/logs/**", "**/.cache/**"],
+const files = globSync(`${root}/docs/**/*.adoc`, {
+  ignore: [
+    "**/partials/**",
+    "**/build/**",
+    "**/logs/**",
+    "**/.cache/**",
+    "**/node_modules/**",
+  ],
 });
 
 let changed = 0;
@@ -44,7 +53,7 @@ for (const file of files) {
     console.log(`[dry-run] Would patch ${file} -> add ${inserts.length} fields`);
   } else {
     fs.writeFileSync(file, nextLines.join("\n"), "utf8");
-    console.log(`[patched] ${file} (+${inserts.length} fields)`);
+  console.log(`[patched] ${file} (+${inserts.length} fields)`);
     changed++;
   }
 }
