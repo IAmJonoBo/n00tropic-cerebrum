@@ -26,7 +26,7 @@ This page captures concise rules to keep the superrepo and every subrepo healthy
 * Local virtual environments (`.venv/`, `venv/`) and `.ruff_cache/`, `.pytest_cache/`.
 * Package managers’ stores (`node_modules/`, `.pnpm-store/`, `.cache/`).
 
-== ci / environment notes
+== Ci / environment notes
 
 * Prefer `astral-sh/setup-uv@v2` + `uv sync` for Python in new workflows; it’s faster and cached by default.
 * Keep template workflows under `applications/scaffolder/templates/**/.github/workflows/` minimal and cache-aware so sanity checks stay at 100%.
