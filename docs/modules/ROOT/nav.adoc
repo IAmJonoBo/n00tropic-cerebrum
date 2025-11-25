@@ -15,6 +15,7 @@
 * xref:branching.adoc[Branch Management Pointer]
 * xref:manifesto.adoc[Evergreen Engineering Manifesto]
 * xref:agent-ops.adoc[Agent Operations Guide]
+* xref:++../n00man/docs/agent-registry.adoc++[Agent Registry (n00man)]
 * Legacy imports
 ** xref:++1. Cerebrum Docs/README.adoc++[Cerebrum Knowledge Hub]
 *** xref:++1. Cerebrum Docs/AI_WORKSPACE_PLAYBOOK.adoc++[AI Workspace Playbook]

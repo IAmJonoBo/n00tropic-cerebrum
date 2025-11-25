@@ -125,3 +125,13 @@ repos:
       - scripts
       - "modules/ROOT/pages"
       - "modules/ROOT/nav.adoc"
+
+  n00man:
+    path: n00man
+    branches: ["main"]
+    required:
+      - docs
+      - "docs/agents"
+      - agents
+      - scripts
+      - "modules/ROOT/nav.adoc"
