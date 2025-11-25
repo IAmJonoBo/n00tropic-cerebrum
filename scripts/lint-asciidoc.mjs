@@ -4,6 +4,7 @@
 import Asciidoctor from "@asciidoctor/core";
 import { globSync } from "glob";
 import fs from "node:fs";
+import path from "node:path";
 
 const asciidoctor = Asciidoctor();
 
@@ -29,20 +30,22 @@ let skipped = 0;
 
 for (const file of files) {
   const content = fs.readFileSync(file, "utf8");
-  if (
-    content.includes("partial$") ||
-    content.includes("example$") ||
-    content.includes("attachment$")
-  ) {
-    skipped += 1;
-    continue;
-  }
+  // Remove Antora resource includes that require the Antora pipeline to resolve
+  const sanitized = content
+    .split("\n")
+    .filter(
+      (line) =>
+        !line.match(/include::(partial|example|attachment)\$/) &&
+        !line.match(/image::(partial|example|attachment)\$/),
+    )
+    .join("\n");
   try {
-    asciidoctor.convertFile(file, {
+    asciidoctor.convert(sanitized, {
       safe: "safe",
       backend: "html5",
       to_file: false,
       mkdirs: false,
+      base_dir: path.dirname(file),
     });
   } catch (error) {
     failures += 1;
@@ -52,11 +55,11 @@ for (const file of files) {
 
 if (failures > 0) {
   console.error(
-    `AsciiDoc lint failed on ${failures} file(s); skipped ${skipped} Antora resource files.`,
+    `AsciiDoc lint failed on ${failures} file(s); sanitized Antora resource includes.`,
   );
   process.exit(1);
 }
 
 console.log(
-  `AsciiDoc lint passed for ${files.length - skipped} file(s); skipped ${skipped} Antora resource files.`,
+  `AsciiDoc lint passed for ${files.length} file(s); Antora resource includes sanitized.`,
 );
