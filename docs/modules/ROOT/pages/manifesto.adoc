@@ -23,6 +23,7 @@ Practices (applied across repos)
 * Templates: n00-frontiers cookiecutters must ship ci, security, tests, and README; sanity check stays at 100%.
 * Search: keep `docs/search/logs/typesense-reindex-*.log(.json)` fresh (<7 days) and visible to Danger/ci; MCP exposes latest summary.
 * Submodules: commit in subrepo first; then advance the pointer; never stage build artefacts or local envs.
+* Tagging and indexing: every page needs `:page-tags:` + `:reviewed:`; automation enforces defaults and keeps Typesense indexable.
 
 Agent quickstart (policy-aware)
 
@@ -35,4 +36,5 @@ See also
 * xref:branching.adoc[Branch management]
 * xref:submodules.adoc[Submodule playbook]
 * xref:search/typesense.adoc[Typesense runbook]
+* xref:agent-ops.adoc[Agent operations]
 // vale on

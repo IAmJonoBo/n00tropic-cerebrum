@@ -1,3 +1,5 @@
+:page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-25
 = Sample doc
 
 This page mentions FooBar in a sentence. FooBar stores project code.

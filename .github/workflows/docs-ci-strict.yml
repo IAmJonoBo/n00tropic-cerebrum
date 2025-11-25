@@ -40,6 +40,9 @@ jobs:
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
+      - name: Enforce doc tags
+        run: pnpm run docs:tag-enforce
+
       - name: Run Vale
         run: pnpm exec vale --minAlertLevel warning docs || true
 

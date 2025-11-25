@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Enforce doc tags
+        run: pnpm run docs:tag-enforce
+
       - name: Lint docs before sync (Vale + Lychee + attrs)
         run: pnpm run docs:lint
 
