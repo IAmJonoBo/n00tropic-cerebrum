@@ -47,7 +47,11 @@ Artifacts go to `build/site/` (Lunr), Typesense collections, the log under `docs
 On macOS/WSL, `host.docker.internal` routes containers back to the host HTTP server. On Linux runners you can replace the `--network` flag with `--network host` and keep `start_urls` set to `http://127.0.0.1:8080`.
 ====
 
-== GitHub Actions integration
+// vale off(Google.Headings)
+// vale off
+== DocSearch integration in CI
+// vale on
+// vale on(Google.Headings)
 
 `.github/workflows/search-reindex.yml` builds the docs, launches a short-lived Typesense container, runs the Typesense-maintained Docker image for the DocSearch scraper (`typesense/docsearch-scraper:0.9.0`), and tears everything down. Override the endpoint by setting repository secrets (`TYPESENSE_HOST`, etc.). The workflow fails fast on documentation lint (Vale + Lychee + attribute + AsciiDoc parse checks) via `pnpm run docs:lint` before reindexing.
 

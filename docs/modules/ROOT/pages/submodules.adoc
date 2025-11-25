@@ -1,7 +1,11 @@
-= Submodule Maintenance Playbook
+// vale off(Google.Colons)
+:page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-25
+
+= Submodule maintenance playbook
 :page-role: guide
 
-This page captures the crisp rules we use to keep the superrepo and every subrepo healthy, especially when agents are driving automation.
+This page captures concise rules to keep the superrepo and every subrepo healthy, especially when agents drive automation.
 
 == Golden workflow (per change)
 
@@ -18,13 +22,13 @@ This page captures the crisp rules we use to keep the superrepo and every subrep
 
 == What to never stage
 
-* Build artifacts (e.g., `.next/`, `dist/`, `storybook-static/`, temporary `artifacts/`).
-* Local virtualenvs (`.venv/`, `venv/`) and `.ruff_cache/`, `.pytest_cache/`.
+* Build artifacts (for example, `.next/`, `dist/`, `storybook-static/`, temporary `artifacts/`).
+* Local virtual environments (`.venv/`, `venv/`) and `.ruff_cache/`, `.pytest_cache/`.
 * Package managers’ stores (`node_modules/`, `.pnpm-store/`, `.cache/`).
 
 == CI / environment notes
 
-* Prefer `astral-sh/setup-uv@v2` + `uv sync` for Python in new workflows; it is faster and cached by default.
+* Prefer `astral-sh/setup-uv@v2` + `uv sync` for Python in new workflows; it’s faster and cached by default.
 * Keep template workflows under `applications/scaffolder/templates/**/.github/workflows/` minimal and cache-aware so sanity checks stay at 100%.
 
 == Repairing drift
@@ -32,7 +36,7 @@ This page captures the crisp rules we use to keep the superrepo and every subrep
 * If a submodule shows `+` (ahead) locally, finish its push before touching the superrepo.
 * If you see accidental artifacts (for example `.next/`), delete them locally, update the subrepo’s `.gitignore`, commit, and re-point the superrepo.
 
-== n00menon (docs hub)
+== Docs hub (n00menon)
 
 `n00menon` hosts the shared docs surface. When adding cross-cutting instructions, prefer:
 

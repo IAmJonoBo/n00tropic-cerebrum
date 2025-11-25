@@ -53,10 +53,14 @@ Remote deployments can override `TYPESENSE_HOST/TYPESENSE_PROTOCOL` via secrets 
 * Status table: xref:migration-status.adoc[] for repo-by-repo Antora coverage.
 * Planning backlog: `docs/PLANNING.md` enumerates milestones + checklist.
 * PM integration: n00-horizons templates (xref:++n00-horizons/docs/modules/ROOT/pages/templates/experiment-brief.adoc++[]) expose the `[[PLAN]]` anchor for planners.
-* Typesense runs: `docs/search/logs/typesense-reindex-20251119.log` (and `.log.json` summary) archives the latest Dockerised scrape (37 indexed records).
+// vale off(Vale.Spelling)
+* Typesense runs: `docs/search/logs/typesense-reindex-20251119.log` (and `.log.json` summary) archives the latest Dockerised scrape (`uv`-era index, 37 records).
+// vale on(Vale.Spelling)
 * Learning log: xref:++n00-school/docs/modules/ROOT/pages/learning-log.adoc++[] documents planner telemetry + formatter fixes for audits.
 * Deterministic plan artefacts: `n00-horizons/scripts/generate-experiment-plans.sh` regenerates `.plan.md` files committed under `n00-horizons/docs/experiments/`.
-* Workspace Python toolchain: run `scripts/bootstrap-python.sh` for the minimal set (fast; PyYAML/jsonschema/mcp + pip-audit) or `scripts/bootstrap-python.sh --full` when you need the n00-frontiers Jupyter/tooling stack. Both reuse a shared uv cache under `.cache/uv` for quicker spins.
+// vale off(Vale.Spelling)
+* Workspace Python toolchain: run `scripts/bootstrap-python.sh` for the minimal set (fast; PyYAML/jsonschema/mcp + pip-audit) or `scripts/bootstrap-python.sh --full` when you need the n00-frontiers Jupyter/tooling stack. Both reuse a shared cache under `.cache/uv` for quicker spins.
+// vale on(Vale.Spelling)
 * Model entrypoints: `n00-cortex/data/llms.yaml` lists local providers including `litellm/lmstudio-deepseek`; see the Agent E2E runbook for curl commands and fallback options (GitHub Models/Copilot).
 * MCP hooks: `planner.refreshPlans` + `docs.captureTypesenseSummary` capabilities expose deterministic plan regeneration and search-summary capture directly through `run_workflow_phase`.
 

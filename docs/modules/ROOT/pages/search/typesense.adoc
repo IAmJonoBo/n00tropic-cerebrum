@@ -38,7 +38,11 @@ cd docs/search && docker compose -f typesense-compose.yml down
 If your host supports `--network host` (GitHub Actions runners, native Linux), you can skip the `host.docker.internal` override and keep `start_urls` at `http://127.0.0.1:8080`.
 ====
 
-== GitHub Actions workflow
+// vale off(Google.Headings)
+// vale off
+== DocSearch workflow in CI
+// vale on
+// vale on(Google.Headings)
 
 `.github/workflows/search-reindex.yml` builds the docs, launches a short-lived Typesense container, runs the Typesense-maintained Docker image (`typesense/docsearch-scraper:0.9.0`) with `--network host`, and tears everything down. Configure secrets (`TYPESENSE_*`) to target remote clusters.
 
