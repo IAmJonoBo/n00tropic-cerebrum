@@ -17,7 +17,7 @@ Fast commands
 * Install hooks everywhere: `bash scripts/install-hooks.sh`
 * Docs lint: `pnpm run docs:lint`
 * Docs auto-format: `pnpm run docs:fix-style -- --pattern "docs/**/*.adoc,n00menon/modules/**/*.adoc"`
-* Refresh Typesense locally: `pnpm exec antora antora-playbook.yml && pnpm dlx http-server build/site -p 8080 & ...` (see xref:search/typesense.adoc[]).
+* Refresh Typesense locally: `pnpm exec antora-playbook.yml && pnpm dlx http-server build/site -p 8080 & …` (see xref:search/typesense.adoc[]).
 
 Common pitfalls
 
