@@ -103,7 +103,7 @@ jobs:
           chmod +x .dev/automation/scripts/run-trunk-subrepos.sh
           .dev/automation/scripts/run-trunk-subrepos.sh --fmt || true
       - name: Enforce doc tags across all repos
-        run: bash scripts/tag-propagate.sh
+        run: bash scripts/tag-propagate.sh && pnpm run docs:tag-suggest --apply
       - name: Typesense freshness (info)
         run: pnpm run search:freshness-check || true
       - name: Install Python linters

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Suggest :page-tags: based on path heuristics and existing tags.
- * Does not write files; prints suggestions.
+ * Suggest or apply :page-tags: based on path heuristics and existing tags.
+ * Use --apply to write inferred tags into files missing :page-tags:.
  */
 import { globSync } from "glob";
 import fs from "node:fs";
@@ -10,6 +10,9 @@ import path from "node:path";
 const files = globSync("docs/modules/**/pages/**/*.adoc", {
   ignore: ["**/partials/**", "**/build/**", "**/.cache/**", "**/logs/**"],
 });
+
+const apply = process.argv.includes("--apply");
+const today = new Date().toISOString().slice(0, 10);
 
 const inferDomain = (p) => {
   const lower = p.toLowerCase();
@@ -37,13 +40,26 @@ const inferDiataxis = (p) => {
 
 for (const f of files) {
   const content = fs.readFileSync(f, "utf8");
-  const tagsLine = content.split("\n").find((l) => l.startsWith(":page-tags:"));
-  if (tagsLine) continue;
-  const inferred = [
-    inferDiataxis(f),
-    inferDomain(f),
-    inferAudience(f),
-    "stability:beta",
-  ];
-  console.log(`${f}: ${inferred.join(", ")}`);
+  const lines = content.split("\n");
+  const tagsLineIdx = lines.findIndex((l) => l.startsWith(":page-tags:"));
+  if (tagsLineIdx >= 0) continue;
+  const inferred = [inferDiataxis(f), inferDomain(f), inferAudience(f), "stability:beta"];
+  if (apply) {
+    const insertAt = lines.findIndex((l) => l.trim().startsWith("="));
+    const reviewedIdx = lines.findIndex((l) => l.startsWith(":reviewed:"));
+    const newLines = [...lines];
+    const tagsLine = `:page-tags: ${inferred.join(", ")}`;
+    if (insertAt >= 0) {
+      newLines.splice(insertAt, 0, tagsLine);
+    } else {
+      newLines.unshift(tagsLine);
+    }
+    if (reviewedIdx === -1) {
+      newLines.splice(insertAt >= 0 ? insertAt + 1 : 1, 0, `:reviewed: ${today}`);
+    }
+    fs.writeFileSync(f, newLines.join("\n"), "utf8");
+    console.log(`[applied] ${f} -> ${tagsLine}`);
+  } else {
+    console.log(`${f}: ${inferred.join(", ")}`);
+  }
 }
