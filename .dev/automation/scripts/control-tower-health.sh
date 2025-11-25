@@ -45,7 +45,11 @@ log "3/5 n00t tests"
 (cd "$ROOT/n00t" && pnpm test)
 
 log "4/5 metadata autofix"
-uv run python "$ROOT/.dev/automation/scripts/autofix-project-metadata.py" --apply || true
+if [[ -x "$ROOT/.venv-workspace/bin/python" ]]; then
+  "$ROOT/.venv-workspace/bin/python" "$ROOT/.dev/automation/scripts/autofix-project-metadata.py" --apply || true
+else
+  uv run --with pyyaml python "$ROOT/.dev/automation/scripts/autofix-project-metadata.py" --apply || true
+fi
 
 log "5/5 meta-check"
 "$ROOT/.dev/automation/scripts/meta-check.sh" --doctor --auto-fix
