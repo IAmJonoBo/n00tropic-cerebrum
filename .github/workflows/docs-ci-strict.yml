@@ -43,6 +43,9 @@ jobs:
       - name: Enforce doc tags
         run: pnpm run docs:tag-enforce
 
+      - name: Typesense freshness guard
+        run: pnpm run search:freshness-check || true
+
       - name: Run Vale
         run: pnpm exec vale --minAlertLevel warning docs || true
 

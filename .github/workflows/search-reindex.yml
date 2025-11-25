@@ -39,6 +39,10 @@ jobs:
           version: 10.23.0
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Enforce doc tags
+        run: pnpm run docs:tag-enforce
+      - name: Typesense freshness guard
+        run: pnpm run search:freshness-check
       - name: Lint docs (Vale + Lychee + attrs)
         run: pnpm run docs:lint
       - name: Build Antora site
