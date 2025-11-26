@@ -18,7 +18,7 @@ fi
 declare -i dirty=0
 
 while IFS= read -r line; do
-	submodule_path=$(awk '{print $2}' <<<"$line")
+	submodule_path="$line"
 	status_output=$(git -C "$submodule_path" status --short)
 	if [[ -n $status_output ]]; then
 		echo "[check-submodules] Detected uncommitted changes in '$submodule_path':"
