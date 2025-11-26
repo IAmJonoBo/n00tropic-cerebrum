@@ -136,6 +136,18 @@ OpenTelemetry instrumentation with semantic conventions:
 - `RAGAttributes` - Retrieval operation metrics
 - `AgentAttributes` - Multi-agent workflow tracing
 
+### MCP Federation (`n00t/packages/mcp-proxy/`)
+
+Advanced tool federation for cross-agent collaboration:
+
+| Component               | Module                   | Features                                      |
+| ----------------------- | ------------------------ | --------------------------------------------- |
+| Permission System       | `advanced_federation.py` | Capability-based ACL with rate limiting       |
+| Tool Delegation         | `advanced_federation.py` | Cross-agent tool sharing with expiration      |
+| Tool Composition        | `advanced_federation.py` | Multi-step tool chaining with context passing |
+| Agent Message Bus       | `advanced_federation.py` | Async agent-to-agent communication            |
+| Federated Agent Network | `advanced_federation.py` | Unified orchestration of all federation       |
+
 ## Cross-repo release flow
 
 ```mermaid
