@@ -2,8 +2,8 @@
 # Fetch syft into ./bin if missing. Kept out of git via .gitignore.
 set -euo pipefail
 
-ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-BIN_DIR="${ROOT_DIR}/bin"
+# Default to a cache directory without spaces to avoid installer parsing issues
+BIN_DIR="${SYFT_INSTALL_DIR:-$HOME/.cache/n00tropic-syft/bin}"
 mkdir -p "${BIN_DIR}"
 
 if command -v syft >/dev/null 2>&1; then
@@ -17,5 +17,8 @@ if [[ -x "${BIN_DIR}/syft" ]]; then
 fi
 
 echo "Installing syft to ${BIN_DIR}..."
-curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b "${BIN_DIR}"
+tmp_script=$(mktemp)
+curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh -o "$tmp_script"
+bash "$tmp_script" -b "$BIN_DIR"
+rm -f "$tmp_script"
 echo "syft installed at ${BIN_DIR}/syft"
