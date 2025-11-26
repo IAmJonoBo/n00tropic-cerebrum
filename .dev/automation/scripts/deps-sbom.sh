@@ -26,6 +26,14 @@ EOF
 }
 
 require_syft() {
+	if command -v syft >/dev/null 2>&1; then
+		return 0
+	fi
+	local fetch_script="${ROOT_DIR}/scripts/fetch-syft.sh"
+	if [[ -x ${fetch_script} ]]; then
+		echo "[deps-sbom] syft missing; running fetch-syft.sh"
+		"${fetch_script}"
+	fi
 	if ! command -v syft >/dev/null 2>&1; then
 		echo "[deps-sbom] syft is required but not found in PATH. Install via https://github.com/anchore/syft#installation." >&2
 		exit 1
