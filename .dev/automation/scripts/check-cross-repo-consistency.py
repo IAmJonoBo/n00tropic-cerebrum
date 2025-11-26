@@ -4,13 +4,14 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Tuple
+
 import argparse
 import datetime as dt
 import json
 import re
 import sys
-from pathlib import Path
-from typing import Any, Dict, Iterable, List, Tuple
 
 ROOT: Path = Path(__file__).resolve().parents[3]
 TOOLCHAIN_MANIFEST = ROOT / "n00-cortex" / "data" / "toolchain-manifest.json"
@@ -170,7 +171,10 @@ def _extract_workflow_node_version(path: Path) -> Iterable[str]:
         for line in handle:
             match = pattern.search(line)
             if match:
-                yield match.group(1)
+                val = match.group(1)
+                if "{" in val:
+                    continue
+                yield val
 
 
 def _extract_workflow_python_version(path: Path) -> Iterable[str]:
@@ -179,11 +183,17 @@ def _extract_workflow_python_version(path: Path) -> Iterable[str]:
         for line in handle:
             match = pattern.search(line)
             if match:
-                yield match.group(1)
+                val = match.group(1)
+                if "{" in val:
+                    continue
+                yield val
 
 
 def _discover_all_workflows() -> Iterable[Path]:
+    skip = {"node_modules", ".pnpm", ".git", ".dev", "artifacts"}
     for wf in ROOT.glob("**/.github/workflows/*.yml"):
+        if set(wf.parts) & skip:
+            continue
         yield wf
 
 
@@ -371,16 +381,42 @@ def main() -> int:
 
     # check for pnpm pinning in scripts and workflows
     if expected_pnpm:
+        skip_dirs = {
+            ".git",
+            "node_modules",
+            ".pnpm",
+            ".trunk",
+            "dist",
+            "build",
+            ".dev",
+            "artifacts",
+        }
+        skip_suffixes = {
+            ".md",
+            ".adoc",
+            ".txt",
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".svg",
+            ".jsonl",
+        }
         for path in sorted(ROOT.glob("**/*")):
-            if path.is_file() and (".git" not in str(path)):
-                try:
-                    for pn in _extract_pnpm_versions_in_file(path):
-                        if pn != expected_pnpm:
-                            errors.append(
-                                f"{path} references pnpm@{pn}, expected pnpm@{expected_pnpm}."
-                            )
-                except OSError:
-                    continue
+            if not path.is_file():
+                continue
+            if path.suffix in skip_suffixes:
+                continue
+            parts = set(path.parts)
+            if parts & skip_dirs:
+                continue
+            try:
+                for pn in _extract_pnpm_versions_in_file(path):
+                    if pn != expected_pnpm:
+                        errors.append(
+                            f"{path} references pnpm@{pn}, expected pnpm@{expected_pnpm}."
+                        )
+            except OSError:
+                continue
 
     canonical_payload = None
     canonical_linters: Dict[str, str | None] = {}

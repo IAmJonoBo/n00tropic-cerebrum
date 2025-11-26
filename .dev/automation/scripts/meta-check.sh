@@ -290,6 +290,10 @@ if [[ -x "$SCRIPTS_DIR/check-submodules.sh" ]]; then
 	fi
 fi
 
+if [[ -x "$SCRIPTS_DIR/workspace-health.sh" ]]; then
+	run_command "workspace-health" "Workspace git hygiene & status" "$SCRIPTS_DIR/workspace-health.sh"
+fi
+
 log "Workspace health checks completed"
 
 COMPLETED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")

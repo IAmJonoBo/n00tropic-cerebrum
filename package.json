@@ -77,17 +77,20 @@
     "trunk:check-all": "auto_dir=.dev/auto; auto_dir=\"${auto_dir}mation\"; bash ${auto_dir}/scripts/run-trunk-subrepos.sh",
     "trunk:upgrade": "bash scripts/trunk-upgrade-workspace.sh --check",
     "trunk:sync-defs": "node scripts/sync-trunk-defs.mjs",
+    "qa:workspace": "bash scripts/workspace-qa.sh",
+    "qa:workspace:full": "bash scripts/workspace-qa.sh --full",
     "tools:scan-npm": "node scripts/find-npm-usages.mjs",
     "tools:replace-npx": "node scripts/replace-npx-with-pnpm.mjs",
     "tools:check-toolchain": "node scripts/check-toolchain-pins.mjs",
+    "tools:sync-node": "bash scripts/sync-node-version.sh",
     "python:lock": "bash scripts/refresh-python-lock.sh",
     "python:lock:check": "bash scripts/refresh-python-lock.sh --check",
     "tools:sync-python-version": "bash scripts/sync-python-version.sh",
     "tools:check-runners": "node scripts/check-runners.mjs",
     "tsconfig:check": "node scripts/check-tsconfig-consistency.mjs",
     "penpot:smoke": "node n00plicate/scripts/update-penpot-images.mjs --dry-run",
-    "ui:serve": "node ui/fusion-ui-server.mjs"
-    ,"sync:ecosystem": "bash scripts/sync-ecosystem.sh"
+    "ui:serve": "node ui/fusion-ui-server.mjs",
+    "sync:ecosystem": "bash scripts/sync-ecosystem.sh"
   },
   "pnpm": {
     "overrides": {
