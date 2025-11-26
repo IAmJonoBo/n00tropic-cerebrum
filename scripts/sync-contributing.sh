@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Propagate the workspace CONTRIBUTING.md into each submodule root.
+# Propagate the workspace CONTRIBUTING.md into each submodule root and refresh the
+# VS Code workspace file so subrepos appear automatically in Explorer/SCM.
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 SOURCE="$ROOT/CONTRIBUTING.md"
+WORKSPACE_FILE="$ROOT/n00tropic-cerebrum.code-workspace"
 WRITE=0
 
 while [[ $# -gt 0 ]]; do
@@ -15,7 +17,7 @@ while [[ $# -gt 0 ]]; do
 	-h | --help)
 		cat <<'USAGE'
 Usage: scripts/sync-contributing.sh [--write]
-  --write   Actually copy the CONTRIBUTING.md into submodules (default: dry-run)
+  --write   Actually copy the CONTRIBUTING.md into submodules and rewrite the workspace file (default: dry-run)
 USAGE
 		exit 0
 		;;
@@ -36,6 +38,41 @@ submodules=$(git config -f "$ROOT/.gitmodules" --get-regexp '^submodule\..*\.pat
 if [[ -z $submodules ]]; then
 	echo "[sync-contributing] No submodules found" >&2
 	exit 0
+fi
+
+# Rebuild VS Code workspace descriptor from current submodule list
+tmp_ws=$(mktemp)
+{
+	echo '{'
+	echo '  "folders": ['
+	echo '    { "path": "." },'
+	idx=0
+	for path in $submodules; do
+		idx=$((idx + 1))
+		sep=","
+		[[ $idx -eq $(echo "$submodules" | wc -w) ]] && sep=""
+		echo "    { \"path\": \"$path\" }$sep"
+	done
+	cat <<'JSON'
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.trunk": true,
+      "**/.venv": true,
+      "**/node_modules": false
+    }
+  }
+}
+JSON
+} >"$tmp_ws"
+
+if [[ $WRITE -eq 1 ]]; then
+	mv "$tmp_ws" "$WORKSPACE_FILE"
+	echo "[sync-contributing] Regenerated VS Code workspace file"
+else
+	echo "[sync-contributing] Would regenerate VS Code workspace file (run with --write)"
+	rm "$tmp_ws"
 fi
 
 for path in $submodules; do
