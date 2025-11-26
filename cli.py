@@ -3,16 +3,16 @@
 
 from __future__ import annotations
 
+from observability import initialize_tracing
+from pathlib import Path
+from shutil import which
+from typing import Iterable, List, Optional, Tuple
+
 import argparse
 import json
 import os
 import subprocess  # nosec B404 - trusted workspace commands only
 import sys
-from pathlib import Path
-from shutil import which
-from typing import Iterable, List, Optional, Tuple
-
-from observability import initialize_tracing
 
 WORKSPACE_ROOT = Path(__file__).resolve().parent
 ORG_ROOT = WORKSPACE_ROOT.parent
@@ -116,7 +116,7 @@ _FALLBACK_SUBREPO_CONTEXT = {
         "language": "node",
         "pkg": "pnpm",
         "venv": None,
-        "cli": "pnpm exec ts-node cli/index.ts",
+        "cli": "pnpm exec tsx cli/index.ts",
         "tooling": WORKSPACE_ROOT / "n00plicate" / "tooling",
         "scripts_dir": WORKSPACE_ROOT
         / "n00plicate"
@@ -138,7 +138,7 @@ _FALLBACK_SUBREPO_CONTEXT = {
         "language": "node",
         "pkg": "pnpm",
         "venv": None,
-        "cli": "pnpm exec ts-node cli/index.ts",
+        "cli": "pnpm exec tsx cli/index.ts",
         "tooling": WORKSPACE_ROOT / "n00t" / "tooling",
         "scripts_dir": WORKSPACE_ROOT / "n00t" / ".dev" / "n00t" / "scripts",
     },
@@ -576,6 +576,74 @@ def build_parser() -> argparse.ArgumentParser:
         "health-python-lock", help="Verify uv lock freshness for workspace Python deps."
     )
 
+    deps_sbom = subparsers.add_parser(
+        "deps:sbom", help="Generate SBOMs with Syft across workspace targets."
+    )
+    deps_sbom.add_argument(
+        "--target",
+        action="append",
+        help="Optional target(s) from automation/workspace.manifest.json (repeatable).",
+    )
+    deps_sbom.add_argument(
+        "--format",
+        default="cyclonedx-json",
+        help="Syft output format (default: cyclonedx-json).",
+    )
+    deps_sbom.add_argument(
+        "--ref",
+        help="Override ref label used in output paths (defaults to git SHA or GITHUB_REF_NAME).",
+    )
+    deps_sbom.add_argument(
+        "--list",
+        action="store_true",
+        help="List detected targets without generating SBOMs.",
+    )
+
+    deps_audit = subparsers.add_parser(
+        "deps:audit",
+        help="Generate SBOMs then upload them to Dependency-Track (requires secrets).",
+    )
+    deps_audit.add_argument(
+        "--target",
+        action="append",
+        help="Optional target(s) to limit the run (repeatable).",
+    )
+    deps_audit.add_argument(
+        "--ref",
+        help="Override ref label (defaults to git SHA or GITHUB_REF_NAME).",
+    )
+    deps_audit.add_argument(
+        "--format",
+        default="cyclonedx-json",
+        help="SBOM format to generate before upload.",
+    )
+    deps_audit.add_argument(
+        "--skip-upload",
+        action="store_true",
+        help="Generate SBOMs only; skip Dependency-Track upload.",
+    )
+
+    deps_drift = subparsers.add_parser(
+        "deps:drift",
+        help="Detect dependency version drift and deprecated packages across the workspace.",
+    )
+    deps_drift.add_argument(
+        "--format",
+        choices=["json", "table", "both"],
+        default="both",
+        help="Output format (default: both).",
+    )
+
+    deps_renovate = subparsers.add_parser(
+        "deps:renovate:dry-run",
+        help="Run Renovate locally in dry-run mode (no PRs).",
+    )
+    deps_renovate.add_argument(
+        "--log-level",
+        default=os.environ.get("RENOVATE_LOG_LEVEL", "info"),
+        help="Renovate log level (default: info).",
+    )
+
     normalize_js = subparsers.add_parser(
         "normalize-js", help="Run normalize-workspace-pnpm.sh with pin enforcement."
     )
@@ -699,6 +767,47 @@ def handle_health_python_lock(_: argparse.Namespace) -> None:
     run(["pnpm", "run", "python:lock:check"], cwd=WORKSPACE_ROOT)
 
 
+def handle_deps_sbom(args: argparse.Namespace) -> None:
+    cmd = [".dev/automation/scripts/deps-sbom.sh"]
+    if args.list:
+        cmd.append("--list")
+    if args.ref:
+        cmd.extend(["--ref", args.ref])
+    if args.format:
+        cmd.extend(["--format", args.format])
+    for target in args.target or []:
+        cmd.extend(["--target", target])
+    run(cmd, cwd=WORKSPACE_ROOT)
+
+
+def handle_deps_audit(args: argparse.Namespace) -> None:
+    cmd = [".dev/automation/scripts/deps-audit.sh"]
+    if args.ref:
+        cmd.extend(["--ref", args.ref])
+    if args.format:
+        cmd.extend(["--format", args.format])
+    if args.skip_upload:
+        cmd.append("--skip-upload")
+    for target in args.target or []:
+        cmd.extend(["--target", target])
+    run(cmd, cwd=WORKSPACE_ROOT)
+
+
+def handle_deps_renovate_dry_run(args: argparse.Namespace) -> None:
+    env = os.environ.copy()
+    env["RENOVATE_LOG_LEVEL"] = args.log_level
+    run(
+        [".dev/automation/scripts/deps-renovate-dry-run.sh"],
+        cwd=WORKSPACE_ROOT,
+        env=env,
+    )
+
+
+def handle_deps_drift(args: argparse.Namespace) -> None:
+    cmd = [".dev/automation/scripts/deps-drift.py", "--format", args.format]
+    run(cmd, cwd=WORKSPACE_ROOT)
+
+
 def handle_normalize_js(args: argparse.Namespace) -> None:
     cmd = [".dev/automation/scripts/normalize-workspace-pnpm.sh"]
     if args.allow_mismatch:
@@ -795,6 +904,10 @@ COMMAND_HANDLERS = {
     "health-toolchain": handle_health_toolchain,
     "health-runners": handle_health_runners,
     "health-python-lock": handle_health_python_lock,
+    "deps:sbom": handle_deps_sbom,
+    "deps:audit": handle_deps_audit,
+    "deps:renovate:dry-run": handle_deps_renovate_dry_run,
+    "deps:drift": handle_deps_drift,
     "normalize-js": handle_normalize_js,
     "remotes": handle_remotes,
     "bootstrap": handle_bootstrap,

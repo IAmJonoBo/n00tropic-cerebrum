@@ -24,7 +24,6 @@
     "madge": "^8.0.0",
     "markdownlint-cli2": "0.19.1",
     "stylelint": "16.26.0",
-    "ts-node": "^10.9.2",
     "tsup": "^8.5.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",

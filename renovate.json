@@ -1,5 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Workspace Renovate config (uses central preset + local surfacing rules). AGENT_HOOK: dependency-management",
   "extends": ["local>renovate-presets/workspace.json"],
   "packageRules": [
     {
