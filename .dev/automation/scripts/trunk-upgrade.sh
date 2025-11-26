@@ -5,6 +5,7 @@ ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
 SCRIPTS_DIR="$ROOT/.dev/automation/scripts"
 DEFAULT_CMD_TIMEOUT="${TRUNK_CMD_TIMEOUT:-300}"
 TRUNK_INSTALL_ALLOWED="${TRUNK_INSTALL:-${CI:-0}}"
+TRUNK_INIT_MISSING="${TRUNK_INIT_MISSING:-1}"
 
 log() {
 	printf '[trunk-upgrade] %s\n' "$1"
@@ -16,12 +17,17 @@ Usage: trunk-upgrade.sh [--repo <name>]...
 
 Runs `trunk upgrade --no-progress` in every repository that contains a `.trunk/trunk.yaml`
 file. When one or more `--repo` flags are supplied, limits execution to those repositories.
+If `TRUNK_INIT_MISSING=1` (default), repositories without `.trunk/trunk.yaml` are
+auto-initialized with `trunk init --ci --yes --no-progress` to enable recommended linters
+per repo before upgrading.
 
 Environment variables:
   TRUNK_UPGRADE_FLAGS   Extra flags to pass to `trunk upgrade` (space-delimited).
   TRUNK_INSTALL         Set to 1 (or CI=1) to permit automatic CLI install when missing.
   TRUNK_INSTALL_SKIP    Set to `1` to skip the automatic installation attempt when the
                         Trunk CLI is missing.
+  TRUNK_INIT_MISSING    Default 1. When set to 1, run `trunk init --ci --yes` in repos
+                        that lack `.trunk/trunk.yaml` (per-repo recommended linters).
 USAGE
 }
 
@@ -92,6 +98,55 @@ contains_repo() {
 		fi
 	done
 	return 1
+}
+
+missing_from_manifest() {
+	local manifest="$ROOT/automation/workspace.manifest.json"
+	[[ -f $manifest ]] || return 0
+	python3 - <<'PY'
+import json, os, sys
+from pathlib import Path
+
+root = Path(os.environ["ROOT"])
+manifest = root / "automation" / "workspace.manifest.json"
+data = json.loads(manifest.read_text())
+existing = set()
+for p in sys.argv[1:]:
+    existing.add(p)
+
+paths = []
+for repo in data.get("repos", []):
+    path = repo.get("path")
+    name = repo.get("name")
+    if not path or not name:
+        continue
+    repo_path = root / path
+    if (repo_path / ".trunk" / "trunk.yaml").exists():
+        continue
+    paths.append((name, str(repo_path)))
+
+for name, path in paths:
+    print(f"{name}\t{path}")
+PY
+}
+
+ensure_trunk_init() {
+	local repo_name="$1"
+	local repo_path="$2"
+	if [[ ! -d $repo_path ]]; then
+		log "Skipping init for $repo_name (missing path $repo_path)"
+		return 1
+	fi
+	log "Initializing Trunk in $repo_name"
+	if (
+		cd "$repo_path" &&
+			TRUNK_NO_PROGRESS=1 TRUNK_DISABLE_TELEMETRY=1 TRUNK_NONINTERACTIVE=1 trunk init --ci --no-progress
+	); then
+		return 0
+	else
+		log "⚠️  trunk init failed in $repo_name"
+		return 1
+	fi
 }
 
 run_with_timeout() {
@@ -189,6 +244,21 @@ ALL_REPOS=()
 while IFS= read -r repo; do
 	[[ -n $repo ]] && ALL_REPOS+=("$repo")
 done < <(discover_repos)
+
+if [[ $TRUNK_INIT_MISSING == "1" ]]; then
+	MISSING_INIT=()
+	while IFS=$'\t' read -r name path; do
+		[[ -z $name ]] && continue
+		MISSING_INIT+=("$name::$path")
+	done < <(ROOT="$ROOT" missing_from_manifest)
+	for entry in "${MISSING_INIT[@]}"; do
+		repo_name="${entry%%::*}"
+		repo_path="${entry##*::}"
+		if ensure_trunk_init "$repo_name" "$repo_path"; then
+			ALL_REPOS+=("$repo_name")
+		fi
+	done
+fi
 
 if [[ ${#ALL_REPOS[@]} -eq 0 ]]; then
 	log "No repositories with .trunk/trunk.yaml discovered."

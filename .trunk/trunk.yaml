@@ -35,15 +35,15 @@ lint:
     - gofmt@1.25.0
     - golangci-lint2@2.6.1
     - actionlint@1.7.8
-    - bandit@1.9.1
-    - checkov@3.2.494
+    - bandit@1.9.2
+    - checkov@3.2.495
     - git-diff-check
-    - markdownlint-cli2@0.19.0
+    - markdownlint-cli2@0.19.1
     - eslint@9.39.1
     - osv-scanner@2.2.4
     - prettier@3.6.2
-    - renovate@42.19.0
-    - ruff@0.14.5
+    - renovate@42.24.0
+    - ruff@0.14.6
     - shellcheck@0.11.0
     - biome-lint
     - antora-validate
