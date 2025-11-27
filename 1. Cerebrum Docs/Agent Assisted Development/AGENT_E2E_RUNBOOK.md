@@ -156,7 +156,21 @@ To view traces locally, launch an OpenTelemetry collector (or Docker `otel/opent
      -d '{"model":"deepseek/deepseek-r1-0528-qwen3-8b","messages":[{"role":"system","content":"You are a concise assistant."},{"role":"user","content":"State the workspace name."}]}'
    ```
 
-3. `n00-cortex/data/llms.yaml` now ships the `litellm/lmstudio-deepseek` provider (air-gapped, pointing at the LM Studio server). Run planners or other tooling with:
+3. `n00-cortex/data/llms.yaml` currently ships two providers:
+   - `ollama/llama3.1-8b` (airgapped, priority 10, port 11434)
+   - `litellm/together-llama3.1` (cloud, priority 5)
+
+   To add LM Studio support, append a provider entry:
+
+   ```yaml
+   - id: litellm/lmstudio-deepseek
+     transport: litellm
+     airgapped: true
+     priority: 15
+     api_base: http://127.0.0.1:1234/v1
+   ```
+
+   Then run planners with:
 
    ```bash
    n00t plan docs/experiments/sample-brief.adoc \
