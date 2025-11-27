@@ -70,3 +70,9 @@ AI assistants (and ephemeral agent sessions) frequently attach to this filesyste
 4. When invoked via MCP, prefer `workspace.gitDoctor` so the host automatically records the output path.
 
 Following the loop above removes the guesswork around submodules, untracked files, and root vs submodule context before automation tries to run.
+
+- **Concurrency caps:** Every capability inherits `guardrails.max_concurrency` (default `1`). Bump the value when the backing script is idempotent and can safely overlap, otherwise keep it at `1` to serialize disk-heavy routines like `workspace.gitDoctor`.
+- **Output redaction:** Populate `guardrails.redact_patterns` with regexes for API keys, tokens, or client names; anything matched is swapped with `guardrails.redact_replacement` (default `[redacted]`) before stdout/stderr reach agents.
+- **Log size limits:** The server truncates stdout/stderr via `guardrails.stdout_max_bytes` / `stderr_max_bytes`. Increase these when a capability must stream structured JSON, decrease them when only final summaries matter.
+- **Telemetry tagging:** Optional `guardrails.telemetry_tags` (e.g., `{ "category": "workspace", "pii": "none" }`) travel with every start/finish event so dashboards can pivot by capability family.
+- **Runtime hooks:** Set `N00T_MCP_TELEMETRY_PATH` to capture JSONL start/finish envelopes for each capability. The file is append-only, ordered, and respects the redaction rules above, making it safe to sync into `.dev/automation/artifacts/automation/` for historical analysis.

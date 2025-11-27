@@ -136,6 +136,12 @@ Run these via `run_workflow_phase` whenever you need to refresh planner collater
 
 To view traces locally, launch an OpenTelemetry collector (or Docker `otel/opentelemetry-collector`) pointing at Honeycomb/Jaeger, then run `cli.py` commands; the spans are emitted before any sub-command logic executes.
 
+- **Concurrency:** `guardrails.max_concurrency` now provisions per-capability semaphores in `mcp/capabilities_server.py`, preventing multiple long-running scripts from exhausting runners. Set higher limits (up to 32) explicitly in `n00t/capabilities/manifest.json` when the underlying script is idempotent.
+- **Output controls:** `guardrails.stdout_max_bytes` / `guardrails.stderr_max_bytes` cap captured logs per invocation, while `guardrails.redact_patterns` (regex list) replaces secrets or tokens before payloads reach MCP clients. The replacement token defaults to `[redacted]`, but you can override it via `guardrails.redact_replacement`.
+- **Telemetry tags:** Every capability can add `guardrails.telemetry_tags` (simple key/value map). Tags land inside the JSONL telemetry stream, making it trivial to pivot dashboards by area (`workspace`, `docs`, `erp`) or data-classification level.
+- **Run log hook:** Set `N00T_MCP_TELEMETRY_PATH=/path/to/mcp-runs.jsonl` to enable JSONL emission for every capability start/finish event. The server writes sorted JSON, so downstream tools can tail the file safely; leave the variable unset to disable collection.
+- **Docs alignment:** Reference the updated guardrail schema in `AI_WORKSPACE_PLAYBOOK.md` whenever you onboard a new capability so operators know which defaults they inherit and when to override them.
+
 ## Model entrypoints
 
 ### LM Studio (local OpenAI-compatible server)

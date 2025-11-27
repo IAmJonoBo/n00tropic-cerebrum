@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-from typing import Any, Iterable, List
+from typing import Any, Dict, Iterable, List
 
 DEFAULT_ENTRYPOINT_ROOTS: tuple[str, ...] = (
     ".dev/automation/scripts",
@@ -27,12 +27,50 @@ class Guardrails(BaseModel):
         default_factory=lambda: list(DEFAULT_ENTRYPOINT_ROOTS)
     )
     allow_network: bool = False
+    max_concurrency: int = Field(
+        1,
+        ge=1,
+        le=32,
+        description="Maximum concurrent executions of this capability",
+    )
+    stdout_max_bytes: int = Field(
+        8000,
+        ge=256,
+        le=65536,
+        description="Upper bound for captured stdout per run",
+    )
+    stderr_max_bytes: int = Field(
+        8000,
+        ge=256,
+        le=65536,
+        description="Upper bound for captured stderr per run",
+    )
+    redact_patterns: List[str] = Field(
+        default_factory=list,
+        description="Regex patterns to redact from stdout/stderr",
+    )
+    redact_replacement: str = Field(
+        "[redacted]",
+        min_length=3,
+        description="Replacement token for redacted stdout/stderr text",
+    )
+    telemetry_tags: Dict[str, str] = Field(
+        default_factory=dict,
+        description="Key/value tags appended to capability telemetry records",
+    )
 
     @model_validator(mode="after")
     def _dedupe_lists(self) -> "Guardrails":  # pragma: no cover - deterministic
         self.allowed_exit_codes = sorted(set(self.allowed_exit_codes))
         self.allowed_env = sorted(set(self.allowed_env))
         self.allowed_entrypoint_roots = sorted(set(self.allowed_entrypoint_roots))
+        if self.redact_patterns:
+            seen: list[str] = []
+            for pattern in self.redact_patterns:
+                if not pattern or pattern in seen:
+                    continue
+                seen.append(pattern)
+            self.redact_patterns = seen
         return self
 
 

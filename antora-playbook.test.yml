@@ -1,0 +1,26 @@
+site:
+  title: n00 Docs (Test Build)
+  start_page: n00tropic-cerebrum::index.adoc
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_paths: [docs]
+ui:
+  bundle:
+    url: ./vendor/antora/ui-bundle.zip
+antora:
+  extensions:
+    - "@antora/lunr-extension"
+asciidoc:
+  extensions:
+    - asciidoctor-kroki
+  attributes:
+    page-pagination: ""
+    sectanchors: ""
+    icons: font
+    source-highlighter: highlight.js
+    kroki-server-url: https://kroki.io
+    kroki-fetch-diagram: true
+runtime:
+  fetch: false

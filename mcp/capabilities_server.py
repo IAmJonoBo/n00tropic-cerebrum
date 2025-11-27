@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from mcp.server.fastmcp.utilities.func_metadata import ArgModelBase, FuncMetadata
 from pathlib import Path
 from pydantic import ConfigDict, create_model
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Type
+from typing import Any, Dict, Iterable, List, Optional, Pattern, Tuple, Type
 
 import argparse
 import asyncio
@@ -42,6 +42,95 @@ logging.basicConfig(level=getattr(logging, LOG_LEVEL, logging.INFO))
 logger = logging.getLogger("n00t.mcp.capabilities")
 
 mcp = None  # FastMCP will be loaded lazily
+
+try:  # best-effort OTEL hook; dependency optional at runtime
+    from observability import initialize_tracing as _initialize_tracing  # type: ignore
+except Exception:  # pragma: no cover - optional dependency
+    _initialize_tracing = None
+
+_TRACING_READY = False
+
+
+def _ensure_tracing() -> None:
+    global _TRACING_READY
+    if _TRACING_READY or _initialize_tracing is None:
+        _TRACING_READY = True
+        return
+    try:
+        _initialize_tracing("n00t.mcp.capabilities")
+    except Exception:  # pragma: no cover - tracing failures are non-fatal
+        pass
+    finally:
+        _TRACING_READY = True
+
+
+def _resolve_optional_path(raw: str | None) -> Path | None:
+    if not raw:
+        return None
+    candidate = Path(os.path.expanduser(raw))
+    if not candidate.is_absolute():
+        candidate = (REPO_ROOT / candidate).resolve()
+    return candidate
+
+
+TELEMETRY_PATH = _resolve_optional_path(os.environ.get("N00T_MCP_TELEMETRY_PATH"))
+_telemetry_lock: asyncio.Lock | None = None
+
+
+def _get_telemetry_lock() -> asyncio.Lock:
+    global _telemetry_lock
+    if _telemetry_lock is None:
+        _telemetry_lock = asyncio.Lock()
+    return _telemetry_lock
+
+
+def _append_json_line(path: Path, payload: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(payload)
+        handle.write("\n")
+
+
+async def _emit_telemetry(event: Dict[str, Any]) -> None:
+    if TELEMETRY_PATH is None:
+        return
+    payload = json.dumps(event, separators=(",", ":"), sort_keys=True)
+    lock = _get_telemetry_lock()
+    async with lock:
+        await asyncio.to_thread(_append_json_line, TELEMETRY_PATH, payload)
+
+
+def _compile_redactors(patterns: Iterable[str]) -> List[Pattern[str]]:
+    compiled: List[Pattern[str]] = []
+    for pattern in patterns:
+        candidate = pattern.strip()
+        if not candidate:
+            continue
+        try:
+            compiled.append(re.compile(candidate))
+        except re.error as exc:
+            logger.warning(
+                "guardrail_redaction_invalid",
+                extra={"pattern": pattern, "error": str(exc)},
+            )
+    return compiled
+
+
+def _apply_redaction(text: str, patterns: List[Pattern[str]], replacement: str) -> str:
+    redacted = text
+    for regex in patterns:
+        redacted = regex.sub(replacement, redacted)
+    return redacted
+
+
+def _truncate_output(text: str, limit: int) -> str:
+    if limit <= 0 or not text:
+        return ""
+    encoded = text.encode("utf-8", errors="replace")
+    if len(encoded) <= limit:
+        return text
+    trimmed = encoded[-limit:]
+    return trimmed.decode("utf-8", errors="replace")
 
 
 @dataclass
@@ -304,78 +393,127 @@ def _register_capability(module: ModuleRuntime, cap: Capability) -> None:
     entrypoint = cap.resolved_entrypoint(module.workdir, module.manifest_dir)
     summary = cap.summary
     guardrails = cap.guardrails
+    redactors = _compile_redactors(guardrails.redact_patterns)
+    semaphore: asyncio.Semaphore | None = None
+
+    def _capacity_guard() -> asyncio.Semaphore:
+        nonlocal semaphore
+        if semaphore is None:
+            semaphore = asyncio.Semaphore(max(1, guardrails.max_concurrency))
+        return semaphore
+
+    telemetry_common = {
+        "capability": cap_id,
+        "module_id": module.id,
+        "entrypoint": _relative_to_repo(entrypoint),
+        "guardrails": {
+            "maxRuntimeSeconds": guardrails.max_runtime_seconds,
+            "maxConcurrency": guardrails.max_concurrency,
+            "allowNetwork": guardrails.allow_network,
+        },
+        "tags": dict(guardrails.telemetry_tags or {}),
+    }
 
     async def _run(**kwargs: Any) -> Dict[str, Any]:
-        cmd = _build_command(entrypoint)
-        env = {k: os.environ[k] for k in guardrails.allowed_env if k in os.environ}
-        env["WORKSPACE_ROOT"] = str(REPO_ROOT)
-        env["CAPABILITY_ID"] = cap_id
-        env["CAPABILITY_MODULE"] = module.id
-        env["CAPABILITY_MANIFEST"] = _relative_to_repo(module.manifest_path)
-        env["CAPABILITY_INPUTS"] = json.dumps(kwargs)
-        for key, value in kwargs.items():
-            env[f"INPUT_{_to_upper_snake(key)}"] = str(value)
+        async with _capacity_guard():
+            cmd = _build_command(entrypoint)
+            env = {k: os.environ[k] for k in guardrails.allowed_env if k in os.environ}
+            env["WORKSPACE_ROOT"] = str(REPO_ROOT)
+            env["CAPABILITY_ID"] = cap_id
+            env["CAPABILITY_MODULE"] = module.id
+            env["CAPABILITY_MANIFEST"] = _relative_to_repo(module.manifest_path)
+            env["CAPABILITY_INPUTS"] = json.dumps(kwargs)
+            for key, value in kwargs.items():
+                env[f"INPUT_{_to_upper_snake(key)}"] = str(value)
 
-        logger.info(
-            "capability_start",
-            extra={
-                "capability": cap_id,
-                "module": module.id,
-                "command": cmd,
-                "inputs": sorted(kwargs.keys()),
-            },
-        )
-
-        proc = await asyncio.create_subprocess_exec(
-            *cmd,
-            cwd=str(module.workdir),
-            env=env,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-        timed_out = False
-        start = time.perf_counter()
-        try:
-            out_b, err_b = await asyncio.wait_for(
-                proc.communicate(), timeout=guardrails.max_runtime_seconds
+            input_keys = sorted(kwargs.keys())
+            logger.info(
+                "capability_start",
+                extra={
+                    "capability": cap_id,
+                    "module_id": module.id,
+                    "command": cmd,
+                    "inputs": input_keys,
+                },
             )
-        except asyncio.TimeoutError:
-            timed_out = True
-            proc.kill()
-            out_b, err_b = await proc.communicate()
+            await _emit_telemetry(
+                {
+                    **telemetry_common,
+                    "event": "start",
+                    "timestamp": time.time(),
+                    "inputs": input_keys,
+                }
+            )
 
-        out = out_b.decode(errors="replace")
-        err = err_b.decode(errors="replace")
-        duration = time.perf_counter() - start
-        exit_code = proc.returncode
-        exit_ok = exit_code in guardrails.allowed_exit_codes
-        status = "ok" if (exit_ok and not timed_out) else "error"
-        if timed_out:
-            status = "timeout"
+            proc = await asyncio.create_subprocess_exec(
+                *cmd,
+                cwd=str(module.workdir),
+                env=env,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            timed_out = False
+            start = time.perf_counter()
+            try:
+                out_b, err_b = await asyncio.wait_for(
+                    proc.communicate(), timeout=guardrails.max_runtime_seconds
+                )
+            except asyncio.TimeoutError:
+                timed_out = True
+                proc.kill()
+                out_b, err_b = await proc.communicate()
 
-        payload = {
-            "status": status,
-            "exitCode": exit_code,
-            "stdout": out[-8000:],
-            "stderr": err[-8000:],
-            "command": " ".join(shlex.quote(p) for p in cmd),
-            "duration": round(duration, 3),
-            "timedOut": timed_out,
-            "module": module.id,
-        }
+            out = out_b.decode(errors="replace")
+            err = err_b.decode(errors="replace")
+            out = _truncate_output(
+                _apply_redaction(out, redactors, guardrails.redact_replacement),
+                guardrails.stdout_max_bytes,
+            )
+            err = _truncate_output(
+                _apply_redaction(err, redactors, guardrails.redact_replacement),
+                guardrails.stderr_max_bytes,
+            )
+            duration = time.perf_counter() - start
+            exit_code = proc.returncode
+            exit_ok = exit_code in guardrails.allowed_exit_codes
+            status = "ok" if (exit_ok and not timed_out) else "error"
+            if timed_out:
+                status = "timeout"
 
-        logger.info(
-            "capability_finish",
-            extra={
-                "capability": cap_id,
-                "module": module.id,
+            payload = {
                 "status": status,
-                "exit_code": exit_code,
-                "duration": payload["duration"],
-                "timed_out": timed_out,
-            },
-        )
-        return payload
+                "exitCode": exit_code,
+                "stdout": out,
+                "stderr": err,
+                "command": " ".join(shlex.quote(p) for p in cmd),
+                "duration": round(duration, 3),
+                "timedOut": timed_out,
+                "module": module.id,
+            }
+
+            logger.info(
+                "capability_finish",
+                extra={
+                    "capability": cap_id,
+                    "module_id": module.id,
+                    "status": status,
+                    "exit_code": exit_code,
+                    "duration": payload["duration"],
+                    "timed_out": timed_out,
+                },
+            )
+            await _emit_telemetry(
+                {
+                    **telemetry_common,
+                    "event": "finish",
+                    "timestamp": time.time(),
+                    "status": status,
+                    "exitCode": exit_code,
+                    "duration": payload["duration"],
+                    "timedOut": timed_out,
+                }
+            )
+            return payload
 
     tool_name = cap_id.replace(".", "_")
     assert mcp is not None
@@ -450,6 +588,14 @@ def _summarize_guardrails(capabilities: Iterable[Capability]) -> dict[str, Any]:
             "allowedEntryRoots": [],
             "allowedExitCodes": [],
             "allowNetwork": False,
+            "concurrencyRange": [0, 0],
+            "stdoutBytes": [0, 0],
+            "stderrBytes": [0, 0],
+            "redaction": {
+                "patterns": [],
+                "replacements": [],
+            },
+            "telemetryKeys": [],
         }
     runtimes = [cap.guardrails.max_runtime_seconds for cap in caps]
     env = sorted({value for cap in caps for value in cap.guardrails.allowed_env})
@@ -460,12 +606,39 @@ def _summarize_guardrails(capabilities: Iterable[Capability]) -> dict[str, Any]:
         {value for cap in caps for value in cap.guardrails.allowed_exit_codes}
     )
     allow_network = any(cap.guardrails.allow_network for cap in caps)
+    concurrency = [
+        min(cap.guardrails.max_concurrency for cap in caps),
+        max(cap.guardrails.max_concurrency for cap in caps),
+    ]
+    stdout_bytes = [
+        min(cap.guardrails.stdout_max_bytes for cap in caps),
+        max(cap.guardrails.stdout_max_bytes for cap in caps),
+    ]
+    stderr_bytes = [
+        min(cap.guardrails.stderr_max_bytes for cap in caps),
+        max(cap.guardrails.stderr_max_bytes for cap in caps),
+    ]
+    redaction_patterns = sorted(
+        {pattern for cap in caps for pattern in cap.guardrails.redact_patterns}
+    )
+    redaction_replacements = sorted({cap.guardrails.redact_replacement for cap in caps})
+    telemetry_keys = sorted(
+        {key for cap in caps for key in (cap.guardrails.telemetry_tags or {}).keys()}
+    )
     return {
         "runtimeRange": [min(runtimes), max(runtimes)],
         "allowedEnv": env,
         "allowedEntryRoots": entry_roots,
         "allowedExitCodes": exit_codes,
         "allowNetwork": allow_network,
+        "concurrencyRange": concurrency,
+        "stdoutBytes": stdout_bytes,
+        "stderrBytes": stderr_bytes,
+        "redaction": {
+            "patterns": redaction_patterns,
+            "replacements": redaction_replacements,
+        },
+        "telemetryKeys": telemetry_keys,
     }
 
 
@@ -518,6 +691,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    _ensure_tracing()
     args = parse_args()
     if args.manifest:
         config = RegistryConfig(

@@ -222,6 +222,104 @@ Antora automatically generates a Lunr search index during build. The index inclu
 
 For production deployments, Algolia DocSearch provides enhanced search capabilities. The crawler runs automatically on GitHub Pages deployments.
 
+== Diagrams
+
+The workspace supports multiple diagram types via Kroki, including Mermaid, PlantUML, GraphViz, C4, BPMN, and more. Diagrams are rendered server-side during Antora build.
+
+=== Mermaid Diagrams
+
+Mermaid is ideal for flowcharts, sequence diagrams, class diagrams, and state diagrams.
+
+[source,asciidoc]
+----
+[mermaid]
+....
+graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Do Something]
+    B -->|No| D[Do Something Else]
+    C --> E[End]
+    D --> E
+....
+----
+
+=== PlantUML Diagrams
+
+PlantUML is suitable for UML diagrams, including component, deployment, and activity diagrams.
+
+[source,asciidoc]
+----
+[plantuml]
+....
+@startuml
+actor User
+User -> System : Request
+System -> Database : Query
+Database -> System : Result
+System -> User : Response
+@enduml
+....
+----
+
+=== GraphViz Diagrams
+
+GraphViz (DOT) is powerful for directed and undirected graphs, network diagrams, and dependency trees.
+
+[source,asciidoc]
+----
+[graphviz]
+....
+digraph G {
+    rankdir=LR;
+    A -> B;
+    B -> C;
+    C -> D;
+    D -> A;
+}
+....
+----
+
+=== C4 Architecture Diagrams
+
+C4 diagrams visualize software architecture at different levels: Context, Container, Component, and Code.
+
+[source,asciidoc]
+----
+[c4plantuml]
+....
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "User")
+System(system, "System")
+user -> system : Uses
+@enduml
+....
+----
+
+=== Diagram Best Practices
+
+* **Keep diagrams simple** - Focus on clarity over complexity
+* **Use consistent styling** - Follow workspace color schemes where possible
+* **Add alt text** - Use `[alt=Description]` for accessibility
+* **Version control diagrams** - Store diagram source in docs, not just rendered images
+* **Test rendering** - Always build docs locally to verify diagram output
+
+=== Kroki Configuration
+
+Diagrams are rendered using the public Kroki service (`https://kroki.io`). For air-gapped environments, configure a self-hosted Kroki instance:
+
+[source,yaml]
+----
+# antora-playbook.yml
+asciidoc:
+  attributes:
+    kroki-server-url: http://localhost:8000
+    kroki-fetch-diagram: true
+----
+
+Refer to https://docs.kroki.io/kroki/setup/install/[Kroki installation docs] for self-hosting instructions.
+
 == Model Context Protocol docs server (optional)
 
 For AI agent access, run the MCP docs server:
@@ -235,6 +333,7 @@ This provides three Tools:
 * `search(query)` - Full-text search
 * `get_page(id)` - Retrieve page content
 * `list_tags()` - List all available tags
+
 == Questions and Support
 
 For questions about documentation:

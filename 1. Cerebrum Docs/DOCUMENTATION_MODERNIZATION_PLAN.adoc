@@ -1,0 +1,902 @@
+= Documentation Audit and Modernization - Execution Plan
+:page-tags: diataxis:reference, domain:platform, audience:contrib, stability:draft
+:reviewed: 2025-11-27
+:toc:
+:toclevels: 3
+
+== Executive Summary
+
+This document provides a comprehensive execution plan for auditing, updating, and modernizing all documentation across the n00tropic Cerebrum workspace. The plan addresses the following key objectives:
+
+1. **Diagram Support**: Install and configure Kroki for rendering Mermaid, PlantUML, GraphViz, and C4 diagrams
+2. **Docusaurus Retirement**: Migrate n00-cortex from Docusaurus to Antora
+3. **Antora Migration**: Complete migration for n00-frontiers, n00t, and n00tropic
+4. **Content Audit**: Identify and update stale documentation, add missing review dates
+5. **Content Enhancement**: Create tutorials, how-to guides, and troubleshooting documentation
+6. **Documentation Governance**: Establish automated validation and review processes
+
+== Phase 1: Diagram Support ✅ COMPLETED
+
+=== Actions Taken
+
+1. **Installed asciidoctor-kroki** package (v0.18.1)
+2. **Updated Antora playbooks** (`antora-playbook.yml` and `antora-playbook.ci.yml`):
+   - Added `asciidoctor-kroki` to `asciidoc.extensions`
+   - Configured `kroki-server-url: https://kroki.io`
+   - Enabled `kroki-fetch-diagram: true`
+3. **Created test playbook** (`antora-playbook.test.yml`) for local testing
+4. **Documented diagram syntax** in `CONTRIBUTING-docs.adoc`:
+   - Mermaid examples
+   - PlantUML examples
+   - GraphViz examples
+   - C4 architecture diagram examples
+   - Best practices and self-hosting guidance
+5. **Verified build** - Antora builds successfully with Kroki extension
+
+=== Supported Diagram Types
+
+* Mermaid (flowcharts, sequence, class, state diagrams)
+* PlantUML (UML diagrams)
+* GraphViz (DOT - directed/undirected graphs)
+* C4 (architecture diagrams - context, container, component, code)
+* BPMN, BlockDiag, SeqDiag, ActDiag, NwDiag, PacketDiag, RackDiag, ERD, Excalidraw, Nomnoml, Pikchr, Structurizr, Svgbob, Vega, Vega-Lite, WaveDrom
+
+=== Next Steps
+
+* Convert existing Mermaid diagrams in README.md files to AsciiDoc format
+* Add architecture diagrams to key concept pages during content enhancement phase
+
+== Phase 2: Retire Docusaurus from n00-cortex 🔄 IN PROGRESS
+
+=== Current State
+
+**Docusaurus Content Location**: `n00-cortex/docs/docs/`
+
+**Files to Migrate**:
+* `intro.md` - Introduction
+* `manifesto.mdx` - Core manifesto (JSX/React components)
+* `mission-vision.mdx` - Mission and vision
+* `repo-contract.mdx` - Repository contract
+* `ai-usage-and-guardrails.mdx` - AI guidelines
+* `dependency-governance.md` - Dependency management
+* `development-playbook.mdx` - Development workflows
+* `frontiers-templates.md` - Template documentation
+* `fusion-linkage.md` - Fusion integration
+* `quality-gates.mdx` - Quality gates
+* `tutorial-basics/` - Basic tutorials directory
+* `tutorial-extras/` - Advanced tutorials directory
+* `design/` - Design documentation directory
+
+**Standalone Files**: `n00-cortex/docs/`
+* `manifesto.md` - Markdown manifesto (duplicate?)
+* `tag-governance.md` - Tag taxonomy
+* `version-sync.md` - Version synchronization
+
+**Existing Antora Content**: `n00-cortex/docs/modules/ROOT/pages/`
+* `index.adoc` - Home page ✅
+* `automation-overview.adoc` - Already migrated ✅
+
+=== Migration Steps
+
+==== Step 1: Convert Core Documentation
+
+Use `kramdown-asciidoc` to convert Markdown/MDX files:
+
+[source,bash]
+----
+cd n00-cortex/docs
+mkdir -p modules/ROOT/pages
+
+# Convert each file
+kramdoc -o modules/ROOT/pages/intro.adoc docs/intro.md
+kramdoc -o modules/ROOT/pages/manifesto.adoc docs/manifesto.mdx
+kramdoc -o modules/ROOT/pages/mission-vision.adoc docs/mission-vision.mdx
+kramdoc -o modules/ROOT/pages/repo-contract.adoc docs/repo-contract.mdx
+kramdoc -o modules/ROOT/pages/ai-usage-guardrails.adoc docs/ai-usage-and-guardrails.mdx
+kramdoc -o modules/ROOT/pages/dependency-governance.adoc docs/dependency-governance.md
+kramdoc -o modules/ROOT/pages/development-playbook.adoc docs/development-playbook.mdx
+kramdoc -o modules/ROOT/pages/frontiers-templates.adoc docs/frontiers-templates.md
+kramdoc -o modules/ROOT/pages/fusion-linkage.adoc docs/fusion-linkage.md
+kramdoc -o modules/ROOT/pages/quality-gates.adoc docs/quality-gates.mdx
+----
+
+**Manual cleanup required**:
+* Remove JSX/React component syntax from MDX files
+* Convert inline `<Component />` references to AsciiDoc equivalents
+* Update image paths to use Antora resource IDs
+* Add page attributes (`:page-tags:`, `:reviewed:`)
+
+==== Step 2: Convert Tutorials
+
+[source,bash]
+----
+mkdir -p modules/ROOT/pages/tutorials
+# Convert tutorial-basics files
+# Convert tutorial-extras files
+----
+
+==== Step 3: Migrate Standalone Files
+
+[source,bash]
+----
+kramdoc -o modules/ROOT/pages/tag-governance.adoc tag-governance.md
+kramdoc -o modules/ROOT/pages/version-sync.adoc version-sync.md
+# Merge manifesto.md content with manifesto.adoc
+----
+
+==== Step 4: Build Navigation
+
+Create comprehensive `modules/ROOT/nav.adoc`:
+
+[source,asciidoc]
+----
+.n00 Cortex
+* xref:index.adoc[Home]
+* xref:intro.adoc[Introduction]
+
+.Vision & Governance
+* xref:manifesto.adoc[Manifesto]
+* xref:mission-vision.adoc[Mission & Vision]
+* xref:repo-contract.adoc[Repository Contract]
+
+.Reference
+* xref:dependency-governance.adoc[Dependency Governance]
+* xref:tag-governance.adoc[Tag Governance]
+* xref:version-sync.adoc[Version Synchronization]
+
+.How-To Guides
+* xref:development-playbook.adoc[Development Playbook]
+* xref:ai-usage-guardrails.adoc[AI Usage & Guardrails]
+* xref:quality-gates.adoc[Quality Gates]
+
+.Automation & Integration
+* xref:automation-overview.adoc[Automation Overview]
+* xref:frontiers-templates.adoc[Frontiers Templates]
+* xref:fusion-linkage.adoc[Fusion Integration]
+
+.Tutorials
+* xref:tutorials/index.adoc[Getting Started]
+----
+
+==== Step 5: Add Page Attributes
+
+For each converted page, add header:
+
+[source,asciidoc]
+----
+= Page Title
+:page-tags: diataxis:<tutorial|howto|reference|explanation>, domain:platform, audience:<user|operator|contrib>, stability:stable
+:reviewed: 2025-11-27
+----
+
+==== Step 6: Remove Docusaurus Files
+
+[source,bash]
+----
+cd n00-cortex/docs
+rm -rf docs/              # Docusaurus content
+rm docusaurus.config.ts
+rm sidebars.ts
+rm package.json
+rm tsconfig.json
+rm -rf src/               # React components
+rm -rf static/            # Static assets (migrate if needed)
+rm -rf blog/              # Blog posts (migrate if needed)
+# Update .gitignore to remove Docusaurus-specific ignores
+----
+
+==== Step 7: Test Migration
+
+[source,bash]
+----
+# Build Antora site with n00-cortex content
+cd /Volumes/APFS\ Space/n00tropic/n00tropic-cerebrum
+pnpm exec antora antora-playbook.test.yml
+
+# Verify pages render
+open build/site/n00-cortex/main/index.html
+
+# Run validation
+node docs/check-attrs.mjs --component n00-cortex
+vale n00-cortex/docs/modules/ROOT/pages/**/*.adoc
+lychee --config .lychee.toml 'n00-cortex/docs/**/*.adoc'
+----
+
+=== Estimated Time
+
+* Step 1: 2 hours (conversion + cleanup)
+* Step 2: 1 hour (tutorials)
+* Step 3: 30 minutes (standalone files)
+* Step 4: 30 minutes (navigation)
+* Step 5: 1 hour (attributes)
+* Step 6: 30 minutes (cleanup)
+* Step 7: 1 hour (testing)
+**Total**: 6.5 hours
+
+== Phase 3: Complete n00-frontiers Antora Migration
+
+=== Current State
+
+**Status**: Antora config exists (`antora.yml`) but no `modules/ROOT/pages/` content
+
+**Key Documentation Files**:
+* `README.md` (683 lines) - Comprehensive quickstart
+* `BIBLE.md` (566 lines, v1.0.0, last updated 2025-10-11) - Machine-readable reference
+* `CATALOG.md` - Machine-readable catalog
+* `FRAMEWORK.md` - Unified framework
+* `QUALITY_STANDARDS.md` - Quality standards
+* `CONVENTIONS.md` - Development conventions
+* `TEMPLATE_STANDARDS.md` - Template requirements
+* `TASKS.md` - Implementation roadmap (SSoT)
+* `IMPLEMENTATION.md` - Technical decisions
+* `Red Team + Software Excellence.md` - Comprehensive playbook
+
+**Existing Docs Structure**:
+* `docs/antora.yml` - Component descriptor ✅
+* `docs/adr/` - 8+ ADRs with lifecycle guide
+* `docs/guides/`, `docs/quality/`, `docs/security/`, `docs/supply-chain/`, `docs/benchmarks/`
+* `docs/notebooks/` - Jupyter notebook documentation
+* `applications/scaffolder/examples/video-tutorials/` - Video tutorial scripts
+
+=== Migration Steps
+
+==== Step 1: Create Pages Directory
+
+[source,bash]
+----
+cd n00-frontiers/docs
+mkdir -p modules/ROOT/pages/{adr,guides,tutorials}
+----
+
+==== Step 2: Convert Core Documentation
+
+[source,bash]
+----
+# Convert primary docs
+kramdoc -o modules/ROOT/pages/index.adoc ../README.md
+kramdoc -o modules/ROOT/pages/bible.adoc ../BIBLE.md
+kramdoc -o modules/ROOT/pages/catalog.adoc ../CATALOG.md
+kramdoc -o modules/ROOT/pages/framework.adoc ../FRAMEWORK.md
+kramdoc -o modules/ROOT/pages/quality-standards.adoc ../QUALITY_STANDARDS.md
+kramdoc -o modules/ROOT/pages/conventions.adoc ../CONVENTIONS.md
+kramdoc -o modules/ROOT/pages/template-standards.adoc ../TEMPLATE_STANDARDS.md
+kramdoc -o modules/ROOT/pages/tasks.adoc ../TASKS.md
+kramdoc -o modules/ROOT/pages/implementation.adoc ../IMPLEMENTATION.md
+kramdoc -o modules/ROOT/pages/red-team-excellence.adoc "../Red Team + Software Excellence.md"
+----
+
+==== Step 3: Migrate ADRs
+
+[source,bash]
+----
+# Convert all ADRs
+for file in docs/adr/*.md; do
+  basename=$(basename "$file" .md)
+  kramdoc -o "modules/ROOT/pages/adr/${basename}.adoc" "$file"
+done
+----
+
+==== Step 4: Convert Video Tutorials
+
+[source,bash]
+----
+# Convert video tutorial scripts to tutorial pages
+cd applications/scaffolder/examples/video-tutorials
+for script in *.md; do
+  basename=$(basename "$script" .md)
+  kramdoc -o "../../../../docs/modules/ROOT/pages/tutorials/${basename}.adoc" "$script"
+done
+----
+
+==== Step 5: Migrate Existing Docs Content
+
+[source,bash]
+----
+# Convert existing structured docs
+cd docs
+for file in *.adoc *.md; do
+  # Convert if needed and organize into appropriate pages/ subdirectories
+done
+----
+
+==== Step 6: Build Navigation
+
+Create `modules/ROOT/nav.adoc`:
+
+[source,asciidoc]
+----
+.n00 Frontiers
+* xref:index.adoc[Home]
+* xref:bible.adoc[Frontiers Bible]
+* xref:catalog.adoc[Catalog Reference]
+
+.Framework & Standards
+* xref:framework.adoc[Unified Framework]
+* xref:quality-standards.adoc[Quality Standards]
+* xref:conventions.adoc[Development Conventions]
+* xref:template-standards.adoc[Template Standards]
+
+.Implementation
+* xref:tasks.adoc[Implementation Roadmap]
+* xref:implementation.adoc[Technical Decisions]
+* xref:red-team-excellence.adoc[Red Team & Excellence]
+
+.Architecture Decisions
+* xref:adr/index.adoc[ADR Index]
+* xref:adr/lifecycle.adoc[ADR Lifecycle]
+// List individual ADRs
+
+.Tutorials
+* xref:tutorials/index.adoc[Getting Started]
+// List video tutorials
+
+.How-To Guides
+* xref:guides/index.adoc[Guide Index]
+----
+
+==== Step 7: Add Attributes and Review Dates
+
+Add to all converted pages:
+
+[source,asciidoc]
+----
+:page-tags: diataxis:<type>, domain:product, audience:<target>, stability:stable
+:reviewed: 2025-11-27
+----
+
+=== Estimated Time
+
+* Steps 1-2: 2 hours
+* Step 3: 1 hour (ADRs)
+* Step 4: 1 hour (tutorials)
+* Step 5: 1 hour (existing docs)
+* Step 6: 45 minutes (navigation)
+* Step 7: 1.5 hours (attributes)
+**Total**: 7.25 hours
+
+== Phase 4: Complete n00t Antora Migration
+
+=== Current State
+
+**Status**: Minimal Antora structure, needs expansion
+
+**Existing Files**:
+* `README.md` - Concise overview
+* `SPEC.md` - Specifications
+* `SITE-ARCHITECTURE.md` - Architecture docs
+* `docs/antora.yml` - Component descriptor ✅
+* `docs/AGENT_RUNTIME.md` - Agent runtime docs
+* `docs/OPERATING_RULES.md` - Operating rules
+
+**Missing**:
+* Getting-started tutorial
+* MCP capabilities documentation
+* API reference
+* Foundational ADRs (3-5 needed)
+
+=== Migration Steps
+
+==== Step 1: Convert Existing Documentation
+
+[source,bash]
+----
+cd n00t/docs
+mkdir -p modules/ROOT/pages/{adr,tutorials,reference}
+
+kramdoc -o modules/ROOT/pages/index.adoc ../README.md
+kramdoc -o modules/ROOT/pages/specification.adoc ../SPEC.md
+kramdoc -o modules/ROOT/pages/site-architecture.adoc ../SITE-ARCHITECTURE.md
+kramdoc -o modules/ROOT/pages/agent-runtime.adoc AGENT_RUNTIME.md
+kramdoc -o modules/ROOT/pages/operating-rules.adoc OPERATING_RULES.md
+----
+
+==== Step 2: Create Getting-Started Tutorial
+
+Create `modules/ROOT/pages/tutorials/getting-started.adoc`:
+
+[source,asciidoc]
+----
+= Getting Started with n00t
+:page-tags: diataxis:tutorial, domain:platform, audience:user, stability:stable
+:reviewed: 2025-11-27
+
+== Prerequisites
+
+* Node.js 24+
+* pnpm 10.23+
+* Access to n00tropic Cerebrum workspace
+
+== Installation
+
+[source,bash]
+----
+cd n00t
+pnpm install
+----
+
+== Starting the Control Panel
+
+[source,bash]
+----
+pnpm dev
+----
+
+== First Capability Execution
+
+[Tutorial content...]
+----
+
+==== Step 3: Document MCP Capabilities
+
+Create `modules/ROOT/pages/reference/mcp-capabilities.adoc`:
+
+[source,asciidoc]
+----
+= MCP Capabilities Reference
+:page-tags: diataxis:reference, domain:platform, audience:operator, stability:stable
+:reviewed: 2025-11-27
+
+== Capabilities Manifest
+
+The capabilities manifest (`capabilities/manifest.json`) defines all automation entrypoints accessible via MCP.
+
+=== Structure
+
+[source,json]
+----
+{
+  "capabilities": {
+    "workspace.plan": {
+      "id": "workspace.plan",
+      "name": "Generate Workspace Plan",
+      "description": "...",
+      "entrypoint": "...",
+      "guardrails": {...}
+    }
+  }
+}
+----
+
+[Document all capabilities...]
+----
+
+==== Step 4: Create API Reference
+
+Create `modules/ROOT/pages/reference/api.adoc` documenting the control panel API.
+
+==== Step 5: Create Foundational ADRs
+
+Create 3-5 ADRs in `modules/ROOT/pages/adr/`:
+
+1. `adr-001-mcp-server-architecture.adoc` - Why MCP for automation
+2. `adr-002-control-panel-technology.adoc` - Choice of tech stack
+3. `adr-003-capability-manifest-schema.adoc` - Manifest design decisions
+4. `adr-004-guardrails-framework.adoc` - Guardrails implementation
+5. `adr-005-telemetry-collection.adoc` - Observability approach
+
+==== Step 6: Build Navigation
+
+Create comprehensive `modules/ROOT/nav.adoc`.
+
+=== Estimated Time
+
+* Steps 1-2: 2 hours
+* Step 3: 1.5 hours (MCP docs)
+* Step 4: 1 hour (API)
+* Step 5: 2 hours (ADRs)
+* Step 6: 30 minutes (navigation)
+**Total**: 7 hours
+
+== Phase 5: Complete n00tropic Antora Migration
+
+=== Current State
+
+**Status**: Basic Antora structure exists
+
+**Existing Files**:
+* `README.md` - Functional directory structure
+* `docs/antora.yml` - Component descriptor ✅
+* `docs/design-generator.md` - AI design generator docs
+
+**Missing**:
+* Design generator tutorial
+* Functional directory documentation
+* Client workflow guides
+* Foundational ADRs (3-5 needed)
+
+=== Migration Steps
+
+Similar structure to n00t migration:
+
+1. Convert existing documentation
+2. Create design generator tutorial
+3. Document functional directory structure
+4. Create client workflow guides
+5. Create foundational ADRs
+6. Build navigation
+
+=== Estimated Time
+
+**Total**: 6 hours
+
+== Phase 6: Audit and Update Existing Documentation
+
+=== Actions Required
+
+==== Step 1: Add Review Dates
+
+[source,bash]
+----
+# Run check-attrs with --fix flag to add missing :reviewed: dates
+node docs/check-attrs.mjs --fix --reviewed
+
+# This will add :reviewed: 2025-11-27 to all pages missing the attribute
+----
+
+==== Step 2: Identify Stale Content
+
+[source,bash]
+----
+# Find pages with review dates >90 days old
+node docs/check-attrs.mjs --stale-days 90
+
+# Review flagged pages for accuracy
+----
+
+==== Step 3: Remove Deprecated References
+
+Files to clean up:
+* `Next_Steps_Log.md` - Archive or remove
+* `stuff/Temp/temp-doc-2.md` - Remove
+* Migration guides from 2025 - Review for current relevance
+
+==== Step 4: Validate Links
+
+[source,bash]
+----
+# Check all cross-repo links
+lychee --config .lychee.toml '**/*.adoc' '**/*.md'
+
+# Fix broken links identified
+----
+
+==== Step 5: Convert releases.yaml to Formatted Pages
+
+Create `1. Cerebrum Docs/releases/` directory with formatted release note pages:
+
+[source,adoc]
+----
+= Release v0.3.0 - 2025-11-15
+:page-tags: diataxis:reference, domain:platform, audience:user, stability:stable
+:reviewed: 2025-11-27
+
+== Overview
+
+[Release content from releases.yaml...]
+
+== Features
+
+== Fixes
+
+== Breaking Changes
+----
+
+=== Estimated Time
+
+* Step 1: 30 minutes
+* Step 2: 1 hour (review + updates)
+* Step 3: 1 hour (cleanup)
+* Step 4: 1.5 hours (link validation + fixes)
+* Step 5: 2 hours (release notes)
+**Total**: 6 hours
+
+== Phase 7: Enhance Content (Diátaxis Framework)
+
+=== Tutorials (3-5 per major workflow)
+
+Create tutorial pages for:
+
+1. **Workspace Setup**
+   - Fresh clone tutorial
+   - Submodule initialization
+   - MCP server setup
+   - Python environment configuration
+
+2. **MCP Server Usage**
+   - First capability execution
+   - Workflow phase execution
+   - Debugging MCP calls
+
+3. **Project Orchestration**
+   - Project lifecycle tutorial
+   - ERPNext integration tutorial
+   - Control panel usage
+
+4. **Template Scaffolding**
+   - Creating first frontier template
+   - Template validation
+   - Template deployment
+
+5. **Documentation Contribution**
+   - Writing your first doc page
+   - Adding diagrams
+   - Running validation
+
+=== How-To Guides (5-10 task-oriented guides)
+
+Create how-to pages for common tasks:
+
+1. How to add a new MCP capability
+2. How to create an ADR
+3. How to run automation scripts
+4. How to validate documentation
+5. How to configure Renovate
+6. How to update Trunk configuration
+7. How to debug CI failures
+8. How to create schema definitions
+9. How to export cortex assets
+10. How to sync documentation across repos
+
+=== Troubleshooting Pages (per subrepo)
+
+Create troubleshooting pages:
+
+1. `n00-cortex/troubleshooting.adoc`
+2. `n00-frontiers/troubleshooting.adoc`
+3. `n00t/troubleshooting.adoc`
+4. `n00tropic/troubleshooting.adoc`
+5. `docs/troubleshooting.adoc` (workspace-level)
+
+=== API Documentation
+
+Publish OpenAPI specs as browsable documentation:
+
+1. Convert OpenAPI YAML to AsciiDoc
+2. Create API reference pages
+3. Add interactive examples
+
+=== Architecture Diagrams
+
+Add diagrams to key concept pages:
+
+1. Workspace architecture (C4 context diagram)
+2. MCP server architecture (C4 container diagram)
+3. Automation workflow (Mermaid flowchart)
+4. Documentation pipeline (Mermaid sequence diagram)
+5. Project lifecycle (Mermaid state diagram)
+6. ERPNext integration (PlantUML component diagram)
+
+=== Estimated Time
+
+* Tutorials: 15 hours (3 hours per workflow)
+* How-to guides: 10 hours (1 hour per guide)
+* Troubleshooting: 5 hours (1 hour per subrepo)
+* API docs: 4 hours
+* Diagrams: 6 hours
+**Total**: 40 hours
+
+== Phase 8: Establish Documentation Governance
+
+=== Step 1: Enforce :reviewed: Validation in CI
+
+Update CI workflows to fail on missing/stale review dates:
+
+[source,yaml]
+----
+# .github/workflows/docs-validation.yml
+- name: Check Documentation Attributes
+  run: node docs/check-attrs.mjs --strict --stale-days 90
+----
+
+=== Step 2: Implement Quarterly Audit Schedule
+
+Create automation capability:
+
+[source,bash]
+----
+# .dev/automation/scripts/docs-quarterly-audit.sh
+----
+
+Schedule via cron or GitHub Actions workflow.
+
+=== Step 3: Create Deprecation Process
+
+Document in `CONTRIBUTING-docs.adoc`:
+
+[source,asciidoc]
+----
+== Deprecating Documentation
+
+When documentation becomes outdated:
+
+1. Add deprecation notice to page
+2. Set stability to `stability:deprecated`
+3. Link to replacement documentation
+4. Schedule removal (1 quarter grace period)
+5. Archive before deletion
+----
+
+=== Step 4: Measure Coverage Metrics
+
+Create script to measure:
+
+* Total pages
+* Pages by Diátaxis category
+* Pages by domain
+* Pages by stability
+* Pages with recent review dates
+* Pages with diagrams
+* Tutorial completeness
+* API documentation coverage
+
+Generate dashboard or badge.
+
+=== Step 5: Test and Improve Search
+
+1. Test Lunr offline search
+2. Configure Typesense integration
+3. Improve tag taxonomy
+4. Add search-specific metadata
+
+=== Estimated Time
+
+* Step 1: 1 hour (CI updates)
+* Step 2: 2 hours (audit automation)
+* Step 3: 1 hour (deprecation docs)
+* Step 4: 3 hours (metrics script)
+* Step 5: 3 hours (search improvements)
+**Total**: 10 hours
+
+== Summary Timeline
+
+[options="header"]
+|===
+| Phase | Description | Estimated Time | Status
+
+| 1 | Diagram Support | 2 hours | ✅ COMPLETED
+| 2 | Retire Docusaurus (n00-cortex) | 6.5 hours | 🔄 IN PROGRESS
+| 3 | n00-frontiers Migration | 7.25 hours | ⏳ PENDING
+| 4 | n00t Migration | 7 hours | ⏳ PENDING
+| 5 | n00tropic Migration | 6 hours | ⏳ PENDING
+| 6 | Audit & Update | 6 hours | ⏳ PENDING
+| 7 | Enhance Content | 40 hours | ⏳ PENDING
+| 8 | Documentation Governance | 10 hours | ⏳ PENDING
+|===
+
+**Total Estimated Time**: 84.75 hours (~11 working days)
+
+== Prioritization
+
+### High Priority (Complete First)
+1. ✅ Phase 1: Diagram Support (DONE)
+2. Phase 2: Retire Docusaurus (IN PROGRESS)
+3. Phase 6: Audit & Update Existing Docs
+4. Phase 8: Documentation Governance (Steps 1-3)
+
+### Medium Priority (Complete Second)
+5. Phase 3: n00-frontiers Migration
+6. Phase 4: n00t Migration
+7. Phase 5: n00tropic Migration
+
+### Lower Priority (Complete Third)
+8. Phase 7: Enhance Content
+9. Phase 8: Documentation Governance (Steps 4-5)
+
+== Success Metrics
+
+* ✅ All subrepos using Antora (no Docusaurus)
+* ✅ All pages have `:reviewed:` dates
+* ✅ No pages with review dates >90 days
+* ✅ All internal links valid
+* ✅ Diagrams render correctly in Antora
+* ✅ CI enforces documentation quality
+* ✅ At least 3 tutorials per major workflow
+* ✅ At least 5 how-to guides
+* ✅ Troubleshooting page per subrepo
+* ✅ API documentation published
+* ✅ Search functionality tested and working
+
+== Next Immediate Actions
+
+1. **Complete n00-cortex Docusaurus migration** (6.5 hours)
+2. **Run check-attrs.mjs --fix --reviewed** across workspace (30 minutes)
+3. **Identify and update stale content** (1 hour)
+4. **Begin n00-frontiers migration** (start with core docs conversion)
+
+== Appendices
+
+=== A. Tools and Commands Reference
+
+[source,bash]
+----
+# Install kramdown-asciidoc for Markdown conversion
+gem install kramdown-asciidoc
+
+# Convert Markdown to AsciiDoc
+kramdoc -o output.adoc input.md
+
+# Build Antora site locally
+pnpm exec antora antora-playbook.yml
+
+# Check documentation attributes
+node docs/check-attrs.mjs --fix --reviewed
+
+# Validate with Vale
+vale docs/
+
+# Check links
+lychee --config .lychee.toml '**/*.adoc'
+
+# Run full docs validation
+.dev/automation/scripts/docs-verify.sh
+----
+
+=== B. Common Conversion Issues
+
+**MDX to AsciiDoc**:
+* Remove JSX components: `<Component />` → equivalent AsciiDoc
+* Convert inline code: `` `code` `` → `\`code\``
+* Update image paths: `![alt](./image.png)` → `image::image.png[alt]`
+* Remove frontmatter, replace with AsciiDoc attributes
+
+**Link Conversion**:
+* Internal links: `[text](./page.md)` → `xref:page.adoc[text]`
+* External links: Keep as-is
+* Anchor links: `#section` → `xref:#section`
+
+=== C. Page Attribute Template
+
+[source,asciidoc]
+----
+= Page Title
+:page-tags: diataxis:<tutorial|howto|reference|explanation>, domain:<product|platform|ops>, audience:<user|operator|agent|contrib>, stability:<draft|beta|stable>
+:reviewed: 2025-11-27
+:toc:
+:toclevels: 2
+
+[Content...]
+----
+
+=== D. Documentation Review Checklist
+
+For each page during audit:
+
+* [ ] Has `:page-tags:` attribute with all required tags
+* [ ] Has `:reviewed:` date within last 90 days
+* [ ] All links work (internal and external)
+* [ ] Code examples are tested and current
+* [ ] Images render correctly
+* [ ] Diagrams render (if present)
+* [ ] Passes Vale linting
+* [ ] Follows Diátaxis framework
+* [ ] Uses Oxford English spelling
+* [ ] Present tense, active voice
+* [ ] No gerunds in headings
+
+=== E. Responsibility Matrix
+
+[options="header"]
+|===
+| Task | Primary Owner | Support | Timeline
+
+| Kroki Integration | ✅ Done | - | ✅ Completed
+| n00-cortex Migration | AI Agent | Human Review | Week 1
+| n00-frontiers Migration | AI Agent | Domain Expert | Week 1-2
+| n00t Migration | AI Agent | Platform Team | Week 2
+| n00tropic Migration | AI Agent | Design Team | Week 2
+| Content Audit | AI Agent | All Contributors | Week 3
+| Content Enhancement | AI Agent | Subject Matter Experts | Week 3-5
+| Governance Setup | Platform Team | AI Agent | Week 5
+|===
+
+== Conclusion
+
+This execution plan provides a comprehensive, step-by-step approach to modernizing all documentation across the n00tropic Cerebrum workspace. By following this plan systematically, we will achieve:
+
+1. **Unified documentation system** (Antora only, no Docusaurus)
+2. **Enhanced discoverability** (diagrams, search, navigation)
+3. **Quality enforcement** (automated validation, review SLAs)
+4. **Comprehensive coverage** (tutorials, how-tos, references, explanations)
+5. **Sustainable governance** (quarterly audits, deprecation process, metrics)
+
+The plan is designed for phased execution with clear priorities, allowing for incremental progress while maintaining documentation availability throughout the migration process.
