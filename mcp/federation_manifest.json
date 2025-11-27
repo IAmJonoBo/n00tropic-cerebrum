@@ -1,0 +1,127 @@
+{
+  "version": "2024.11",
+  "modules": [
+    {
+      "id": "n00t-core",
+      "summary": "Core automation and delivery capabilities from the n00t workspace",
+      "manifest": "n00t/capabilities/manifest.json",
+      "repoRoot": ".",
+      "tags": ["automation", "core"],
+      "health": {
+        "commands": [
+          {
+            "label": "validate-manifest",
+            "command": [
+              "python",
+              "mcp/validate_manifest.py",
+              "--manifest",
+              "n00t/capabilities/manifest.json",
+              "--json"
+            ],
+            "timeoutSeconds": 60
+          }
+        ]
+      }
+    },
+    {
+      "id": "n00-horizons",
+      "summary": "Horizons governance and lifecycle capabilities",
+      "manifest": "n00-horizons/mcp/capabilities_manifest.json",
+      "repoRoot": "n00-horizons",
+      "tags": ["horizons", "governance", "jobs"],
+      "includeInRoot": true,
+      "health": {
+        "commands": [
+          {
+            "label": "validate-horizons-manifest",
+            "command": [
+              "python",
+              "../mcp/validate_manifest.py",
+              "--manifest",
+              "mcp/capabilities_manifest.json",
+              "--repo-root",
+              ".",
+              "--json"
+            ],
+            "timeoutSeconds": 60
+          }
+        ]
+      }
+    },
+    {
+      "id": "n00-frontiers",
+      "summary": "Frontiers template and smoketest automation",
+      "manifest": "n00-frontiers/mcp/capabilities_manifest.json",
+      "repoRoot": "n00-frontiers",
+      "tags": ["frontiers", "templates", "validation"],
+      "includeInRoot": true,
+      "health": {
+        "commands": [
+          {
+            "label": "validate-frontiers-manifest",
+            "command": [
+              "python",
+              "../mcp/validate_manifest.py",
+              "--manifest",
+              "mcp/capabilities_manifest.json",
+              "--repo-root",
+              ".",
+              "--json"
+            ],
+            "timeoutSeconds": 60
+          }
+        ]
+      }
+    },
+    {
+      "id": "n00-cortex",
+      "summary": "Cortex schema, export, and catalog automation",
+      "manifest": "n00-cortex/mcp/capabilities_manifest.json",
+      "repoRoot": "n00-cortex",
+      "tags": ["cortex", "schemas", "exports"],
+      "includeInRoot": true,
+      "health": {
+        "commands": [
+          {
+            "label": "validate-cortex-manifest",
+            "command": [
+              "python",
+              "../mcp/validate_manifest.py",
+              "--manifest",
+              "mcp/capabilities_manifest.json",
+              "--repo-root",
+              ".",
+              "--json"
+            ],
+            "timeoutSeconds": 60
+          }
+        ]
+      }
+    },
+    {
+      "id": "n00tropic",
+      "summary": "n00tropic AI design generator + publishing flows",
+      "manifest": "n00tropic/mcp/capabilities_manifest.json",
+      "repoRoot": "n00tropic",
+      "tags": ["n00tropic", "design", "generator"],
+      "includeInRoot": true,
+      "health": {
+        "commands": [
+          {
+            "label": "validate-n00tropic-manifest",
+            "command": [
+              "python",
+              "../mcp/validate_manifest.py",
+              "--manifest",
+              "mcp/capabilities_manifest.json",
+              "--repo-root",
+              ".",
+              "--json"
+            ],
+            "timeoutSeconds": 60
+          }
+        ]
+      }
+    }
+  ]
+}

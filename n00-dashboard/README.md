@@ -9,7 +9,7 @@ This target hosts the macOS/iPadOS SwiftUI companion for the Control Tower. Mile
 - Ensure the workspace artefacts exist: run from the repo root
   ```bash
   .dev/automation/scripts/project-lifecycle-radar.sh
-  .dev/automation/scripts/project-control-panel.sh
+  .dev/automation/scripts/project-control-panel.py
   ```
 
 ## Building the Read-Only Dashboard

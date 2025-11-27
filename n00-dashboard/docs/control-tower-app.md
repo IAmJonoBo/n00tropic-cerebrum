@@ -31,14 +31,14 @@
 | `PreflightStore`       | Index `*-preflight.json` artefacts, compute freshness, surface blockers grouped by job.                                                            | Shared with notification center integration.               |
 | `JobCatalogStore`      | Read metadata from `n00-horizons/jobs/**/README.md` (via the same YAML parser logic wrapped in a Swift bridge).                                    | Provide quick filters (owner, lifecycle, review window).   |
 | `CapabilityBridge`     | Invoke `.dev/automation/scripts/*.sh` through `Process`, capture stdout/stderr, and persist transcripts to `artifacts/automation/agent-runs.json`. | Aligns with existing n00t telemetry.                       |
-| `ControlPanelExporter` | Call `project-control-panel.sh` and surface the resulting Markdown + share/export options.                                                         | Keeps Markdown as the source of truth.                     |
+| `ControlPanelExporter` | Call `project-control-panel.py` and surface the resulting Markdown + share/export options.                                                         | Keeps Markdown as the source of truth.                     |
 | `n00tClient`           | Future: wrap MCP over WebSockets so the app can list & trigger capabilities without shelling out.                                                  | Planned after CLI parity.                                  |
 
 ### Data Flow
 
 1. **Startup**: stores read cached JSON/Markdown and render immediately. File-system observers refresh sections when artefacts are rewritten by automation or the CLI.
 2. **User runs Preflight**: CapabilityRunner asks for doc path, shells out to `project-preflight.sh`, pipes stdout/stderr into a log view, then refreshes PreflightStore + ControlPanelExporter.
-3. **Control Panel**: At any time the operator taps “Regenerate Control Panel,” which chains `project-lifecycle-radar.sh` → `project-control-panel.sh` and opens the Markdown preview inside the app alongside a share/export button.
+3. **Control Panel**: At any time the operator taps “Regenerate Control Panel,” which chains `project-lifecycle-radar.sh` → `project-control-panel.py` and opens the Markdown preview inside the app alongside a share/export button.
 4. **Notifications**: When RadarStore detects new “overdue” entries or PreflightStore sees `status = attention`, the app surfaces badges (and can push notifications) without waiting for daily email updates.
 
 ## UI & Navigation

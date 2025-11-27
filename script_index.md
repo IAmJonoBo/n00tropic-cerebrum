@@ -169,7 +169,7 @@ pylint: disable=missing-function-docstring,line-too-long,invalid-name
 - **Repository:** `.dev`
 - **Category:** `automation/scripts`
 
-#### `.dev/automation/scripts/project-control-panel.sh`
+#### `.dev/automation/scripts/project-control-panel.py`
 
 No description available
 - **Size:** 0.1 KB
@@ -8005,7 +8005,7 @@ Generate the Control Panel Markdown linking radar, runbooks, and preflight artef
 - **Repository:** `n00tropic-cerebrum`
 - **Category:** `n00tropic/.dev/automation/scripts`
 
-#### `n00tropic-cerebrum/n00tropic/.dev/automation/scripts/project-control-panel.sh`
+#### `n00tropic-cerebrum/n00tropic/.dev/automation/scripts/project-control-panel.py`
 
 No description available
 - **Size:** 0.1 KB

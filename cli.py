@@ -697,7 +697,7 @@ def handle_preflight(args: argparse.Namespace) -> None:
 
 
 def handle_control_panel(_: argparse.Namespace) -> None:
-    run_script("project-control-panel.sh")
+    run_script("project-control-panel.py")
 
 
 def handle_autofix_links(args: argparse.Namespace) -> None:

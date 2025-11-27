@@ -43,7 +43,7 @@ scripts/bootstrap-python.sh
 source .venv-workspace/bin/activate  # repeat in new shells before running automation
 ```
 
-The script installs everything defined in `requirements.workspace.txt`, ensuring automation like `project-control-panel.sh` and docs MCP services never fail with `ModuleNotFoundError`.
+The script installs everything defined in `requirements.workspace.txt`, ensuring automation like `project-control-panel.py` and docs MCP services never fail with `ModuleNotFoundError`.
 
 ## Editor configuration for Copilot workflows
 

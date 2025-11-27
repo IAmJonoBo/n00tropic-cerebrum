@@ -21,7 +21,7 @@ MCP_PROXY_BIN="mcp-proxy"
 if ! command -v mcp-proxy >/dev/null 2>&1; then
 	MCP_PROXY_BIN="python -m mcp_proxy.cli"
 fi
-WORKSPACE_ROOT="$WORKSPACE_ROOT" ${MCP_PROXY_BIN} --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" list
+env WORKSPACE_ROOT="$WORKSPACE_ROOT" ${MCP_PROXY_BIN} --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" list
 
 echo "[smoke] docs server page fetch (index) via local import"
 python - <<'PY'
@@ -48,30 +48,30 @@ python - <<'PY'
 import os, sys
 from pathlib import Path
 root = Path(os.environ["WORKSPACE_ROOT"])
-sys.path.insert(0, str(root / "mcp"))
-import capabilities_server as cap  # type: ignore
+sys.path.insert(0, str(root))
+import mcp as mcp_package
+local_pkg = root / "mcp"
+if str(local_pkg) not in mcp_package.__path__:
+    mcp_package.__path__.append(str(local_pkg))
+from mcp.capabilities_server import list_capabilities  # type: ignore
+from mcp.federation_manifest import FederationManifest
+from mcp.capabilities_manifest import CapabilityManifest
 
-print("[smoke] capabilities count:", len(cap.list_capabilities()))
+print("[smoke] capabilities count:", len(list_capabilities()))
 
-# Validate entrypoints for MCP-enabled capabilities exist
-manifest_path = root / "n00t" / "capabilities" / "manifest.json"
-caps = []
-import json
-data = json.loads(manifest_path.read_text())
-for capdef in data.get("capabilities", []):
-    agent_cfg = capdef.get("agent", {})
-    mcp_cfg = agent_cfg.get("mcp", {}) if isinstance(agent_cfg, dict) else {}
-    if not mcp_cfg.get("enabled", False):
-        continue
-    ep = capdef.get("entrypoint")
-    if not ep:
-        raise SystemExit(f"[smoke] missing entrypoint for {capdef.get('id')}")
-    path = (manifest_path.parent / ep).resolve()
-    if not path.exists():
-        raise SystemExit(f"[smoke] entrypoint missing: {path}")
-    caps.append(capdef.get("id"))
+fed_manifest = FederationManifest.load(root / "mcp" / "federation_manifest.json", root)
+validated = 0
+for module in fed_manifest.modules:
+    manifest_path = module.manifest_path(root)
+    repo_path = module.repo_path(root)
+    manifest = CapabilityManifest.load(manifest_path, repo_path)
+    enabled_caps = list(manifest.enabled_capabilities())
+    for cap in enabled_caps:
+        cap.resolved_entrypoint(repo_path, manifest_path.parent)
+    print(f"[smoke] module {module.id}: {len(enabled_caps)} enabled capabilities")
+    validated += len(enabled_caps)
 
-print("[smoke] validated entrypoints:", len(caps))
+print("[smoke] validated entrypoints:", validated)
 PY
 
 if [[ ${RUN_CAP_SMOKE:-0} == "1" ]]; then
@@ -82,12 +82,12 @@ fi
 
 if [[ ${RUN_AI_WORKFLOW_PING:-0} == "1" ]]; then
 	echo "[smoke] ai-workflow MCP ping (tool list)"
-	WORKSPACE_ROOT="$WORKSPACE_ROOT" mcp-proxy --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" tools | grep -i "ai-workflow" || true
+	env WORKSPACE_ROOT="$WORKSPACE_ROOT" mcp-proxy --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" tools | grep -i "ai-workflow" || true
 fi
 
 if [[ ${RUN_CORTEX_PING:-0} == "1" ]]; then
 	echo "[smoke] cortex-catalog MCP ping (tool list)"
-	WORKSPACE_ROOT="$WORKSPACE_ROOT" mcp-proxy --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" tools | grep -i "cortex" || true
+	env WORKSPACE_ROOT="$WORKSPACE_ROOT" mcp-proxy --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" tools | grep -i "cortex" || true
 fi
 
 echo "[smoke] done"

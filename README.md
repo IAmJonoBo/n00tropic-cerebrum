@@ -195,7 +195,7 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 | `ai-workflows/*`                       | Phase-specific scripts for the AI-assisted development workflow surfaced by `n00t`.                                                                                                        |
 | `project-preflight.sh`                 | Chains capture + GitHub/ERPNext syncs and fails fast when review cadence, links, or IDs are missing.                                                                                       |
 | `project-lifecycle-radar.sh`           | Emits a JSON radar summarizing lifecycle totals, overdue reviews, and integration gaps for planning.                                                                                       |
-| `project-control-panel.sh`             | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights.                                                                                 |
+| `project-control-panel.py`             | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks, radar output, and preflights.                                                                                 |
 | `scripts/erpnext-run.sh`               | Run-and-gun ERPNext dev stack: bootstraps bench, verifies MySQL/Redis, launches browser, logs telemetry, and triggers PM/telemetry exports.                                                |
 | `project-preflight-batch.sh`           | Executes preflight across every registry entry to keep GitHub + ERPNext sync warnings visible.                                                                                             |
 | `workspace-health.py`                  | Summarizes root + submodule git status, emits `artifacts/workspace-health.json`, cleans safe untracked files, and syncs submodules on demand.                                              |
@@ -298,7 +298,7 @@ Any repo that needs an asset from a sibling must reference the published artifac
 
 - **Python format flow**: Every Trunk config runs `isort@7.0.0` before `black@25.x` so imports settle before layout styling. If a formatter loop appears, run `trunk fmt --filter=isort,black` or `isort . && black .` in the affected repo.
 - **isort configuration**: `n00-frontiers/.isort.cfg` pins `profile = black` and `line_length = 120`, and the setting is mirrored by the other repos via Trunk sync so Black never rewrites imports immediately after isort.
-- **Deep dive**: See `n00-school/in-dev-learnings/black-isort-conflicts.md` plus `n00-frontiers/docs/quality/formatting-style.md` for the rationale, escalation steps, and verification checklist agents should follow when formatters disagree.
+- **Deep dive**: See `n00-school/docs/modules/ROOT/pages/learning-log/black-vs-isort.adoc` plus `n00-frontiers/docs/quality/formatting-style.md` for the rationale, escalation steps, and verification checklist agents should follow when formatters disagree.
 - **Automation reminder**: `trunk-upgrade.sh` (and the `python3 cli.py trunk-upgrade` helper) keep formatter versions in lockstep across every repo, so rerun it whenever `isort`/`black` ship compatibility fixes.
 - **Python linting helper**: run `pnpm run lint:python` in the workspace root to run `isort`, `black` and `ruff` checks across Python subprojects. The workspace CI now runs `pnpm run lint:python` as part of `workspace-health` to validate Python formatting and lint checks in PRs.
 

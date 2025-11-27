@@ -169,7 +169,7 @@ links, or IDs are missing.
 | Emits a JSON radar summarising lifecycle totals, overdue reviews, and
 integration gaps for planning.
 
-| `project-control-panel.sh`
+| `project-control-panel.py`
 | Builds `n00-horizons/docs/control-panel.md` so planning decks link runbooks,
 radar output, and preflights.
 
@@ -229,8 +229,8 @@ hand-editing and stays reversible.
 * *isort configuration*: `n00-frontiers/.isort.cfg` pins `profile = black` and
  `line_length = 88`, and the setting is mirrored by the other repos via Trunk
  sync so Black never rewrites imports immediately after isort.
-* *Deep dive*: See `n00-school/in-dev-learnings/black-isort-conflicts.md` plus
- `n00-frontiers/docs/quality/formatting-style.md` for the rationale, escalation
+* *Deep dive*: See `n00-school/docs/modules/ROOT/pages/learning-log/black-vs-isort.adoc` plus
+	`n00-frontiers/docs/quality/formatting-style.md` for the rationale, escalation
  steps, and verification checklist agents should follow when formatters disagree.
 * *Automation reminder*: `trunk-upgrade.sh` (and the `python3 CLI.py
  trunk-upgrade` helper) keep formatter versions in lockstep across every Repo, so

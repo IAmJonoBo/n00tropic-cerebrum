@@ -24,9 +24,31 @@ if ! command -v mcp-proxy >/dev/null 2>&1; then
 fi
 
 set -x
-WORKSPACE_ROOT="$WORKSPACE_ROOT" ${MCP_PROXY_BIN} --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" list
+env WORKSPACE_ROOT="$WORKSPACE_ROOT" ${MCP_PROXY_BIN} --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" list
+
+VALIDATOR_PY="${WORKSPACE_ROOT}/.venv/bin/python"
+if [[ ! -x $VALIDATOR_PY ]]; then
+	VALIDATOR_PY="python"
+fi
+
+VALIDATION_FLAGS=("--federation" "${WORKSPACE_ROOT}/mcp/federation_manifest.json")
+if [[ ${RUN_MODULE_HEALTH:-0} == "1" ]]; then
+	VALIDATION_FLAGS+=("--run-health")
+fi
+
+"$VALIDATOR_PY" "${WORKSPACE_ROOT}/mcp/validate_manifest.py" "${VALIDATION_FLAGS[@]}"
+
+DISCOVERY_SCRIPT="${WORKSPACE_ROOT}/mcp/discover_capability_candidates.py"
+DISCOVERY_BASELINE="${WORKSPACE_ROOT}/mcp/capability_candidates.baseline.json"
+if [[ -f $DISCOVERY_SCRIPT ]]; then
+	DISCOVERY_ARGS=("$DISCOVERY_SCRIPT" "--format" "table")
+	if [[ -f $DISCOVERY_BASELINE ]]; then
+		DISCOVERY_ARGS+=("--baseline" "$DISCOVERY_BASELINE" "--fail-on-new")
+	fi
+	"$VALIDATOR_PY" "${DISCOVERY_ARGS[@]}"
+fi
 
 # Full tool fetch can be slow if servers emit telemetry; enable with RUN_TOOLS=1
 if [[ ${RUN_TOOLS:-0} == "1" ]]; then
-	WORKSPACE_ROOT="$WORKSPACE_ROOT" ${MCP_PROXY_BIN} --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" tools
+	env WORKSPACE_ROOT="$WORKSPACE_ROOT" ${MCP_PROXY_BIN} --config "${WORKSPACE_ROOT}/mcp/mcp-suite.yaml" tools
 fi

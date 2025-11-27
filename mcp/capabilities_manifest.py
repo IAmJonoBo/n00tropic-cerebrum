@@ -10,6 +10,11 @@ DEFAULT_ENTRYPOINT_ROOTS: tuple[str, ...] = (
     ".dev/automation/scripts",
     "scripts",
     "n00clear-fusion",
+    "n00-horizons",
+    "n00-frontiers",
+    "n00-cortex",
+    "n00-school",
+    "n00t",
 )
 DEFAULT_ALLOWED_ENV: tuple[str, ...] = ("PATH", "PYTHONPATH", "HOME")
 
@@ -45,7 +50,9 @@ class Capability(BaseModel):
     entrypoint: str
     inputs: dict[str, Any] = Field(default_factory=dict)
     outputs: dict[str, Any] = Field(default_factory=dict)
-    metadata: CapabilityMetadata
+    metadata: CapabilityMetadata = Field(
+        default_factory=CapabilityMetadata  # type: ignore[arg-type]
+    )
     agent: dict[str, Any] = Field(default_factory=dict)
     guardrails: Guardrails = Field(default_factory=Guardrails)  # type: ignore[arg-type]
 
