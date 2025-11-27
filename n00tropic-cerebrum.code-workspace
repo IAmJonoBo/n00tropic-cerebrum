@@ -18,5 +18,29 @@
       "**/.venv": true,
       "**/node_modules": false
     }
+  },
+  "launch": {
+    "configurations": [
+      {
+        "type": "swift",
+        "request": "launch",
+        "args": [],
+        "cwd": "${workspaceFolder:n00tropic-cerebrum}",
+        "name": "Debug control-tower (n00tropic-cerebrum)",
+        "target": "control-tower",
+        "configuration": "debug",
+        "preLaunchTask": "swift: Build Debug control-tower (n00tropic-cerebrum)"
+      },
+      {
+        "type": "swift",
+        "request": "launch",
+        "args": [],
+        "cwd": "${workspaceFolder:n00tropic-cerebrum}",
+        "name": "Release control-tower (n00tropic-cerebrum)",
+        "target": "control-tower",
+        "configuration": "release",
+        "preLaunchTask": "swift: Build Release control-tower (n00tropic-cerebrum)"
+      }
+    ]
   }
 }
