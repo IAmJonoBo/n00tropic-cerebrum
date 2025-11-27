@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-11-27T13:11:10.624246+00:00",
+  "generated_at": "2025-11-27T14:26:02.983211+00:00",
   "candidateScripts": [
     ".dev/automation/scripts/ai-workflows/workflow-utils.sh",
     ".dev/automation/scripts/autofix-project-metadata.py",
@@ -8,7 +8,6 @@
     ".dev/automation/scripts/check-superrepo-skeleton.sh",
     ".dev/automation/scripts/check-workspace-skeleton.py",
     ".dev/automation/scripts/complete-n00menon.sh",
-    ".dev/automation/scripts/control-tower-health.sh",
     ".dev/automation/scripts/deps-dependency-track-upload.sh",
     ".dev/automation/scripts/doctor.sh",
     ".dev/automation/scripts/erpnext-bootstrap.sh",
