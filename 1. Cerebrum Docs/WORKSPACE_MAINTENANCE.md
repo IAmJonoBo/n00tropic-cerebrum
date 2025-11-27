@@ -49,6 +49,10 @@ When submodules have moved forward (for example, after you have committed and pu
 
 This stages all submodule paths in the root repo and creates a single commit that pins the updated SHAs, so you can follow with a simple `git push`.
 
+Agents (or humans) who just need to verify submodule hygiene without the full `workspace.gitDoctor` payload can invoke `workspace.checkSubmodules`, which shells out to `check-submodules.sh` and fails fast on dirty submodules, detached HEADs, or upstream drift.
+
+When manifests or repos drift from the skeleton definition, `workspace.checkSkeleton` mirrors `check-workspace-skeleton.py` so you can audit required directories, scaffold missing stubs with `apply=true`, and optionally bootstrap pnpm/trunk when reviving older clones.
+
 ## 4. Validate Delivery Artefacts
 
 For any metadata-bearing document (ideas, jobs, projects):
@@ -70,7 +74,18 @@ Preflight chains capture, GitHub sync, and ERPNext sync to confirm IDs, links, a
 ## AI / Agent Quick Reference
 
 - Preferred capability: `workspace.gitDoctor` (backed by `workspace-health.sh`). Payload keys include `cleanUntracked`, `syncSubmodules`, `publishArtifact`, and `strict`.
+- Fast preflight: `workspace.doctor` runs Renovate token checks, Trunk config sync, and pnpm dependency checks; pass `mode=fix` to apply repairs.
+- Lightweight hygiene check: `workspace.checkSubmodules` mirrors `.dev/automation/scripts/check-submodules.sh` so you can gate releases on submodule cleanliness without running the full doctor sweep.
+- Skeleton enforcement: `workspace.checkSkeleton` wraps `check-workspace-skeleton.py` for manifest/skeleton validation plus optional `apply` or `bootstrap` flows.
+- JS toolchain reset: `workspace.normalizePnpm` reuses `normalize-workspace-pnpm.sh` to delete `node_modules/.pnpm` trees and reinstall with the pinned pnpm version across templates/examples.
+- Node version propagation: `workspace.syncNvmrc` links subrepo `.nvmrc` files back to the workspace pin (set `force=true` to override repo-specific pins).
+- Python env hygiene: `workspace.venvHealth` fronts `venv-health.sh` so agents can inventory/prune `.venv-*` directories or refresh them from requirements files.
+- Trunk upgrades: `workspace.trunkUpgradeWorkspace` encapsulates `scripts/trunk-upgrade-workspace.sh` to refresh linters, sync configs, and (optionally) run trunk check/fmt across subrepos.
+- Trunk orchestration: `trunk.manage` (sync/pull/push/upgrade/fmt) and `trunk.sync` (check/pull/push with JSON reporting) keep downstream configs aligned; `trunk.runSubrepos` runs trunk fmt/check across subrepos; `trunk.lintSetup` installs/initialises the CLI when missing.
 - Automation emits `artifacts/workspace-health.json`, which distinguishes tracked vs untracked entries per repo so agents can react programmatically.
+- Branch hygiene: `merge.minimalSet` merges eligible automerge PRs; `branches.wrangle` files a cleanup issue (and can auto-delete with `autoDelete=true`); `branches.auditTemp` emits a markdown branch report under `artifacts/tmp/branch-wrangler/`.
+- Check polling: `checks.waitForChecks` / `checks.waitForPrChecks` monitor GitHub check-runs until success/failure/timeout for handoffs that need a definite gate.
+- Telemetry helpers: `telemetry.recordRunEnvelope` and `telemetry.recordCapabilityRun` append JSONL run records under `.dev/automation/artifacts/automation/` for dashboards.
 - Additional context and sample payload LIVE in [`AI_WORKSPACE_PLAYBOOK.md`](AI_WORKSPACE_PLAYBOOK.md).
 
 ## Branch merging helpers

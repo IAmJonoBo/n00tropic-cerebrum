@@ -206,9 +206,13 @@ Automation scripts live under `.dev/automation/scripts/` and surface through the
 | `guard-root-pnpm-install.mjs`          | Blocks accidental `pnpm install` at workspace root; set `ALLOW_ROOT_PNPM_INSTALL=1` only when you truly need a root install.                                                               |
 | `refresh-python-lock.sh`               | Regenerates or checks the Python lockfiles (`requirements.workspace.min.lock`, `requirements.workspace.lock`) using `uv`; CI can run the check to enforce reproducible deps.               |
 | `check-runners.mjs`                    | Lists GitHub self-hosted runners for the superrepo + submodules (uses `GH_TOKEN`); nightly workflow alerts if coverage drops to zero.                                                      |
-| `normalize-workspace-pnpm.sh`          | Canonical entry for re-installing JS deps in templates/examples; now fails if Node pins drift (override with `--allow-mismatch`).                                                          |
+| `check-workspace-skeleton.py`          | Validates repos against the skeleton manifest and can scaffold missing directories/stubs; exposed to agents as `workspace.checkSkeleton`.                                                  |
+| `normalize-workspace-pnpm.sh`          | Canonical entry for re-installing JS deps in templates/examples; now fails if Node pins drift (override with `--allow-mismatch`). Call `workspace.normalizePnpm` for MCP access.           |
+| `venv-health.sh`                       | Audits `.venv-*` directories, optionally prunes invalid names, and refreshes envs from requirements files. Available to agents via `workspace.venvHealth`.                                 |
 | `guard-subrepo-pnpm-install.mjs`       | Wired as `preinstall` in JS subrepos; blocks installs from the wrong directory/workspace context.                                                                                          |
 | `cli.py health-*`                      | Front door commands wrapping health checks: toolchain, runners, Python lock, and JS normalization with consistent logging.                                                                 |
+
+Agents can invoke these workflows via MCP using `workspace.checkSkeleton`, `workspace.normalizePnpm`, `workspace.venvHealth`, and `workspace.trunkUpgradeWorkspace` without touching bespoke scripts.
 
 ### Alerts (Discord)
 

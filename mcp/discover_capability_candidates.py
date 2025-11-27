@@ -30,6 +30,21 @@ DEFAULT_FEDERATION_PATH = REPO_ROOT / "mcp" / "federation_manifest.json"
 CANDIDATE_BASELINE_PATH = REPO_ROOT / "mcp" / "capability_candidates.baseline.json"
 CANDIDATE_EXTENSIONS = {".py", ".sh", ".ts", ".js"}
 SKIP_FILENAMES = {"__init__.py"}
+SKIP_DIR_NAMES = {
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "node_modules",
+    ".turbo",
+    "dist",
+    "build",
+    ".mypy_cache",
+}
+# Explicitly ignore compatibility shims or shared libs that should not become capabilities.
+SKIP_PATHS = {
+    ".dev/automation/scripts/lib/project_metadata.py",
+}
 
 
 @dataclass
@@ -152,6 +167,12 @@ def discover_scan_roots(extra_roots: Sequence[str] | None) -> list[Path]:
 def iter_candidate_files(root: Path, extensions: set[str]) -> Iterable[Path]:
     for path in root.rglob("*"):
         if not path.is_file():
+            continue
+        # skip hidden files and common build/cache/venv trees
+        if any(part in SKIP_DIR_NAMES for part in path.parts):
+            continue
+        rel = path.relative_to(REPO_ROOT)
+        if str(rel) in SKIP_PATHS:
             continue
         if path.name.startswith("."):
             continue

@@ -28,7 +28,26 @@
         "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}"
       }
     }
-    // Optional (uncomment when tokens are available):
+    // Optional (uncomment as needed):
+    // "ai-workflow": {
+    //   "command": "node",
+    //   "args": ["${workspaceFolder}/.dev/automation/mcp-server/index.js"],
+    //   "options": { "cwd": "${workspaceFolder}" }
+    // },
+    // "cortex-catalog": {
+    //   "command": "node",
+    //   "args": ["${workspaceFolder}/n00-cortex/mcp-server/index.js"],
+    //   "options": { "cwd": "${workspaceFolder}/n00-cortex" }
+    // },
+    // "cortex-graph": {
+    //   "transport": "http",
+    //   "url": "http://localhost:8787/mcp"
+    // },
+    // "github": {
+    //   "command": "npx",
+    //   "args": ["-y", "@modelcontextprotocol/server-github"],
+    //   "env": { "GITHUB_TOKEN": "${env:GITHUB_TOKEN}" }
+    // },
     // "github": {
     //   "command": "npx",
     //   "args": ["-y", "@modelcontextprotocol/server-github"],

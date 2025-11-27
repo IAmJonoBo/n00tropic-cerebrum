@@ -507,14 +507,6 @@ No description available
 - **Repository:** `n00tropic-cerebrum`
 - **Category:** `.dev/automation/scripts`
 
-#### `n00tropic-cerebrum/.dev/automation/scripts/workspace-gitdoctor-capability.sh`
-
-No description available
-- **Size:** 1.9 KB
-- **Modified:** 2025-11-10T12:47:31.695247
-- **Repository:** `n00tropic-cerebrum`
-- **Category:** `.dev/automation/scripts`
-
 #### `n00tropic-cerebrum/.dev/automation/scripts/workspace-health.py`
 
 Report workspace + submodule health, with optional repair hooks.

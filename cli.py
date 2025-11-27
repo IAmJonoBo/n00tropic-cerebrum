@@ -720,11 +720,11 @@ def handle_project_command(args: argparse.Namespace) -> None:
 
 def handle_doctor(args: argparse.Namespace) -> None:
     flags: List[str] = ["--strict"] if args.strict else []
-    run_workspace_script("workspace-gitdoctor-capability.sh", *flags)
+    run_workspace_script("workspace-health.sh", *flags)
     skeleton_flags: List[str] = []
     if args.strict:
         skeleton_flags.append("--apply")
-    run_workspace_script("check-superrepo-skeleton.sh", *skeleton_flags)
+    run_workspace_script("check-workspace-skeleton.py", *skeleton_flags)
     generate_repo_context_artifact()
 
 

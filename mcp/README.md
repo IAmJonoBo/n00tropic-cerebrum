@@ -40,6 +40,15 @@ python mcp/validate_manifest.py --federation mcp/federation_manifest.json
 RUN_MODULE_HEALTH=1 WORKSPACE_ROOT=$(pwd) ./mcp/health-suite.sh
 ```
 
+### VS Code / Copilot quick start
+
+```bash
+mkdir -p .vscode
+ln -sf ../mcp/vscode.mcp.json .vscode/mcp.json
+```
+
+Then open Copilot Chat → Agent → Tools and click **Start** to launch `filesystem`, `memory`, `docs`, and `n00t-capabilities`. Uncomment optional servers (GitHub, search, ai-workflow, cortex-\*) in `mcp/vscode.mcp.json` when you have tokens or local services.
+
 If VS Code still fails to launch the local Python servers, run the config validator:
 
 ```bash

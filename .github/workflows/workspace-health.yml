@@ -23,14 +23,14 @@ jobs:
         with:
           python-version: 3.11.14
       - name: Cache uv downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: .cache/uv
           key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
           restore-keys: |
             ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
       - name: Cache uv downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: .cache/uv
           key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
@@ -51,7 +51,7 @@ jobs:
         with:
           node-version-file: .nvmrc
       - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
         with:
           version: 10.23.0
       - name: Verify pnpm
@@ -117,7 +117,7 @@ jobs:
       - name: Validate cortex schemas
         run: pnpm run ci:validate:cortex
       - name: Run workspace.gitDoctor capability
-        run: ./.dev/automation/scripts/workspace-gitdoctor-capability.sh --sync-submodules --publish-artifact --strict
+        run: ./.dev/automation/scripts/workspace-health.sh --sync-submodules --publish-artifact --strict
       - name: Lint workspace manifest & gate new repos
         run: |
           python .dev/automation/scripts/lint-workspace-manifest.py
@@ -140,7 +140,7 @@ jobs:
         with:
           python-version: 3.11.14
       - name: Cache uv downloads
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: .cache/uv
           key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
@@ -153,7 +153,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: n00t/pnpm-lock.yaml
       - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
         with:
           version: 10.23.0
       - name: Verify pnpm (self-hosted)
@@ -173,4 +173,4 @@ jobs:
       - name: Run Python lint script
         run: pnpm run lint:python
       - name: Run workspace.gitDoctor capability (self-hosted)
-        run: ./.dev/automation/scripts/workspace-gitdoctor-capability.sh --sync-submodules --publish-artifact --strict
+        run: ./.dev/automation/scripts/workspace-health.sh --sync-submodules --publish-artifact --strict

@@ -26,11 +26,11 @@
 2. **Refresh sources** – `./.dev/automation/scripts/refresh-workspace.sh`.
 3. **Meta-check** – `./.dev/automation/scripts/meta-check.sh` (runs lint/test suites per repo).
 4. **Release snapshot** – `./.dev/automation/scripts/workspace-release.sh` (writes `1. Cerebrum Docs/releases.yaml`).
-5. **Installs** – root `pnpm install` is blocked; use subrepo installs or `pnpm --filter`. JS subrepos have preinstall guards; rerun installs via `scripts/normalize-workspace-pnpm.sh` to enforce toolchain pins.
-6. **Python deps** – locked with `uv`; verify via `pnpm run python:lock:check`.
+5. **Installs** – root `pnpm install` is blocked; use subrepo installs or `pnpm --filter`. JS subrepos have preinstall guards; rerun installs via `scripts/normalize-workspace-pnpm.sh` (or MCP capability `workspace.normalizePnpm`) to enforce toolchain pins.
+6. **Python deps** – locked with `uv`; verify via `pnpm run python:lock:check` and use `workspace.venvHealth` when you need to audit or rebuild `.venv-*` directories.
 7. **Alerts** – set `DISCORD_WEBHOOK` (and optional `REQUIRED_RUNNER_LABELS`) for runner and Python lock notifications.
 8. **Secrets** – copy `.env.example` to `.env` in the workspace root; run `scripts/sync-env-templates.sh` to fan out `.env.example` stubs to subrepos. Keys: `GH_TOKEN`, `GITHUB_TOKEN`, `DISCORD_WEBHOOK`, `REQUIRED_RUNNER_LABELS`.
-9. **CLI shortcuts** – prefer `python3 cli.py health-toolchain|health-runners|health-python-lock|normalize-js` for common checks; they wrap the canonical scripts with logging.
+9. **CLI shortcuts** – prefer `python3 cli.py health-toolchain|health-runners|health-python-lock|normalize-js` for common checks; they wrap the canonical scripts with logging. Skeleton compliance is available via `python3 cli.py workspace-doctor --strict` or the `workspace.checkSkeleton` capability (with `apply=true` for scaffolding).
 
 These scripts back the `workspace.*` capabilities exposed through `n00t/capabilities/manifest.json`.
 
