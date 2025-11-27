@@ -1,5 +1,16 @@
 * xref:index.adoc[Home]
 * xref:migration-status.adoc[Migration Tracker]
+
+.Getting Started
+* xref:tutorials/workspace-setup.adoc[Workspace Setup]
+* xref:tutorials/mcp-server-usage.adoc[MCP Server Usage]
+
+.How-To Guides
+* xref:guides/running-automation.adoc[Running Automation]
+* xref:guides/adding-mcp-capability.adoc[Adding MCP Capability]
+* xref:guides/creating-adr.adoc[Creating ADRs]
+
+.Planning & Workflows
 * xref:planning.adoc[Planning & Typesense]
 ** xref:closing-gaps.adoc[Gap Closure Plan]
 ** xref:++n00-horizons/docs/modules/ROOT/pages/experiments/planner-telemetry.adoc++[Experiment: Planner telemetry]
@@ -29,3 +40,10 @@
 **** xref:++1. Cerebrum Docs/ADR/ADR-002-agent-orchestration-and-training.adoc++[ADR-002 Agent Orchestration]
 **** xref:++1. Cerebrum Docs/ADR/ADR-003-operational-workspace-taxonomy-and-erpnext-integration.adoc++[ADR-003 Workspace Taxonomy]
 **** xref:++1. Cerebrum Docs/ADR/ADR-004-unified-project-management-system.adoc++[ADR-004 Unified PM System]
+
+.Troubleshooting
+* xref:troubleshooting/workspace.adoc[Workspace Issues]
+
+.Reference
+* xref:reference/architecture.adoc[Architecture Overview]
+* xref:reference/glossary.adoc[Glossary]
