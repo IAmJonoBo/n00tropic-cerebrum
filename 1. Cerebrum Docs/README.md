@@ -32,5 +32,6 @@ This directory captures workspace-level knowledge that sits above any single rep
 - [ADR-001: Federated Generator Workspace](ADR/ADR-001-workspace-federation.md)
 - [ADR-002: Agent Orchestration & Training Spine](ADR/ADR-002-agent-orchestration-and-training.md)
 - [ADR-003: Operational Workspace Taxonomy & ERPNext Integration](ADR/ADR-003-operational-workspace-taxonomy-and-erpnext-integration.md)
+- [ADR-007: Proactivity Doctrine & Workspace Health Enforcement](ADR/ADR-007-proactivity-doctrine.md)
 
 Keep the documentation concise and avoid duplicating material maintained inside the individual repositories.

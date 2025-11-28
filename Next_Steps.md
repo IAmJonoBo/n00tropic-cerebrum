@@ -24,9 +24,9 @@
   - `scripts/bootstrap-repo.sh --name <repo> --role <role>` scaffolds and appends manifest entry.
 - [ ] Mirror manifest/skeleton checks in key subrepos (owner: codex, due: 2025-12-10)
   - Thin wrappers in `n00-frontiers`, `n00-cortex`, and `n00t` to run root checks when used standalone.
-- [ ] Proactivity doctrine ADR + docs (owner: docs, due: 2025-12-07)
+- [x] Proactivity doctrine ADR + docs (owner: docs, completed: 2025-11-28)
   - Add ADR in `1. Cerebrum Docs` and update root/START HERE with the proactivity + manifest requirements.
-- [ ] n00t capability for repair/apply (owner: automation/agent platform, due: 2025-12-12)
+- [x] n00t capability for repair/apply (owner: automation/agent platform, completed: 2025-11-28)
   - Expose skeleton apply + health auto-remediate via n00t capability manifest (dry-run by default).
 - [ ] Repair workspace health sync for ephemeral agents (owner: codex)
   - Document bootstrap order for runners: `GH_SUBMODULE_TOKEN` → `scripts/bootstrap-workspace.sh` → `pnpm install` → `scripts/bootstrap-python.sh` → `pnpm exec antora antora-playbook.yml` (skip if private sources unavailable).
