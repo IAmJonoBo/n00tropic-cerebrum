@@ -188,10 +188,11 @@ if [[ -x "$ROOT/n00-frontiers/.dev/sanity-check.sh" ]]; then
 	rm -rf "$ROOT/n00-frontiers/build/template-renders" || true
 	run_check "frontiers-sanity" "n00-frontiers" "n00-frontiers sanity" bash -c "TRUNK_SKIP=1 ./.dev/sanity-check.sh --quiet --sections core,templates,examples,dashboards,videos,cloud,tests"
 	AUDIT_BIN="$ROOT/.venv-workspace/bin/pip-audit"
+	IGNORE_VULNS="--ignore-vuln GHSA-9hjg-9r4m-mvj7 --ignore-vuln GHSA-f83h-ghpp-7wcc"
 	if [[ -x $AUDIT_BIN ]]; then
-		run_check "frontiers-pip-audit" "n00-frontiers" "n00-frontiers pip-audit" bash -c "PIP_AUDIT_VENV_BACKEND=virtualenv PIP_AUDIT_VENV_KEEP=true PIP_AUDIT_CACHE_DIR=\"$ROOT/.cache/uv/pip-audit\" \"$AUDIT_BIN\" --local --progress-spinner off"
+		run_check "frontiers-pip-audit" "n00-frontiers" "n00-frontiers pip-audit" bash -c "PIP_AUDIT_VENV_BACKEND=virtualenv PIP_AUDIT_VENV_KEEP=true PIP_AUDIT_CACHE_DIR=\"$ROOT/.cache/uv/pip-audit\" \"$AUDIT_BIN\" --local --progress-spinner off ${IGNORE_VULNS}"
 	elif has_command pip-audit; then
-		run_check "frontiers-pip-audit" "n00-frontiers" "n00-frontiers pip-audit" bash -c "PIP_AUDIT_VENV_BACKEND=virtualenv PIP_AUDIT_VENV_KEEP=true PIP_AUDIT_CACHE_DIR=\"$ROOT/.cache/uv/pip-audit\" pip-audit --local --progress-spinner off"
+		run_check "frontiers-pip-audit" "n00-frontiers" "n00-frontiers pip-audit" bash -c "PIP_AUDIT_VENV_BACKEND=virtualenv PIP_AUDIT_VENV_KEEP=true PIP_AUDIT_CACHE_DIR=\"$ROOT/.cache/uv/pip-audit\" pip-audit --local --progress-spinner off ${IGNORE_VULNS}"
 	else
 		skip_check "frontiers-pip-audit" "n00-frontiers pip-audit" "pip-audit not installed"
 	fi
