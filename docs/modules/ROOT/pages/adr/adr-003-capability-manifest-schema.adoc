@@ -1,0 +1,2 @@
+= ADR-003 Capability Manifest Schema (stub)
+Stub to satisfy cross-references.

@@ -1,0 +1,2 @@
+= ADR-004 Guardrails Framework (stub)
+Stub to satisfy cross-references.

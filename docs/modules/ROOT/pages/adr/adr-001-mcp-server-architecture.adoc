@@ -1,0 +1,2 @@
+= ADR-001 MCP Server Architecture (stub)
+Stub to satisfy cross-references.

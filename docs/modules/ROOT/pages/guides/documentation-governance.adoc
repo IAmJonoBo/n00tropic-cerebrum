@@ -1,6 +1,7 @@
 = Documentation Governance
 :page-tags: documentation,governance,standards,quality
 :reviewed: 2025-11-27
+:doctype: book
 :toc: left
 :toclevels: 3
 
