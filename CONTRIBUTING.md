@@ -42,3 +42,11 @@ This workspace stitches together multiple submodules (cortex, frontiers, horizon
 ## Auto-sync helper
 
 - To propagate this CONTRIBUTING file into each submodule root: `./scripts/sync-contributing.sh --write` (safe; only updates when content differs).
+
+## Coverage policy
+
+- Maintain a **minimum 85% line coverage** per repo and for the superrepo. New changes must keep or raise coverage; exceptions require explicit approval and a follow-up issue.
+- JavaScript/TypeScript: run `pnpm run test -- --coverage` or `vitest --coverage` and ensure reports stay ≥85%.
+- Python: run `coverage run -m pytest && coverage report` (or `python -m pytest --cov` if configured) and keep modules touched ≥85%.
+- Mixed repos: run both JS and Python coverage where applicable. Document coverage deltas in PR descriptions.
+- If coverage dips below 85%, add tests before merge or file a waiver with a remediation plan (tests in the next PR).
