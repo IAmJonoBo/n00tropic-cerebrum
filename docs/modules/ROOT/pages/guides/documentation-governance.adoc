@@ -766,7 +766,7 @@ Common issues and solutions.
 * xref:reference.adoc[Reference Documentation]
 ----
 
-=== Troubleshooting Template
+== Troubleshooting Template
 
 [source,asciidoc]
 ----
@@ -813,7 +813,7 @@ Information on how to get additional support.
 Links to related guides.
 ----
 
-=== API Reference Template
+== API Reference Template
 
 [source,asciidoc]
 ----
