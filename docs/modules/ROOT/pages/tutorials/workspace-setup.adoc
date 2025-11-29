@@ -516,7 +516,7 @@ Now that your workspace is set up:
 1. **Learn MCP Usage**: See xref:tutorials/mcp-server-usage.adoc[MCP Server Usage Tutorial]
 2. **Run Automation**: See xref:guides/running-automation.adoc[Running Automation Guide]
 3. **Contribute Docs**: See xref:ROOT:CONTRIBUTING-docs.adoc[Documentation Contribution Guide]
-4. **Explore Capabilities**: See xref:n00t:reference/mcp-capabilities.adoc[MCP Capabilities Reference]
+4. **Explore Capabilities**: See xref:reference/mcp-capabilities.adoc[MCP Capabilities Reference]
 
 == Summary Checklist
 

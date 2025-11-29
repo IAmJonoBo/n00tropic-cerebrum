@@ -425,8 +425,8 @@ performance to purpose-built TSDBs for our scale.
 
 === Excellent ADR Examples
 
-* xref:n00t:adr/adr-001-mcp-server-architecture.adoc[ADR-001: MCP Server Architecture]
-* xref:n00tropic:adr/adr-004-multi-model-strategy.adoc[ADR-004: Multi-Model Strategy]
+* xref:adr/adr-001-mcp-server-architecture.adoc[ADR-001: MCP Server Architecture]
+* xref:adr/adr-004-multi-model-strategy.adoc[ADR-004: Multi-Model Strategy]
 * xref:ROOT:1. Cerebrum Docs/ADR/ADR-001-workspace-federation.adoc[ADR-001: Workspace Federation]
 
 These demonstrate:
@@ -439,6 +439,6 @@ These demonstrate:
 == See Also
 
 * xref:ROOT:1. Cerebrum Docs/ADR/README.adoc[Workspace ADR Index]
-* xref:n00t:adr/index.adoc[n00t ADR Index]
-* xref:n00-frontiers:adr/README.adoc[n00-frontiers ADR Index]
+* xref:adr/index.adoc[ADR Index]
+* xref:adr/index.adoc[Workspace ADR Index]
 * https://adr.github.io/[ADR Project Homepage]

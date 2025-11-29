@@ -1,0 +1,36 @@
+site:
+  title: n00 Docs (local)
+  start_page: n00tropic-cerebrum::index.adoc
+content:
+  sources:
+    - url: .
+      branches: [HEAD]
+      start_paths:
+        - docs
+        - n00-frontiers/docs
+        - n00-cortex/docs
+        - n00t/docs
+        - n00-horizons/docs
+        - n00-school/docs
+        - n00plicate/docs
+        - n00tropic/docs
+        - n00clear-fusion/docs
+        - n00menon
+ui:
+  bundle:
+    url: ./vendor/antora/ui-bundle.zip
+antora:
+  extensions:
+    - "@antora/lunr-extension"
+asciidoc:
+  extensions:
+    - asciidoctor-kroki
+  attributes:
+    page-pagination: ""
+    sectanchors: ""
+    icons: font
+    source-highlighter: highlight.js
+    kroki-server-url: https://kroki.io
+    kroki-fetch-diagram: true
+runtime:
+  fetch: false

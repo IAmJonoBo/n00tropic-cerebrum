@@ -1,0 +1,2 @@
+= CONTRIBUTING (Docs) Stub
+Placeholder for documentation contributing guide.

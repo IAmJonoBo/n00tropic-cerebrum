@@ -564,10 +564,10 @@ Before running automation, query n00-docs for relevant procedures
 
 Now that you can use MCP servers:
 
-1. **Explore Capabilities**: See xref:n00t:reference/mcp-capabilities.adoc[MCP Capabilities Reference]
+1. **Explore Capabilities**: See xref:reference/mcp-capabilities.adoc[MCP Capabilities Reference]
 2. **Read the Runbook**: See xref:ROOT:1. Cerebrum Docs/Agent Assisted Development/AGENT_E2E_RUNBOOK.adoc[Agent E2E Runbook]
 3. **Learn Workflows**: See xref:guides/running-automation.adoc[Running Automation Guide]
-4. **Understand Architecture**: See xref:n00t:adr/adr-001-mcp-server-architecture.adoc[ADR-001: MCP Server Architecture]
+4. **Understand Architecture**: See xref:adr/adr-001-mcp-server-architecture.adoc[ADR-001: MCP Server Architecture]
 
 == Summary Checklist
 
@@ -583,4 +583,4 @@ Now that you can use MCP servers:
 
 **Learning Time**: 30-45 minutes
 
-**Support**: For MCP-specific issues, see xref:n00t:troubleshooting.adoc[n00t Troubleshooting] or review xref:n00t:adr/adr-003-capability-manifest-schema.adoc[ADR-003: Capability Manifest Schema].
+**Support**: For MCP-specific issues, see xref:troubleshooting/n00t.adoc[n00t Troubleshooting] or review xref:adr/adr-003-capability-manifest-schema.adoc[ADR-003: Capability Manifest Schema].

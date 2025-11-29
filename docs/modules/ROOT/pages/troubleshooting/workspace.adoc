@@ -296,7 +296,7 @@ pnpm exec antora antora-playbook.yml
 xref:mcp-capabilities.adoc[]
 
 // Correct (includes component)
-xref:n00t:reference/mcp-capabilities.adoc[]
+xref:reference/mcp-capabilities.adoc[]
 ----
 
 5. **Use test playbook for local builds:**

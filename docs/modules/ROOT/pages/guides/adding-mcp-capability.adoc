@@ -150,7 +150,7 @@ Run validation.myValidator with target="test-data"
 
 === 6. Document the Capability
 
-Add documentation to xref:n00t:reference/mcp-capabilities.adoc[]:
+Add documentation to xref:reference/mcp-capabilities.adoc[]:
 
 [source,asciidoc]
 ----
@@ -273,6 +273,6 @@ echo '{"status": "complete", "processed": 10}'
 
 == See Also
 
-* xref:n00t:reference/mcp-capabilities.adoc[MCP Capabilities Reference]
-* xref:n00t:adr/adr-003-capability-manifest-schema.adoc[ADR-003: Manifest Schema]
-* xref:n00t:adr/adr-004-guardrails-framework.adoc[ADR-004: Guardrails]
+* xref:reference/mcp-capabilities.adoc[MCP Capabilities Reference]
+* xref:adr/adr-003-capability-manifest-schema.adoc[ADR-003: Manifest Schema]
+* xref:adr/adr-004-guardrails-framework.adoc[ADR-004: Guardrails]

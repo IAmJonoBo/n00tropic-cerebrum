@@ -661,5 +661,5 @@ chmod +x .dev/automation/scripts/*.py
 
 * xref:ROOT:1. Cerebrum Docs/AI_WORKSPACE_PLAYBOOK.adoc[AI Workspace Playbook]
 * xref:ROOT:1. Cerebrum Docs/WORKSPACE_MAINTENANCE.adoc[Workspace Maintenance]
-* xref:n00t:reference/mcp-capabilities.adoc[MCP Capabilities]
+* xref:reference/mcp-capabilities.adoc[MCP Capabilities]
 * xref:guides/adding-mcp-capability.adoc[Adding MCP Capability]

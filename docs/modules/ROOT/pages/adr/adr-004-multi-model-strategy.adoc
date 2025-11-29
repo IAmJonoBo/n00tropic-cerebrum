@@ -1,0 +1,2 @@
+= ADR-004 Multi-model Strategy (stub)
+Placeholder to satisfy cross-references.

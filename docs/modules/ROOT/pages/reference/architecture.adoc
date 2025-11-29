@@ -645,4 +645,4 @@ flowchart TD
 * xref:guides/running-automation.adoc[Running Automation] - How to execute automation scripts
 * xref:tutorials/mcp-server-usage.adoc[MCP Server Usage] - Tutorial for using MCP capabilities
 * xref:guides/creating-adr.adoc[Creating ADRs] - How to document architectural decisions
-* xref:n00t:reference/mcp-capabilities.adoc[MCP Capabilities Reference] - Complete list of available capabilities
+* xref:reference/mcp-capabilities.adoc[MCP Capabilities Reference] - Complete list of available capabilities
