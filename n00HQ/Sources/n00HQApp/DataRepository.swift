@@ -17,10 +17,12 @@ final class DataRepository: ObservableObject {
     @Published var remoteStatus: String = "local"
     @Published var dataSource: DataSource = .local
     @Published var remoteBaseURL: URL?
+    @Published var pipelineSummary: PipelineValidationSummary?
 
     func loadAll() {
         loadLocalArtifacts()
         loadHistory()
+        loadPipelineSummary()
     }
 
     func loadLocalArtifacts() {
@@ -31,6 +33,7 @@ final class DataRepository: ObservableObject {
         capabilityHealth = loadCapabilityHealth(from: artifacts) ?? loadJSON(named: "capability-health", as: CapabilityHealthReport.self) ?? CapabilityHealthReport(generated_at: nil, capabilities: [])
         tokenDrift = loadTokenDrift(from: artifacts) ?? loadJSON(named: "token-drift", as: TokenDriftReport.self) ?? tokenDrift
         runs = loadRuns(fromArtifacts: artifacts) ?? loadRunsFromBundle()
+        loadPipelineSummary()
     }
 
     // Simple persistence for guard run history (used in ManagementView)
@@ -132,6 +135,12 @@ final class DataRepository: ObservableObject {
     private func loadTokenDrift(from artifacts: URL?) -> TokenDriftReport? {
         guard let url = artifacts?.appendingPathComponent("token-drift.json") else { return nil }
         return loadJSON(at: url)
+    }
+
+    private func loadPipelineSummary() {
+        guard let root = WorkspaceLocator.workspaceRoot() else { return }
+        let path = root.appendingPathComponent(".dev/automation/artifacts/pipeline-validation/latest.json")
+        pipelineSummary = loadJSON(at: path)
     }
 
     private func loadJSON<T: Decodable>(at url: URL) -> T? {

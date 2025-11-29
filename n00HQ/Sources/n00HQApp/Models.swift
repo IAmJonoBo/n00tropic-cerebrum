@@ -19,6 +19,19 @@ struct WorkspaceGraph: Codable {
     let edges: [GraphEdge]
 }
 
+struct PipelineRun: Codable, Identifiable {
+    var id: String { name }
+    let name: String
+    let status: String
+    let duration_ms: Int?
+    let log: String?
+}
+
+struct PipelineValidationSummary: Codable {
+    let generated_at: String?
+    let runs: [PipelineRun]
+}
+
 struct CapabilityHealthItem: Codable, Identifiable {
     let id: String
     let summary: String?
