@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Dict, Iterable, List, Tuple, Union
 
 import argparse
 import datetime as dt
@@ -43,8 +43,6 @@ CORTEX_FRONTIERS_ASSETS = (
 CORTEX_FRONTIERS_EXPORT_DIR = (
     ROOT / "n00-cortex" / "data" / "exports" / "frontiers" / "templates"
 )
-from typing import Union
-
 RENOVATE_FILES: Dict[str, Tuple[Path, Union[str, list[str]]]] = {
     "n00-cortex": (
         ROOT / "n00-cortex" / "renovate.json",
@@ -74,6 +72,7 @@ CANONICAL_GITHUB_PRESET = (
     "github>n00tropic/n00tropic-cerebrum//renovate-presets/workspace.json"
 )
 TRUNK_LINTER_COMMENT = re.compile(r"\s+#.*$")
+ALLOWED_DOWNGRADES: List[str] = []
 
 
 def _discover_trunk_targets() -> Dict[str, Path]:
@@ -215,8 +214,8 @@ def _extract_trunk_runtime(path: Path, runtime: str) -> Iterable[str]:
                 yield match.group(1)
 
 
-def _load_overrides() -> Dict[str, Dict[str, str]]:
-    overrides: Dict[str, Dict[str, str]] = {}
+def _load_overrides() -> Dict[str, Dict[str, Dict[str, object]]]:
+    overrides: Dict[str, Dict[str, Dict[str, object]]] = {}
     if not OVERRIDE_DIR.exists():
         return overrides
     for manifest_path in sorted(OVERRIDE_DIR.glob("*.json")):
@@ -224,10 +223,13 @@ def _load_overrides() -> Dict[str, Dict[str, str]]:
         project = data.get("project")
         if not isinstance(project, str):
             continue
-        project_overrides: Dict[str, str] = {}
+        project_overrides: Dict[str, Dict[str, object]] = {}
         for tool, details in (data.get("overrides") or {}).items():
             if isinstance(details, dict) and isinstance(details.get("version"), str):
-                project_overrides[tool] = details["version"]
+                entry: Dict[str, object] = {"version": details["version"]}
+                if "allow_lower" in details:
+                    entry["allow_lower"] = bool(details["allow_lower"])
+                project_overrides[tool] = entry
         if project_overrides:
             overrides[project] = project_overrides
     return overrides
@@ -254,17 +256,24 @@ def _effective_version(
     project: str,
     tool: str,
     canonical: str | None,
-    overrides: Dict[str, Dict[str, str]],
+    overrides: Dict[str, Dict[str, Dict[str, object]]],
     errors: list[str],
 ) -> str | None:
-    override = overrides.get(project, {}).get(tool)
-    if override and canonical:
+    entry = overrides.get(project, {}).get(tool) or {}
+    override = entry.get("version") if isinstance(entry, dict) else None
+    allow_lower = bool(entry.get("allow_lower")) if isinstance(entry, dict) else False
+    if isinstance(override, str) and canonical:
         if _version_tuple(override) < _version_tuple(canonical):
+            if allow_lower:
+                ALLOWED_DOWNGRADES.append(
+                    f"{project} {tool} {override} < {canonical} (override allowed)"
+                )
+                return override
             errors.append(
                 f"Override for {project} {tool} ({override}) is lower than canonical {canonical}."
             )
         return override
-    if override:
+    if isinstance(override, str):
         return override
     return canonical
 
@@ -305,6 +314,8 @@ def main() -> int:
     overrides = _load_overrides()
     if overrides:
         metadata["overrides"] = overrides
+    if ALLOWED_DOWNGRADES:
+        metadata["allowed_downgrades"] = ALLOWED_DOWNGRADES
 
     if not FRONTIERS_MANIFEST.exists():
         errors.append(
