@@ -90,7 +90,8 @@
     "tsconfig:check": "node scripts/check-tsconfig-consistency.mjs",
     "penpot:smoke": "node n00plicate/scripts/update-penpot-images.mjs --dry-run",
     "ui:serve": "node ui/fusion-ui-server.mjs",
-    "sync:ecosystem": "bash scripts/sync-ecosystem.sh"
+    "sync:ecosystem": "bash scripts/sync-ecosystem.sh",
+    "local:preflight": "bash scripts/local-preflight.sh"
   },
   "pnpm": {
     "overrides": {

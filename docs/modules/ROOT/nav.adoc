@@ -10,6 +10,8 @@
 * xref:guides/adding-mcp-capability.adoc[Adding MCP Capability]
 * xref:guides/creating-adr.adoc[Creating ADRs]
 * xref:guides/documentation-governance.adoc[Documentation Governance]
+* xref:golden-paths.adoc[Golden Paths]
+* xref:automation/control-plane.adoc[Control-Plane Automation]
 
 .Planning & Workflows
 * xref:planning.adoc[Planning & Typesense]

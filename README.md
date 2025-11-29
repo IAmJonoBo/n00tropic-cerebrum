@@ -170,6 +170,8 @@ This sequence highlights the typical cadence: adjust policy in `n00-cortex`, ada
 
 ## Automation toolkit
 
+Node version pinning: scripts automatically load nvm (if installed) and `nvm use` the workspace `.nvmrc` via `scripts/ensure-nvm-node.sh`. If nvm is absent, scripts warn and continue using the current Node.
+
 Automation scripts live under `.dev/automation/scripts/` and surface through the `n00t` capability manifest.
 
 ### Backstage & Sync

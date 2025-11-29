@@ -1,0 +1,81 @@
+= Golden Paths (Workspace & Subrepos)
+
+Use these concise sequences to get from clean checkout → validated outputs for each repo and for the ecosystem. All commands assume `nvm` is available; scripts auto-source `scripts/ensure-nvm-node.sh`.
+
+== Workspace (superrepo)
+
+. `source scripts/ensure-nvm-node.sh` (or run any capability; auto-switches to .nvmrc).
+. `scripts/bootstrap-workspace.sh` (submodules, skeleton, hooks, nvmrc sync, python/bootstrap).
+. Optional all-in-one: `pnpm run local:preflight` (tokens, policy sync, graph, Typesense freshness; skip parts with SKIP_* envs).
+. `pnpm -C n00plicate tokens:orchestrate` (uses temporary Penpot tokens stubbed via `n00plicate/tokens.json` symlink) and `pnpm run build:core`.
+. `.dev/automation/scripts/policy-sync.sh --check` (frontiers ingest → cortex validate → n00menon sync → releases snapshot).
+. `scripts/workspace-graph-export.sh` (produces `artifacts/workspace-graph.json` and `capability-health.json`).
+
+== n00-frontiers
+
+. `source scripts/ensure-nvm-node.sh` (from workspace root).
+. `pnpm -C n00-frontiers install`.
+. `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt` (if notebooks/validation needed).
+. `n00-frontiers/.dev/validate-templates.sh --all`.
+. `pnpm -C n00-frontiers run lint` (optional if enabled).
+. `n00-frontiers/scripts/workspace-skeleton.sh` to ensure alignment when standalone.
+
+== n00-cortex
+
+. `source scripts/ensure-nvm-node.sh`.
+. `pnpm -C n00-cortex install`.
+. `pnpm -C n00-cortex run validate` (schemas, data, docs manifest).
+. `pnpm -C n00-cortex run ingest:frontiers` when templates change.
+. `n00-cortex/scripts/workspace-skeleton.sh` when standalone.
+
+== n00tropic
+
+. `source scripts/ensure-nvm-node.sh`.
+. `pnpm -C n00tropic install` (or run `python -m venv .venv-workspace && pip install -r requirements.txt` for automation).
+. `pnpm -C n00tropic run validate-docs` and key generators as needed.
+. Keep `.env` in sync via `scripts/sync-env-templates.sh`.
+
+== n00t
+
+. `source scripts/ensure-nvm-node.sh`.
+. `pnpm -C n00t install`.
+. `pnpm -C n00t test` then `pnpm -C n00t dev` (UI) or `pnpm -C n00t cli`.
+. `n00t/scripts/workspace-skeleton.sh` when standalone.
+
+== n00plicate
+
+. `source scripts/ensure-nvm-node.sh`.
+. `pnpm -C n00plicate install`.
+. `pnpm -C n00plicate tokens:orchestrate` (uses `tokens.json` symlink to Penpot export) then `pnpm -C n00plicate tokens:validate`.
+. `pnpm -C n00plicate lint:workspace && pnpm -C n00plicate test`.
+
+== n00clear-fusion
+
+. `source scripts/ensure-nvm-node.sh`.
+. `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`.
+. `python fusion_workflows.py --help` or run pipelines; ensure OTEL env if tracing.
+
+== n00-horizons
+
+. `source scripts/ensure-nvm-node.sh`.
+. `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`.
+. `python horizons_executors.py --help` or run job preflight; ensure jobs under `jobs/` are clean.
+
+== n00-school
+
+. `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`.
+. `scripts/run-training.sh default --check` then with dataset.
+
+== n00menon (docs SSoT)
+
+. `source scripts/ensure-nvm-node.sh`.
+. `pnpm -C n00menon install`.
+. `pnpm -C n00menon run validate` and `pnpm -C n00menon run docs:build`.
+
+== Search & Freshness guards
+
+- `workspace.toolchainPins` for Node/pnpm drift.
+- `search.typesenseFreshness` for Typesense log age.
+- `workspace.tokensDrift` after tokens:orchestrate to gate template releases.
+
+These paths are mirrored into n00menon for SSoT visibility.

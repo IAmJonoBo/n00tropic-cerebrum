@@ -8,6 +8,7 @@ import path from "node:path";
 
 const LOG_DIR = "docs/search/logs";
 const MAX_DAYS = Number(process.env.TYPESENSE_MAX_AGE_DAYS || "7");
+const WARN_DAYS = Number(process.env.TYPESENSE_WARN_AGE_DAYS || "5");
 
 function findLatest() {
   if (!fs.existsSync(LOG_DIR)) return null;
@@ -56,6 +57,14 @@ if (age > MAX_DAYS) {
   process.exit(1);
 }
 
-console.log(
-  `Typesense freshness OK: ${path.basename(latest)} age=${age.toFixed(1)} days (<= ${MAX_DAYS})`,
-);
+if (age > WARN_DAYS) {
+  console.warn(
+    `Typesense freshness warning: ${path.basename(latest)} is ${age.toFixed(
+      1,
+    )} days old (> warn ${WARN_DAYS}, <= max ${MAX_DAYS})`,
+  );
+} else {
+  console.log(
+    `Typesense freshness OK: ${path.basename(latest)} age=${age.toFixed(1)} days (<= ${MAX_DAYS})`,
+  );
+}

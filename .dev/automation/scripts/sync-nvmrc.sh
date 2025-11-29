@@ -12,6 +12,7 @@ if [[ ! -f ${WORKSPACE_NVMRC} ]]; then
 	echo "error: workspace .nvmrc not found at ${WORKSPACE_NVMRC}" >&2
 	exit 1
 fi
+expectedNode=$(cat "${WORKSPACE_NVMRC}")
 
 # Repositories that should link back to the workspace .nvmrc by default.
 REPOS=(
@@ -63,7 +64,6 @@ for repo in "${REPOS[@]}"; do
 		continue
 	fi
 	target="${repo_path}/.nvmrc"
-	rel="../.nvmrc"
 
 	if is_override "${repo}"; then
 		if [[ ${force_flag} -eq 0 ]]; then
@@ -72,7 +72,14 @@ for repo in "${REPOS[@]}"; do
 		fi
 	fi
 
-	ln -sfn "${rel}" "${target}"
-	echo "linked ${target} -> ${rel}"
+	# If .nvmrc is tracked as a file, write the pinned version to avoid type changes.
+	if [[ -e "${target}" && ! -L "${target}" ]]; then
+		echo "${expectedNode}" >"${target}"
+		echo "wrote ${target} (${expectedNode})"
+	else
+		rel="../.nvmrc"
+		ln -sfn "${rel}" "${target}"
+		echo "linked ${target} -> ${rel}"
+	fi
 
 done

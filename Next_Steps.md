@@ -22,8 +22,8 @@
   - `manifest-gate.sh` + CI step block missing manifest entries.
 - [x] Bootstrap new-repo scaffolder (owner: codex, completed: 2025-11-24)
   - `scripts/bootstrap-repo.sh --name <repo> --role <role>` scaffolds and appends manifest entry.
-- [ ] Mirror manifest/skeleton checks in key subrepos (owner: codex, due: 2025-12-10)
-  - Thin wrappers in `n00-frontiers`, `n00-cortex`, and `n00t` to run root checks when used standalone.
+- [x] Mirror manifest/skeleton checks in key subrepos (owner: codex, completed: 2025-11-29)
+  - Thin wrappers added in `n00-frontiers/scripts/workspace-skeleton.sh`, `n00-cortex/scripts/workspace-skeleton.sh`, and `n00t/scripts/workspace-skeleton.sh` to run root checks when used standalone.
 - [x] Proactivity doctrine ADR + docs (owner: docs, completed: 2025-11-28)
   - Add ADR in `1. Cerebrum Docs` and update root/START HERE with the proactivity + manifest requirements.
 - [x] n00t capability for repair/apply (owner: automation/agent platform, completed: 2025-11-28)

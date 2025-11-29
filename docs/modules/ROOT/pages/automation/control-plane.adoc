@@ -1,0 +1,54 @@
+= Control-Plane Automation (Capability Graph, Policy Sync, Tokens, RAG Packs)
+
+The following workspace capabilities turn the superproject into an observable, self-updating control plane. They are exposed via `n00t/capabilities/manifest.json` and usable from the MCP UI/CLI.
+
+== Capability Graph & Health
+
+* Command: `workspace.graph` (scripts/workspace-graph-export.sh)
+* Outputs:
+** `artifacts/workspace-graph.json` — unified graph of templates, schemas, docs, capabilities, corpora, and recent runs (built by `n00-cortex/scripts/build-graph.mjs`).
+** `artifacts/capability-health.json` — entrypoint existence/executable check for every capability.
+* Suggested consumers: `n00-dashboard` (Typesense/JSON ingest), `n00t` UI, cost/SLO dashboards.
+* Node pinning: auto-loads nvm via `scripts/ensure-nvm-node.sh` if available.
+
+== Policy → Template → Schema → Docs Loop
+
+* Command: `workspace.policySync` ( .dev/automation/scripts/policy-sync.sh )
+* Steps (run or `--check`):
+** Ingest latest `n00-frontiers` outputs into `n00-cortex` (`ingest-frontiers.sh`).
+** Validate cortex schemas/data (`npm run validate:schemas`).
+** Sync TechDocs into `n00menon` (`scripts/sync-n00menon-docs.mjs --write`).
+** Regenerate `1. Cerebrum Docs/releases.yaml` via `workspace-release.sh`.
+
+== Design Token Drift Guard
+
+* Command: `workspace.tokensDrift` (.dev/automation/scripts/token-drift.sh)
+* Behaviour: hashes `n00plicate/packages/design-tokens/.../tokens.json`, compares to the last recorded hash, runs `pnpm run tokens:validate`, and writes `artifacts/token-drift.json`.
+* Use to block template releases or regenerate briefs when drift=true.
+* Set `TOKENS_SKIP_VALIDATE=1` if the pinned Node version is unavailable on the runner (validation will be skipped but hash is still recorded).
+
+== Toolchain Pins Drift
+
+* Command: `workspace.toolchainPins` (scripts/check-toolchain-pins.mjs)
+* Behaviour: compares `.nvmrc` and `packageManager` pins across all subrepos against `n00-cortex/data/toolchain-manifest.json`; emits JSON/logs and exits non-zero on drift.
+
+== Typesense Freshness Guard
+
+* Command: `search.typesenseFreshness` (.dev/automation/scripts/typesense-freshness.sh)
+* Behaviour: fails if the newest `docs/search/logs/typesense-reindex-*.log[.json]` is older than `maxDays` (default 7). Set `maxDays` input or `TYPESENSE_MAX_AGE_DAYS` env to override.
+* Node pinning: auto-loads nvm via `scripts/ensure-nvm-node.sh` if available.
+
+== Fusion RAG Pack Surface
+
+* Command: `fusion.ragPack` (.dev/automation/scripts/fusion-rag-pack.sh)
+* Behaviour: picks the newest file under `n00clear-fusion/exports`, emits `artifacts/rag-pack-latest.json` with relative path + mtime. Agents can mount the referenced file directly.
+
+== Planner Telemetry → Evaluations
+
+* Command: `horizons.planEvalSync` (.dev/automation/scripts/planner-eval-sync.sh)
+* Behaviour: indexes `artifacts/plans/horizons-*.json` into `n00-school/runs/plan-telemetry-index.json` so evaluation pipelines can consume planner outputs without manual file chasing.
+
+== Bootstrap Reminders
+
+* `scripts/bootstrap-workspace.sh` now skips root `pnpm install` unless `ALLOW_ROOT_PNPM_INSTALL=1`; use per-repo installs after submodules + skeleton checks.
+* Set tracing env once per runner: `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_NAME`, `N00_DISABLE_TRACING`.

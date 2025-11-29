@@ -5,6 +5,10 @@ ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 SUBMODULE_JOBS=${SUBMODULE_JOBS:-8}
 TOKEN=${GH_SUBMODULE_TOKEN:-${GITHUB_TOKEN-}}
 
+# Ensure pinned Node version (nvm) for any Node-based steps
+# shellcheck source=/dev/null
+source "$ROOT_DIR/scripts/ensure-nvm-node.sh" 2>/dev/null || true
+
 log() { printf "[bootstrap-workspace] %s\n" "$*"; }
 
 cd "$ROOT_DIR"
@@ -26,11 +30,21 @@ python3 "$ROOT_DIR/.dev/automation/scripts/check-workspace-skeleton.py" --apply
 bash "$ROOT_DIR/scripts/install-hooks.sh"
 bash "$ROOT_DIR/scripts/tag-propagate.sh"
 
+log "Linking subrepo .nvmrc files to workspace pin"
+bash "$ROOT_DIR/.dev/automation/scripts/sync-nvmrc.sh"
+
 log "Verifying superrepo layout"
 "$ROOT_DIR/scripts/check-superrepo.sh"
 
-log "Installing pnpm workspace dependencies"
-pnpm install --frozen-lockfile
+log "Ensuring pnpm is available (corepack)"
+bash "$ROOT_DIR/scripts/setup-pnpm.sh"
+
+if [[ ${ALLOW_ROOT_PNPM_INSTALL:-0} == 1 || ${CI-} == 1 ]]; then
+	log "Installing pnpm workspace dependencies at root (ALLOW_ROOT_PNPM_INSTALL=${ALLOW_ROOT_PNPM_INSTALL:-0})"
+	pnpm install --frozen-lockfile
+else
+	log "Skipping root pnpm install (guard-root-pnpm-install.mjs). Run per-repo installs or set ALLOW_ROOT_PNPM_INSTALL=1 if you understand the risk."
+fi
 
 log "Installing shared Python dependencies"
 "$ROOT_DIR/scripts/bootstrap-python.sh"

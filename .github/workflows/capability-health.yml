@@ -1,0 +1,21 @@
+name: capability-health
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Ensure pinned Node
+        run: |
+          source scripts/ensure-nvm-node.sh
+          node -v
+      - name: Check manifest
+        run: node scripts/check-capability-manifest.mjs

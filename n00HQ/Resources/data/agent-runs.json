@@ -1,0 +1,1109 @@
+[
+  {
+    "id": "760c8d31-7d7a-497f-a8ab-a71b56514dca",
+    "capability": "workspace.metaCheck",
+    "status": "succeeded",
+    "summary": "All checks succeeded",
+    "started": "2025-11-04T16:08:41Z",
+    "completed": "2025-11-04T16:10:10Z",
+    "logPath": "artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": "artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "74e409b7-f07e-4977-9ae3-f28af3a0b89e",
+    "capability": "workspace.metaCheck",
+    "status": "succeeded",
+    "summary": "All checks succeeded",
+    "started": "2025-11-04T16:46:51Z",
+    "completed": "2025-11-04T16:48:13Z",
+    "logPath": "artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": "artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "ba251dc5-b8e1-49a3-b1cc-88aee2b9b823",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00t lint n00t build",
+    "started": "2025-11-04T16:50:33Z",
+    "completed": "2025-11-04T16:51:43Z",
+    "logPath": "artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": "artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "5e62c175-9ce1-4287-a2ad-c692ca921300",
+    "capability": "workspace.metaCheck",
+    "status": "succeeded",
+    "summary": "All checks succeeded",
+    "started": "2025-11-04T16:55:26Z",
+    "completed": "2025-11-04T16:56:36Z",
+    "logPath": "artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": "artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "8d0f63db-c555-4407-997b-bafeb8a55550",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00t lint n00t build",
+    "started": "2025-11-04T17:02:19Z",
+    "completed": "2025-11-04T17:03:41Z",
+    "logPath": "artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": "artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "493e0cd9-e7a6-47e9-a147-421f7e4069a0",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00t build",
+    "started": "2025-11-04T17:04:49Z",
+    "completed": "2025-11-04T17:06:03Z",
+    "logPath": "artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": "artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "749e1c89-5c8b-403b-b9d8-9d4a1b274b93",
+    "capability": "workspace.metaCheck",
+    "status": "succeeded",
+    "summary": "All checks succeeded",
+    "started": "2025-11-04T17:10:32Z",
+    "completed": "2025-11-04T17:12:13Z",
+    "logPath": "artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": "artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "9da87a0e-1197-4c31-bd60-b6fcc288aa50",
+    "capability": "ai.workflow.planning",
+    "status": "succeeded",
+    "summary": "Planning spec generated for Test Project",
+    "started": "2025-11-05T10:14:39Z",
+    "completed": "2025-11-05T10:14:39Z",
+    "metadata": {
+      "spec": "/Volumes/APFS Space/n00tropic-cerebrum/.dev/automation/artifacts/ai-workflows/planning-specs/spec-20251105-121439.md"
+    }
+  },
+  {
+    "id": "9a00f20a-99c6-4800-95fb-22ca798b3cb1",
+    "capability": "ai.workflow.architecture",
+    "status": "succeeded",
+    "summary": "Architecture diagram generated for Web App Architecture",
+    "started": "2025-11-05T10:14:46Z",
+    "completed": "2025-11-05T10:14:46Z",
+    "metadata": {
+      "diagram": "/Volumes/APFS Space/n00tropic-cerebrum/.dev/automation/artifacts/ai-workflows/architecture-diagrams/diagram-20251105-121446.md"
+    }
+  },
+  {
+    "id": "be1527bf-d371-44a7-b0c7-1963b00b77d4",
+    "capability": "ai.workflow.coding",
+    "status": "succeeded",
+    "summary": "Code stub generated for TypeScript",
+    "started": "2025-11-05T10:14:56Z",
+    "completed": "2025-11-05T10:14:56Z",
+    "metadata": {
+      "stub": "/Volumes/APFS Space/n00tropic-cerebrum/.dev/automation/artifacts/ai-workflows/code-stubs/stub-20251105-121456.ts"
+    }
+  },
+  {
+    "id": "a9636963-5a3e-428a-95c6-4148cf5aed93",
+    "capability": "ai.workflow.debugging",
+    "status": "completed",
+    "summary": "Debugging and testing phase completed",
+    "started": "2025-11-05T10:16:15Z",
+    "completed": "2025-11-05T10:16:15Z",
+    "logPath": "artifacts/ai-workflows/debugging-testing"
+  },
+  {
+    "id": "7e7e00b6-9ab2-40ae-9f16-b0bb04742f31",
+    "capability": "ai.workflow.review",
+    "status": "completed",
+    "summary": "Review and deployment phase completed for development",
+    "started": "2025-11-05T10:16:32Z",
+    "completed": "2025-11-05T10:16:32Z",
+    "metadata": {
+      "environment": "development",
+      "artifacts": "/Volumes/APFS Space/n00tropic-cerebrum/.dev/automation/artifacts/ai-workflows/review-deployment"
+    }
+  },
+  {
+    "id": "ac9211e5-fcfb-4985-b404-ef9a68b4b62a",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: Workspace doctor (check) Verify Trunk configs n00-frontiers sanity n00t build Cross-repo consistency checks",
+    "started": "2025-11-05T21:25:56Z",
+    "completed": "2025-11-05T21:27:59Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "0de9ed47-5d31-4488-8edd-45e3701212ec",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: Workspace doctor (check) Verify Trunk configs n00-frontiers sanity n00t build Cross-repo consistency checks",
+    "started": "2025-11-05T21:28:56Z",
+    "completed": "2025-11-05T21:29:55Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "2845dd85-e071-4e42-aebb-155f07308f64",
+    "capability": "workspace.trunkUpgrade",
+    "status": "succeeded",
+    "summary": "Trunk upgraded in 5 repositories",
+    "started": "2025-11-05T21:30:41Z",
+    "completed": "2025-11-05T21:32:06Z"
+  },
+  {
+    "id": "dd6d7a85-1685-45ab-a299-69b266fcb4f0",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers catalog export current Cross-repo consistency checks",
+    "started": "2025-11-05T21:41:13Z",
+    "completed": "2025-11-05T21:42:36Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "b393b81a-11d9-4cbb-b936-d9d11d4aa6fd",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Cross-repo consistency checks",
+    "started": "2025-11-05T21:43:39Z",
+    "completed": "2025-11-05T21:44:42Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "3e8385f3-52db-423e-a8b5-fd50653226ea",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers catalog export current n00-frontiers sanity",
+    "started": "2025-11-05T21:46:47Z",
+    "completed": "2025-11-05T21:47:58Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "5dae4be8-1da0-4b01-9919-13167bfcdab4",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers catalog export current n00-frontiers sanity",
+    "started": "2025-11-05T21:49:39Z",
+    "completed": "2025-11-05T21:50:42Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "cf907de3-7998-42f8-b771-ae5712cc149f",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity",
+    "started": "2025-11-05T21:51:54Z",
+    "completed": "2025-11-05T21:52:54Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "de265c79-3bc5-4a7b-88c7-0a82526ba257",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity",
+    "started": "2025-11-05T21:53:11Z",
+    "completed": "2025-11-05T21:54:58Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "fdc5f21a-7c1e-4679-84b6-60b062225a7f",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers catalog export current n00-frontiers sanity",
+    "started": "2025-11-05T21:55:30Z",
+    "completed": "2025-11-05T21:56:31Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "918a2958-106e-4ff0-b987-88f2f22b3509",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers catalog export current n00-frontiers sanity",
+    "started": "2025-11-05T22:01:01Z",
+    "completed": "2025-11-05T22:02:05Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "d305e633-3015-4058-bebe-1e1190c0fd33",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers catalog export current",
+    "started": "2025-11-05T22:03:31Z",
+    "completed": "2025-11-05T22:04:34Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "d0fdbdfd-3eac-4260-804f-a51f3ebd6cdc",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity",
+    "started": "2025-11-05T22:06:43Z",
+    "completed": "2025-11-05T22:07:54Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "b8e4db98-cb6d-4fa5-b06c-b5ed8168de47",
+    "capability": "workspace.metaCheck",
+    "status": "succeeded",
+    "summary": "All checks succeeded",
+    "started": "2025-11-05T22:08:19Z",
+    "completed": "2025-11-05T22:09:25Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "ef1cb2a7-a25c-4d0a-ba63-87882b0b144e",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: Workspace doctor (check) Verify Trunk configs n00-frontiers sanity n00-cortex frontiers ingestion current Cross-repo consistency checks",
+    "started": "2025-11-05T22:31:42Z",
+    "completed": "2025-11-05T22:33:53Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "a879dcb8-0113-4ef8-85d0-e2c2fd56f2b4",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity n00-cortex frontiers ingestion current",
+    "started": "2025-11-05T22:35:55Z",
+    "completed": "2025-11-05T22:37:06Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "36c79088-f66e-4e89-a108-2c9cf84a06ab",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity n00-cortex frontiers ingestion current",
+    "started": "2025-11-05T22:38:47Z",
+    "completed": "2025-11-05T22:40:18Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "7f9d229a-3198-40d0-9549-5161ccbccf67",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity n00-cortex frontiers ingestion current",
+    "started": "2025-11-05T22:41:04Z",
+    "completed": "2025-11-05T22:42:12Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "e95ec5bd-3cc4-4036-ae44-35806c00f688",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity n00-cortex frontiers ingestion current",
+    "started": "2025-11-05T22:43:26Z",
+    "completed": "2025-11-05T22:44:55Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "10b7bf8f-4093-4f7a-bbbe-e160600b31e6",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-cortex frontiers ingestion current",
+    "started": "2025-11-05T22:45:16Z",
+    "completed": "2025-11-05T22:46:26Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "f72c3879-01ff-491f-a8d5-d28ef23ef1f2",
+    "capability": "internal.demoEcho",
+    "status": "failed",
+    "summary": "Run auto-marked as failed after interrupted execution.",
+    "started": "2025-11-10T11:10:00+02:00",
+    "logPath": "../.dev/automation/scripts/demo-capability.mjs",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": true,
+      "prompt": "Demo run",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "autoRecovered": true
+    },
+    "completed": "2025-11-10T11:19:41+02:00"
+  },
+  {
+    "id": "c126faa0-09c2-4f5a-9c99-bd8f91db724b",
+    "capability": "internal.demoEcho",
+    "status": "succeeded",
+    "summary": "Run succeeded. Tail: [demo-capability] Dry-run requested; not writing output artefact.",
+    "started": "2025-11-10T11:10:30+02:00",
+    "completed": "2025-11-10T11:10:31+02:00",
+    "logPath": "n00t/.dev/automation/scripts/demo-capability.mjs",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": true,
+      "prompt": "Demo run",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 0,
+      "stdoutTail": "[demo-capability] Dry-run requested; not writing output artefact.",
+      "durationSeconds": 0.574
+    }
+  },
+  {
+    "id": "d4c2692e-9a45-4ce7-91ca-865ddda1f02a",
+    "capability": "internal.demoEcho",
+    "status": "succeeded",
+    "summary": "Run succeeded. Tail: [demo-capability] Output written to /Volumes/APFS Space/n00tropic/n00tropic-cerebrum/.dev/automation/artifacts/automation/agent-run-internal-demoEcho-2025-11-10",
+    "started": "2025-11-10T11:10:40+02:00",
+    "completed": "2025-11-10T11:10:41+02:00",
+    "logPath": "n00t/.dev/automation/scripts/demo-capability.mjs",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "prompt": "Demo run execute",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 0,
+      "stdoutTail": "[demo-capability] Output written to /Volumes/APFS Space/n00tropic/n00tropic-cerebrum/.dev/automation/artifacts/automation/agent-run-internal-demoEcho-2025-11-10T11-10-41-02-00.json",
+      "durationSeconds": 0.055
+    }
+  },
+  {
+    "id": "7c0e3a44-b554-4588-bf3d-9f6219c9283a",
+    "capability": "workspace.gitDoctor",
+    "status": "succeeded",
+    "summary": "Run succeeded. Tail: workspace: tracked 1 (branch main, HEAD d74e6b6)\n  tracked changes:\n    1 .M S.M. 160000 160000 160000 d66dbd629b0b9279aacac4bc073824ff435152fe d66dbd629b0b9279",
+    "started": "2025-11-10T12:34:40+02:00",
+    "completed": "2025-11-10T12:34:40+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "prompt": "{\"publishArtifact\":false}",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 0,
+      "stdoutTail": "workspace: tracked 1 (branch main, HEAD d74e6b6)\n  tracked changes:\n    1 .M S.M. 160000 160000 160000 d66dbd629b0b9279aacac4bc073824ff435152fe d66dbd629b0b9279aacac4bc073824ff435152fe n00t\nsubmodules needing attention: 1/8\n- n00t: tracked 2 (branch main, HEAD d66dbd6)\n    tracked:\n      1 .M N... 100644 100644 100644 9d960c5d8d84576758b4fd31ba3288b0e00ce946 9d960c5d8d84576758b4fd31ba3288b0e00ce946 capabilities/README.md\n      1 .M N... 100644 100644 100644 83e42d0c617dd2a2b0f22c0b681f523e2a43ebb7 83e42d0c617dd2a2b0f22c0b681f523e2a43ebb7 capabilities/manifest.json",
+      "durationSeconds": 0.434,
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": []
+    }
+  },
+  {
+    "id": "9a0f4a46-577d-405b-a144-8e8a78e738da",
+    "capability": "workspace.gitDoctor",
+    "status": "succeeded",
+    "summary": "Run succeeded. Tail: workspace: tracked 1 (branch main, HEAD d74e6b6)\n  tracked changes:\n    1 .M S.M. 160000 160000 160000 d66dbd629b0b9279aacac4bc073824ff435152fe d66dbd629b0b9279",
+    "started": "2025-11-10T12:38:05+02:00",
+    "completed": "2025-11-10T12:38:05+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "prompt": "{\"publishArtifact\":false}",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 0,
+      "stdoutTail": "workspace: tracked 1 (branch main, HEAD d74e6b6)\n  tracked changes:\n    1 .M S.M. 160000 160000 160000 d66dbd629b0b9279aacac4bc073824ff435152fe d66dbd629b0b9279aacac4bc073824ff435152fe n00t\nsubmodules needing attention: 1/8\n- n00t: tracked 4 (branch main, HEAD d66dbd6)\n    tracked:\n      1 .M N... 100644 100644 100644 3e106796fc18e3695e1f399c5b6cee70b435e83e 3e106796fc18e3695e1f399c5b6cee70b435e83e apps/agent-runner/src/index.ts\n      1 .M N... 100644 100644 100644 9d960c5d8d84576758b4fd31ba3288b0e00ce946 9d960c5d8d84576758b4fd31ba3288b0e00ce946 capabilities/README.md\n      1 .M N... 100644 100644 100644 83e42d0c617dd2a2b0f22c0b681f523e2a43ebb7 83e42d0c617dd2a2b0f22c0b681f523e2a43ebb7 capabilities/manifest.json",
+      "durationSeconds": 0.656,
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": []
+    }
+  },
+  {
+    "id": "12006b04-7ea7-4003-949a-2cb0b13e534c",
+    "capability": "workspace.trunkUpgrade",
+    "status": "failed",
+    "summary": "Failures in n00tropic-cerebrum",
+    "started": "2025-11-10T21:37:17Z",
+    "completed": "2025-11-10T21:37:17Z"
+  },
+  {
+    "id": "4f6e2c65-7e92-4458-81ed-6270d2168613",
+    "capability": "workspace.trunkUpgrade",
+    "status": "succeeded",
+    "summary": "Trunk upgraded in 1 repositories",
+    "started": "2025-11-10T21:39:06Z",
+    "completed": "2025-11-10T21:39:46Z"
+  },
+  {
+    "id": "run.workspace.gitdoctor.20251121T040057z",
+    "capability": "workspace.gitDoctor",
+    "status": "succeeded",
+    "summary": "Run succeeded. Tail: [run-envelope] recorded run.workspace.health.20251121t040058z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+    "started": "2025-11-21T06:00:57+02:00",
+    "completed": "2025-11-21T06:00:58+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 0,
+      "stdoutTail": "[run-envelope] recorded run.workspace.health.20251121t040058z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "durationSeconds": 1.416,
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": []
+    },
+    "runEnvelope": {
+      "schema_version": "1.0.0",
+      "run_id": "run.workspace.gitdoctor.20251121T040057z",
+      "capability_id": "workspace.gitDoctor",
+      "status": "success",
+      "started_at": "2025-11-21T06:00:57+02:00",
+      "completed_at": "2025-11-21T06:00:58+02:00",
+      "duration_ms": 1000,
+      "telemetry_path": ".dev/automation/artifacts/automation/agent-runs.json",
+      "notes": "Run succeeded. Tail: [run-envelope] recorded run.workspace.health.20251121t040058z -> .dev/automation/artifacts/automation/run-envelopes.jsonl"
+    }
+  },
+  {
+    "id": "run.workspace.gitdoctor.20251121T040142z",
+    "capability": "workspace.gitDoctor",
+    "status": "succeeded",
+    "summary": "Run succeeded. Tail: [run-envelope] recorded run.workspace.health.20251121t040143z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+    "started": "2025-11-21T06:01:42+02:00",
+    "completed": "2025-11-21T06:01:43+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 0,
+      "stdoutTail": "[run-envelope] recorded run.workspace.health.20251121t040143z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "durationSeconds": 1.261,
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": []
+    },
+    "runEnvelope": {
+      "schema_version": "1.0.0",
+      "run_id": "run.workspace.gitdoctor.20251121T040142z",
+      "capability_id": "workspace.gitDoctor",
+      "status": "success",
+      "started_at": "2025-11-21T06:01:42+02:00",
+      "completed_at": "2025-11-21T06:01:43+02:00",
+      "duration_ms": 1000,
+      "telemetry_path": ".dev/automation/artifacts/automation/agent-runs.json",
+      "notes": "Run succeeded. Tail: [run-envelope] recorded run.workspace.health.20251121t040143z -> .dev/automation/artifacts/automation/run-envelopes.jsonl"
+    }
+  },
+  {
+    "id": "d26c8d89-ec68-4665-9303-ca2a81d1a021",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: Workspace doctor (check) Verify Trunk configs n00-frontiers sanity n00-frontiers pip-audit n00-school pipeline validation n00-school pytest n00-cortex frontiers ingestion current n00-cortex docs manifest n00t test n00t build Validate project metadata documents Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-21T04:46:10Z",
+    "completed": "2025-11-21T04:47:21Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "run.workspace.gitdoctor.20251121T061440z",
+    "capability": "workspace.gitDoctor",
+    "status": "failed",
+    "summary": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t061442z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+    "started": "2025-11-21T08:14:40+02:00",
+    "completed": "2025-11-21T08:14:42+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "prompt": "{\"strict\":true}",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 1,
+      "stdoutTail": "[run-envelope] recorded run.workspace.health.20251121t061442z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "durationSeconds": 1.349,
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": []
+    },
+    "runEnvelope": {
+      "schema_version": "1.0.0",
+      "run_id": "run.workspace.gitdoctor.20251121T061440z",
+      "capability_id": "workspace.gitDoctor",
+      "status": "failure",
+      "started_at": "2025-11-21T08:14:40+02:00",
+      "completed_at": "2025-11-21T08:14:42+02:00",
+      "duration_ms": 2000,
+      "telemetry_path": ".dev/automation/artifacts/automation/agent-runs.json",
+      "notes": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t061442z -> .dev/automation/artifacts/automation/run-envelopes.jsonl"
+    }
+  },
+  {
+    "id": "run.workspace.gitdoctor.20251121T061617z",
+    "capability": "workspace.gitDoctor",
+    "status": "failed",
+    "summary": "Run auto-marked as failed after interrupted execution.",
+    "started": "2025-11-21T08:16:17+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "prompt": "{\"strict\":true}",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": [],
+      "autoRecovered": true
+    },
+    "runEnvelope": {
+      "schema_version": "1.0.0",
+      "run_id": "run.workspace.gitdoctor.20251121T061617z",
+      "capability_id": "workspace.gitDoctor",
+      "status": "running",
+      "started_at": "2025-11-21T08:16:17+02:00",
+      "telemetry_path": ".dev/automation/artifacts/automation/agent-runs.json",
+      "notes": "Agent CLI run started."
+    },
+    "completed": "2025-11-21T08:16:34+02:00"
+  },
+  {
+    "id": "run.workspace.gitdoctor.20251121T061634z",
+    "capability": "workspace.gitDoctor",
+    "status": "failed",
+    "summary": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t061635z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+    "started": "2025-11-21T08:16:34+02:00",
+    "completed": "2025-11-21T08:16:35+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "prompt": "{\"strict\":true}",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 1,
+      "stdoutTail": "[run-envelope] recorded run.workspace.health.20251121t061635z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "durationSeconds": 1.329,
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": []
+    },
+    "runEnvelope": {
+      "schema_version": "1.0.0",
+      "run_id": "run.workspace.gitdoctor.20251121T061634z",
+      "capability_id": "workspace.gitDoctor",
+      "status": "failure",
+      "started_at": "2025-11-21T08:16:34+02:00",
+      "completed_at": "2025-11-21T08:16:35+02:00",
+      "duration_ms": 1000,
+      "telemetry_path": ".dev/automation/artifacts/automation/agent-runs.json",
+      "notes": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t061635z -> .dev/automation/artifacts/automation/run-envelopes.jsonl"
+    }
+  },
+  {
+    "id": "run.workspace.gitdoctor.20251121T085232z",
+    "capability": "workspace.gitDoctor",
+    "status": "failed",
+    "summary": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t085233z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+    "started": "2025-11-21T10:52:32+02:00",
+    "completed": "2025-11-21T10:52:33+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "prompt": "{\"strict\":true}",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 1,
+      "stdoutTail": "[run-envelope] recorded run.workspace.health.20251121t085233z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "durationSeconds": 1.225,
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": []
+    },
+    "runEnvelope": {
+      "schema_version": "1.0.0",
+      "run_id": "run.workspace.gitdoctor.20251121T085232z",
+      "capability_id": "workspace.gitDoctor",
+      "status": "failure",
+      "started_at": "2025-11-21T10:52:32+02:00",
+      "completed_at": "2025-11-21T10:52:33+02:00",
+      "duration_ms": 1000,
+      "telemetry_path": ".dev/automation/artifacts/automation/agent-runs.json",
+      "notes": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t085233z -> .dev/automation/artifacts/automation/run-envelopes.jsonl"
+    }
+  },
+  {
+    "id": "run.workspace.gitdoctor.20251121T085506z",
+    "capability": "workspace.gitDoctor",
+    "status": "failed",
+    "summary": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t085507z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+    "started": "2025-11-21T10:55:06+02:00",
+    "completed": "2025-11-21T10:55:07+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "prompt": "{\"strict\":true}",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 1,
+      "stdoutTail": "[run-envelope] recorded run.workspace.health.20251121t085507z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "durationSeconds": 1.188,
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": []
+    },
+    "runEnvelope": {
+      "schema_version": "1.0.0",
+      "run_id": "run.workspace.gitdoctor.20251121T085506z",
+      "capability_id": "workspace.gitDoctor",
+      "status": "failure",
+      "started_at": "2025-11-21T10:55:06+02:00",
+      "completed_at": "2025-11-21T10:55:07+02:00",
+      "duration_ms": 1000,
+      "telemetry_path": ".dev/automation/artifacts/automation/agent-runs.json",
+      "notes": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t085507z -> .dev/automation/artifacts/automation/run-envelopes.jsonl"
+    }
+  },
+  {
+    "id": "run.workspace.gitdoctor.20251121T085522z",
+    "capability": "workspace.gitDoctor",
+    "status": "failed",
+    "summary": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t085523z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+    "started": "2025-11-21T10:55:22+02:00",
+    "completed": "2025-11-21T10:55:23+02:00",
+    "logPath": ".dev/automation/scripts/workspace-health.sh",
+    "metadata": {
+      "workspaceRoot": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum",
+      "check": false,
+      "prompt": "{\"strict\":true}",
+      "provenance": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00t/capabilities/manifest.json",
+      "exitCode": 1,
+      "stdoutTail": "[run-envelope] recorded run.workspace.health.20251121t085523z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "durationSeconds": 1.199,
+      "secretsRequested": [],
+      "secretsLoaded": [],
+      "secretsMissing": []
+    },
+    "runEnvelope": {
+      "schema_version": "1.0.0",
+      "run_id": "run.workspace.gitdoctor.20251121T085522z",
+      "capability_id": "workspace.gitDoctor",
+      "status": "failure",
+      "started_at": "2025-11-21T10:55:22+02:00",
+      "completed_at": "2025-11-21T10:55:23+02:00",
+      "duration_ms": 1000,
+      "telemetry_path": ".dev/automation/artifacts/automation/agent-runs.json",
+      "notes": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t085523z -> .dev/automation/artifacts/automation/run-envelopes.jsonl"
+    }
+  },
+  {
+    "id": "5421bff8-2b80-42d1-af82-58106603df3a",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity n00-cortex frontiers ingestion current n00t test Validate project metadata documents Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T09:49:51Z",
+    "completed": "2025-11-26T09:52:39Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "f8fa8c97-d098-4524-a962-07c682c8b819",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T10:21:27Z",
+    "completed": "2025-11-26T10:23:57Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "86c9ce9c-5a9c-4121-94f2-8617a026578e",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T10:40:44Z",
+    "completed": "2025-11-26T10:42:29Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "7f5f9a3e-67be-4d05-be91-34d000c9ccf8",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T10:48:00Z",
+    "completed": "2025-11-26T10:49:43Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "1145e233-92b0-440a-8b35-ea4c45915075",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T10:55:48Z",
+    "completed": "2025-11-26T10:57:34Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "4dc1f668-e101-49a3-8129-ccfbc0f6c0b0",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T11:00:25Z",
+    "completed": "2025-11-26T11:02:10Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "2f5d83e0-6fe0-408a-af33-18889e77471d",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T11:12:49Z",
+    "completed": "2025-11-26T11:15:10Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "d5fe4663-065d-4692-9a71-be2bcea236c2",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T11:19:24Z",
+    "completed": "2025-11-26T11:21:09Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "51c4b951-1d33-46f9-bbfd-bee2c28f4f2c",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T11:23:57Z",
+    "completed": "2025-11-26T11:25:37Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "d7a568a1-176f-4d36-99bc-3d3f65e857f8",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity n00-cortex frontiers ingestion current Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T11:30:13Z",
+    "completed": "2025-11-26T11:32:07Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "683228f5-0f20-4d38-abff-53d7bd2c662b",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity n00-cortex frontiers ingestion current Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-26T11:35:05Z",
+    "completed": "2025-11-26T11:36:46Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "71cac2bf-2efe-4ba1-97b0-6ce9ac9f4316",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Submodule hygiene checks",
+    "started": "2025-11-26T11:42:13Z",
+    "completed": "2025-11-26T11:43:55Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "b34f0f6b-4335-45e3-9a80-4f75ad189dd8",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Submodule hygiene checks",
+    "started": "2025-11-26T11:44:36Z",
+    "completed": "2025-11-26T11:46:20Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "7d1c101c-2047-4f84-9998-26cf5eb3be22",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Submodule hygiene checks",
+    "started": "2025-11-26T11:51:09Z",
+    "completed": "2025-11-26T11:53:36Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "6a9c81ad-fcd6-477a-bc68-b1477d602276",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: n00-frontiers sanity Submodule hygiene checks",
+    "started": "2025-11-26T11:56:23Z",
+    "completed": "2025-11-26T11:58:03Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "a7f48751-7441-426b-9f5b-163a96abd4b7",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: Submodule hygiene checks",
+    "started": "2025-11-26T12:01:12Z",
+    "completed": "2025-11-26T12:02:52Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "22b5784f-c693-4d8f-b402-23314181168b",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: Submodule hygiene checks",
+    "started": "2025-11-26T12:06:31Z",
+    "completed": "2025-11-26T12:08:51Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "55c07096-b452-4fcc-9e01-e3b902327951",
+    "capability": "workspace.metaCheck",
+    "status": "succeeded",
+    "summary": "All checks succeeded",
+    "started": "2025-11-26T12:12:53Z",
+    "completed": "2025-11-26T12:14:34Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "7a79e40d-d080-4592-820e-c87457786a26",
+    "capability": "workspace.metaCheck",
+    "status": "succeeded",
+    "summary": "All checks succeeded",
+    "started": "2025-11-26T12:22:31Z",
+    "completed": "2025-11-26T12:24:48Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "0c4503fb-edc1-4d5e-8dd7-b5b7e755cb15",
+    "capability": "workspace.release",
+    "status": "failed",
+    "summary": "Release manifest generated",
+    "started": "2025-11-28T13:56:23Z",
+    "completed": "2025-11-28T13:56:23Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "c9b56193-8fdc-4875-859a-9c5edd336b80",
+    "capability": "workspace.metaCheck",
+    "status": "failed",
+    "summary": "Failures: Cross-repo consistency checks Submodule hygiene checks",
+    "started": "2025-11-29T10:40:30Z",
+    "completed": "2025-11-29T10:45:14Z",
+    "logPath": ".dev/automation/artifacts/meta-check/latest.log",
+    "metadata": {
+      "report": ".dev/automation/artifacts/meta-check/latest.json"
+    }
+  },
+  {
+    "id": "e27d4128-f62c-45eb-83ab-d9c824c18825",
+    "capability": "workspace.release",
+    "status": "failed",
+    "summary": "Release manifest generated",
+    "started": "2025-11-29T13:29:00Z",
+    "completed": "2025-11-29T13:29:00Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "683dd06c-5ec8-4c84-9283-17f9c6b65b87",
+    "capability": "workspace.release",
+    "status": "failed",
+    "summary": "Release manifest generated",
+    "started": "2025-11-29T14:27:33Z",
+    "completed": "2025-11-29T14:27:34Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "70c6af69-05b0-4c7a-a3f1-c50f4d4ef73f",
+    "capability": "workspace.release",
+    "status": "failed",
+    "summary": "Release manifest generated",
+    "started": "2025-11-29T14:27:56Z",
+    "completed": "2025-11-29T14:27:56Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "7524a949-6f7a-438b-bf05-83c55df89415",
+    "capability": "workspace.release",
+    "status": "failed",
+    "summary": "Release manifest generated",
+    "started": "2025-11-29T14:31:14Z",
+    "completed": "2025-11-29T14:31:15Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "6a6ccfac-e1e1-4067-958f-5320e3f2f081",
+    "capability": "workspace.release",
+    "status": "failed",
+    "summary": "Release manifest generated",
+    "started": "2025-11-29T14:32:29Z",
+    "completed": "2025-11-29T14:32:30Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "893a622c-42fb-425d-890e-907958ba2eaa",
+    "capability": "workspace.release",
+    "status": "failed",
+    "summary": "Release manifest generated",
+    "started": "2025-11-29T14:39:36Z",
+    "completed": "2025-11-29T14:43:00Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "d11cdfa2-f225-4596-b07e-b11ccf27f91c",
+    "capability": "workspace.release",
+    "status": "failed",
+    "summary": "Release manifest generated",
+    "started": "2025-11-29T14:43:40Z",
+    "completed": "2025-11-29T14:46:51Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "f8a04c1e-1193-473f-8e66-b06226858561",
+    "capability": "workspace.release",
+    "status": "succeeded",
+    "summary": "Release manifest 2025.11.29 recorded",
+    "started": "2025-11-29T14:50:09Z",
+    "completed": "2025-11-29T14:52:31Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "9b1628d3-b384-4bcc-b596-862d442b0e69",
+    "capability": "workspace.release",
+    "status": "succeeded",
+    "summary": "Release manifest 2025.11.29 recorded",
+    "started": "2025-11-29T14:59:01Z",
+    "completed": "2025-11-29T15:01:24Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  },
+  {
+    "id": "2453bda3-497b-43fe-a326-135fd5390d67",
+    "capability": "workspace.release",
+    "status": "succeeded",
+    "summary": "Release manifest 2025.11.29 recorded",
+    "started": "2025-11-29T17:35:42Z",
+    "completed": "2025-11-29T17:38:33Z",
+    "metadata": {
+      "raw": "{\"manifest\": \"../n00tropic-cerebrum/1. Cerebrum Docs/releases.yaml\"\"}"
+    }
+  }
+]
