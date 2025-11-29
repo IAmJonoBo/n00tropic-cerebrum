@@ -48,6 +48,10 @@
 5. Run security + health (`osv-scanner --config osv-scanner.toml .`, confirm GHSA items cleared).
 6. Mirror Antora/Vale/Lychee + Markdown→AsciiDoc migrations across repos listed in `docs/modules/ROOT/pages/migration-status.adoc` when private submodules are reachable.
 
+### Pipeline validation
+
+- `scripts/validate-pipelines.sh --clean` creates temp fixtures, runs preflight → graph export → docs build → fusion (if venv present), and writes logs to `.dev/automation/artifacts/pipeline-validation/latest.json`.
+
 ## Deliverables
 
 - Restored pnpm toolchain with default pnpm store location and documented external Trunk management.
