@@ -73,21 +73,29 @@ PY
 import time; print(int(time.time()*1_000_000_000))
 PY
 )
-  duration_ms=$(( (end_ns - start_ns) / 1_000_000 ))
+  duration_ms=$(python3 - "$start_ns" "$end_ns" <<'PY'
+import sys
+start_ns = int(sys.argv[1]); end_ns = int(sys.argv[2])
+print(int((end_ns - start_ns) / 1_000_000))
+PY
+)
   echo "[validate] <<< $name ($status, ${duration_ms}ms) log=$log_file"
   echo "$name|$status|$duration_ms|$log_file" >> "$ARTIFACT_DIR/latest.results"
 }
 
 write_summary() {
   if [[ ! -f "$ARTIFACT_DIR/latest.results" ]]; then return; fi
-  python3 - "$ARTIFACT_DIR/latest.results" "$ARTIFACT_DIR/latest.json" <<'PY'
+python3 - "$ARTIFACT_DIR/latest.results" "$ARTIFACT_DIR/latest.json" <<'PY'
 import json, sys, pathlib, datetime
 rows = []
 input_path, out_path = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
 for line in input_path.read_text().splitlines():
     name, status, dur, log = line.split("|")
     rows.append({"name": name, "status": status, "duration_ms": int(dur), "log": log})
-out = {"generated_at": datetime.datetime.utcnow().isoformat() + "Z", "runs": rows}
+out = {
+    "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    "runs": rows,
+}
 out_path.write_text(json.dumps(out, indent=2))
 PY
   rm -f "$ARTIFACT_DIR/latest.results"
@@ -151,7 +159,14 @@ fi
 # pipeline: fusion (skip softly if venv missing)
 if should_run fusion; then
   if [[ -d "${ROOT_DIR}/n00clear-fusion/.venv" ]]; then
-    log_step fusion bash -lc "FUSION_EMBED_BACKEND=${FUSION_EMBED_BACKEND:-stub} .dev/automation/scripts/fusion-pipeline.sh '${PDF_FIXTURE}' validation-fixture"
+    log_step fusion bash -lc "
+      source n00clear-fusion/.venv/bin/activate
+      SYMLINK=\"$TMP_DIR/fusion-python\"
+      mkdir -p \"$TMP_DIR\"
+      ln -sf \"${ROOT_DIR}/n00clear-fusion/.venv/bin/python\" \"\$SYMLINK\"
+      \"\$SYMLINK\" -m pip install -q -r n00clear-fusion/requirements.txt
+      FUSION_EMBED_BACKEND=${FUSION_EMBED_BACKEND:-stub} bash .dev/automation/scripts/fusion-pipeline.sh '${PDF_FIXTURE}' validation-fixture
+    "
   else
     echo "[validate] fusion skipped (missing n00clear-fusion/.venv)" | tee "$ARTIFACT_DIR/fusion-skip.log"
   fi
