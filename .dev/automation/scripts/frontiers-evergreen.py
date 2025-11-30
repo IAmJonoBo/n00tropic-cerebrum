@@ -35,6 +35,69 @@ WATCH_TARGETS = {
     "toolchainManifest": TOOLCHAIN_MANIFEST,
     "frontiersCatalog": CATALOG_JSON,
 }
+WATCH_STATUS_TITLE = "Frontiers Evergreen Status"
+
+STATUS_BADGES = {
+    "success": "[OK]",
+    "failed": "[FAIL]",
+    "needs-run": "[RUN]",
+    "clean": "[CLEAN]",
+    "skipped": "[SKIP]",
+}
+
+
+def _status_badge(status: Optional[str]) -> str:
+    label = status or "unknown"
+    return f"{STATUS_BADGES.get(label, '[INFO]')} {label}"
+
+
+def _format_list(values: Optional[List[str]]) -> str:
+    if not values:
+        return "none"
+    cleaned = [str(value) for value in values if value]
+    return ", ".join(cleaned) if cleaned else "none"
+
+
+def _print_status_block(title: str, rows: List[tuple[str, str]]) -> None:
+    divider = "-" * 60
+    print(f"[evergreen] {divider}")
+    print(f"[evergreen] {title}")
+    for label, value in rows:
+        print(f"[evergreen]   {label:<18}: {value}")
+    print(f"[evergreen] {divider}")
+
+
+def _render_watch_summary(payload: Dict[str, Any], title: str) -> None:
+    rows = [
+        ("Status", _status_badge(payload.get("status"))),
+        ("Changed Targets", _format_list(payload.get("changedTargets"))),
+        ("State Path", payload.get("statePath") or "n/a"),
+    ]
+    _print_status_block(title, rows)
+
+
+def _render_run_summary(summary: Dict[str, Any]) -> None:
+    rows: List[tuple[str, str]] = [
+        ("Status", _status_badge(summary.get("status"))),
+        ("Exit Code", str(summary.get("exitCode"))),
+        ("Duration (s)", str(summary.get("durationSeconds"))),
+        ("Changed Targets", _format_list(summary.get("changedTargets"))),
+        ("Templates", ", ".join(summary.get("templates", []))),
+        ("Command", summary.get("command", "")),
+        ("Log", summary.get("logPath", "n/a")),
+    ]
+    _print_status_block("Frontiers Evergreen Run", rows)
+
+
+def _render_probe_summary(summary: Dict[str, Any]) -> None:
+    rows = [
+        ("Status", _status_badge(summary.get("status"))),
+        ("Canonical", summary.get("canonical", "n/a")),
+        ("Override", summary.get("override", "n/a")),
+        ("Allow Lower", str(summary.get("allowLower"))),
+        ("Log", summary.get("logPath", "n/a")),
+    ]
+    _print_status_block("Python Probe", rows)
 
 
 def _load_json(path: Path) -> Dict[str, Any]:
@@ -205,45 +268,55 @@ def _probe_python_requirements(python_version: str) -> Dict[str, Any]:
     }
 
 
-def maybe_probe_python_alignment(state: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def _resolve_python_versions() -> tuple[Optional[str], Optional[str], bool]:
     manifest = _load_json(TOOLCHAIN_MANIFEST)
-    canonical = (
-        manifest.get("toolchains", {})
-        .get("python", {})
-        .get("version")
-    )
+    toolchains = manifest.get("toolchains", {})
+    python_entry = toolchains.get("python", {}) if isinstance(toolchains, dict) else {}
+    canonical = python_entry.get("version") if isinstance(python_entry, dict) else None
     override_data = _load_json(FRONTIERS_OVERRIDE)
-    override_entry = (
-        override_data.get("overrides", {})
-        .get("python", {})
-        if override_data
-        else {}
-    )
-    override_version = override_entry.get("version") if isinstance(override_entry, dict) else None
-    allow_lower = bool(override_entry.get("allow_lower")) if isinstance(override_entry, dict) else False
+    overrides = override_data.get("overrides", {}) if isinstance(override_data, dict) else {}
+    python_override = overrides.get("python", {}) if isinstance(overrides, dict) else {}
+    if not isinstance(python_override, dict):
+        return canonical, None, False
+    override_value = python_override.get("version")
+    override_version = override_value if isinstance(override_value, str) else None
+    allow_lower = bool(python_override.get("allow_lower"))
+    return canonical, override_version, allow_lower
 
-    if not canonical or not override_version:
-        return None
-    if _version_tuple(canonical) <= _version_tuple(override_version):
-        return None
-    if not allow_lower:
-        return None
 
-    existing = state.get("pythonProbe", {}) if isinstance(state, dict) else {}
+def _should_probe_python(canonical: Optional[str], override_version: Optional[str], allow_lower: bool) -> bool:
+    if not canonical or not override_version or not allow_lower:
+        return False
+    return _version_tuple(canonical) > _version_tuple(override_version)
+
+
+def _cached_python_probe(
+    state: Dict[str, Any], canonical: str, override_version: str
+) -> Optional[Dict[str, Any]]:
+    existing = state.get("pythonProbe") if isinstance(state, dict) else None
+    if not isinstance(existing, dict):
+        return None
     if (
-        existing.get("canonical") == canonical
-        and existing.get("override") == override_version
+        existing.get("canonical") != canonical
+        or existing.get("override") != override_version
     ):
-        timestamp_raw = existing.get("timestamp")
-        if timestamp_raw:
-            try:
-                normalized = timestamp_raw.replace("Z", "+00:00")
-                last_run = datetime.fromisoformat(normalized)
-            except ValueError:
-                last_run = None
-            if last_run and datetime.now(timezone.utc) - last_run < timedelta(hours=PYTHON_PROBE_RETENTION_HOURS):
-                return existing
+        return None
+    timestamp_raw = existing.get("timestamp")
+    if not isinstance(timestamp_raw, str):
+        return None
+    try:
+        normalized = timestamp_raw.replace("Z", "+00:00")
+        last_run = datetime.fromisoformat(normalized)
+    except ValueError:
+        return None
+    if datetime.now(timezone.utc) - last_run < timedelta(hours=PYTHON_PROBE_RETENTION_HOURS):
+        return existing
+    return None
 
+
+def _execute_python_probe(
+    state: Dict[str, Any], canonical: str, override_version: str, allow_lower: bool
+) -> Dict[str, Any]:
     probe_result = _probe_python_requirements(canonical)
     summary = {
         **probe_result,
@@ -254,7 +327,7 @@ def maybe_probe_python_alignment(state: Dict[str, Any]) -> Optional[Dict[str, An
     }
     state["pythonProbe"] = summary
     save_state(state)
-
+    _render_probe_summary(summary)
     if summary["status"] == "success":
         print(
             json.dumps(
@@ -265,6 +338,18 @@ def maybe_probe_python_alignment(state: Dict[str, Any]) -> Optional[Dict[str, An
             )
         )
     return summary
+
+
+def maybe_probe_python_alignment(state: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    canonical, override_version, allow_lower = _resolve_python_versions()
+    if not _should_probe_python(canonical, override_version, allow_lower):
+        return None
+    if canonical is None or override_version is None:
+        return None
+    cached = _cached_python_probe(state, canonical, override_version)
+    if cached:
+        return cached
+    return _execute_python_probe(state, canonical, override_version, allow_lower)
 
 
 def run_validation(args: argparse.Namespace, hashes: Dict[str, Optional[str]], state: Dict[str, Any]) -> int:
@@ -302,6 +387,7 @@ def run_validation(args: argparse.Namespace, hashes: Dict[str, Optional[str]], s
     if state.get("pythonProbe"):
         summary["pythonProbe"] = state["pythonProbe"]
 
+    _render_run_summary(summary)
     json_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 
     next_state = dict(state)
@@ -368,15 +454,18 @@ def main() -> int:
         payload["pythonProbe"] = state["pythonProbe"]
 
     if args.check_only:
+        _render_watch_summary(payload, WATCH_STATUS_TITLE)
         print(json.dumps(payload, indent=2))
         return 0
 
     if not needs_run and not args.force:
         payload["status"] = "skipped"
         payload["message"] = "No watched changes detected; use --force to run anyway."
+        _render_watch_summary(payload, WATCH_STATUS_TITLE)
         print(json.dumps(payload, indent=2))
         return 0
 
+    _render_watch_summary(payload, WATCH_STATUS_TITLE)
     return run_validation(args, hashes, state)
 
 
