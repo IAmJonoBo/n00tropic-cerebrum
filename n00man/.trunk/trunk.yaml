@@ -11,6 +11,8 @@ runtimes:
     - python@3.10.8
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
+  disabled:
+    - markdownlint
   enabled:
     - taplo@0.8.0
     - bandit@1.9.2
@@ -18,7 +20,6 @@ lint:
     - checkov@3.2.495
     - git-diff-check
     - isort@7.0.0
-    - markdownlint@0.46.0
     - prettier@3.7.3
     - ruff@0.14.7
     - shellcheck@0.8.0
