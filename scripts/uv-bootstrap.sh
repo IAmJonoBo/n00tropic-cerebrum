@@ -30,6 +30,41 @@ else
 	echo "[uv-bootstrap] reusing existing .venv in ${repo_root}"
 fi
 
+find_trunk_root() {
+	local dir="$1"
+	while [[ ${dir} != "/" ]]; do
+		if [[ -f "${dir}/.trunk/trunk.yaml" ]]; then
+			echo "${dir}"
+			return 0
+		fi
+		dir="$(dirname "${dir}")"
+	done
+	return 1
+}
+
+refresh_trunk() {
+	if ! command -v trunk >/dev/null 2>&1; then
+		echo "[uv-bootstrap] trunk not installed; skipping trunk upgrade"
+		return 0
+	fi
+
+	local trunk_root
+	if ! trunk_root=$(find_trunk_root "${repo_root}"); then
+		echo "[uv-bootstrap] no .trunk/trunk.yaml found above ${repo_root}; skipping trunk upgrade"
+		return 0
+	fi
+
+	echo "[uv-bootstrap] refreshing trunk tools in ${trunk_root}"
+	(
+		cd "${trunk_root}"
+		TRUNK_DAEMON_DISABLED=1 \
+			TRUNK_NO_ANALYTICS=1 \
+			TRUNK_DISABLE_TELEMETRY=1 \
+			TRUNK_NO_PROGRESS=1 \
+			trunk upgrade --yes-to-all --ci --no-progress
+	)
+}
+
 install_if_exists() {
 	local file="$1"
 	if [[ -f ${file} ]]; then
@@ -40,5 +75,7 @@ install_if_exists() {
 
 install_if_exists requirements.txt
 install_if_exists requirements-dev.txt
+
+refresh_trunk
 
 echo "[uv-bootstrap] done. Activate with: source ${repo_root}/.venv/bin/activate"
