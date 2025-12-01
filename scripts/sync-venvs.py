@@ -26,6 +26,7 @@ import json
 import shutil
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "automation" / "workspace.manifest.json"
@@ -156,6 +157,12 @@ def main(argv: list[str] | None = None) -> int:
         help="install: resolve transitive deps (uv pip install --upgrade -r ...); "
         "sync: expect fully pinned requirement files (uv pip sync ...)",
     )
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        default=1,
+        help="Number of repos to process in parallel (default: 1)",
+    )
     args = parser.parse_args(argv)
 
     manifest = load_manifest()
@@ -168,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
     uv_bin = ensure_uv()
     failures: List[str] = []
 
-    for entry in repos:
+    def _task(entry: dict) -> tuple[str, bool]:
         name = entry["name"]
         repo_root = ROOT / entry["path"]
         venv_path = default_venv_path(repo_root, name, entry.get("venv"))
@@ -176,15 +183,21 @@ def main(argv: list[str] | None = None) -> int:
         print(
             f"[sync-venvs] syncing {name} -> {venv_path} using {', '.join(r.name for r in reqs) or 'no reqs'}"
         )
-        try:
-            _, ok = sync_repo(
-                uv_bin, name, repo_root, venv_path, reqs, args.check, args.mode
-            )
-            if not ok:
-                failures.append(name)
-        except subprocess.CalledProcessError as exc:
+        _, ok = sync_repo(
+            uv_bin, name, repo_root, venv_path, reqs, args.check, args.mode
+        )
+        return name, ok
+
+    jobs = max(1, args.jobs)
+    if jobs == 1:
+        results = [_task(entry) for entry in repos]
+    else:
+        with ThreadPoolExecutor(max_workers=jobs) as pool:
+            results = list(pool.map(_task, repos))
+
+    for name, ok in results:
+        if not ok:
             failures.append(name)
-            print(f"[sync-venvs] {name}: failed ({exc})", file=sys.stderr)
 
     if failures:
         print(

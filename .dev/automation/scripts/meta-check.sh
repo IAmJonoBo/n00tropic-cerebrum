@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
+# shellcheck source=./lib/log.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/log.sh"
+
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
 AUTOMATION_DIR="$ROOT/.dev/automation"
 SCRIPTS_DIR="$AUTOMATION_DIR/scripts"
@@ -9,6 +12,7 @@ export UV_CACHE_DIR="${UV_CACHE_DIR:-$ROOT/.cache/uv}"
 
 AUTO_FIX=${META_CHECK_AUTO_FIX:-0}
 DOCTOR=${META_CHECK_DOCTOR:-0}
+JOBS=${META_CHECK_JOBS:-1}
 
 while [[ $# -gt 0 ]]; do
 	case $1 in
@@ -23,8 +27,13 @@ while [[ $# -gt 0 ]]; do
 Usage: meta-check.sh [--doctor] [--auto-fix]
   --doctor     Run workspace doctor preflight before checks.
   --auto-fix   Attempt safe self-healing actions (implies --doctor).
+  --jobs N     Parallelize eligible steps (default: 1)
 USAGE
 		exit 0
+		;;
+	--jobs)
+		JOBS=$2
+		shift
 		;;
 	*)
 		printf '[meta-check] Unknown argument: %s\n' "$1" >&2
@@ -60,7 +69,7 @@ RESULT_FILE=$(mktemp "$LOG_DIR/meta-check-results.XXXXXX")
 OVERALL_STATUS=0
 
 log() {
-	printf '[meta-check] %s\n' "$1"
+	log_info "$1"
 }
 
 _sanitize() {
@@ -107,6 +116,27 @@ run_check() {
 	fi
 }
 
+# Run a set of commands in parallel respecting JOBS
+run_parallel() {
+	local desc="$1"
+	shift
+	if [[ $JOBS -le 1 ]]; then
+		for cmd in "$@"; do
+			bash -c "$cmd" || OVERALL_STATUS=1
+		done
+		return
+	fi
+	log "→ ${desc} (parallel x${JOBS})"
+	local pids=()
+	for cmd in "$@"; do
+		bash -c "$cmd" &
+		pids+=($!)
+		if [[ ${#pids[@]} -ge $JOBS ]]; then
+			wait -n || OVERALL_STATUS=1
+		fi
+	done
+	wait "${pids[@]}" 2>/dev/null || OVERALL_STATUS=1
+}
 run_command() {
 	local id="$1"
 	local description="$2"
@@ -158,7 +188,11 @@ if [[ $DOCTOR -eq 1 ]]; then
 fi
 
 if has_command python3 && [[ -f "$ROOT/scripts/sync-venvs.py" ]]; then
-	run_check "sync-venvs" "." "Sync Python venvs with uv" python3 scripts/sync-venvs.py --all --full --check
+	if [[ $JOBS -gt 1 ]]; then
+		run_check "sync-venvs" "." "Sync Python venvs with uv (parallel x${JOBS})" python3 scripts/sync-venvs.py --all --full --check --jobs "$JOBS"
+	else
+		run_check "sync-venvs" "." "Sync Python venvs with uv" python3 scripts/sync-venvs.py --all --full --check
+	fi
 else
 	skip_check "sync-venvs" "Sync Python venvs with uv" "python3 or scripts/sync-venvs.py missing"
 fi
