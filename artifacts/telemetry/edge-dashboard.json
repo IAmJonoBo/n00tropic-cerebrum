@@ -1,0 +1,9 @@
+{
+  "title": "Edge Routing & Guardrails",
+  "panels": [
+    {"type": "stat", "metric": "router.confidence", "description": "Router confidence (p95)"},
+    {"type": "timeseries", "metric": "guardrail.violations", "description": "Guardrail violations over time"},
+    {"type": "table", "metric": "router.hardware_targets", "description": "Model selections by hardware"}
+  ],
+  "notes": "Generated placeholder; wire to OTEL metrics backend."
+}
