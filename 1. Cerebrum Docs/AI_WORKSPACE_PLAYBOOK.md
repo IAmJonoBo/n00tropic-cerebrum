@@ -76,3 +76,8 @@ Following the loop above removes the guesswork around submodules, untracked file
 - **Log size limits:** The server truncates stdout/stderr via `guardrails.stdout_max_bytes` / `stderr_max_bytes`. Increase these when a capability must stream structured JSON, decrease them when only final summaries matter.
 - **Telemetry tagging:** Optional `guardrails.telemetry_tags` (e.g., `{ "category": "workspace", "pii": "none" }`) travel with every start/finish event so dashboards can pivot by capability family.
 - **Runtime hooks:** Set `N00T_MCP_TELEMETRY_PATH` to capture JSONL start/finish envelopes for each capability. The file is append-only, ordered, and respects the redaction rules above, making it safe to sync into `.dev/automation/artifacts/automation/` for historical analysis.
+
+## New pipelines (Dec 2025)
+
+- **Workflow compiler:** `n00tropic_cli design workflow compile --dsl path/to/workflow.yaml --target artifacts/workflows/... [--simulate]` validates DSL against Cortex schema and emits agent configs + run script. Telemetry hints are dropped alongside outputs for meta-learner consumption.
+- **Guardrail/routing spans:** `observability.py` and `observability-node.mjs` now emit `guardrail.decision` (with `guardrail.prompt_variant`) and `router.selection` spans. Dashboards aggregate via `artifacts/telemetry/edge-dashboard.json`.

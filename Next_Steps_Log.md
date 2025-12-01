@@ -66,3 +66,10 @@
   - notes: Added targeted tests for model router scoring/circuit paths, tag registry/CLI analytics, unified telemetry propagation/OTEL stubs, and planning workflow phases. Coverage lifted to ~77% (from ~53%); next push targets tracing/unified_telemetry/model_router deep branches to reach the 85% policy bar.
   - checks: `python -m pytest` in `n00t/packages/agent-core` (pass, coverage ~77%); `pnpm -C n00t run test` (pass, vitest suite).
   - follow-ups: add tracing branch coverage, exporter/propagator edge cases, and record the next run in `.dev/automation/artifacts/automation/agent-runs.json`.
+
+## 2025-12-01 (branch: main, actor: Codex)
+
+- [x] Edge/guardrail observability + workflow compiler
+  - notes: Added guardrail/routing OTEL spans in `observability.py` and `observability-node.mjs`; stubbed edge dashboard at `artifacts/telemetry/edge-dashboard.json`. Delivered workflow compiler + CLI (`n00tropic_cli design workflow compile`) that validates Cortex DSL, emits agent configs, run script, and telemetry hints.
+  - checks: meta-check full suite (frontiers sanity, cortex schemas/ingest, n00-school pytest, n00t lint/test/build) all ✅; manual `pnpm -C n00t run test` ✅; n00-school pytest ✅.
+  - follow-ups: finish workspace-release dry-run once cross-repo consistency completes; wire compiler output registration into `n00t/capabilities/manifest.json` in a subsequent pass if required by orchestrations.
