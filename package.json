@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@10.23.0",
   "engines": {
-    "node": ">=24.0.0",
+    "node": ">=24.11.0",
     "pnpm": ">=10.23.0"
   },
   "devDependencies": {
@@ -95,12 +95,30 @@
   },
   "pnpm": {
     "overrides": {
-      "eslint-plugin-ft-flow": "3.0.11",
-      "eslint-plugin-react-native": "5.0.0",
-      "esbuild": "0.27.0",
-      "fast-json-patch": "3.1.1",
-      "tmp": "0.2.4",
-      "body-parser": "2.2.1"
+      "eslint-plugin-ft-flow": {
+        "version": "3.0.11",
+        "reason": "security fix"
+      },
+      "eslint-plugin-react-native": {
+        "version": "5.0.0",
+        "reason": "security fix"
+      },
+      "esbuild": {
+        "version": "0.27.0",
+        "reason": "pinned for deterministic builds"
+      },
+      "fast-json-patch": {
+        "version": "3.1.1",
+        "reason": "CVE patch"
+      },
+      "tmp": {
+        "version": "0.2.4",
+        "reason": "CVE patch"
+      },
+      "body-parser": {
+        "version": "2.2.1",
+        "reason": "CVE patch"
+      }
     }
   }
 }

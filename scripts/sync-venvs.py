@@ -8,7 +8,8 @@ Defaults:
   - Installs requirements in priority order:
       requirements.txt, requirements-dev.txt, requirements-doctr.txt (if present)
   - Uses uv; installs uv if missing.
-  - Mode `install` (default) resolves transitive deps (`uv pip install -r ...`).
+  - Mode `auto` (default) prefers pinned sync if lockfiles exist, else resolves.
+  - Mode `install` resolves transitive deps (`uv pip install -r ...`).
     Mode `sync` expects fully pinned requirement files (`uv pip sync ...`).
 
 Examples:
@@ -65,6 +66,32 @@ def requirement_files(repo_root: Path, include_full: bool) -> List[Path]:
     return files
 
 
+def lock_files(repo_root: Path, include_full: bool) -> List[Path]:
+    names: List[str] = [
+        "requirements.lock",
+        "requirements.txt.lock",
+    ]
+    if include_full:
+        names += [
+            "requirements-dev.lock",
+            "requirements-dev.txt.lock",
+            "requirements-doctr.lock",
+            "requirements-doctr.txt.lock",
+        ]
+    else:
+        names += ["requirements-dev.lock", "requirements-dev.txt.lock"]
+    locks = [repo_root / name for name in names if (repo_root / name).exists()]
+    # fall back to workspace-level locks to avoid floating installs
+    workspace_lock = ROOT / (
+        "requirements.workspace.lock"
+        if include_full
+        else "requirements.workspace.min.lock"
+    )
+    if workspace_lock.exists():
+        locks.append(workspace_lock)
+    return locks
+
+
 def default_venv_path(repo_root: Path, repo_name: str, explicit: str | None) -> Path:
     if explicit:
         return ROOT / explicit
@@ -81,25 +108,33 @@ def sync_repo(
     reqs: List[Path],
     perform_check: bool,
     mode: str,
+    locks: List[Path],
 ) -> Tuple[str, bool]:
     venv_path.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run([uv_bin, "venv", str(venv_path)], check=True)
     if not reqs:
         print(f"[sync-venvs] {repo_name}: no requirements files; skipped installs")
         return (repo_name, True)
+    chosen_mode = mode
+    if mode == "auto":
+        chosen_mode = "sync" if locks else "install"
     cmd = [
         uv_bin,
         "pip",
-        "install" if mode == "install" else "sync",
+        "install" if chosen_mode == "install" else "sync",
         "--python",
         str(venv_path / "bin" / "python"),
     ]
-    if mode == "install":
+    if chosen_mode == "install":
         cmd.append("--upgrade")
         for r in reqs:
             cmd.extend(["-r", str(r)])
     else:
-        cmd += [str(r) for r in reqs]
+        sources = locks if locks else reqs
+        cmd += [str(r) for r in sources]
+    print(
+        f"[sync-venvs] {repo_name}: mode={chosen_mode} sources={[p.name for p in (locks if chosen_mode=='sync' else reqs)]}",
+    )
     subprocess.run(cmd, check=True)
     if perform_check:
         check_cmd = [
@@ -152,9 +187,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--mode",
-        choices=["install", "sync"],
-        default="install",
-        help="install: resolve transitive deps (uv pip install --upgrade -r ...); "
+        choices=["install", "sync", "auto"],
+        default="auto",
+        help="auto (default): prefer sync when lockfiles exist; "
+        "install: resolve transitive deps (uv pip install --upgrade -r ...); "
         "sync: expect fully pinned requirement files (uv pip sync ...)",
     )
     parser.add_argument(
@@ -180,11 +216,12 @@ def main(argv: list[str] | None = None) -> int:
         repo_root = ROOT / entry["path"]
         venv_path = default_venv_path(repo_root, name, entry.get("venv"))
         reqs = requirement_files(repo_root, include_full=args.full)
+        locks = lock_files(repo_root, include_full=args.full)
         print(
             f"[sync-venvs] syncing {name} -> {venv_path} using {', '.join(r.name for r in reqs) or 'no reqs'}"
         )
         _, ok = sync_repo(
-            uv_bin, name, repo_root, venv_path, reqs, args.check, args.mode
+            uv_bin, name, repo_root, venv_path, reqs, args.check, args.mode, locks
         )
         return name, ok
 

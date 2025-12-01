@@ -40,6 +40,8 @@ if ! command -v uv >/dev/null 2>&1; then
 	exit 1
 fi
 
+UV_COMPILE_ARGS=${UV_COMPILE_ARGS:---prerelease=allow}
+
 process_lock() {
 	local req="$1" lock="$2"
 	local label="$3"
@@ -50,7 +52,7 @@ process_lock() {
 	if $CHECK; then
 		tmp=$(mktemp)
 		trap 'rm -f "$tmp"' RETURN
-		uv pip compile "$req" -o "$tmp"
+		uv pip compile $UV_COMPILE_ARGS "$req" -o "$tmp"
 		if ! diff -u "$lock" "$tmp" >/dev/null 2>&1; then
 			echo "$label is out of date" >&2
 			diff -u "$lock" "$tmp" || true
@@ -59,7 +61,7 @@ process_lock() {
 		echo "$label up to date"
 	else
 		echo "Rebuilding $label with uv..."
-		uv pip compile "$req" -o "$lock"
+		uv pip compile $UV_COMPILE_ARGS "$req" -o "$lock"
 		printf "Updated %s -> %s\n" "$req" "$lock"
 	fi
 }

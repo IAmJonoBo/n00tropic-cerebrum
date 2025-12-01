@@ -187,14 +187,38 @@ if [[ $DOCTOR -eq 1 ]]; then
 	fi
 fi
 
+if has_command node; then
+	run_check "toolchain-pins" "." "Toolchain pin alignment" node scripts/check-toolchain-pins.mjs --json
+else
+	skip_check "toolchain-pins" "Toolchain pin alignment" "node missing"
+fi
+
 if has_command python3 && [[ -f "$ROOT/scripts/sync-venvs.py" ]]; then
 	if [[ $JOBS -gt 1 ]]; then
-		run_check "sync-venvs" "." "Sync Python venvs with uv (parallel x${JOBS})" python3 scripts/sync-venvs.py --all --full --check --jobs "$JOBS"
+		run_check "sync-venvs" "." "Sync Python venvs with uv (parallel x${JOBS})" python3 scripts/sync-venvs.py --all --full --check --mode=auto --jobs "$JOBS"
 	else
-		run_check "sync-venvs" "." "Sync Python venvs with uv" python3 scripts/sync-venvs.py --all --full --check
+		run_check "sync-venvs" "." "Sync Python venvs with uv" python3 scripts/sync-venvs.py --all --full --check --mode=auto
 	fi
 else
 	skip_check "sync-venvs" "Sync Python venvs with uv" "python3 or scripts/sync-venvs.py missing"
+fi
+
+if has_command bash && [[ -f "$ROOT/scripts/refresh-python-lock.sh" ]]; then
+	run_check "python-locks" "." "Validate Python lockfiles" bash scripts/refresh-python-lock.sh --check
+else
+	skip_check "python-locks" "Validate Python lockfiles" "refresh-python-lock.sh missing"
+fi
+
+if has_command python3 && [[ -f "$ROOT/scripts/lint-unpinned-reqs.py" ]]; then
+	run_check "python-unpinned" "." "Lint floating Python requirements" python3 scripts/lint-unpinned-reqs.py
+else
+	skip_check "python-unpinned" "Lint floating Python requirements" "lint-unpinned-reqs.py missing"
+fi
+
+if has_command node && [[ -f "$ROOT/scripts/sync-pnpm-overrides.mjs" ]]; then
+	run_check "pnpm-overrides" "." "Verify pnpm overrides parity" node scripts/sync-pnpm-overrides.mjs --check
+else
+	skip_check "pnpm-overrides" "Verify pnpm overrides parity" "sync-pnpm-overrides.mjs missing"
 fi
 
 if [[ -z ${RENOVATE_TOKEN-} && -f $RENOVATE_SECRET_FILE ]]; then
