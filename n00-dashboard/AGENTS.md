@@ -117,3 +117,7 @@ When in the superrepo context:
 ---
 
 *For ecosystem context, see the root `AGENTS.md` in n00tropic-cerebrum.*
+
+---
+
+*Last updated: 2025-12-01*

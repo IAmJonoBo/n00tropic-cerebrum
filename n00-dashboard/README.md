@@ -1,6 +1,8 @@
 # n00-dashboard – Control Tower Companion
 
-This target hosts the macOS/iPadOS SwiftUI companion for the Control Tower. Milestone 1 delivers a read-only dashboard that watches lifecycle-radar + control-panel artefacts and surfaces the same readiness signals operators see in Markdown.
+This target hosts the macOS/iPadOS SwiftUI companion for the Control Tower. Milestone 1 delivers a read-only dashboard that watches lifecycle-radar + control-panel artefacts and surfaces the same readiness signals operators see in Markdown.
+
+> 🤖 **AI Agents**: Start with [`AGENTS.md`](./AGENTS.md) for agent-optimised build and test commands.
 
 ## Prerequisites
 

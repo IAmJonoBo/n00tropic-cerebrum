@@ -35,10 +35,15 @@ EOF
 append_repo_section() {
 	local repo_path="$1"
 	local summary="$2"
+	local conflicts="$3"
 	printf '\n## %s\n\n' "${repo_path}" >>"${REPORT_FILE}"
 	printf '| Branch | Committer | Commit Date (UTC) | Ahead | Behind | PR | Recommendation | Command |\n' >>"${REPORT_FILE}"
 	printf '| --- | --- | --- | --- | --- | --- | --- | --- |\n' >>"${REPORT_FILE}"
 	printf '%s' "${summary}" >>"${REPORT_FILE}"
+	if [[ -n ${conflicts} ]]; then
+		printf '\n**Unresolved merge markers (%s):**\n\n' "$(printf '%s' "${conflicts}" | sed '/^$/d' | wc -l | tr -d ' ')" >>"${REPORT_FILE}"
+		printf '```\n%s\n```\n' "${conflicts}" >>"${REPORT_FILE}"
+	fi
 }
 
 format_row() {
@@ -102,6 +107,7 @@ for repo_path in "${REPOS[@]}"; do
 
 	mapfile -t remote_branches < <(git for-each-ref --format '%(refname:short)' "refs/remotes/origin" | grep -v 'HEAD$' || true)
 	repo_rows=""
+	conflict_markers="$(git grep -n '^<<<<<<< ' -- ':!.git' || true)"
 
 	for remote_branch in "${remote_branches[@]}"; do
 		short_branch="${remote_branch#origin/}"
@@ -137,7 +143,7 @@ for repo_path in "${REPOS[@]}"; do
 		printf '    reason: %s\n' "${reason}" >&2
 	done
 
-	append_repo_section "${rel_path}" "${repo_rows}"
+	append_repo_section "${rel_path}" "${repo_rows}" "${conflict_markers}"
 	popd >/dev/null
 done
 

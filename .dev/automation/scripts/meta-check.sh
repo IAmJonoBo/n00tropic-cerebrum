@@ -337,6 +337,14 @@ if [[ -x "$SCRIPTS_DIR/check-submodules.sh" ]]; then
 	fi
 fi
 
+if [[ -x "$SCRIPTS_DIR/conflict-scan.sh" ]]; then
+	MERGE_MARKER_REPORT="${ARTIFACTS_DIR}/conflict-scan/latest.md"
+	mkdir -p "$(dirname "$MERGE_MARKER_REPORT")"
+	run_command "merge-markers" "Unresolved merge marker scan" "$SCRIPTS_DIR/conflict-scan.sh" --report "$MERGE_MARKER_REPORT"
+else
+	skip_check "merge-markers" "Unresolved merge marker scan" "conflict-scan.sh missing"
+fi
+
 if [[ -x "$SCRIPTS_DIR/workspace-health.sh" ]]; then
 	run_command "workspace-health" "Workspace git hygiene & status" "$SCRIPTS_DIR/workspace-health.sh"
 fi

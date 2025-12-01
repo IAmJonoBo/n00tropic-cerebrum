@@ -144,6 +144,9 @@ Each subproject contains its own `AGENTS.md` with package-specific commands. Age
 # Workspace status snapshot
 .dev/automation/scripts/workspace-status.sh
 
+# Detect unresolved merge markers (root + submodules)
+.dev/automation/scripts/conflict-scan.sh --report artifacts/tmp/conflict-scan/latest.md
+
 # Commit submodule updates
 .dev/automation/scripts/workspace-commit-submodules.sh
 
