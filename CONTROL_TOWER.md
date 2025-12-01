@@ -23,3 +23,4 @@ Notes:
 - QA guardrail: keep coverage ≥85% across subrepos; for agent-core run `python -m pytest` (coverage) and `pnpm -C n00t run test` (Vitest) before orchestration sims.
 - Observability: guardrail decisions (`guardrail.decision`, `guardrail.prompt_variant`) and router selections (`router.model_id`, `router.confidence`) are exported via `observability.py` / `observability-node.mjs`. Dashboards materialize to `artifacts/telemetry/edge-dashboard.json`.
 - Script ergonomics: prefer `./bin/workspace <cmd>` (`health`, `meta-check`, `release-dry-run`, `deps-audit`, `ingest-frontiers`, `render-templates`) as the stable entrypoint; legacy scripts remain under `.dev/automation/scripts/`.
+- Parallel runs: `meta-check.sh` and `sync-venvs.py` accept `--jobs N` (via `META_CHECK_JOBS`) for safe parallel venv sync and related steps; default remains serial for predictability.
