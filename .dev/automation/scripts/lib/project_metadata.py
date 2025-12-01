@@ -227,7 +227,7 @@ def ensure_paths_exist(document: MetadataDocument) -> List[str]:
 def write_metadata(document: MetadataDocument, payload: Dict[str, object]) -> None:
     """Rewrite the YAML front matter of a document with the provided payload."""
     text = document.path.read_text(encoding="utf-8")
-    start, end = document.match_span
+    _, end = document.match_span
     front_matter = yaml.safe_dump(payload, sort_keys=False).strip()
     new_header = f"---\n{front_matter}\n---\n"
     remainder = text[end:]

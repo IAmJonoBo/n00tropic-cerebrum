@@ -65,7 +65,7 @@ def fence_close_re(ch: str, n: int) -> re.Pattern:
 LIST_MARKER_RE = re.compile(
     r"""
     ^(?P<indent>\s*)
-    (?P<marker>(?:[*+-])|(?:\d{1,9}[.)]))
+    (?P<marker>[*+-]|\d{1,9}[.)])
     (?P<space>\s+)
     (?P<checkbox>\[(?:\s|x|X)\]\s+)?  # optional task list box
     """,
@@ -254,7 +254,7 @@ def _fill(text: str, width: int, initial_indent: str, subsequent_indent: str) ->
             # collapse multiple spaces to one normal space unless NBSP used
             if NBSP in w:
                 # keep NBSPs as-is (won't split), normal spaces collapse to one
-                w2 = re.sub(r"[ ]+", " ", w.replace(NBSP, NBSP))
+                w2 = re.sub(r" +", " ", w.replace(NBSP, NBSP))
             else:
                 w2 = " "
         else:

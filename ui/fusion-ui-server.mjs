@@ -1,10 +1,5 @@
 #!/usr/bin/env node
-import {
-  createWriteStream,
-  existsSync,
-  mkdirSync,
-  readFileSync,
-} from "node:fs";
+import * as fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,8 +20,8 @@ const pipelineScript = path.join(
 function serveStatic(req, res) {
   const url = req.url === "/" ? "/index.html" : req.url;
   const filePath = path.join(__dirname, url);
-  if (!existsSync(filePath)) return false;
-  const content = readFileSync(filePath);
+  if (!fs.existsSync(filePath)) return false;
+  const content = fs.readFileSync(filePath);
   const type = filePath.endsWith(".js")
     ? "application/javascript"
     : "text/html";
@@ -38,8 +33,8 @@ function serveStatic(req, res) {
 function serveExport(req, res) {
   if (!req.url.startsWith("/exports/")) return false;
   const target = path.join(root, req.url);
-  if (!existsSync(target)) return false;
-  const content = readFileSync(target);
+  if (!fs.existsSync(target)) return false;
+  const content = fs.readFileSync(target);
   res.writeHead(200, { "Content-Type": "text/plain" });
   res.end(content);
   return true;
@@ -56,7 +51,7 @@ function serveStatus(req, res) {
   }
   const genDir = path.join(fusionDir, "exports", dataset, "generated");
   let assets = [];
-  if (existsSync(genDir)) {
+  if (fs.existsSync(genDir)) {
     assets = fs
       .readdirSync(genDir)
       .map((name) => path.join("exports", dataset, "generated", name));
@@ -69,14 +64,14 @@ function serveStatus(req, res) {
 function handleUpload(req, res) {
   const busboy = Busboy({ headers: req.headers });
   const uploadsDir = path.join(fusionDir, "corpora");
-  mkdirSync(uploadsDir, { recursive: true });
+  fs.mkdirSync(uploadsDir, { recursive: true });
   let dataset = "";
   let filePath = "";
   let backend = "";
   busboy.on("file", (_name, file, info) => {
     const saveTo = path.join(uploadsDir, info.filename);
     filePath = saveTo;
-    file.pipe(createWriteStream(saveTo));
+    file.pipe(fs.createWriteStream(saveTo));
   });
   busboy.on("field", (name, val) => {
     if (name === "dataset") dataset = val;
@@ -95,9 +90,13 @@ function handleUpload(req, res) {
     const proc = spawn("bash", args.slice(0), { cwd: root, env });
     let output = "";
     let assets = [];
-    let dataset = "";
-    proc.stdout.on("data", (d) => (output += d.toString()));
-    proc.stderr.on("data", (d) => (output += d.toString()));
+    let resultDataset = dataset;
+    proc.stdout.on("data", (d) => {
+      output += d.toString();
+    });
+    proc.stderr.on("data", (d) => {
+      output += d.toString();
+    });
     proc.on("close", (code) => {
       const status = code === 0 ? "ok" : "error";
       // naive asset extraction
@@ -112,18 +111,25 @@ function handleUpload(req, res) {
             .split(" ")
             .map((kv) => kv.split("=")),
         );
-        dataset = parts.dataset || "";
+        resultDataset = parts.dataset || resultDataset;
         assets = parts.assets ? parts.assets.split(",").filter(Boolean) : [];
       } else {
         assets = output.match(/generated\/[^\s]+/g) || [];
       }
       // Best-effort list from filesystem when dataset is known
-      if (dataset) {
-        const genDir = path.join(fusionDir, "exports", dataset, "generated");
-        if (existsSync(genDir)) {
+      if (resultDataset) {
+        const genDir = path.join(
+          fusionDir,
+          "exports",
+          resultDataset,
+          "generated",
+        );
+        if (fs.existsSync(genDir)) {
           const found = fs
             .readdirSync(genDir)
-            .map((name) => path.join("exports", dataset, "generated", name));
+            .map((name) =>
+              path.join("exports", resultDataset, "generated", name),
+            );
           assets = assets.concat(found);
         }
       }
@@ -131,7 +137,14 @@ function handleUpload(req, res) {
       res.writeHead(code === 0 ? 200 : 500, {
         "Content-Type": "application/json",
       });
-      res.end(JSON.stringify({ status, output, assets, dataset }));
+      res.end(
+        JSON.stringify({
+          status,
+          output,
+          assets,
+          dataset: resultDataset,
+        }),
+      );
     });
   });
   req.pipe(busboy);
