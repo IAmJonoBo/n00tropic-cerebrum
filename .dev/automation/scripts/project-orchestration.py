@@ -39,6 +39,16 @@ from lib.project_metadata import (
 
 TIMESTAMP_FMT = "%Y-%m-%dT%H:%M:%SZ"
 DISPLAY_DATE_FMT = "%d-%m-%Y"
+README_FILENAME = "README.md"
+MSG_VALIDATING_METADATA = "Validating metadata document"
+MSG_METADATA_COMPLETE = "Metadata validation complete"
+MSG_LOADED_REGISTRY = "Loaded project registry"
+TAG_KNOWLEDGE_IDEA = "knowledge/idea"
+TAG_KNOWLEDGE_LEARNING_LOG = "knowledge/learning-log"
+TAG_GOV_PM = "governance/project-management"
+TAG_DELIVERY_JOB = "delivery/job"
+TAG_SOURCE_DESCRIPTOR = "Source descriptor."
+PREFLIGHT_STAGE_KEY = "preflight.stage"
 
 
 def now() -> str:
@@ -281,10 +291,10 @@ def discover_workspace_metadata() -> List[Path]:
     _, workspace_root, org_root = resolve_roots()
     documents: Set[Path] = set()
     documents.update(
-        discover_documents(workspace_root / "n00-horizons" / "ideas", ["README.md"])
+        discover_documents(workspace_root / "n00-horizons" / "ideas", [README_FILENAME])
     )
     documents.update(
-        discover_documents(workspace_root / "n00-horizons" / "jobs", ["README.md"])
+        discover_documents(workspace_root / "n00-horizons" / "jobs", [README_FILENAME])
     )
     documents.update(
         discover_documents(
@@ -345,11 +355,11 @@ def validate_erpnext_reference(code: Optional[str]) -> Optional[str]:
 
 
 def capture(path: Path, registry_path: Path) -> Dict[str, object]:
-    emit_progress("capture.start", "Validating metadata document", {"path": path})
+    emit_progress("capture.start", MSG_VALIDATING_METADATA, {"path": path})
     document, payload, warnings = validate_metadata_document(path)
     emit_progress(
         "capture.metadata",
-        "Metadata validation complete",
+        MSG_METADATA_COMPLETE,
         {"id": payload.get("id"), "path": path},
     )
     original_tags = document.payload.get("tags")
@@ -374,7 +384,7 @@ def capture(path: Path, registry_path: Path) -> Dict[str, object]:
     registry = load_registry(registry_path)
     emit_progress(
         "capture.registry",
-        "Loaded project registry",
+        MSG_LOADED_REGISTRY,
         {"id": payload.get("id"), "registryPath": registry_path},
     )
     existing = find_registry_entry(registry, payload["id"])
@@ -417,17 +427,17 @@ def capture(path: Path, registry_path: Path) -> Dict[str, object]:
 
 
 def sync_github(path: Path, registry_path: Path) -> Dict[str, object]:
-    emit_progress("sync.github.start", "Validating metadata document", {"path": path})
+    emit_progress("sync.github.start", MSG_VALIDATING_METADATA, {"path": path})
     _document, payload, warnings = validate_metadata_document(path)
     emit_progress(
         "sync.github.metadata",
-        "Metadata validation complete",
+        MSG_METADATA_COMPLETE,
         {"id": payload.get("id"), "path": path},
     )
     registry = load_registry(registry_path)
     emit_progress(
         "sync.github.registry",
-        "Loaded project registry",
+        MSG_LOADED_REGISTRY,
         {"id": payload.get("id"), "registryPath": registry_path},
     )
     existing = find_registry_entry(registry, payload["id"])
@@ -479,17 +489,17 @@ def sync_github(path: Path, registry_path: Path) -> Dict[str, object]:
 
 
 def sync_erpnext(path: Path, registry_path: Path) -> Dict[str, object]:
-    emit_progress("sync.erpnext.start", "Validating metadata document", {"path": path})
+    emit_progress("sync.erpnext.start", MSG_VALIDATING_METADATA, {"path": path})
     _document, payload, warnings = validate_metadata_document(path)
     emit_progress(
         "sync.erpnext.metadata",
-        "Metadata validation complete",
+        MSG_METADATA_COMPLETE,
         {"id": payload.get("id"), "path": path},
     )
     registry = load_registry(registry_path)
     emit_progress(
         "sync.erpnext.registry",
-        "Loaded project registry",
+        MSG_LOADED_REGISTRY,
         {"id": payload.get("id"), "registryPath": registry_path},
     )
     existing = find_registry_entry(registry, payload["id"])
@@ -584,7 +594,7 @@ def record_idea(
     review_date = format_calendar_date(
         (datetime.now(timezone.utc) + timedelta(days=review_days)).date()
     )
-    tag_set = list(dict.fromkeys((tags or []) + ["knowledge/idea"]))
+    tag_set = list(dict.fromkeys((tags or []) + [TAG_KNOWLEDGE_IDEA]))
 
     metadata = {
         "id": identifier,
@@ -594,7 +604,7 @@ def record_idea(
         "owner": owner,
         "sponsors": sponsors or [],
         "source": source or "internal",
-        "tags": tag_set or ["governance/project-management"],
+        "tags": tag_set or [TAG_GOV_PM],
         "review_date": review_date,
         "erpnext_project": None,
         "github_project": None,
@@ -631,7 +641,7 @@ Summarise the expected outcome if the idea is implemented.
 """
     ).strip()
 
-    readme_path = directory_path / "README.md"
+    readme_path = directory_path / README_FILENAME
     readme_path.write_text(body + "\n", encoding="utf-8")
     emit_progress(
         "record.idea.document",
@@ -682,9 +692,7 @@ def record_job(
             else datetime.now(timezone.utc)
         ).date()
     )
-    tag_set = list(
-        dict.fromkeys((tags or []) + ["delivery/job", "governance/project-management"])
-    )
+    tag_set = list(dict.fromkeys((tags or []) + [TAG_DELIVERY_JOB, TAG_GOV_PM]))
 
     metadata = {
         "id": identifier,
@@ -731,7 +739,7 @@ Summarise the measurable outcome for this job and its success predicates.
 """
     ).strip()
 
-    readme_path = directory_path / "README.md"
+    readme_path = directory_path / README_FILENAME
     readme_path.write_text(body + "\n", encoding="utf-8")
     emit_progress(
         "record.job.document",
@@ -817,13 +825,13 @@ def ingest_markdown(
     if create_front_matter:
         title = detect_title(resolved) or resolved.stem.replace("-", " ").title()
         slug = slugify(identifier or f"{kind}-{title}")
-        default_tags = tags or ["governance/project-management"]
-        if kind == "job" and "delivery/job" not in default_tags:
-            default_tags.append("delivery/job")
-        if kind == "idea" and "knowledge/idea" not in default_tags:
-            default_tags.append("knowledge/idea")
-        if kind == "learn" and "knowledge/learning-log" not in default_tags:
-            default_tags.append("knowledge/learning-log")
+        default_tags = tags or [TAG_GOV_PM]
+        if kind == "job" and TAG_DELIVERY_JOB not in default_tags:
+            default_tags.append(TAG_DELIVERY_JOB)
+        if kind == "idea" and TAG_KNOWLEDGE_IDEA not in default_tags:
+            default_tags.append(TAG_KNOWLEDGE_IDEA)
+        if kind == "learn" and TAG_KNOWLEDGE_LEARNING_LOG not in default_tags:
+            default_tags.append(TAG_KNOWLEDGE_LEARNING_LOG)
         metadata = {
             "id": identifier or f"{kind}-{slug}",
             "title": title,
@@ -858,12 +866,12 @@ def ingest_markdown(
                 else []
             )
             merged_tags = list(dict.fromkeys((tags or []) + existing_tags))
-            if kind == "idea" and "knowledge/idea" not in merged_tags:
-                merged_tags.append("knowledge/idea")
-            if kind == "learn" and "knowledge/learning-log" not in merged_tags:
-                merged_tags.append("knowledge/learning-log")
-            if kind == "job" and "delivery/job" not in merged_tags:
-                merged_tags.append("delivery/job")
+            if kind == "idea" and TAG_KNOWLEDGE_IDEA not in merged_tags:
+                merged_tags.append(TAG_KNOWLEDGE_IDEA)
+            if kind == "learn" and TAG_KNOWLEDGE_LEARNING_LOG not in merged_tags:
+                merged_tags.append(TAG_KNOWLEDGE_LEARNING_LOG)
+            if kind == "job" and TAG_DELIVERY_JOB not in merged_tags:
+                merged_tags.append(TAG_DELIVERY_JOB)
             payload["tags"] = merged_tags
             updated = True
         if owner:
@@ -895,23 +903,23 @@ def ingest_markdown(
             updated = True
         if kind == "idea":
             tags_field = cast(List[str], payload.get("tags") or [])
-            if "knowledge/idea" not in tags_field:
+            if TAG_KNOWLEDGE_IDEA not in tags_field:
                 payload["tags"] = list(
-                    dict.fromkeys(list(tags_field) + ["knowledge/idea"])  # type: ignore[arg-type]
+                    dict.fromkeys(list(tags_field) + [TAG_KNOWLEDGE_IDEA])  # type: ignore[arg-type]
                 )
                 updated = True
         if kind == "learn":
             tags_field = cast(List[str], payload.get("tags") or [])
-            if "knowledge/learning-log" not in tags_field:
+            if TAG_KNOWLEDGE_LEARNING_LOG not in tags_field:
                 payload["tags"] = list(
-                    dict.fromkeys(list(tags_field) + ["knowledge/learning-log"])  # type: ignore[arg-type]
+                    dict.fromkeys(list(tags_field) + [TAG_KNOWLEDGE_LEARNING_LOG])  # type: ignore[arg-type]
                 )
                 updated = True
         if kind == "job":
             tags_field = cast(List[str], payload.get("tags") or [])
-            if "delivery/job" not in tags_field:
+            if TAG_DELIVERY_JOB not in tags_field:
                 payload["tags"] = list(
-                    dict.fromkeys(list(tags_field) + ["delivery/job"])  # type: ignore[arg-type]
+                    dict.fromkeys(list(tags_field) + [TAG_DELIVERY_JOB])  # type: ignore[arg-type]
                 )
                 updated = True
         if updated:
@@ -950,25 +958,29 @@ def preflight(path: Path, registry_path: Path) -> Dict[str, object]:
     capture_result = capture(path, registry_path)
     write_artifact(capture_result)
     emit_progress(
-        "preflight.stage",
+        PREFLIGHT_STAGE_KEY,
         "Capture stage complete",
         {"id": capture_result.get("id"), "status": capture_result.get("status")},
     )
 
-    emit_progress("preflight.stage", "Planning GitHub synchronisation", {"path": path})
+    emit_progress(
+        PREFLIGHT_STAGE_KEY, "Planning GitHub synchronisation", {"path": path}
+    )
     github_result = sync_github(path, registry_path)
     write_artifact(github_result)
     emit_progress(
-        "preflight.stage",
+        PREFLIGHT_STAGE_KEY,
         "GitHub synchronisation stage complete",
         {"id": github_result.get("id"), "status": github_result.get("status")},
     )
 
-    emit_progress("preflight.stage", "Planning ERPNext synchronisation", {"path": path})
+    emit_progress(
+        PREFLIGHT_STAGE_KEY, "Planning ERPNext synchronisation", {"path": path}
+    )
     erpnext_result = sync_erpnext(path, registry_path)
     write_artifact(erpnext_result)
     emit_progress(
-        "preflight.stage",
+        PREFLIGHT_STAGE_KEY,
         "ERPNext synchronisation stage complete",
         {"id": erpnext_result.get("id"), "status": erpnext_result.get("status")},
     )
@@ -1266,7 +1278,7 @@ def parse_args() -> argparse.Namespace:
         "--sponsors", nargs="*", default=[], help="Sponsor teams or reviewers."
     )
     record_parser.add_argument(
-        "--source", default="internal", help="Source descriptor."
+        "--source", default="internal", help=TAG_SOURCE_DESCRIPTOR
     )
     record_parser.add_argument(
         "--review-days",
@@ -1287,7 +1299,7 @@ def parse_args() -> argparse.Namespace:
         "--sponsors", nargs="*", default=[], help="Sponsor teams or reviewers."
     )
     record_job_parser.add_argument(
-        "--source", default="internal", help="Source descriptor."
+        "--source", default="internal", help=TAG_SOURCE_DESCRIPTOR
     )
     record_job_parser.add_argument(
         "--review-days",
@@ -1349,7 +1361,7 @@ def parse_args() -> argparse.Namespace:
     ingest_parser.add_argument(
         "--sponsors", nargs="*", default=[], help="Sponsor list."
     )
-    ingest_parser.add_argument("--source", help="Source descriptor.")
+    ingest_parser.add_argument("--source", help=TAG_SOURCE_DESCRIPTOR)
     ingest_parser.add_argument("--erpnext-project", help="ERPNext project code.")
     ingest_parser.add_argument("--github-project", help="GitHub project URL.")
 

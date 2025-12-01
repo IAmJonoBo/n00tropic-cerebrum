@@ -62,25 +62,28 @@ def default_path(kind: str, slug: str, workspace_root: Path) -> Path:
     return workspace_root / "n00-horizons" / "docs" / "experiments" / f"{slug}.md"
 
 
+PM_TAG = "governance/project-management"
+
+
 def kind_defaults(kind: str) -> Dict[str, object]:
     if kind == "idea":
         return {
             "lifecycle_stage": "discover",
             "status": "proposed",
-            "tags": ["governance/project-management", "knowledge/idea"],
+            "tags": [PM_TAG, "knowledge/idea"],
             "id_prefix": "idea",
         }
     if kind == "learn":
         return {
             "lifecycle_stage": "discover",
             "status": "recorded",
-            "tags": ["governance/project-management", "knowledge/learning-log"],
+            "tags": [PM_TAG, "knowledge/learning-log"],
             "id_prefix": "learn",
         }
     return {
         "lifecycle_stage": "shape",
         "status": "in-definition",
-        "tags": ["governance/project-management"],
+        "tags": [PM_TAG],
         "id_prefix": "project",
     }
 
