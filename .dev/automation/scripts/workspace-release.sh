@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
+IFS=$'\n\t'
+
+# shellcheck source=./lib/log.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/log.sh"
+# shellcheck source=../toolchain.env
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)/toolchain.env"
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
 SCRIPTS_DIR="$ROOT/.dev/automation/scripts"
