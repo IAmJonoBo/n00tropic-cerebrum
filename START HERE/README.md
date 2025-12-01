@@ -24,7 +24,7 @@
 
 1. **Bootstrap tooling** – `./.dev/scripts/bootstrap-trunk-python.sh` (only if Trunk cannot download runtimes automatically).
 2. **Refresh sources** – `./.dev/automation/scripts/refresh-workspace.sh`.
-3. **Proactivity pass** – run `python3 .dev/automation/scripts/workspace-health.py --auto-remediate --publish-artifact` (or the n00t capability `workspace.repair` in dry-run/apply mode). This applies skeletons, syncs submodules, performs a safe clean, and ensures branches before any plan/build.
+3. **Proactivity pass** – run `./bin/workspace health` (wraps `workspace-health.sh --publish-artifact`) or `python3 .dev/automation/scripts/workspace-health.py --auto-remediate --publish-artifact` (or the n00t capability `workspace.repair` in dry-run/apply mode). This applies skeletons, syncs submodules, performs a safe clean, and ensures branches before any plan/build.
 4. **Meta-check** – `./.dev/automation/scripts/meta-check.sh` (runs lint/test suites per repo).
 5. **Release snapshot** – `./.dev/automation/scripts/workspace-release.sh` (writes `1. Cerebrum Docs/releases.yaml`).
 6. **Installs** – root `pnpm install` is blocked; use subrepo installs or `pnpm --filter`. JS subrepos have preinstall guards; rerun installs via `scripts/normalize-workspace-pnpm.sh` (or MCP capability `workspace.normalizePnpm`) to enforce toolchain pins. If you must install at root, set `ALLOW_ROOT_PNPM_INSTALL=1`.

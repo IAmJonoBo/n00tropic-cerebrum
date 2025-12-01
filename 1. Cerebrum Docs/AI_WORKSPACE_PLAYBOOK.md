@@ -81,3 +81,4 @@ Following the loop above removes the guesswork around submodules, untracked file
 
 - **Workflow compiler:** `n00tropic_cli design workflow compile --dsl path/to/workflow.yaml --target artifacts/workflows/... [--simulate]` validates DSL against Cortex schema and emits agent configs + run script. Telemetry hints are dropped alongside outputs for meta-learner consumption.
 - **Guardrail/routing spans:** `observability.py` and `observability-node.mjs` now emit `guardrail.decision` (with `guardrail.prompt_variant`) and `router.selection` spans. Dashboards aggregate via `artifacts/telemetry/edge-dashboard.json`.
+- **Workspace CLI:** `./bin/workspace` wraps the canonical automation flows (`health`, `meta-check`, `release-dry-run`, `deps-audit`, `ingest-frontiers`, `render-templates`) for quicker operator and agent use; scripts still live under `.dev/automation/scripts/`.

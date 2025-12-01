@@ -22,3 +22,4 @@ Notes:
 - Edge scaffolds (RPi/Jetson) and agent guardrail routes land in this run; add tracing via `ai-mlstudio.tracing.open` before simulation.
 - QA guardrail: keep coverage ≥85% across subrepos; for agent-core run `python -m pytest` (coverage) and `pnpm -C n00t run test` (Vitest) before orchestration sims.
 - Observability: guardrail decisions (`guardrail.decision`, `guardrail.prompt_variant`) and router selections (`router.model_id`, `router.confidence`) are exported via `observability.py` / `observability-node.mjs`. Dashboards materialize to `artifacts/telemetry/edge-dashboard.json`.
+- Script ergonomics: prefer `./bin/workspace <cmd>` (`health`, `meta-check`, `release-dry-run`, `deps-audit`, `ingest-frontiers`, `render-templates`) as the stable entrypoint; legacy scripts remain under `.dev/automation/scripts/`.
