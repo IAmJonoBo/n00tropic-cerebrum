@@ -11,11 +11,16 @@ A concise, agent-facing guide for n00man. Keep it short, concrete, and enforceab
 
 ## Status
 
-⚠️ **Scaffolding only.** Core functionality not yet implemented.
+✅ **Agent foundry core online.** Python package `n00man.core` now exposes the
+AgentFoundryExecutor, registry helpers, and scaffold generator.
+
+Available features:
+
+- CLI-driven scaffolding with JSON registry updates
+- Agent profile, capability manifest, and executor stub generation
 
 Planned features:
 
-- Agent scaffolding templates
 - Governance rules and validation
 - Registration with n00t capability manifest
 - Integration testing for new agents
@@ -29,15 +34,22 @@ Planned features:
 ### Common Commands
 
 ```bash
-# TBD - scaffolding only
-cd n00man
-# Future: python3 cli.py scaffold --name my-agent --type mcp
+# Scaffold a new agent profile + executor
+python -m n00man.cli scaffold \
+  --name brand-reviewer \
+  --role "Brand Reviewer" \
+  --description "Reviews assets for brand compliance" \
+  --tag brand --tag creative
+
+# List registered agents from docs/agent-registry.json
+python -m n00man.cli list
 ```
 
 ## Code Style
 
 - Follow `n00-frontiers` conventions when implementing.
 - Agents must meet frontier standards.
+- Generated executors rely on `agent_core` shipped in `n00t/packages/agent-core`.
 
 ## Security & Boundaries
 
