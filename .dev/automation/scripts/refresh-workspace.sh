@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
+IFS=$'\n\t'
+
+# shellcheck source=./lib/log.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/log.sh"
+# shellcheck source=../toolchain.env
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)/toolchain.env"
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
 SCRIPTS_DIR="$ROOT/.dev/automation/scripts"
-
-log() {
-	printf '[refresh-workspace] %s\n' "$1"
-}
 
 STARTED_AT=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 FAILED=0

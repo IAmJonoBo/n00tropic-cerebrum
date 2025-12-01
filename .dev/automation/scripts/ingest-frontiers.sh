@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Synchronise n00-cortex with exports from n00-frontiers.
 set -euo pipefail
+IFS=$'\n\t'
+# shellcheck source=./lib/log.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/log.sh"
+# shellcheck source=../toolchain.env
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)/toolchain.env"
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)
 CORTEX_DIR="$ROOT/n00-cortex"
