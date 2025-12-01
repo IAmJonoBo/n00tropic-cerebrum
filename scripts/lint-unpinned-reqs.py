@@ -11,7 +11,6 @@ from pathlib import Path
 import json
 import os
 import re
-import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 ALLOWLIST_PATH = ROOT / "automation" / "requirements-unpinned-allowlist.json"

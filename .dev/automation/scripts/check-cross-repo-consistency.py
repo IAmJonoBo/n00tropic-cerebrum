@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Literal, Tuple, Union
+from typing import Dict, Iterable, List, Literal, Tuple, Union
 
 import argparse
 import datetime as dt

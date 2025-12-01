@@ -17,7 +17,6 @@ from typing import Dict, Iterable, List, Tuple
 import argparse
 import json
 import re
-import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]

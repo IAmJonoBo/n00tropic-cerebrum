@@ -6,7 +6,7 @@ Currently normalises tag aliases to their canonical names and can insert missing
 
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from lib.project_metadata import (
     discover_documents,
     extract_metadata,
@@ -19,7 +19,7 @@ from lib.project_metadata import (
     write_metadata,
 )
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Tuple
 
 import argparse
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from lib import project_metadata
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Set
+from typing import Dict, List, Sequence, Set
 
 import argparse
 import json
