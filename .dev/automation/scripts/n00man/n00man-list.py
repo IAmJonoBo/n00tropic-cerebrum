@@ -11,7 +11,7 @@ import json
 import os
 import sys
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 N00MAN_ROOT = ROOT / "n00man"
 DOCS_ROOT = N00MAN_ROOT / "docs"
 DEFAULT_REGISTRY = DOCS_ROOT / "agent-registry.json"

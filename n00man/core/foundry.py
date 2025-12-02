@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
+
 from .governance import AgentGovernanceValidator
 from .profile import AgentCapability, AgentGuardrail, AgentProfile
 from .registry import AgentRegistry
 from .scaffold import AgentScaffold
-from pathlib import Path
-from typing import Any, TYPE_CHECKING
-
-import sys
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 WORKSPACE_ROOT = PACKAGE_ROOT.parent

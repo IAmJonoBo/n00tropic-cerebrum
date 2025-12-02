@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from .profile import AgentProfile
+import json
 from pathlib import Path
 
-import json
+from .profile import AgentProfile
 
 
 class AgentScaffold:

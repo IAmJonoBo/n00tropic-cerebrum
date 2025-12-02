@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from .profile import AgentCapability, AgentGuardrail, AgentProfile
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict
 
-import json
+from .profile import AgentCapability, AgentGuardrail, AgentProfile
 
 
 class AgentRegistry:
