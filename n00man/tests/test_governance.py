@@ -81,3 +81,40 @@ def test_active_agents_require_guardrails_and_fallbacks() -> None:
 
     with pytest.raises(AgentGovernanceError):
         validator.validate(profile)
+
+
+def test_collect_errors_returns_domain_messages() -> None:
+    validator = AgentGovernanceValidator()
+    profile = build_agent_profile(
+        agent_id="active-reviewer",
+        name="Active Reviewer",
+        role="reviewer",
+        description="Runs final QA reviews.",
+        capabilities=_base_capabilities(),
+        status="active",
+        guardrails=[],
+        model_config={
+            "provider": "openai",
+            "model": "gpt-5.1-codex",
+            "fallbacks": [],
+        },
+    )
+
+    errors = validator.collect_errors(profile.to_dict())
+
+    assert "guardrails must be defined" in "\n".join(errors)
+    assert "fallback model" in "\n".join(errors)
+
+
+def test_validate_payload_accepts_raw_dict() -> None:
+    validator = AgentGovernanceValidator()
+    profile = build_agent_profile(
+        agent_id="beta-analyst",
+        name="Beta Analyst",
+        role="analyst",
+        description="Summarises findings.",
+        capabilities=_base_capabilities(),
+        guardrails=["Escalate contentious findings"],
+    )
+
+    validator.validate_payload(profile.to_dict())

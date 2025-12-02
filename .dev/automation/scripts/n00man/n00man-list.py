@@ -3,13 +3,12 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, TYPE_CHECKING
-
 import argparse
 import json
 import os
 import sys
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 ROOT = Path(__file__).resolve().parents[4]
 N00MAN_ROOT = ROOT / "n00man"
@@ -56,6 +55,17 @@ def _merge_inputs(
     return merged
 
 
+def _get_first(inputs: dict[str, Any], *keys: str) -> Any:
+    for key in keys:
+        if key not in inputs:
+            continue
+        value = inputs[key]
+        if value is None:
+            continue
+        return value
+    return None
+
+
 def _serialise_agent(profile: "AgentProfile") -> dict[str, Any]:
     payload = profile.to_dict()
     payload["agentId"] = payload.pop("agent_id")
@@ -66,10 +76,10 @@ def _filter_agents(
     registry: AgentRegistry, filters: dict[str, Any]
 ) -> list[dict[str, Any]]:
     agents: list[AgentProfile] = registry.list()
-    agent_id = filters.get("agent_id") or filters.get("name")
-    status = filters.get("status")
+    agent_id = _get_first(filters, "agent_id", "agentId", "name")
+    status = _get_first(filters, "status", "statusLabel")
     owner = filters.get("owner")
-    tags = filters.get("tag") or filters.get("tags")
+    tags = _get_first(filters, "tag", "tags")
     if isinstance(tags, str):
         tags = [tags]
 
@@ -102,7 +112,8 @@ def main() -> int:
     env_inputs = _load_env_inputs()
     merged_inputs = _merge_inputs(env_inputs, vars(args))
 
-    registry_path = Path(merged_inputs.get("registry_path") or DEFAULT_REGISTRY)
+    registry_value = _get_first(merged_inputs, "registry_path", "registryPath")
+    registry_path = Path(registry_value or DEFAULT_REGISTRY)
     registry_path = registry_path.expanduser().resolve()
 
     try:

@@ -3,13 +3,12 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, Dict
-
 import argparse
 import json
 import os
 import sys
+from pathlib import Path
+from typing import Any, Dict
 
 ROOT = Path(__file__).resolve().parents[4]
 N00MAN_ROOT = ROOT / "n00man"
@@ -59,6 +58,17 @@ def _merge_inputs(
     return merged
 
 
+def _get_first(inputs: dict[str, Any], *keys: str) -> Any:
+    for key in keys:
+        if key not in inputs:
+            continue
+        value = inputs[key]
+        if value is None:
+            continue
+        return value
+    return None
+
+
 def _profile_from_payload(payload: Dict[str, Any]) -> AgentProfile:
     caps = [AgentCapability(**entry) for entry in payload.get("capabilities", [])]
     guardrails = [AgentGuardrail(**entry) for entry in payload.get("guardrails", [])]
@@ -71,17 +81,19 @@ def _profile_from_payload(payload: Dict[str, Any]) -> AgentProfile:
 
 
 def _load_profile(inputs: Dict[str, Any]) -> AgentProfile:
-    if inputs.get("profile_path"):
-        path = Path(str(inputs["profile_path"])).expanduser().resolve()
+    profile_path = _get_first(inputs, "profile_path", "profilePath")
+    if profile_path:
+        path = Path(str(profile_path)).expanduser().resolve()
         payload = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(payload, dict):
             raise SystemExit("profile_path must point to a JSON object")
         return _profile_from_payload(payload)
 
-    agent_id = inputs.get("agent_id") or inputs.get("name")
+    agent_id = _get_first(inputs, "agent_id", "agentId", "name")
     if not agent_id:
         raise SystemExit("agent_id or profile_path is required")
-    registry_path = Path(inputs.get("registry_path") or DEFAULT_REGISTRY)
+    registry_value = _get_first(inputs, "registry_path", "registryPath")
+    registry_path = Path(registry_value or DEFAULT_REGISTRY)
     registry = AgentRegistry(registry_path)
     profile = registry.get(str(agent_id))
     if not profile:
@@ -101,12 +113,10 @@ def main() -> int:
     env_inputs = _load_env_inputs()
     merged_inputs = _merge_inputs(env_inputs, vars(args))
 
-    schema_path = None
-    if merged_inputs.get("schema_path"):
-        schema_path = Path(str(merged_inputs["schema_path"])).expanduser().resolve()
-    roles_path = None
-    if merged_inputs.get("roles_path"):
-        roles_path = Path(str(merged_inputs["roles_path"])).expanduser().resolve()
+    schema_raw = _get_first(merged_inputs, "schema_path", "schemaPath")
+    schema_path = Path(str(schema_raw)).expanduser().resolve() if schema_raw else None
+    roles_raw = _get_first(merged_inputs, "roles_path", "rolesPath")
+    roles_path = Path(str(roles_raw)).expanduser().resolve() if roles_raw else None
 
     try:
         profile = _load_profile(merged_inputs)

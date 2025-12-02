@@ -1,0 +1,105 @@
+{
+  "agent_id": "atlas-operator",
+  "name": "Atlas Data Transfer Operator",
+  "role": "operator",
+  "description": "Automates regulated data contract migrations and certifies lineage across workspaces.",
+  "owner": "data-platform",
+  "status": "beta",
+  "tags": ["data/migrations", "lineage/assurance"],
+  "capabilities": [
+    {
+      "id": "plan-transfer",
+      "name": "Plan Transfer",
+      "description": "Assemble a migration plan with sequencing, throttling windows, and rollback strategy.",
+      "inputs": {
+        "source_contract": {
+          "type": "string",
+          "description": "Fully qualified identifier for the source data contract"
+        },
+        "destination_contract": {
+          "type": "string",
+          "description": "Destination contract or workspace name"
+        },
+        "checks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Validation checks that must pass before execution"
+        }
+      },
+      "outputs": {
+        "transfer_plan": {
+          "type": "object",
+          "description": "Ordered plan with approvals, sequencing, and abort conditions"
+        }
+      }
+    },
+    {
+      "id": "verify-lineage",
+      "name": "Verify Lineage",
+      "description": "Compare telemetry graphs pre/post migration to confirm lineage coverage.",
+      "inputs": {
+        "dataset_id": {
+          "type": "string",
+          "description": "Dataset identifier to trace"
+        },
+        "observability_window": {
+          "type": "string",
+          "description": "Duration (e.g., 24h) used for telemetry comparison"
+        }
+      },
+      "outputs": {
+        "lineage_report": {
+          "type": "object",
+          "description": "Graph diff plus detected regressions"
+        }
+      }
+    },
+    {
+      "id": "reconcile-drift",
+      "name": "Reconcile Drift",
+      "description": "Detect and reconcile schema drift or policy violations after migration completion.",
+      "inputs": {
+        "drift_events": {
+          "type": "array",
+          "items": { "type": "object" },
+          "description": "List of drift events raised by monitoring"
+        },
+        "policy_catalog": {
+          "type": "object",
+          "description": "Policy definitions that must remain satisfied"
+        }
+      },
+      "outputs": {
+        "remediation_plan": {
+          "type": "object",
+          "description": "Ordered set of fixes mapped to responsible teams"
+        }
+      }
+    }
+  ],
+  "guardrails": [
+    {
+      "id": "atlas-pii-controls",
+      "description": "Enforce tokenization for sensitive fields before any data crosses trust boundaries.",
+      "enforcement": "required",
+      "severity": "high"
+    },
+    {
+      "id": "atlas-latency-budget",
+      "description": "Pause transfers if latency budgets exceed thresholds defined by platform SLOs.",
+      "enforcement": "required",
+      "severity": "medium"
+    }
+  ],
+  "model_config": {
+    "provider": "openai",
+    "model": "gpt-5.1",
+    "fallbacks": ["openai/gpt-5.1-mini", "openai/gpt-5-nano"],
+    "temperature": 0.3
+  },
+  "metadata": {
+    "playbooks": ["docs://data/atlas.md"],
+    "links": ["https://intranet.example/data/atlas"],
+    "runbooks": ["ops://atlas/migrations"]
+  }
+}

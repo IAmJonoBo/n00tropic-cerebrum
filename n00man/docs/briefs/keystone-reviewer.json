@@ -1,0 +1,104 @@
+{
+  "agent_id": "keystone-reviewer",
+  "name": "Keystone Release Reviewer",
+  "role": "reviewer",
+  "description": "Performs cross-discipline release gates for AI-powered services and documents required remediations.",
+  "owner": "release-office",
+  "status": "active",
+  "tags": ["security/release", "compliance/go-live"],
+  "capabilities": [
+    {
+      "id": "score-release",
+      "name": "Score Release",
+      "description": "Blend security, compliance, and reliability inputs into a unified go/no-go score.",
+      "inputs": {
+        "release_manifest": {
+          "type": "object",
+          "description": "Structured manifest exported by delivery tooling"
+        },
+        "risk_signals": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Identifiers for blocking or advisory risk signals"
+        }
+      },
+      "outputs": {
+        "scorecard": {
+          "type": "object",
+          "description": "Weighted score with rationale and follow-up actions"
+        }
+      }
+    },
+    {
+      "id": "simulate-blast-radius",
+      "name": "Simulate Blast Radius",
+      "description": "Model dependency impact from a proposed change set and flag brittle integrations.",
+      "inputs": {
+        "change_set": {
+          "type": "string",
+          "description": "Identifier or URL for the pending change"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of downstream systems that must be assessed"
+        }
+      },
+      "outputs": {
+        "simulation": {
+          "type": "object",
+          "description": "Dependency graph deltas plus mitigation plan"
+        }
+      }
+    },
+    {
+      "id": "enforce-guardrails",
+      "name": "Enforce Guardrails",
+      "description": "Verify attestation evidence for mandatory guardrails before signing off a release.",
+      "inputs": {
+        "guardrail_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Guardrail identifiers the release must satisfy"
+        },
+        "attestations": {
+          "type": "object",
+          "description": "Evidence bundle produced by the owning team"
+        }
+      },
+      "outputs": {
+        "validation_report": {
+          "type": "object",
+          "description": "Pass/fail per guardrail with escalation notes"
+        }
+      }
+    }
+  ],
+  "guardrails": [
+    {
+      "id": "keystone-two-person",
+      "description": "Require two independent reviewers for every production release recommendation.",
+      "enforcement": "required",
+      "severity": "high"
+    },
+    {
+      "id": "keystone-dataplane",
+      "description": "Do not authorize deploys when observability detections are degraded for any critical dataplane.",
+      "enforcement": "required",
+      "severity": "high"
+    }
+  ],
+  "model_config": {
+    "provider": "openai",
+    "model": "gpt-5.1-codex",
+    "fallbacks": ["openai/gpt-5.1-codex-mini", "openai/gpt-4.1-mini"],
+    "temperature": 0.2
+  },
+  "metadata": {
+    "playbooks": ["docs://release/keystone.md"],
+    "links": ["https://intranet.example/release/keystone"],
+    "telemetry": {
+      "span_name": "keystone.release.review"
+    }
+  }
+}

@@ -63,16 +63,31 @@ class AgentGovernanceValidator:
         return Draft202012Validator(schema)
 
     def validate(self, profile: AgentProfile) -> None:
-        payload = profile.to_dict()
-        errors = list(self._iter_error_messages(payload))
-        if payload["status"] in {"beta", "active"} and not payload["guardrails"]:
-            errors.append("guardrails must be defined for beta or active agents")
-        if payload["status"] == "active" and not payload["model_config"].get(
-            "fallbacks"
-        ):
-            errors.append("active agents must define at least one fallback model")
+        errors = self.collect_errors(profile.to_dict())
         if errors:
             raise AgentGovernanceError("\n".join(errors))
+
+    def validate_payload(self, payload: dict[str, Any]) -> None:
+        """Validate a raw profile dictionary without constructing AgentProfile."""
+
+        errors = self.collect_errors(payload)
+        if errors:
+            raise AgentGovernanceError("\n".join(errors))
+
+    def collect_errors(self, payload: dict[str, Any]) -> list[str]:
+        """Return all governance violations instead of raising immediately."""
+
+        errors = list(self._iter_error_messages(payload))
+        status = payload.get("status")
+        guardrails = payload.get("guardrails") or []
+        if status in {"beta", "active"} and not guardrails:
+            errors.append("guardrails must be defined for beta or active agents")
+        if status == "active":
+            model_config = payload.get("model_config") or {}
+            fallbacks = model_config.get("fallbacks")
+            if not fallbacks:
+                errors.append("active agents must define at least one fallback model")
+        return errors
 
     def _iter_error_messages(self, payload: dict[str, Any]) -> Iterable[str]:
         for error in self.validator.iter_errors(payload):
