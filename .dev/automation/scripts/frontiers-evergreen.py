@@ -7,10 +7,6 @@ and control panel consumers.
 """
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-from typing import Any, Dict, List, Optional
-
 import argparse
 import hashlib
 import json
@@ -19,6 +15,10 @@ import shutil
 import subprocess
 import sys
 import time
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from threading import Thread
+from typing import Any, Dict, List, Optional
 
 ROOT = Path(__file__).resolve().parents[3]
 FRONTIERS_ROOT = ROOT / "n00-frontiers"
@@ -180,6 +180,60 @@ def write_log(log_path: Path, stdout: str, stderr: str) -> None:
     log_path.write_text(stdout + "\n--- stderr ---\n" + stderr, encoding="utf-8")
 
 
+def _run_with_live_output(
+    cmd: List[str], cwd: Path, heartbeat_interval: int = 30
+) -> tuple[int, str, str]:
+    process = subprocess.Popen(
+        cmd,
+        cwd=cwd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        bufsize=1,
+    )
+
+    stdout_lines: List[str] = []
+    stderr_lines: List[str] = []
+
+    def _consume(pipe: Optional[Any], label: str, collector: List[str]) -> None:
+        if pipe is None:
+            return
+        for line in iter(pipe.readline, ""):
+            collector.append(line)
+            stripped = line.rstrip()
+            if stripped:
+                print(f"[evergreen][{label}] {stripped}")
+        pipe.close()
+
+    stdout_thread = Thread(
+        target=_consume, args=(process.stdout, "stdout", stdout_lines), daemon=True
+    )
+    stderr_thread = Thread(
+        target=_consume, args=(process.stderr, "stderr", stderr_lines), daemon=True
+    )
+    stdout_thread.start()
+    stderr_thread.start()
+
+    start = time.monotonic()
+    last_heartbeat = start
+    try:
+        while process.poll() is None:
+            now = time.monotonic()
+            if now - last_heartbeat >= heartbeat_interval:
+                elapsed = now - start
+                print(
+                    f"[evergreen] still running ({elapsed:.0f}s elapsed, pid {process.pid})"
+                )
+                last_heartbeat = now
+            time.sleep(1)
+    finally:
+        process.wait()
+        stdout_thread.join()
+        stderr_thread.join()
+
+    return process.returncode, "".join(stdout_lines), "".join(stderr_lines)
+
+
 def _probe_python_requirements(python_version: str) -> Dict[str, Any]:
     log_path = PYTHON_PROBE_LOG
     log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -203,7 +257,7 @@ def _probe_python_requirements(python_version: str) -> Dict[str, Any]:
                 handle.write(result.stderr)
 
     env = os.environ.copy()
-    env.setdefault("UV_PYTHON_DOWNLOADS", "cache")
+    env.setdefault("UV_PYTHON_DOWNLOADS", "auto")
 
     def _run(desc: str, cmd: List[str]) -> bool:
         result = subprocess.run(
@@ -257,6 +311,15 @@ def _probe_python_requirements(python_version: str) -> Dict[str, Any]:
         return {
             "status": "skipped",
             "message": f"Missing requirements.txt at {requirements}",
+            "logPath": str(log_path.relative_to(ROOT)),
+            "steps": steps,
+        }
+
+    if not _run("ensurepip", [str(python_bin), "-m", "ensurepip", "--upgrade"]):
+        shutil.rmtree(probe_dir, ignore_errors=True)
+        return {
+            "status": "failed",
+            "message": "failed to bootstrap pip via ensurepip",
             "logPath": str(log_path.relative_to(ROOT)),
             "steps": steps,
         }
@@ -386,16 +449,13 @@ def run_validation(
     log_path = ARTIFACT_DIR / f"{run_id}.log"
     json_path = ARTIFACT_DIR / f"{run_id}.json"
 
-    start = time.monotonic()
-    result = subprocess.run(
-        cmd,
-        cwd=FRONTIERS_ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
+    print(
+        f"[evergreen] streaming validator output; full log: {log_path.relative_to(ROOT)}"
     )
+    start = time.monotonic()
+    return_code, stdout, stderr = _run_with_live_output(cmd, FRONTIERS_ROOT)
     duration = time.monotonic() - start
-    write_log(log_path, result.stdout, result.stderr)
+    write_log(log_path, stdout, stderr)
 
     summary = {
         "runId": run_id,
@@ -404,13 +464,13 @@ def run_validation(
         "templates": args.templates or ["*"],
         "forceRebuild": args.force_rebuild,
         "durationSeconds": round(duration, 2),
-        "exitCode": result.returncode,
+        "exitCode": return_code,
         "hashes": hashes,
         "changedTargets": changed_targets(hashes, state),
         "logPath": str(log_path.relative_to(ROOT)),
         "artifactPath": str(json_path.relative_to(ROOT)),
     }
-    summary["status"] = "success" if result.returncode == 0 else "failed"
+    summary["status"] = "success" if return_code == 0 else "failed"
     if state.get("pythonProbe"):
         summary["pythonProbe"] = state["pythonProbe"]
 
@@ -419,12 +479,12 @@ def run_validation(
 
     next_state = dict(state)
     next_state["lastRun"] = summary
-    if result.returncode == 0:
+    if return_code == 0:
         next_state["hashes"] = hashes
     save_state(next_state)
 
     print(json.dumps(summary, indent=2))
-    return result.returncode
+    return return_code
 
 
 def ensure_prereqs() -> None:
