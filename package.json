@@ -2,7 +2,7 @@
   "name": "n00tropic-cerebrum",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@10.22.0",
+  "packageManager": "pnpm@10.25.0",
   "devDependencies": {
     "@antora/cli": "3.1.14",
     "@antora/lunr-extension": "1.0.0-alpha.12",
