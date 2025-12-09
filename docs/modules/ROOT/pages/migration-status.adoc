@@ -1,24 +1,25 @@
-= Antora Migration Tracker
+= Antora migration tracker
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
-:reviewed: 2025-11-11
+:reviewed: 2025-11-12
 
 include::partial$diataxis-blurb.adoc[]
 
-[cols="1,1,2,"options="header"] |=== | Repo | Branch | Notes / TODO |
-n00-cerebrum | docs/antora-migration | ✅ Base component descriptor, nav, and ci
-added. | n00-frontiers | docs/antora-migration | ✅ Minimal Antora component
-scaffold added; conversion TODOs remain (see PR). | n00-cortex |
-docs/antora-migration | ✅ Minimal Antora component scaffold added; conversion
-TODOs remain. | n00-horizons | docs/antora-migration | ⏳ Migrate experiment/job
-templates into modules per idea track. | n00-school | docs/antora-migration | ⏳
-Publish learning journeys with Diátaxis tagging. | n00t | docs/antora-migration
-| ✅ Minimal Antora component scaffold added; migration in progress. | n00plicate
-| docs/antora-migration | ⏳ Capture toolchain instructions + Vitest harness
-docs. | n00tropic | docs/antora-migration | ⏳ Move ERPNext ops playbooks into
-Antora layout. | n00clear-fusion | docs/antora-migration | ⏳ Audit repo for
-publishable docs (placeholder entry added in playbook). |===
+[cols="1,1,2",options="header"]
+|===
+| Repo | Branch | Notes / TODO
+
+| n00tropic-cerebrum | `docs/antora-migration` | ✅ Base component descriptor, nav, and ci added.
+| n00-frontiers | `docs/antora-migration` | 🔄 Nav now routes to Antora-first pages and the `overview/` landing was added. Convert the linked Markdown guides next.
+| n00-cortex | `docs/antora-migration` | 🔄 Automation overview landed in `modules/ROOT/pages`; continue migrating `docs/overview/*.md`.
+| n00-horizons | `docs/antora-migration` | 🔄 Playbooks/templates converted to Antora; experiments (planner telemetry, Typesense, control panel) now live under `modules/ROOT/pages/experiments/`. Remaining legacy Markdown tied to automation exports.
+| n00-school | `docs/antora-migration` | 🔄 Antora scaffold + Start Here/overview converted; learning log now in Antora but ADR backlog still pending.
+| n00t | `docs/antora-migration` | ✅ Minimal Antora component scaffold added; migration in progress.
+| n00plicate | `docs/antora-migration` | 🔄 Antora scaffold + overview/start-here added; quality/security/testing guides now mirrored under `modules/ROOT/pages/`, remaining departmental docs still Markdown.
+| n00tropic | `docs/antora-migration` | 🔄 Antora scaffold + overview/start-here added; policies moved to `modules/ROOT/pages/policies/*`, departmental READMEs still Markdown.
+| n00clear-fusion | `docs/antora-migration` | ✅ Antora scaffold plus ingestion/export guide added.
+|===
 
 [IMPORTANT]
 ====
-Every repo above still needs the per-repo steps from `stuff/Temp/temp-doc-2.md`. Drop a status line in this table whenever you open the corresponding PR so the aggregator reflects reality.
+Every repository listed earlier still needs the per-repository steps from `stuff/Temp/temp-doc-2.md`. Drop a status line in this table whenever you open the corresponding PR so the aggregator reflects reality.
 ====

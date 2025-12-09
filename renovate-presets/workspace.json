@@ -1,0 +1,99 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Central preset for the n00tropic superrepo. Keeps schedules predictable and grouping consistent for pnpm, Python/uv, Cargo, SwiftPM, and GitHub Actions. AGENT_HOOK: dependency-management",
+  "extends": ["config:recommended", ":semanticCommits", "workarounds:all"],
+  "dependencyDashboard": true,
+  "rangeStrategy": "replace",
+  "timezone": "UTC",
+  "schedule": ["after 02:00 on monday"],
+  "prConcurrentLimit": 20,
+  "prHourlyLimit": 6,
+  "labels": ["dependencies", "automation"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 04:00 on monday"],
+    "automerge": true,
+    "prPriority": 5
+  },
+  "npm": {
+    "pnpm": {
+      "enabled": true
+    },
+    "postUpdateOptions": ["pnpmDedupe"],
+    "ignoreScripts": false
+  },
+  "pip_requirements": {
+    "fileMatch": [
+      "(^|/)requirements(\\.workspace)?(\\.min)?(\\.lock)?\\.txt$",
+      "(^|/)requirements\\.txt$"
+    ]
+  },
+  "cargo": {
+    "enabled": true
+  },
+  "swift": {
+    "enabled": true
+  },
+  "github-actions": {
+    "fileMatch": ["^\\.github/workflows/.+\\.ya?ml$"]
+  },
+  "packageRules": [
+    {
+      "description": "Surface majors with cooling-off window",
+      "matchUpdateTypes": ["major"],
+      "stabilityDays": 3,
+      "labels": ["dep:major"],
+      "prPriority": 20
+    },
+    {
+      "description": "Group JavaScript/TypeScript toolchain minors & patches",
+      "matchManagers": ["npm", "pnpm"],
+      "matchPackagePatterns": [
+        "^eslint",
+        "^@typescript",
+        "^typescript$",
+        "^vitest$",
+        "^tsup$",
+        "^vite$",
+        "^@vitest/",
+        "^@storybook/",
+        "^storybook$"
+      ],
+      "groupName": "js/ts tooling",
+      "labels": ["dep:tooling"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "prPriority": 50
+    },
+    {
+      "description": "Group Python tooling (lint/test/packaging)",
+      "matchManagers": ["pip-compile", "pip_requirements"],
+      "matchPackagePatterns": ["^(black|ruff|mypy|pytest|uv)$", "^types-"],
+      "groupName": "python tooling",
+      "labels": ["dep:tooling"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "prPriority": 45
+    },
+    {
+      "description": "Group GitHub Actions bumps for auditability",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "separateMinorPatch": false,
+      "labels": ["dep:gha"],
+      "prPriority": 40
+    },
+    {
+      "description": "Pin Renovate to workspace Node toolchain",
+      "matchManagers": ["npm", "pnpm"],
+      "matchPackageNames": ["pnpm"],
+      "allowedVersions": "10.x"
+    },
+    {
+      "description": "Treat infra/templates separately to avoid noise",
+      "matchPaths": ["n00-frontiers/applications/scaffolder/**", "stuff/**"],
+      "labels": ["dep:templates"],
+      "prPriority": 15
+    }
+  ]
+}

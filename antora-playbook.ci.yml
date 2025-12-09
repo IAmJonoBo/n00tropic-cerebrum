@@ -1,20 +1,38 @@
 site:
   title: n00 Docs (CI)
-  start_page: n00-cerebrum::index.adoc
+  start_page: n00tropic-cerebrum::index.adoc
 content:
   sources:
-    - url: https://github.com/IAmJonoBo/n00tropic-cerebrum
+    - url: https://github.com/n00tropic/n00tropic-cerebrum.git
       branches: [main]
       start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00-frontiers
+    - url: https://github.com/n00tropic/n00-frontiers.git
       branches: [main]
       start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00-cortex
+    - url: https://github.com/n00tropic/n00-cortex.git
       branches: [main]
       start_paths: [docs]
-    - url: https://github.com/IAmJonoBo/n00t
+    - url: https://github.com/n00tropic/n00t.git
       branches: [main]
       start_paths: [docs]
+    - url: https://github.com/n00tropic/n00-horizons.git
+      branches: [main]
+      start_paths: [docs]
+    - url: https://github.com/n00tropic/n00-school.git
+      branches: [main]
+      start_paths: [docs]
+    - url: https://github.com/n00tropic/n00plicate.git
+      branches: [main]
+      start_paths: [docs]
+    - url: https://github.com/n00tropic/n00tropic.git
+      branches: [main]
+      start_paths: [docs]
+    - url: https://github.com/n00tropic/n00clear-fusion.git
+      branches: [main]
+      start_paths: [docs]
+    - url: https://github.com/n00tropic/n00menon.git
+      branches: [main]
+      start_paths: [modules/ROOT]
 ui:
   bundle:
     url: ./vendor/antora/ui-bundle.zip
@@ -22,10 +40,14 @@ antora:
   extensions:
     - "@antora/lunr-extension"
 asciidoc:
+  extensions:
+    - asciidoctor-kroki
   attributes:
     page-pagination: ""
     sectanchors: ""
     icons: font
     source-highlighter: highlight.js
+    kroki-server-url: https://kroki.io
+    kroki-fetch-diagram: true
 runtime:
   fetch: true

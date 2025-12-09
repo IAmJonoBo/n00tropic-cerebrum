@@ -1,11 +1,14 @@
 #!/usr/bin/env node
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 const root = process.cwd();
 const args = process.argv.slice(2);
 const apply = args.includes("--apply");
 const dryRun = args.includes("--dry-run");
+if (apply && dryRun) {
+  console.warn("Ignoring --dry-run because --apply was also provided.");
+}
 const dirsArg = args.find((a) => a.startsWith("--dirs="));
 const includeDirs = dirsArg
   ? dirsArg
@@ -104,10 +107,18 @@ for (const f of files) {
 if (replacements.length === 0) {
   console.log("No `npx` occurrences found for replacement.");
 } else {
-  console.log(
-    `Processed ${replacements.length} files. ${apply ? "Applied" : "Dry-run (no changes)"}.`,
-  );
+  const mode = apply
+    ? "Applied replacements."
+    : dryRun
+      ? "Dry-run only (no changes written)."
+      : "Preview only (rerun with --apply to write changes).";
+  console.log(`Processed ${replacements.length} files. ${mode}`);
 }
 
-if (!apply && replacements.length > 0) process.exit(2);
+if (!apply && !dryRun && replacements.length > 0) {
+  console.error(
+    "Exiting with code 2 because changes were only previewed. Add --dry-run to silence this warning or rerun with --apply to write changes.",
+  );
+  process.exit(2);
+}
 process.exit(0);

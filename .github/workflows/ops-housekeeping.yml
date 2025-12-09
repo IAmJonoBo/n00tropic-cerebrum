@@ -1,0 +1,34 @@
+name: Ops Housekeeping
+
+on:
+  schedule:
+    - cron: "15 3 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  housekeeping:
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure pnpm via corepack
+        run: |
+          if command -v corepack >/dev/null 2>&1; then
+            corepack enable || true
+            corepack prepare pnpm@10.23.0 --activate || true
+          fi
+
+      - name: Venv health (prune noncompliant)
+        run: pnpm -s cli venv-health --prune
+
+      - name: Runner backup prune
+        run: pnpm -s cli runner-prune-backups
+
+      - name: Runner doctor snapshot
+        run: pnpm -s cli runner-doctor || true

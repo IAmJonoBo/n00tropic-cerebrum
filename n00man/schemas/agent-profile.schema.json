@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://n00tropic.dev/n00man/schemas/agent-profile.schema.json",
+  "title": "n00man Agent Profile",
+  "description": "Validates agent profiles emitted by the n00man foundry.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent_id",
+    "name",
+    "role",
+    "description",
+    "version",
+    "owner",
+    "status",
+    "capabilities",
+    "model_config",
+    "guardrails",
+    "tags",
+    "metadata"
+  ],
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Kebab-case agent identifier used across docs and executors."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Human readable agent name."
+    },
+    "role": {
+      "$ref": "#/$defs/agentRoles"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 16,
+      "description": "One sentence summary of the agent's charter."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the agent profile."
+    },
+    "owner": {
+      "$ref": "#/$defs/teamSlug"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "beta", "active", "deprecated"],
+      "description": "Lifecycle stage of the agent."
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "description", "inputs", "outputs"],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3
+          },
+          "description": {
+            "type": "string",
+            "minLength": 16
+          },
+          "inputs": {
+            "$ref": "#/$defs/ioSchema"
+          },
+          "outputs": {
+            "$ref": "#/$defs/ioSchema"
+          },
+          "parameters": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "model_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model"],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "minLength": 3
+        },
+        "model": {
+          "type": "string",
+          "minLength": 3
+        },
+        "fallbacks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          },
+          "default": []
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "guardrails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description"],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/slug"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 16
+          },
+          "enforcement": {
+            "type": "string",
+            "enum": ["required", "advisory"],
+            "default": "required"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "default": "medium"
+          },
+          "owner": {
+            "$ref": "#/$defs/teamSlug"
+          }
+        }
+      },
+      "default": []
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "metadata": {
+      "type": "object",
+      "default": {}
+    }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "teamSlug": {
+      "type": "string",
+      "pattern": "^[a-z]+(?:-[a-z]+)*$",
+      "description": "Owning team slug."
+    },
+    "agentRoles": {
+      "type": "string",
+      "enum": ["analyst", "assistant", "operator", "reviewer"],
+      "description": "Role identifiers owned by n00-frontiers."
+    },
+    "ioSchema": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "description"],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 8
+          },
+          "enum": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "format": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

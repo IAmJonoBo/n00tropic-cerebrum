@@ -1,6 +1,35 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
+  "description": "Workspace Renovate config (uses central preset + local surfacing rules). AGENT_HOOK: dependency-management",
+  "extends": ["local>renovate-presets/workspace.json"],
+  "packageRules": [
+    {
+      "description": "Surface esbuild majors with dedicated label",
+      "matchPackageNames": ["esbuild"],
+      "matchUpdateTypes": ["major"],
+      "labels": ["dep:esbuild"],
+      "prPriority": 80
+    },
+    {
+      "description": "Surface Storybook majors with dedicated label",
+      "matchPackageNames": ["storybook", "@storybook/*"],
+      "matchUpdateTypes": ["major"],
+      "labels": ["dep:storybook"],
+      "prPriority": 75
+    },
+    {
+      "description": "Track vitest majors",
+      "matchPackageNames": ["vitest", "@vitest/*"],
+      "matchUpdateTypes": ["major"],
+      "labels": ["dep:vitest"],
+      "prPriority": 70
+    },
+    {
+      "description": "Track tsup majors",
+      "matchPackageNames": ["tsup"],
+      "matchUpdateTypes": ["major"],
+      "labels": ["dep:tsup"],
+      "prPriority": 65
+    }
   ]
 }

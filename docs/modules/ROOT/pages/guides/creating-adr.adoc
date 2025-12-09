@@ -1,0 +1,444 @@
+= Creating an Architecture Decision Record (ADR)
+:page-tags: diataxis:howto, domain:governance, audience:contrib, stability:stable
+:reviewed: 2025-11-27
+:toc:
+:toclevels: 2
+
+Learn how to document significant architectural decisions using the ADR format.
+
+== When to Create an ADR
+
+Create an ADR when you:
+
+* Introduce a new technology or framework
+* Make significant architectural changes
+* Establish new conventions or standards
+* Resolve a major technical debate
+* Deprecate existing systems
+
+**Don't create ADRs for:**
+
+* Minor refactorings
+* Bug fixes
+* Routine updates
+* Implementation details covered by code comments
+
+== ADR Template
+
+Use this template for all ADRs:
+
+[source,asciidoc]
+----
+= ADR-XXX: [Title]
+:page-tags: diataxis:explanation, domain:[domain], audience:contrib, stability:stable
+:reviewed: YYYY-MM-DD
+:toc:
+:toclevels: 2
+
+[One-sentence description of the decision]
+
+== Status
+
+[Proposed | Accepted | Deprecated | Superseded by ADR-YYY]
+
+== Context
+
+[Describe the situation and problem that needs to be addressed.
+Include constraints, requirements, and forces at play.]
+
+== Decision
+
+[State the decision clearly and concisely.
+Describe what will be done and why.]
+
+== Consequences
+
+=== Positive
+
+* [Benefit 1]
+* [Benefit 2]
+
+=== Negative
+
+* [Drawback 1]
+* [Mitigation for drawback 1]
+
+=== Neutral
+
+* [Neutral consequence]
+
+== Alternatives Considered
+
+=== Alternative 1: [Name]
+
+[Brief description]
+
+**Rejected because:** [reason]
+
+=== Alternative 2: [Name]
+
+[Brief description]
+
+**Rejected because:** [reason]
+
+== Implementation
+
+=== Phase 1: [Name]
+
+[Steps, timeline, owners]
+
+=== Phase 2: [Name]
+
+[Steps, timeline, owners]
+
+== References
+
+* [Link to related issue/PR]
+* [External documentation]
+* [Related ADRs]
+----
+
+== Step-by-Step Process
+
+=== 1. Determine ADR Number
+
+Find the next available number:
+
+[source,bash]
+----
+# For workspace-level ADRs
+ls -1 "1. Cerebrum Docs/ADR/" | grep -E "^ADR-[0-9]+" | tail -1
+
+# For component-specific ADRs (example: n00t)
+ls -1 n00t/docs/modules/ROOT/pages/adr/ | grep -E "^adr-[0-9]+" | tail -1
+----
+
+=== 2. Create the ADR File
+
+**Workspace-level:**
+
+[source,bash]
+----
+# Create file
+touch "1. Cerebrum Docs/ADR/ADR-XXX-title-slug.adoc"
+----
+
+**Component-level:**
+
+[source,bash]
+----
+# Example for n00t
+touch "n00t/docs/modules/ROOT/pages/adr/adr-xxx-title-slug.adoc"
+----
+
+**Naming conventions:**
+
+* Use lowercase for component ADRs: `adr-001-topic.adoc`
+* Use uppercase for workspace ADRs: `ADR-001-Topic.adoc`
+* Use kebab-case for multi-word titles
+* Keep titles under 50 characters
+
+=== 3. Fill in the Template
+
+==== Title
+
+Be specific and actionable:
+
+* ✅ "Use PostgreSQL for time-series data"
+* ❌ "Database selection"
+
+==== Status
+
+Start with *Proposed* until team review is complete.
+
+==== Context
+
+Explain the problem thoroughly:
+
+* What forces led to this decision?
+* What constraints exist?
+* Why is this decision necessary now?
+* What happens if we don't make this decision?
+
+==== Decision
+
+State the decision clearly:
+
+[source,asciidoc]
+----
+We will adopt PostgreSQL with TimescaleDB extension for storing
+time-series telemetry data, replacing the current InfluxDB implementation.
+----
+
+==== Consequences
+
+Be honest about trade-offs:
+
+**Positive:**
+
+* Unified database stack (same as primary DB)
+* Better SQL tooling support
+* Lower operational overhead
+
+**Negative:**
+
+* Migration effort required (2-3 weeks)
+* Team needs TimescaleDB training
+
+**Mitigation:**
+
+* Allocate 1 week for training
+* Run dual-write during migration
+
+==== Alternatives
+
+Show you considered other options:
+
+[source,asciidoc]
+----
+=== Alternative 1: Continue with InfluxDB
+
+**Pros:**
+* No migration needed
+* Team already familiar
+
+**Cons:**
+* Separate database stack
+* Higher hosting costs
+
+**Rejected because:** The operational overhead and cost outweigh
+the short-term migration effort.
+----
+
+=== 4. Add Diagrams (Optional)
+
+Use Kroki for architectural diagrams:
+
+[source,asciidoc]
+----
+[mermaid]
+....
+graph LR
+    A[App] --> B[PostgreSQL]
+    B --> C[TimescaleDB Extension]
+    C --> D[Time-series Tables]
+....
+----
+
+=== 5. Update Navigation
+
+Add to the ADR index:
+
+**Workspace ADRs:**
+
+Edit `1. Cerebrum Docs/ADR/README.adoc`:
+
+[source,asciidoc]
+----
+* xref:ADR-XXX-title.adoc[ADR-XXX: Title]
+----
+
+**Component ADRs:**
+
+Edit component's `nav.adoc`:
+
+[source,asciidoc]
+----
+*** xref:adr/adr-xxx-title.adoc[ADR-XXX: Title]
+----
+
+=== 6. Create Pull Request
+
+[source,bash]
+----
+git checkout -b adr-xxx-title
+git add "1. Cerebrum Docs/ADR/ADR-XXX-title.adoc"
+git commit -m "docs: Add ADR-XXX for [topic]"
+git push -u origin adr-xxx-title
+----
+
+**PR template:**
+
+[source,markdown]
+----
+## ADR-XXX: [Title]
+
+### Summary
+[One paragraph summary]
+
+### Review Focus
+- [ ] Is the context clear?
+- [ ] Are alternatives thoroughly evaluated?
+- [ ] Are consequences realistic?
+- [ ] Is implementation plan feasible?
+
+### Related
+- Closes #XXX
+- Related to ADR-YYY
+----
+
+=== 7. Facilitate Review
+
+**Review checklist:**
+
+* Context explains why the decision is needed
+* Decision is stated clearly
+* Consequences are honest and complete
+* Alternatives were genuinely considered
+* Implementation plan is concrete
+* References are included
+
+**Common feedback:**
+
+* "Can you expand on why Alternative X was rejected?"
+* "What's the rollback plan if this doesn't work?"
+* "Have you considered impact on [system]?"
+
+=== 8. Update Status
+
+After approval:
+
+[source,asciidoc]
+----
+== Status
+
+Accepted on 2025-11-27
+----
+
+== ADR Lifecycle
+
+[mermaid]
+....
+stateDiagram-v2
+    [*] --> Proposed
+    Proposed --> Accepted: Team approval
+    Proposed --> Rejected: Team rejection
+    Accepted --> Deprecated: No longer relevant
+    Accepted --> Superseded: Replaced by newer ADR
+    Deprecated --> [*]
+    Superseded --> [*]
+    Rejected --> [*]
+....
+
+=== Deprecating an ADR
+
+When circumstances change:
+
+[source,asciidoc]
+----
+== Status
+
+Deprecated on 2025-11-27
+
+**Reason:** The assumptions in the Context section no longer hold.
+Migration to new approach documented in ADR-XXX.
+----
+
+=== Superseding an ADR
+
+When a better approach emerges:
+
+[source,asciidoc]
+----
+== Status
+
+Superseded by xref:ADR-YYY-new-approach.adoc[ADR-YYY] on 2025-11-27
+
+**Summary:** New requirements led to a revised architecture.
+See ADR-YYY for current approach.
+----
+
+== Tips for Good ADRs
+
+=== Be Concrete
+
+❌ "We will use a modern database"
+✅ "We will use PostgreSQL 15 with TimescaleDB 2.11"
+
+=== Show Your Work
+
+Include decision criteria:
+
+[options="header"]
+|===
+| Criterion | InfluxDB | PostgreSQL+Timescale | Score
+
+| Query Performance
+| Good
+| Excellent
+| PostgreSQL
+
+| Operational Overhead
+| High (separate stack)
+| Low (unified)
+| PostgreSQL
+
+| Team Familiarity
+| Medium
+| High
+| PostgreSQL
+|===
+
+=== Address Concerns Proactively
+
+If you anticipate pushback, address it:
+
+[source,asciidoc]
+----
+**Concern:** "PostgreSQL isn't designed for time-series."
+
+**Response:** TimescaleDB extension provides time-series optimizations
+while retaining PostgreSQL's reliability. Benchmarks show comparable
+performance to purpose-built TSDBs for our scale.
+----
+
+=== Link to Evidence
+
+* Benchmark results
+* Proof of concepts
+* External articles
+* Related discussions
+
+== Common Mistakes
+
+**Mistake 1:** Writing ADR after implementation
+
+✅ Write ADR before or during design phase
+
+**Mistake 2:** Too much implementation detail
+
+✅ Focus on "what" and "why", not "how"
+
+**Mistake 3:** No alternatives section
+
+✅ Always show you considered other options
+
+**Mistake 4:** Ignoring negative consequences
+
+✅ Be honest about trade-offs
+
+**Mistake 5:** Vague implementation plan
+
+✅ Include concrete next steps with owners
+
+== Examples
+
+=== Excellent ADR Examples
+
+* xref:adr/adr-001-mcp-server-architecture.adoc[ADR-001: MCP Server Architecture]
+* xref:adr/adr-004-multi-model-strategy.adoc[ADR-004: Multi-Model Strategy]
+* xref:ROOT:1. Cerebrum Docs/ADR/ADR-001-workspace-federation.adoc[ADR-001: Workspace Federation]
+
+These demonstrate:
+
+* Clear problem statements
+* Thorough alternatives analysis
+* Honest consequence assessment
+* Concrete implementation plans
+
+== See Also
+
+* xref:ROOT:1. Cerebrum Docs/ADR/README.adoc[Workspace ADR Index]
+* xref:adr/index.adoc[ADR Index]
+* xref:adr/index.adoc[Workspace ADR Index]
+* https://adr.github.io/[ADR Project Homepage]

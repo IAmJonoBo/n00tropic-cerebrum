@@ -1,0 +1,87 @@
+name: docs-ci-strict
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  strict-docs:
+    name: Strict Antora docs build (self-hosted)
+    permissions:
+      contents: read
+      pages: write
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+
+      - name: Ensure pnpm is available
+        run: |
+          set -eux
+          if command -v corepack >/dev/null 2>&1; then
+            corepack enable
+            corepack prepare pnpm@10.23.0 --activate
+          else
+            npm i -g pnpm@10.23.0
+          fi
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Enforce doc tags
+        run: pnpm run docs:tag-enforce
+
+      - name: Typesense freshness guard
+        run: pnpm run search:freshness-check || true
+
+      - name: Run Vale
+        run: pnpm exec vale --minAlertLevel warning docs || true
+
+      - name: Run Lychee link-check
+        run: pnpm exec lychee --config .lychee.toml 'docs/**/*.md' || true
+
+      - name: Try running kramdoc validation
+        run: |
+          if command -v kramdoc >/dev/null 2>&1; then
+            find docs -name '*.adoc' -print0 | xargs -0 -n1 kramdoc -V || true
+          else
+            echo "kramdoc not found; skipping kramdoc validation"
+          fi
+
+      - name: Run n00menon validations (Vale + cspell + verify)
+        run: pnpm -C n00menon run validate
+
+      - name: Verify documentation structure
+        run: pnpm -C n00menon run docs:verify
+
+      - name: Build Antora CI playbook (strict)
+        run: |
+          pnpm exec antora antora-playbook.ci.yml --stacktrace
+
+      - name: Upload site artifact
+        run: |
+          if [ -d build/site ]; then
+            echo "Artifact ok: upload or store"
+          fi
+      - name: Upload site artifact
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: strict-docs-site
+          path: build/site
+
+      - name: Deploy to Pages (optional)
+        if: github.ref == 'refs/heads/main'
+        uses: actions/deploy-pages@v4

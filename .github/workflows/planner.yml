@@ -1,0 +1,79 @@
+name: planner
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "n00-horizons/**"
+      - "stuff/Temp/**"
+      - ".dev/automation/scripts/plan-exec.sh"
+      - "n00t/planning/**"
+      - "n00-school/**"
+
+permissions:
+  contents: read
+
+jobs:
+  plan-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: false
+      - name: Try to fetch submodules (optional)
+        run: |
+          set -eux
+          git submodule sync --recursive || true
+          git submodule update --init --recursive || echo "Submodules failed to update — continuing without them"
+      - name: Gather planning targets
+        id: targets
+        env:
+          BASE: ${{ github.base_ref }}
+        run: |
+          if [ -z "$BASE" ]; then
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git fetch origin "$BASE" --depth=1 || true
+          git diff --name-only "origin/$BASE"...HEAD > all-changes.txt
+          grep -E '(^n00-horizons/.*\.md$|^docs/.*\.md$|^stuff/Temp/.*\.md$)' all-changes.txt > plan-targets.txt || true
+          if ! [ -s plan-targets.txt ]; then
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          count=$(wc -l < plan-targets.txt | tr -d ' ')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+      - name: Run planner
+        if: steps.targets.outputs.count != '0'
+        env:
+          PYTHONPATH: ${{ github.workspace }}/n00t
+        run: |
+          ARTIFACT_DIR=.dev/automation/artifacts/plans
+          rm -rf "$ARTIFACT_DIR"
+          mkdir -p "$ARTIFACT_DIR"
+          while IFS= read -r file; do
+            if [ -n "$file" ]; then
+              echo "Planning $file"
+              safe_name=$(echo "$file" | sed -E 's/[^A-Za-z0-9._-]/_/g' | sed -E 's/\.md$//')
+              plan_path="$ARTIFACT_DIR/${safe_name}.plan.md"
+              telemetry_path="$ARTIFACT_DIR/${safe_name}.json"
+              .dev/automation/scripts/plan-exec.sh \
+                --brief "$file" \
+                --airgapped \
+                --force \
+                --output "$plan_path" \
+                --telemetry "$telemetry_path" \
+                --yagni-threshold 0.3 \
+                --conflict-limit 0 || exit 1
+            fi
+          done < plan-targets.txt
+      - name: Upload planner artifacts
+        if: steps.targets.outputs.count != '0'
+        uses: actions/upload-artifact@v5
+        with:
+          name: planner-artifacts
+          path: .dev/automation/artifacts/plans
+      - name: No-op
+        if: steps.targets.outputs.count == '0'
+        run: echo "No planner-eligible files changed"

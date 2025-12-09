@@ -1,0 +1,4 @@
+= Cerebrum ADRs (stub)
+:page-tags: diataxis:reference, audience:contrib, stability:draft
+
+Placeholder for legacy ADR index referenced by migrating docs. Replace with the real ADR rollup when available.

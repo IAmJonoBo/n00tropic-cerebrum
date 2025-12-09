@@ -6,9 +6,12 @@ help: ## Show this help message
 	@echo "Available targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 
+tidy-submodules: ## Sync and update submodules, run manifest gate and skeleton check (dry-run)
+	@bash scripts/tidy-submodules.sh
+
 docs: ## Build Antora documentation
 	@echo "Building Antora documentation..."
-	@pnpm -v >/dev/null 2>&1 || (corepack prepare pnpm@latest --activate)
+	@pnpm -v >/dev/null 2>&1 || (corepack prepare pnpm@10.23.0 --activate)
 	pnpm exec antora antora-playbook.yml --stacktrace
 
 antora-local: ## Build Antora docs by cloning remote components into a temp dir and running a local playbook
@@ -88,6 +91,15 @@ validate: ## Run all validation checks
 	fi
 	@echo "Checking page attributes..."
 	node scripts/check-attrs.mjs
+	@echo "Running workspace cspell checks..."
+	@if command -v cspell >/dev/null 2>&1; then \
+		pnpm exec cspell --config ./cspell.json 'docs/**/*' || true; \
+	else \
+		echo "cspell not installed, skipping spellcheck..."; \
+	fi
+	@if [ -d n00menon ]; then \
+		pnpm -C n00menon run lint:spell || true; \
+	fi
 
 validate-docs: ## Run docs validation checks (Vale + Lychee + check-attrs). Use SKIP_VALE=1 to skip Vale locally
 	@echo "Validating docs..."

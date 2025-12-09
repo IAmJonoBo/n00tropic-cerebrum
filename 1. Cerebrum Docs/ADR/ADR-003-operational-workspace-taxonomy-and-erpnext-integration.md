@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted – 2025-11-06
+Accepted - 2025-11-06
 
 ## Context
 
@@ -36,7 +36,7 @@ Accepted – 2025-11-06
 ## Consequences
 
 - Positive: Contributors have a single navigable workspace that mirrors ERPNext domains without polluting individual repos.
-- Positive: Data lineage improves—each export or deliverable points back to both the ERPNext module and the originating repository artefact.
+- Positive: Data lineage improves; each export or deliverable points back to both the ERPNext module and the originating repository artefact.
 - Positive: Automation can treat the taxonomy as a contract, simplifying sync jobs and audits.
 - Negative: Additional discipline is required to keep READMEs current and ensure large files do not accumulate unchecked.
 - Negative: Two layers of organisation (repos + workspace) may confuse newcomers; onboarding docs must highlight the relationship.

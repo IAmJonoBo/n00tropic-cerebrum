@@ -1,0 +1,52 @@
+name: penpot-smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *" # daily at 06:00 UTC
+
+jobs:
+  penpot-smoke:
+    runs-on: ubuntu-latest
+    env:
+      PNPM_VERIFY_STORE_INTEGRITY: "true"
+      PNPM_SKIP_RECURSIVE_CACHE: "1"
+      PNPM_ENABLE_PRELPOSTSCRIPTS: "false"
+      ALLOW_SUBREPO_PNPM_INSTALL: "1"
+    steps:
+      - name: Checkout repo (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node (LTS from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+          run_install: false
+
+      - name: Install dependencies
+        env:
+          ALLOW_SUBREPO_PNPM_INSTALL: "1"
+          PNPM_SKIP_RECURSIVE_CACHE: "1"
+          PNPM_ENABLE_PRELPOSTSCRIPTS: "false"
+          PNPM_VERIFY_STORE_INTEGRITY: "true"
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Approve esbuild (non-interactive)
+        run: printf ' y\n' | pnpm approve-builds esbuild || true
+
+      - name: Prune pnpm store
+        run: pnpm store prune || true
+
+      - name: Penpot version drift (dry run)
+        run: pnpm penpot:smoke
+
+      - name: Build design-tokens
+        run: pnpm --filter @n00plicate/design-tokens run build

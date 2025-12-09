@@ -1,0 +1,86 @@
+# This file controls the behavior of Trunk: https://docs.trunk.io/cli
+# To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
+version: 0.1
+cli:
+  version: 1.25.0
+# Trunk provides extensibility via plugins. (https://docs.trunk.io/plugins)
+plugins:
+  sources:
+    - id: trunk
+      ref: v1.7.4
+      uri: https://github.com/trunk-io/plugins
+# Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
+runtimes:
+  enabled:
+    - go@1.25.0
+    - node@24.11.0
+    - python@3.11.6
+  definitions:
+    - type: python
+      system_version: allowed
+      version: 3.11.6
+    - type: go
+      system_version: allowed
+      version: 1.25.0
+    - type: node
+      system_version: allowed
+      version: 24.11.0
+# This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
+lint:
+  enabled:
+    - hadolint@2.14.0
+    - isort@7.0.0
+    - black@25.11.0
+    - svgo@4.0.0
+    - gofmt@1.25.0
+    - golangci-lint2@2.6.1
+    - actionlint@1.7.8
+    - bandit@1.9.1
+    - checkov@3.2.494
+    - git-diff-check
+    - markdownlint-cli2@0.19.0
+    - eslint@9.39.1
+    - osv-scanner@2.2.4
+    - prettier@3.6.2
+    - renovate@42.19.0
+    - ruff@0.14.5
+    - shellcheck@0.11.0
+    - biome-lint
+    - antora-validate
+    - shfmt@3.12.0
+    - taplo@0.10.0
+    - trufflehog@3.90.13
+    - yamllint@1.37.1
+  disabled:
+    - markdownlint # Replaced with markdownlint-cli2
+  ignore:
+    - linters: [black, taplo]
+      paths:
+        - "n00-frontiers/templates/**/{{cookiecutter.service_slug}}/**"
+  definitions:
+    - name: biome-lint
+      batch: true
+      commands:
+        - name: lint
+          run: |
+            # Use workspace-managed Biome to avoid per-repo `pnpm install` runs that duplicate storage
+            pnpm -w exec biome check --reporter compact .
+          output: pass_fail
+          success_codes: [0, 1]
+    - name: antora-validate
+      batch: true
+      commands:
+        - name: lint
+          run: |
+            # Try running Antora from a sibling `n00plicate` repo (where Antora is typically installed),
+            # fall back to workspace Antora if present. This avoids repeated installs.
+            pnpm -C ../n00plicate exec antora --log-failure-level=error --asciidoc-sourcemap antora-playbook.yml || \
+            pnpm -w exec antora --log-failure-level=error --asciidoc-sourcemap antora-playbook.yml
+          output: pass_fail
+          success_codes: [0, 1]
+actions:
+  enabled:
+    - trunk-announce
+    - trunk-check-pre-push
+    - trunk-fmt-pre-commit
+    - trunk-upgrade-available

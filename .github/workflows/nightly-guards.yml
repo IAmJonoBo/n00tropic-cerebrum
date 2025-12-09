@@ -1,0 +1,51 @@
+name: nightly-guards
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  guards:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Sync .nvmrc links
+        run: bash .dev/automation/scripts/sync-nvmrc.sh --force
+
+      - name: Ensure pinned Node
+        shell: bash
+        run: |
+          source scripts/ensure-nvm-node.sh
+          node -v
+
+      - name: Tokens drift (tolerates missing real export today)
+        run: |
+          scripts/check-tokens-present.sh
+          ./.dev/automation/scripts/token-drift.sh
+
+      - name: PNPM store pin
+        run: |
+          PIN=10.23.0 scripts/check-pnpm-store-version.sh || true
+
+      - name: Typesense freshness
+        run: |
+          ./.dev/automation/scripts/typesense-freshness.sh 7
+
+      - name: Toolchain pins
+        run: node scripts/check-toolchain-pins.mjs --json || exit 1
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-guards
+          path: |
+            .dev/automation/artifacts/token-drift.json
+            .dev/automation/artifacts/*.json

@@ -1,0 +1,6 @@
+# Workspace defaults
+* @n00tropic
+
+# Scripts and bootstrap automation
+scripts/** @n00tropic
+.dev/automation/** @n00tropic

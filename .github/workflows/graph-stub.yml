@@ -1,0 +1,24 @@
+name: graph-stub
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  graph:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Ensure pinned Node
+        run: |
+          source scripts/ensure-nvm-node.sh
+      - name: Build workspace graph (stub)
+        env:
+          GRAPH_OUTPUT: /tmp/graph.json
+        run: |
+          node n00-cortex/scripts/build-graph.mjs --stub
+          test -s /tmp/graph.json

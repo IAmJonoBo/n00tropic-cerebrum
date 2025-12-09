@@ -1,0 +1,43 @@
+name: Trunk sync (apply)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-trunk-sync:
+    name: "Apply trunk sync (dangerous: uses PAT to push & create PRs)"
+    runs-on: [self-hosted, linux]
+    env:
+      TRUNK_SYNC_PAT: ${{ secrets.TRUNK_SYNC_PAT }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      - name: Configure git to use PAT for pushing
+        run: |
+          git config --global user.name "n00tropic-automation"
+          git config --global user.email "automation@n00tropic.org"
+          git remote set-url origin https://x-access-token:${{ env.TRUNK_SYNC_PAT }}@github.com/${{ github.repository }}.git
+
+      - name: Install GH CLI
+        run: |
+          sudo apt-get update && sudo apt-get install -y gh
+
+      - name: Authenticate GH CLI
+        env:
+          GH_TOKEN: ${{ env.TRUNK_SYNC_PAT }}
+        run: |
+          echo "${GH_TOKEN}" | gh auth login --with-token
+
+      - name: Apply trunk sync with PR creation
+        env:
+          GH_TOKEN: ${{ env.TRUNK_SYNC_PAT }}
+        run: |
+          set -eux
+          python3 .dev/automation/scripts/sync-trunk-autopush.py --apply

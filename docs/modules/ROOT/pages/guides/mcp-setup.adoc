@@ -1,0 +1,8 @@
+= MCP setup (stub)
+:page-tags: diataxis:howto, audience:contrib, stability:draft
+
+Placeholder to satisfy cross-references. Replace with the full MCP setup guide.
+
+1. Install dependencies (`scripts/bootstrap-workspace.sh` + `scripts/bootstrap-python.sh`).
+2. Export MCP env (model keys, `OTEL_EXPORTER_OTLP_ENDPOINT`, `N00_DISABLE_TRACING`).
+3. Run the docs MCP server with `make mcp-dev` or equivalent.

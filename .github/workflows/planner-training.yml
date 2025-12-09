@@ -1,0 +1,66 @@
+name: planner-training
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run-planner-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          submodules: false
+      - name: Try to fetch submodules (optional)
+        run: |
+          set -eux
+          git submodule sync --recursive || true
+          git submodule update --init --recursive || echo "Submodules failed to update — continuing without them"
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.11.14
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('n00-school/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+      - name: Install uv + workspace deps
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+          uv pip sync requirements.workspace.min.lock
+      - name: Install training dependencies
+        working-directory: n00-school
+        run: |
+          if [ -d n00-school ]; then
+            export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+            uv pip install -r requirements.txt
+          else
+            echo "n00-school submodule not present; skipping training dependency install"
+          fi
+      - name: Run planner-v1 pipeline
+        working-directory: n00-school
+        env:
+          PLANNER_DATASET: planner-v1
+        run: |
+          if [ -d n00-school ]; then
+            chmod +x scripts/run-training.sh
+            ./scripts/run-training.sh planner-v1 --dataset "$PLANNER_DATASET" --output runs/planner-v1/latest.json
+          else
+            echo "n00-school submodule not present; skipping planner-training run"
+          fi
+      - name: Upload planner run artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: planner-training-run
+          path: n00-school/runs/planner-v1
+          if-no-files-found: warn

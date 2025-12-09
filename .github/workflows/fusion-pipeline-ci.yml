@@ -1,0 +1,79 @@
+name: fusion-pipeline-ci
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "n00clear-fusion/**"
+      - ".dev/automation/scripts/fusion-pipeline.sh"
+      - "n00-cortex/**"
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Try to fetch submodules (optional)
+        run: |
+          set -eux
+          git submodule sync --recursive || true
+          git submodule update --init --recursive || echo "Submodules failed to update — continuing without them"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11.14
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('n00clear-fusion/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+      - name: Install uv + deps (fusion)
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+          if [ -d n00clear-fusion ]; then
+            uv pip install -r n00clear-fusion/requirements.txt
+          else
+            echo "n00clear-fusion submodule not present; skipping install"
+          fi
+      - name: Install deps (fusion)
+        run: |
+          if [ -d n00clear-fusion ]; then
+            export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+            uv venv n00clear-fusion/.venv
+            uv pip install -r n00clear-fusion/requirements.txt --python n00clear-fusion/.venv/bin/python
+          else
+            echo "n00clear-fusion submodule not present; skipping install"
+          fi
+      - name: Run fusion pipeline on sample pdf
+        env:
+          WORKSPACE_ROOT: ${{ github.workspace }}
+        run: |
+          if [ -d n00clear-fusion ]; then
+            SAMPLE=$(mktemp /tmp/sample.XXXX.pdf)
+            echo "sample" > /tmp/sample.txt
+            /usr/bin/enscript -B -o - /tmp/sample.txt | ps2pdf - "$SAMPLE"
+            bash .dev/automation/scripts/fusion-pipeline.sh "$SAMPLE"
+          else
+            echo "n00clear-fusion submodule not present; skipping fusion pipeline run"
+          fi
+      - name: Validate graph
+        run: |
+          if [ -d n00-cortex ]; then
+            node n00-cortex/scripts/validate-json.mjs n00-cortex/schemas/catalog-graph.schema.json n00-cortex/data/catalog/graph.json
+          else
+            echo "n00-cortex submodule not present; skipping graph validation"
+          fi

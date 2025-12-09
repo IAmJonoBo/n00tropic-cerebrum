@@ -1,0 +1,7 @@
+# Minimal Python requirements for common automation/agents
+-r n00tropic/requirements.txt
+-r n00-school/requirements.txt
+-r mcp/docs_server/requirements.txt
+
+# Lightweight utilities that aid automation checks without pulling full Jupyter stack
+pip-audit==2.9.0

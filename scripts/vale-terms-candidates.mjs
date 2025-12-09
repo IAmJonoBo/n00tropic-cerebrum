@@ -14,8 +14,8 @@ let applyEdits = false;
 let interactive = false;
 let yesAll = false;
 let caseInsensitive = false;
-let autoWhitelist = false;
-let autoApply = false;
+let _autoWhitelist = false;
+let _autoApply = false;
 let oxfordMode = false;
 for (let i = 0; i < args.length; i++) {
   switch (args[i]) {
@@ -45,12 +45,12 @@ for (let i = 0; i < args.length; i++) {
       caseInsensitive = true;
       break;
     case "--auto-whitelist":
-      autoWhitelist = true;
+      _autoWhitelist = true;
       whitelistMode = true;
       yesAll = true;
       break;
     case "--auto-apply":
-      autoApply = true;
+      _autoApply = true;
       applyEdits = true;
       yesAll = true;
       break;
@@ -84,7 +84,7 @@ const counts = {};
 const suggestions = {}; // maps token -> suggested replacement
 const fileMap = {}; // token -> { file: count }
 
-const matchesMessage = (issue) => {
+const _matchesMessage = (issue) => {
   if (issue.Match) return issue.Match;
   if (issue.Message) return issue.Message;
   return null;
@@ -100,7 +100,7 @@ for (const [file, issues] of Object.entries(data)) {
     let token = issue.Match || null;
     if (!token && issue.Message) {
       // look for "quoted tokens" or single-word tokens in code-like context
-      const m = issue.Message.match(/"([A-Za-z0-9/_\-\.:]+)"/);
+      const m = issue.Message.match(/"([A-Za-z0-9/_\-.:]+)"/);
       if (m) token = m[1];
       else {
         // fallback: pick the first word with limited length
@@ -193,28 +193,33 @@ if (oxfordMode) {
 const existing = new Set();
 if (fs.existsSync("styles/n00/vocab.txt")) {
   const txt = fs.readFileSync("styles/n00/vocab.txt", "utf8");
-  txt.split(/\r?\n/).forEach((l) => l && existing.add(l.trim()));
+  for (const l of txt.split(/\r?\n/)) {
+    if (l) existing.add(l.trim());
+  }
 }
 if (fs.existsSync("styles/n00/Terms.yml")) {
   const txt = fs.readFileSync("styles/n00/Terms.yml", "utf8");
-  const tokens = [...txt.matchAll(/"([^\"]+)"/g)].map((m) => m[1]);
-  tokens.forEach((t) => existing.add(t));
+  const tokens = [...txt.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+  for (const t of tokens) {
+    existing.add(t);
+  }
 }
 // also check .vale.ini TokenIgnores
 if (fs.existsSync(".vale.ini")) {
   const txt = fs.readFileSync(".vale.ini", "utf8");
   const m = txt.match(/TokenIgnores\s*=\s*(.*)/);
   if (m) {
-    m[1]
-      .split(",")
-      .map((s) => s.trim())
-      .forEach((t) => t && existing.add(t));
+    for (const t of m[1].split(",").map((s) => s.trim())) {
+      if (t) existing.add(t);
+    }
   }
 }
 // If case-insensitive mode requested, also add lowercase variants to existing set for comparison
 if (caseInsensitive) {
   const addLower = [...existing].map((t) => String(t).toLowerCase());
-  addLower.forEach((l) => existing.add(l));
+  for (const l of addLower) {
+    existing.add(l);
+  }
 }
 
 const candidates = arr.filter(
@@ -270,7 +275,7 @@ const ask = async (question) => {
     input: process.stdin,
     output: process.stdout,
   });
-  const answer = (await rl.question(question + " (y/N): "))
+  const answer = (await rl.question(`${question} (y/N): `))
     .trim()
     .toLowerCase();
   rl.close();
@@ -332,7 +337,7 @@ const appendToTermsYml = (tokens) => {
     inside +
     (inside.trim().endsWith(",") || inside.trim().endsWith("\n") ? "" : ",") +
     "\n    " +
-    toAppend.map((t) => `\"${t}\",`).join("\n    ") +
+    toAppend.map((t) => `"${t}",`).join("\n    ") +
     "\n  ";
   const newText = text.replace(m[0], `terms: [${newInside}]`);
   fs.writeFileSync(pathTerms, newText);
@@ -374,7 +379,7 @@ const previewEditsForFile = (file, token, replacement) => {
 const applyEditsForFile = (file, edits) => {
   if (!edits || edits.length === 0) return false;
   const txt = fs.readFileSync(file, "utf8");
-  let lines = txt.split(/\r?\n/);
+  const lines = txt.split(/\r?\n/);
   for (const e of edits) {
     lines[e.line - 1] = e.after;
   }

@@ -1,0 +1,10 @@
+= Typesense search
+:page-tags: diataxis:reference, audience:contrib, stability:draft
+
+Stub page to satisfy cross-references. Document the search pipeline (crawl, index, freshness guards) here.
+
+== Placeholder
+
+- Describe index sources and schedules.
+- Add `scripts/check-typesense-freshness.mjs` usage.
+- Capture API keys and host variables (`TYPESENSE_API_KEY`, `TYPESENSE_HOST`) in your runner env.

@@ -1,0 +1,9 @@
+[tool.black]
+line-length = 88
+# Python 3.11+ across the workspace
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+combine_as_imports = true

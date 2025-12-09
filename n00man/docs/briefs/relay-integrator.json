@@ -1,0 +1,71 @@
+{
+  "agent_id": "relay-integrator",
+  "name": "Relay Integration Steward",
+  "role": "operator",
+  "description": "Orchestrates deployment runbooks across partner environments and confirms telemetry wiring.",
+  "owner": "infra-automation",
+  "status": "beta",
+  "tags": ["integration/platform", "sre/runbooks"],
+  "capabilities": [
+    {
+      "id": "prepare-runbook",
+      "name": "Prepare Runbook",
+      "description": "Generate a parameterized runbook for a given deployment target.",
+      "inputs": {
+        "target": {
+          "type": "string",
+          "description": "Deployment environment name"
+        },
+        "signals": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required telemetry signals"
+        }
+      },
+      "outputs": {
+        "runbook": {
+          "type": "object",
+          "description": "Rendered runbook with validation checklist"
+        }
+      }
+    },
+    {
+      "id": "verify-telemetry",
+      "name": "Verify Telemetry",
+      "description": "Confirm OTLP exporters emit the expected traces after deployment.",
+      "inputs": {
+        "service_name": {
+          "type": "string",
+          "description": "Logical service identifier emitting traces"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "OTLP endpoint or collector URI"
+        }
+      },
+      "outputs": {
+        "verification": {
+          "type": "object",
+          "description": "Trace sample counts and remediation hints"
+        }
+      }
+    }
+  ],
+  "guardrails": [
+    {
+      "id": "relay-prod-safeguard",
+      "description": "Require human approval before applying changes to prod control planes.",
+      "enforcement": "required",
+      "severity": "high"
+    }
+  ],
+  "model_config": {
+    "provider": "openai",
+    "model": "gpt-5.1-codex",
+    "fallbacks": ["openai/gpt-5.1-codex-mini", "openai/gpt-4.1-mini"]
+  },
+  "metadata": {
+    "playbooks": ["docs://platform/runbooks/relay.md"],
+    "links": ["https://intranet.example/platform/relay"]
+  }
+}

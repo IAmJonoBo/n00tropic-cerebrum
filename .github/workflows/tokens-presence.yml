@@ -1,0 +1,20 @@
+name: tokens-presence
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  tokens:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Ensure tokens.json exists (placeholder allowed if present)
+        run: |
+          scripts/check-tokens-present.sh

@@ -6,7 +6,9 @@ const files = await glob("docs/modules/**/pages/**/*.adoc");
 const args = process.argv.slice(2);
 const fix = args.includes("--fix");
 const defaultTagArg = args.find((a) => a.startsWith("--default-tags="));
-const defaultTags = defaultTagArg ? defaultTagArg.split("=")[1] : "docs";
+const defaultTags = defaultTagArg
+  ? defaultTagArg.split("=")[1]
+  : "diataxis:reference, domain:platform, audience:contrib, stability:beta";
 const defaultReviewedArg = args.find((a) => a.startsWith("--reviewed="));
 const defaultReviewed = defaultReviewedArg
   ? defaultReviewedArg.split("=")[1]

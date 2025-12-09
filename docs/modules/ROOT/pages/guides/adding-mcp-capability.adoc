@@ -1,0 +1,278 @@
+= Adding a New MCP Capability
+:page-tags: diataxis:howto, domain:platform, audience:contrib, stability:stable
+:reviewed: 2025-11-27
+:toc:
+:toclevels: 2
+
+Learn how to extend the n00t MCP server by adding a new automation capability.
+
+== Prerequisites
+
+* Workspace cloned and set up
+* Familiarity with JSON schema
+* Understanding of shell scripting or Python
+* Editor access to `n00t/capabilities/manifest.json`
+
+== Steps
+
+=== 1. Create the Automation Script
+
+Create your script in `.dev/automation/scripts/`:
+
+[source,bash]
+----
+# Example: Create a new validation script
+touch .dev/automation/scripts/my-new-validator.sh
+chmod +x .dev/automation/scripts/my-new-validator.sh
+----
+
+**Script template:**
+
+[source,bash]
+----
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Parse arguments
+TARGET="${1:-}"
+if [[ -z "$TARGET" ]]; then
+  echo "Usage: $0 <target>" >&2
+  exit 1
+fi
+
+# Your logic here
+echo "Validating $TARGET..."
+
+# Output JSON result
+cat <<EOF
+{
+  "status": "success",
+  "target": "$TARGET",
+  "issues": 0
+}
+EOF
+----
+
+=== 2. Test the Script Manually
+
+[source,bash]
+----
+./.dev/automation/scripts/my-new-validator.sh test-input
+----
+
+Verify it:
+
+* Exits with code 0 on success
+* Outputs valid JSON (optional but recommended)
+* Handles errors gracefully
+
+=== 3. Add Capability to Manifest
+
+Edit `n00t/capabilities/manifest.json`:
+
+[source,json]
+----
+{
+  "capabilities": [
+    {
+      "id": "validation.myValidator",
+      "summary": "Validate custom targets",
+      "entrypoint": "../../.dev/automation/scripts/my-new-validator.sh",
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target to validate"
+          },
+          "strict": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable strict validation"
+          }
+        },
+        "required": ["target"]
+      },
+      "outputs": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "target": { "type": "string" },
+          "issues": { "type": "integer" }
+        }
+      },
+      "guardrails": {
+        "max_concurrency": 1,
+        "stdout_max_bytes": 10240,
+        "stderr_max_bytes": 10240,
+        "timeout_seconds": 300
+      }
+    }
+  ]
+}
+----
+
+**Key fields:**
+
+* `id` - Unique capability identifier (use namespacing: `domain.action`)
+* `summary` - Brief description for AI assistants
+* `entrypoint` - Relative path to script
+* `inputs` - JSON schema for parameters
+* `outputs` - JSON schema for results
+* `guardrails` - Execution limits
+
+=== 4. Validate the Manifest
+
+[source,bash]
+----
+# Validate JSON syntax
+python -m json.tool n00t/capabilities/manifest.json > /dev/null
+
+# Check for duplicate IDs
+jq -r '.capabilities[].id' n00t/capabilities/manifest.json | sort | uniq -d
+----
+
+=== 5. Test via MCP
+
+Restart your MCP client, then test:
+
+[source]
+----
+List all capabilities and show me validation.myValidator
+----
+
+Execute it:
+
+[source]
+----
+Run validation.myValidator with target="test-data"
+----
+
+=== 6. Document the Capability
+
+Add documentation to xref:reference/mcp-capabilities.adoc[]:
+
+[source,asciidoc]
+----
+=== validation.myValidator
+
+Validates custom targets with optional strict mode.
+
+**Inputs:**
+
+* `target` (string, required) - Target to validate
+* `strict` (boolean, optional) - Enable strict mode
+
+**Outputs:**
+
+* `status` - Validation result
+* `issues` - Number of issues found
+
+**Example:**
+
+[source,json]
+----
+{
+  "target": "my-config.json",
+  "strict": true
+}
+----
+----
+
+=== 7. Add Tests (Optional)
+
+Create test in `.dev/automation/scripts/test-my-validator.sh`:
+
+[source,bash]
+----
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Test success case
+result=$(./.dev/automation/scripts/my-new-validator.sh "test")
+echo "$result" | jq -e '.status == "success"'
+
+# Test error handling
+if ./.dev/automation/scripts/my-new-validator.sh ""; then
+  echo "Should have failed on empty input" >&2
+  exit 1
+fi
+
+echo "✓ All tests passed"
+----
+
+== Common Patterns
+
+=== Pattern: File Processing
+
+[source,bash]
+----
+FILE="${1:-}"
+[[ -f "$FILE" ]] || { echo "File not found: $FILE" >&2; exit 1; }
+
+# Process file
+result=$(process_file "$FILE")
+
+# Output JSON
+jq -n --arg result "$result" '{"status": "success", "result": $result}'
+----
+
+=== Pattern: Multi-Input Validation
+
+[source,json]
+----
+"inputs": {
+  "type": "object",
+  "properties": {
+    "files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["strict", "lenient"],
+      "default": "lenient"
+    }
+  },
+  "required": ["files"]
+}
+----
+
+=== Pattern: Progress Reporting
+
+[source,bash]
+----
+# Write progress to stderr (not captured by MCP)
+echo "Processing file 1/10..." >&2
+
+# Final result to stdout
+echo '{"status": "complete", "processed": 10}'
+----
+
+== Troubleshooting
+
+**Capability not appearing:**
+
+* Validate manifest JSON syntax
+* Check `id` is unique
+* Restart MCP server
+* Check MCP client logs
+
+**Execution fails:**
+
+* Verify script has execute permission: `chmod +x`
+* Test script manually with same inputs
+* Check telemetry in `.dev/automation/artifacts/`
+
+**Timeout errors:**
+
+* Increase `guardrails.timeout_seconds`
+* Check for blocking operations
+* Use background processing for long tasks
+
+== See Also
+
+* xref:reference/mcp-capabilities.adoc[MCP Capabilities Reference]
+* xref:adr/adr-003-capability-manifest-schema.adoc[ADR-003: Manifest Schema]
+* xref:adr/adr-004-guardrails-framework.adoc[ADR-004: Guardrails]

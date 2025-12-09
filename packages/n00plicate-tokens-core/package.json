@@ -1,0 +1,31 @@
+{
+  "name": "@n00plicate/tokens-core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "test": "vitest run",
+    "lint": "biome check src",
+    "typecheck": "tsc --project tsconfig.json --emitDeclarationOnly --pretty false"
+  },
+  "dependencies": {
+    "@n00plicate/design-tokens": "workspace:*",
+    "@n00plicate/shared-utils": "workspace:*"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}

@@ -1,0 +1,627 @@
+= n00t Troubleshooting
+:page-tags: troubleshooting,n00t,mcp,automation
+:reviewed: 2025-11-27
+:toc: left
+:toclevels: 3
+
+This guide helps resolve common issues with n00t, the MCP-centric agent control centre for the n00tropic platform.
+
+== MCP Server Issues
+
+=== MCP Server Not Loading
+
+**Problem:** MCP servers fail to load in Copilot Chat or other MCP clients.
+
+**Symptoms:**
+[source,bash]
+----
+Error: Cannot find module '/path/to/mcp-server/index.js'
+MCP server 'ai-workflow' failed to start
+----
+
+**Solutions:**
+
+1. **Verify Node dependencies are installed:**
++
+[source,bash]
+----
+cd n00tropic/.dev/automation/mcp-server
+pnpm install
+
+cd n00-cortex/mcp-server
+pnpm install
+----
+
+2. **Check MCP server configuration in VS Code settings:**
++
+[source,json]
+----
+{
+  "mcpServers": {
+    "ai-workflow": {
+      "command": "node",
+      "args": [
+        "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic/.dev/automation/mcp-server/index.js"
+      ],
+      "cwd": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic"
+    }
+  }
+}
+----
+
+3. **Test MCP server manually:**
++
+[source,bash]
+----
+cd n00tropic/.dev/automation/mcp-server
+node index.js
+# Should start without errors
+----
+
+4. **Check Node version:**
++
+[source,bash]
+----
+node --version
+# Should be Node 20+ (24 recommended)
+----
+
+**Prevention:**
+- Run `pnpm install` in all MCP server directories after workspace updates
+- Use absolute paths in MCP configuration
+- Verify paths match your actual workspace location
+
+=== Capability Manifest Not Found
+
+**Problem:** Agent cannot find or read the capability manifest.
+
+**Symptoms:**
+[source,text]
+----
+Error: Cannot read capabilities/manifest.json
+Resource not found: ai-workflow://capabilities/manifest
+----
+
+**Solutions:**
+
+1. **Verify manifest exists:**
++
+[source,bash]
+----
+ls -la n00t/capabilities/manifest.json
+cat n00t/capabilities/manifest.json | jq .
+----
+
+2. **Validate manifest JSON:**
++
+[source,bash]
+----
+cd n00t
+pnpm test  # Runs validation tests
+----
+
+3. **Check MCP server cwd:**
++
+The `cwd` in MCP configuration must point to the correct workspace root:
++
+[source,json]
+----
+{
+  "cwd": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00tropic"
+}
+----
+
+4. **Regenerate manifest if corrupted:**
++
+[source,bash]
+----
+cd n00t/capabilities
+# Backup existing
+cp manifest.json manifest.json.bak
+# Check for syntax errors
+jq . manifest.json
+----
+
+**Prevention:**
+- Always validate JSON after manual edits
+- Use version control to track changes
+- Run tests before committing manifest changes
+
+== Automation Workflow Issues
+
+=== Workflow Phase Fails
+
+**Problem:** `run_workflow_phase` or `run_full_workflow` fails with errors.
+
+**Symptoms:**
+[source,text]
+----
+Error: Script not found or not executable
+Workflow phase 'planning' failed with exit code 1
+----
+
+**Solutions:**
+
+1. **Check script executable permissions:**
++
+[source,bash]
+----
+ls -la .dev/automation/scripts/ai-workflows/
+chmod +x .dev/automation/scripts/ai-workflows/*.sh
+----
+
+2. **Verify required dependencies:**
++
+[source,bash]
+----
+# Check Python environment
+source .venv-workspace/bin/activate
+python --version  # Should be 3.11+
+
+# Check required packages
+pip list | grep -E "PyYAML|jsonschema"
+----
+
+3. **Run bootstrap script:**
++
+[source,bash]
+----
+cd /Volumes/APFS\ Space/n00tropic/n00tropic-cerebrum
+scripts/bootstrap-python.sh
+source .venv-workspace/bin/activate
+----
+
+4. **Check workflow status:**
++
+[source,bash]
+----
+# Use MCP tool to check status
+# Via agent: get_workflow_status()
+# Or manually:
+ls -la .dev/automation/artifacts/ai-workflows/
+----
+
+**Prevention:**
+- Run bootstrap scripts after workspace updates
+- Keep virtual environment activated for automation tasks
+- Check `.dev/automation/artifacts/` for execution logs
+
+=== Capability Execution Hangs
+
+**Problem:** Capability execution hangs or times out.
+
+**Symptoms:**
+[source,text]
+----
+Executing capability: workspace.refresh
+[No output for 5+ minutes]
+----
+
+**Solutions:**
+
+1. **Check for interactive prompts:**
++
+Some scripts may require user input. Run manually to verify:
++
+[source,bash]
+----
+cd .dev/automation/scripts
+./refresh-workspace.sh
+# Look for prompts or blocking input
+----
+
+2. **Review script logs:**
++
+[source,bash]
+----
+tail -f .dev/automation/artifacts/automation/*.json
+cat .dev/automation/artifacts/ai-workflows/*.log
+----
+
+3. **Kill hanging process:**
++
+[source,bash]
+----
+ps aux | grep refresh-workspace
+kill -9 [PID]
+----
+
+4. **Use timeout wrapper:**
++
+[source,bash]
+----
+timeout 300 ./refresh-workspace.sh
+----
+
+**Prevention:**
+- Set `isBackground: false` for interactive scripts in manifest
+- Add timeout configurations to long-running capabilities
+- Test capabilities manually before exposing via MCP
+
+== Control Panel Issues
+
+=== Control Panel Not Updating
+
+**Problem:** Project control panel doesn't reflect recent changes.
+
+**Symptoms:**
+[source,text]
+----
+Control panel shows stale data
+Last updated: 2 days ago
+----
+
+**Solutions:**
+
+1. **Manually trigger control panel refresh:**
++
+[source,bash]
+----
+cd n00tropic/.dev/automation
+python scripts/project-control-panel.py
+----
+
+2. **Check project metadata:**
++
+[source,bash]
+----
+# Verify PROJECTS.yaml exists and is valid
+cat PROJECTS.yaml | python -c "import yaml; import sys; yaml.safe_load(sys.stdin)"
+----
+
+3. **Verify automation dependencies:**
++
+[source,bash]
+----
+source .venv-workspace/bin/activate
+pip list | grep -E "PyYAML|jsonschema|jinja2"
+----
+
+4. **Check for script errors:**
++
+[source,bash]
+----
+python scripts/project-control-panel.py --verbose
+----
+
+**Prevention:**
+- Run `project.controlPanel` capability after metadata changes
+- Keep PROJECTS.yaml schema-compliant
+- Ensure Python dependencies are up to date
+
+=== Lifecycle Radar Shows No Data
+
+**Problem:** Lifecycle radar returns empty or minimal results.
+
+**Symptoms:**
+[source,json]
+----
+{
+  "overdue": [],
+  "upcoming": [],
+  "total_projects": 0
+}
+----
+
+**Solutions:**
+
+1. **Verify project metadata exists:**
++
+[source,bash]
+----
+ls -la PROJECTS.yaml
+cat PROJECTS.yaml | head -20
+----
+
+2. **Check review dates format:**
++
+[source,yaml]
+----
+projects:
+  - slug: my-project
+    review_date: "2025-12-01"  # ISO format required
+----
+
+3. **Run lifecycle radar manually:**
++
+[source,bash]
+----
+cd n00tropic/.dev/automation
+python scripts/lifecycle-radar.py
+----
+
+4. **Validate project schema:**
++
+[source,bash]
+----
+# Check against cortex schema
+python scripts/validate-projects.py
+----
+
+**Prevention:**
+- Use ISO date format (YYYY-MM-DD) for all dates
+- Include required metadata fields (review_date, links, etc.)
+- Run validation before committing PROJECTS.yaml changes
+
+== Capability Integration Issues
+
+=== Custom Capability Not Recognized
+
+**Problem:** New capability added to manifest but not available to agents.
+
+**Symptoms:**
+[source,text]
+----
+Error: Unknown capability 'my.custom.capability'
+----
+
+**Solutions:**
+
+1. **Verify capability added to manifest:**
++
+[source,bash]
+----
+cd n00t/capabilities
+cat manifest.json | jq '.capabilities[] | select(.id=="my.custom.capability")'
+----
+
+2. **Restart MCP server:**
++
+MCP servers cache the manifest. Restart VS Code or MCP client after changes.
+
+3. **Validate manifest structure:**
++
+[source,bash]
+----
+cd n00t
+pnpm test
+# Should validate manifest schema
+----
+
+4. **Check capability script exists:**
++
+[source,bash]
+----
+# Verify script path in manifest matches actual file
+ls -la /path/to/capability/script.sh
+----
+
+**Prevention:**
+- Follow manifest schema exactly
+- Test new capabilities manually before adding to manifest
+- Restart MCP clients after manifest changes
+
+=== Capability Script Permissions
+
+**Problem:** Capability fails with permission denied error.
+
+**Symptoms:**
+[source,text]
+----
+Error: EACCES: permission denied
+bash: ./my-script.sh: Permission denied
+----
+
+**Solutions:**
+
+1. **Add execute permissions:**
++
+[source,bash]
+----
+chmod +x .dev/automation/scripts/my-script.sh
+----
+
+2. **Check script ownership:**
++
+[source,bash]
+----
+ls -la .dev/automation/scripts/my-script.sh
+# Should be owned by your user
+----
+
+3. **Fix workspace-wide permissions:**
++
+[source,bash]
+----
+find .dev/automation/scripts -name "*.sh" -exec chmod +x {} \;
+----
+
+**Prevention:**
+- Set execute permissions when creating scripts
+- Use `chmod +x` in setup documentation
+- Include permission checks in CI/CD
+
+== Telemetry and Observability
+
+=== Agent Run Telemetry Not Recording
+
+**Problem:** Agent executions not appearing in telemetry.
+
+**Symptoms:**
+[source,bash]
+----
+cat .dev/automation/artifacts/automation/agent-runs.json
+# Empty or outdated
+----
+
+**Solutions:**
+
+1. **Check artifact directory exists:**
++
+[source,bash]
+----
+mkdir -p .dev/automation/artifacts/automation
+----
+
+2. **Verify write permissions:**
++
+[source,bash]
+----
+ls -la .dev/automation/artifacts/automation/
+# Should be writable by your user
+----
+
+3. **Enable observability in scripts:**
++
+[source,python]
+----
+from agent_framework.observability import setup_observability
+
+setup_observability(
+    otlp_endpoint="http://localhost:4317",
+    enable_sensitive_data=True
+)
+----
+
+4. **Check for logging errors:**
++
+[source,bash]
+----
+# Look for write failures in logs
+grep -r "Failed to write telemetry" .dev/automation/artifacts/
+----
+
+**Prevention:**
+- Ensure artifact directories exist before automation runs
+- Set proper file permissions in setup scripts
+- Include telemetry checks in test suites
+
+== Docs MCP Server Issues
+
+=== Documentation Search Returns No Results
+
+**Problem:** Docs MCP server cannot find documentation pages.
+
+**Symptoms:**
+[source,text]
+----
+mcp_docs_search: No results found
+----
+
+**Solutions:**
+
+1. **Verify docs MCP server is running:**
++
+[source,bash]
+----
+cd mcp/docs_server
+python server.py
+# Should start without errors
+----
+
+2. **Check documentation index:**
++
+[source,bash]
+----
+ls -la docs/modules/ROOT/pages/
+# Verify .adoc files exist
+----
+
+3. **Install docs server dependencies:**
++
+[source,bash]
+----
+cd mcp/docs_server
+pip install -r requirements.txt
+----
+
+4. **Test search manually:**
++
+[source,python]
+----
+# From Python REPL
+from docs_server import search_docs
+results = search_docs("troubleshooting")
+print(results)
+----
+
+**Prevention:**
+- Keep docs server dependencies updated
+- Rebuild documentation indexes after adding new pages
+- Test docs MCP tools after documentation changes
+
+== Integration with Other Modules
+
+=== Cortex Catalog Not Accessible
+
+**Problem:** Cannot access cortex catalog via MCP.
+
+**Symptoms:**
+[source,text]
+----
+Resource not found: cortex://catalog/...
+----
+
+**Solutions:**
+
+1. **Verify cortex MCP server configuration:**
++
+[source,json]
+----
+{
+  "cortex": {
+    "command": "node",
+    "args": [
+      "/path/to/n00-cortex/mcp-server/index.js"
+    ],
+    "cwd": "/path/to/n00-cortex"
+  }
+}
+----
+
+2. **Check cortex submodule:**
++
+[source,bash]
+----
+cd n00-cortex
+git status
+git submodule update --init --recursive
+----
+
+3. **Verify catalog files exist:**
++
+[source,bash]
+----
+ls -la n00-cortex/data/catalog/*.json
+----
+
+**Prevention:**
+- Keep submodules updated
+- Configure all MCP servers in settings
+- Test MCP integrations after workspace setup
+
+== Getting Help
+
+If you continue to experience issues:
+
+1. **Check existing issues:**
+   - Review https://github.com/n00tropic/n00tropic-cerebrum/issues[GitHub issues]
+   - Search workspace documentation
+
+2. **Gather diagnostics:**
++
+[source,bash]
+----
+# Collect system info
+node --version
+python --version
+pnpm --version
+
+# Check MCP server status
+# Via agent: get_workflow_status()
+
+# Review recent logs
+ls -lart .dev/automation/artifacts/**/*.log | tail -10
+----
+
+3. **Report issues:**
+   - Include error messages
+   - Attach relevant logs
+   - Describe steps to reproduce
+
+== Related Documentation
+
+* xref:troubleshooting/workspace.adoc[Workspace Troubleshooting]
+* xref:agent-ops.adoc[Agent Operations Guide]
+* xref:guides/mcp-setup.adoc[MCP Server Setup Guide]
+* link:../../n00t/README.md[n00t README]

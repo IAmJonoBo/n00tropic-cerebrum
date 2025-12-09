@@ -1,0 +1,14 @@
+services:
+  typesense:
+    image: typesense/typesense:0.25.1
+    restart: unless-stopped
+    ports:
+      - "8108:8108"
+    environment:
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY}
+      TYPESENSE_ALLOW_ORIGINS: "*"
+      TYPESENSE_DATA_DIR: "/data"
+    volumes:
+      - typesense-data:/data
+volumes:
+  typesense-data:

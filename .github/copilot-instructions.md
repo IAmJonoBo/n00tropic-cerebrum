@@ -1,5 +1,8 @@
 # GitHub Copilot Instructions for n00tropic Cerebrum
 
+> **Agent-facing guide**: See `/AGENTS.md` for the authoritative agent reference.
+> This file provides Copilot-specific context; AGENTS.md is the SSoT for all agents.
+
 ## Workspace Snapshot
 
 - `n00-cortex/` publishes schemas, manifests, and automation metadata.
@@ -83,3 +86,26 @@ requirements.txt` and execute `python n00tropic_cli/main.py design generate
 - Frontiers templates embed security gates. When modifying pipelines, cross
   reference `n00-frontiers/control-traceability-matrix.json` to keep controls
   intact.
+
+## AGENTS.md Hierarchy
+
+Each subproject contains an `AGENTS.md` optimised for AI agents. Read the closest
+`AGENTS.md` first, falling back to the root for ecosystem context:
+
+| Subproject      | AGENTS.md Path              |
+| --------------- | --------------------------- |
+| Root workspace  | `/AGENTS.md`                |
+| n00-cortex      | `n00-cortex/AGENTS.md`      |
+| n00-frontiers   | `n00-frontiers/AGENTS.md`   |
+| n00t            | `n00t/AGENTS.md`            |
+| n00tropic       | `n00tropic/AGENTS.md`       |
+| n00-horizons    | `n00-horizons/AGENTS.md`    |
+| n00-school      | `n00-school/AGENTS.md`      |
+| n00clear-fusion | `n00clear-fusion/AGENTS.md` |
+| n00menon        | `n00menon/AGENTS.md`        |
+| n00plicate      | `n00plicate/AGENTS.md`      |
+| n00-dashboard   | `n00-dashboard/AGENTS.md`   |
+| n00HQ           | `n00HQ/AGENTS.md`           |
+| n00man          | `n00man/AGENTS.md`          |
+
+Use the `docs.refresh` capability to validate all AGENTS.md files are present.

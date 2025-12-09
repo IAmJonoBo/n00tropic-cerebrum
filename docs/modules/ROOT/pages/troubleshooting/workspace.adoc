@@ -1,0 +1,899 @@
+= Workspace Troubleshooting
+:page-tags: troubleshooting,workspace,common-issues
+:reviewed: 2025-11-27
+:toc: left
+:toclevels: 3
+
+This guide helps resolve common issues when working with the n00tropic Cerebrum workspace.
+
+== Installation & Setup Issues
+
+=== Git Submodule Failures
+
+**Problem:** `git submodule update` fails or submodules are empty.
+
+**Symptoms:**
+[source,bash]
+----
+$ ls n00-cortex/
+# Empty directory or missing files
+----
+
+**Solutions:**
+
+1. **Initialize submodules recursively:**
++
+[source,bash]
+----
+cd /path/to/n00tropic-cerebrum
+git submodule update --init --recursive
+----
+
+2. **Force submodule sync if URLs changed:**
++
+[source,bash]
+----
+git submodule sync --recursive
+git submodule update --init --recursive --force
+----
+
+3. **Check submodule status:**
++
+[source,bash]
+----
+git submodule status
+# Look for '-' prefix (uninitialized) or '+' (wrong commit)
+----
+
+4. **Manual clone if automation fails:**
++
+[source,bash]
+----
+cd n00-cortex
+git remote -v  # Verify remote URL
+git fetch origin
+git checkout main
+----
+
+**Prevention:**
+- Always use `--recursive` flag when cloning: `git clone --recursive <url>`
+- Run `.dev/automation/scripts/refresh-workspace.sh` before major work
+
+=== Python Environment Issues
+
+**Problem:** Python packages fail to install or wrong Python version is used.
+
+**Symptoms:**
+[source,bash]
+----
+$ python --version
+Python 3.9.0  # Required: 3.11+
+
+$ pip install -r requirements.workspace.txt
+ERROR: Could not find a version that satisfies the requirement...
+----
+
+**Solutions:**
+
+1. **Verify Python version:**
++
+[source,bash]
+----
+python --version
+python3 --version
+python3.11 --version
+----
+
+2. **Create virtual environment with correct Python:**
++
+[source,bash]
+----
+python3.11 -m venv .venv
+source .venv/bin/activate  # macOS/Linux
+# or
+.venv\Scripts\activate  # Windows
+----
+
+3. **Upgrade pip and setuptools:**
++
+[source,bash]
+----
+python -m pip install --upgrade pip setuptools wheel
+----
+
+4. **Install workspace requirements:**
++
+[source,bash]
+----
+pip install -r requirements.workspace.txt
+----
+
+5. **Use uv for faster installs (optional):**
++
+[source,bash]
+----
+pip install uv
+uv pip install -r requirements.workspace.txt
+----
+
+**Prevention:**
+- Document your Python version in `requires-python.txt`
+- Use `pyenv` or `asdf` to manage Python versions
+- Check `.python-version` file in repo root
+
+=== Node.js & pnpm Issues
+
+**Problem:** `pnpm install` fails or wrong Node version is active.
+
+**Symptoms:**
+[source,bash]
+----
+$ pnpm install
+ERR_PNPM_UNSUPPORTED_ENGINE Unsupported environment
+----
+
+**Solutions:**
+
+1. **Verify Node version:**
++
+[source,bash]
+----
+node --version  # Required: 20+ (CI uses 24)
+----
+
+2. **Install correct Node version:**
++
+[source,bash]
+----
+# Using nvm
+nvm install 24
+nvm use 24
+
+# Using asdf
+asdf install nodejs 24.0.0
+asdf local nodejs 24.0.0
+----
+
+3. **Install pnpm globally:**
++
+[source,bash]
+----
+npm install -g pnpm@9
+# or
+corepack enable
+corepack prepare pnpm@9 --activate
+----
+
+4. **Clear pnpm cache if corrupted:**
++
+[source,bash]
+----
+pnpm store prune
+rm -rf node_modules
+pnpm install
+----
+
+5. **Use workspace pnpm configuration:**
++
+[source,bash]
+----
+cd /path/to/n00tropic-cerebrum
+pnpm install  # Uses pnpm-workspace.yaml
+----
+
+**Prevention:**
+- Use `.nvmrc` or `.node-version` file
+- Document Node requirements in README
+- Run `pnpm install` at workspace root, not in subdirs
+
+== Build & Validation Failures
+
+=== Trunk Check Failures
+
+**Problem:** `trunk check` reports errors that block commits.
+
+**Symptoms:**
+[source,bash]
+----
+$ trunk check
+✖ biome found 12 issues
+✖ vale found 45 issues
+----
+
+**Solutions:**
+
+1. **Auto-fix formatting issues:**
++
+[source,bash]
+----
+trunk fmt
+# or
+trunk check --fix
+----
+
+2. **Run specific linter:**
++
+[source,bash]
+----
+trunk check --filter=biome
+trunk check --filter=vale
+----
+
+3. **Check configuration:**
++
+[source,bash]
+----
+trunk config print
+# Verify enabled linters and versions
+----
+
+4. **Update Trunk to latest:**
++
+[source,bash]
+----
+trunk upgrade
+# or manually edit .trunk/trunk.yaml version
+----
+
+5. **Disable specific checks (temporary):**
++
+[source,bash]
+----
+# Add to .trunk/trunk.yaml
+lint:
+  disabled:
+    - vale  # Only if absolutely necessary
+----
+
+**Prevention:**
+- Run `trunk check` before committing
+- Enable pre-commit hooks: `trunk install`
+- Keep Trunk updated: `trunk upgrade`
+
+=== Antora Build Failures
+
+**Problem:** Documentation build fails with errors.
+
+**Symptoms:**
+[source,bash]
+----
+$ pnpm exec antora antora-playbook.yml
+ERROR: Page not found: xref:missing-page.adoc
+----
+
+**Solutions:**
+
+1. **Check for missing xref targets:**
++
+[source,bash]
+----
+# Build with verbose logging
+pnpm exec antora antora-playbook.yml --log-level=debug
+----
+
+2. **Validate AsciiDoc syntax:**
++
+[source,bash]
+----
+# Check specific file
+asciidoctor -o /dev/null docs/modules/ROOT/pages/file.adoc
+----
+
+3. **Clear Antora cache:**
++
+[source,bash]
+----
+rm -rf build/site
+rm -rf .cache/antora
+pnpm exec antora antora-playbook.yml
+----
+
+4. **Fix cross-component references:**
++
+[source,adoc]
+----
+// Wrong (missing component name)
+xref:mcp-capabilities.adoc[]
+
+// Correct (includes component)
+xref:reference/mcp-capabilities.adoc[]
+----
+
+5. **Use test playbook for local builds:**
++
+[source,bash]
+----
+pnpm exec antora antora-playbook.test.yml
+# Uses local sources, faster iteration
+----
+
+**Prevention:**
+- Validate xrefs before committing
+- Use playbook-test.yml for local development
+- Run `pnpm test` to catch issues early
+
+=== Schema Validation Failures
+
+**Problem:** JSON schemas fail validation.
+
+**Symptoms:**
+[source,bash]
+----
+$ pnpm run validate:schemas
+ERROR: Schema validation failed
+  - Missing required property 'name'
+  - Additional property 'foo' not allowed
+----
+
+**Solutions:**
+
+1. **Run schema validation:**
++
+[source,bash]
+----
+cd n00-cortex
+pnpm run validate:schemas
+----
+
+2. **Check schema definition:**
++
+[source,bash]
+----
+# View schema
+cat schemas/project-metadata.schema.json | jq
+----
+
+3. **Validate specific file:**
++
+[source,bash]
+----
+# Using ajv-cli
+ajv validate -s schemas/project.schema.json -d data/project.json
+----
+
+4. **Fix common validation errors:**
++
+* Missing required fields: Add all fields marked `"required": true`
+* Additional properties: Remove fields not in schema or set `"additionalProperties": true`
+* Type mismatches: Ensure string/number/boolean types match
+* Enum violations: Use only allowed values from schema
+
+**Prevention:**
+- Validate before committing: `pnpm run validate:schemas`
+- Use JSON schema editor plugins in VS Code
+- Reference existing valid examples
+
+== Runtime Issues
+
+=== MCP Server Connection Failures
+
+**Problem:** AI tools can't connect to MCP servers.
+
+**Symptoms:**
+[source,text]
+----
+VS Code Copilot: "Failed to connect to MCP server"
+Claude Desktop: "Server not responding"
+----
+
+**Solutions:**
+
+1. **Verify MCP server configuration:**
++
+[source,bash]
+----
+# VS Code
+cat ~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json
+
+# Claude Desktop
+cat ~/Library/Application\ Support/Claude/claude_desktop_config.json
+----
+
+2. **Check server executable path:**
++
+[source,json]
+----
+{
+  "mcpServers": {
+    "n00t": {
+      "command": "node",
+      "args": ["/absolute/path/to/n00t/dist/index.js"]
+    }
+  }
+}
+----
+
+3. **Test server manually:**
++
+[source,bash]
+----
+cd n00t
+node dist/index.js
+# Should start without errors
+----
+
+4. **Check server logs:**
++
+[source,bash]
+----
+# VS Code logs
+tail -f ~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/logs/mcp-*.log
+
+# n00t artifacts
+cat .dev/automation/artifacts/automation/agent-runs.json
+----
+
+5. **Rebuild MCP server:**
++
+[source,bash]
+----
+cd n00t
+pnpm install
+pnpm build
+----
+
+**Prevention:**
+- Use absolute paths in MCP configs
+- Test server before configuring clients
+- Keep server dependencies updated
+
+=== Automation Script Failures
+
+**Problem:** Workspace automation scripts fail to execute.
+
+**Symptoms:**
+[source,bash]
+----
+$ .dev/automation/scripts/meta-check.sh
+bash: permission denied
+
+$ python .dev/automation/scripts/workspace-plan-workflow.py
+ModuleNotFoundError: No module named 'yaml'
+----
+
+**Solutions:**
+
+1. **Fix permission issues:**
++
+[source,bash]
+----
+chmod +x .dev/automation/scripts/*.sh
+chmod +x .dev/automation/scripts/*.py
+----
+
+2. **Verify script dependencies:**
++
+[source,bash]
+----
+# For Python scripts
+pip install -r requirements.workspace.txt
+
+# For bash scripts
+which jq yq  # Check required tools installed
+----
+
+3. **Run from workspace root:**
++
+[source,bash]
+----
+# Wrong - script paths may fail
+cd .dev/automation/scripts
+./meta-check.sh
+
+# Correct
+cd /path/to/n00tropic-cerebrum
+.dev/automation/scripts/meta-check.sh
+----
+
+4. **Check script logs:**
++
+[source,bash]
+----
+ls -la .dev/automation/artifacts/automation/
+cat .dev/automation/artifacts/automation/agent-runs.json
+----
+
+5. **Use MCP capabilities instead:**
++
+[source,text]
+----
+# In AI tool
+"Run workspace.validate.meta capability"
+----
+
+**Prevention:**
+- Always run scripts from workspace root
+- Use MCP capabilities for better error handling
+- Keep automation dependencies updated
+
+=== GitHub Actions CI Failures
+
+**Problem:** CI pipeline fails on GitHub.
+
+**Symptoms:**
+[source,text]
+----
+✖ Build failed
+✖ Tests failed
+✖ Lint check failed
+----
+
+**Solutions:**
+
+1. **Check CI logs:**
++
+[source,bash]
+----
+# View workflow runs
+gh run list
+gh run view <run-id>
+----
+
+2. **Reproduce locally:**
++
+[source,bash]
+----
+# Run same commands as CI
+pnpm install
+pnpm test
+pnpm run lint
+pnpm run build
+----
+
+3. **Common CI-specific issues:**
++
+* **Node version mismatch:** CI uses Node 24, check `.github/workflows/*.yml`
+* **Missing secrets:** Verify GitHub secrets are configured
+* **Cache corruption:** Clear Actions cache in repo settings
+* **Submodule issues:** Ensure `submodules: recursive` in workflow
+
+4. **Fix failing tests:**
++
+[source,bash]
+----
+# Run tests locally
+pnpm test
+
+# Update snapshots if needed
+pnpm test -- -u
+----
+
+5. **Debug workflow locally:**
++
+[source,bash]
+----
+# Using act to run GitHub Actions locally
+act -j test  # Requires Docker
+----
+
+**Prevention:**
+- Test all changes locally before pushing
+- Keep CI workflow files updated
+- Monitor CI status regularly
+
+== Integration Issues
+
+=== ERPNext Sync Failures
+
+**Problem:** Project metadata fails to sync with ERPNext.
+
+**Symptoms:**
+[source,bash]
+----
+$ .dev/automation/scripts/preflight-check.sh
+ERROR: ERPNext API returned 401 Unauthorized
+----
+
+**Solutions:**
+
+1. **Verify ERPNext credentials:**
++
+[source,bash]
+----
+# Check environment variables
+echo $ERPNEXT_API_KEY
+echo $ERPNEXT_API_SECRET
+echo $ERPNEXT_URL
+----
+
+2. **Test ERPNext API connection:**
++
+[source,bash]
+----
+curl -H "Authorization: token $ERPNEXT_API_KEY:$ERPNEXT_API_SECRET" \
+  "$ERPNEXT_URL/api/resource/Project"
+----
+
+3. **Validate project metadata:**
++
+[source,bash]
+----
+# Ensure required fields present
+python scripts/validate_project_metadata.py
+----
+
+4. **Check metadata file format:**
++
+[source,yaml]
+----
+# projects/project-name/metadata.yaml
+name: "Project Name"
+status: "In Progress"
+links:
+  - github: "https://github.com/..."
+review_date: "2025-12-01"
+----
+
+5. **Manual sync if automation fails:**
++
+[source,bash]
+----
+python .dev/automation/scripts/erpnext-sync.py --project <name>
+----
+
+**Prevention:**
+- Keep ERPNext credentials in secure environment
+- Validate metadata before syncing
+- Use preflight checks before deployment
+
+=== SonarQube Integration Issues
+
+**Problem:** SonarQube analysis fails or returns no data.
+
+**Symptoms:**
+[source,bash]
+----
+$ sonarqube_analyze_file file.ts
+ERROR: SonarQube server not responding
+----
+
+**Solutions:**
+
+1. **Verify SonarQube token:**
++
+[source,bash]
+----
+# Check MCP server config
+cat ~/.sonarqube-mcp-config.json
+# Ensure 'token' is set and is a USER token (not project token)
+----
+
+2. **Test SonarQube connection:**
++
+[source,bash]
+----
+curl -u "$SONAR_TOKEN:" \
+  https://sonarqube.example.com/api/system/status
+----
+
+3. **Check project key exists:**
++
+[source,bash]
+----
+# Search for project
+curl -u "$SONAR_TOKEN:" \
+  "https://sonarqube.example.com/api/projects/search?q=my-project"
+----
+
+4. **Enable connected mode:**
++
+[source,bash]
+----
+# Use SonarQube MCP capability
+sonarqube_setup_connected_mode
+----
+
+5. **Analyze file manually:**
++
+[source,bash]
+----
+# Using SonarQube scanner
+sonar-scanner \
+  -Dsonar.projectKey=my-project \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=https://sonarqube.example.com \
+  -Dsonar.login=$SONAR_TOKEN
+----
+
+**Prevention:**
+- Use USER tokens, not project tokens
+- Keep SonarQube server accessible
+- Configure connected mode in IDE
+
+== Performance Issues
+
+=== Slow Documentation Builds
+
+**Problem:** Antora builds take too long.
+
+**Symptoms:**
+[source,bash]
+----
+$ time pnpm exec antora antora-playbook.yml
+# Takes > 5 minutes
+----
+
+**Solutions:**
+
+1. **Use test playbook for local development:**
++
+[source,bash]
+----
+pnpm exec antora antora-playbook.test.yml
+# Skips remote git fetches
+----
+
+2. **Disable Kroki diagrams temporarily:**
++
+[source,adoc]
+----
+// Comment out diagram in AsciiDoc
+// [plantuml]
+// ....
+// diagram code
+// ....
+----
+
+3. **Build single component:**
++
+[source,yaml]
+----
+# Create minimal playbook
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_path: docs  # Only build one component
+----
+
+4. **Clear stale cache:**
++
+[source,bash]
+----
+rm -rf .cache/antora
+rm -rf build/site
+----
+
+5. **Use incremental builds (future):**
++
+[source,bash]
+----
+# Antora doesn't support incremental yet
+# Workaround: build only changed components
+----
+
+**Prevention:**
+- Use test playbook for iterations
+- Commit frequently with working builds
+- Run full builds only before releases
+
+=== Large Git Repository
+
+**Problem:** Repository is too large, clones are slow.
+
+**Symptoms:**
+[source,bash]
+----
+$ git clone https://github.com/n00tropic/n00tropic-cerebrum.git
+# Takes > 10 minutes
+----
+
+**Solutions:**
+
+1. **Shallow clone:**
++
+[source,bash]
+----
+git clone --depth=1 https://github.com/n00tropic/n00tropic-cerebrum.git
+----
+
+2. **Partial clone (blobless):**
++
+[source,bash]
+----
+git clone --filter=blob:none --recurse-submodules \
+  https://github.com/n00tropic/n00tropic-cerebrum.git
+----
+
+3. **Clone without submodules, add selectively:**
++
+[source,bash]
+----
+git clone https://github.com/n00tropic/n00tropic-cerebrum.git
+cd n00tropic-cerebrum
+git submodule update --init n00-cortex  # Only clone what you need
+----
+
+4. **Check repository size:**
++
+[source,bash]
+----
+git count-objects -vH
+# Shows total size and pack file size
+----
+
+5. **Clean up large files (if any):**
++
+[source,bash]
+----
+# Find large files in history
+git rev-list --objects --all |
+  git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' |
+  awk '/^blob/ {print substr($0,6)}' |
+  sort --numeric-sort --key=2 |
+  tail -20
+----
+
+**Prevention:**
+- Don't commit large binary files
+- Use Git LFS for assets
+- Keep artifacts directory gitignored
+- Clean up build artifacts regularly
+
+== Diagnostic Commands
+
+Quick reference for diagnosing issues:
+
+[source,bash]
+----
+# Workspace health check
+.dev/automation/scripts/meta-check.sh
+.dev/automation/scripts/workspace-health-check.sh
+
+# Python environment
+python --version
+pip list | grep -E "(yaml|requests|ajv)"
+
+# Node environment
+node --version
+pnpm --version
+pnpm list -r  # List all workspace packages
+
+# Git status
+git status
+git submodule status
+git remote -v
+
+# Build status
+pnpm test
+trunk check
+pnpm exec antora antora-playbook.test.yml
+
+# MCP servers
+ls -la n00t/dist/
+cat ~/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json | jq
+
+# Disk space
+df -h .
+du -sh .git
+du -sh node_modules
+----
+
+== Getting Help
+
+If issues persist after trying these solutions:
+
+1. **Check existing documentation:**
+   * xref:tutorials/workspace-setup.adoc[Workspace Setup Tutorial]
+   * xref:guides/running-automation.adoc[Running Automation]
+   * xref:++1. Cerebrum Docs/WORKSPACE_MAINTENANCE.adoc++[Workspace Maintenance]
+
+2. **Review recent changes:**
+   * Check `releases.yaml` for breaking changes
+   * Review recent ADRs in `1. Cerebrum Docs/ADR/`
+
+3. **Search for similar issues:**
+   * GitHub Issues: https://github.com/n00tropic/n00tropic-cerebrum/issues
+   * Workspace logs: `.dev/automation/artifacts/`
+
+4. **Create a detailed issue report:**
+   * Include error messages
+   * Attach relevant logs
+   * Describe reproduction steps
+   * Specify environment (OS, Python/Node versions)
+
+== See Also
+
+* xref:guides/running-automation.adoc[Running Automation]
+* xref:tutorials/workspace-setup.adoc[Workspace Setup]
+* xref:reference/architecture.adoc[Architecture Overview]

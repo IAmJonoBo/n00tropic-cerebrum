@@ -1,0 +1,77 @@
+{
+  "agent_id": "solstice-researcher",
+  "name": "Solstice Research Cartographer",
+  "role": "reviewer",
+  "description": "Maps frontier tech signals and drafts briefs for venture partners.",
+  "owner": "strategy-lab",
+  "status": "draft",
+  "tags": ["research/frontier", "strategy/intel"],
+  "capabilities": [
+    {
+      "id": "ingest-signals",
+      "name": "Ingest Signals",
+      "description": "Aggregate RSS, arXiv, and patent feeds for a given topic.",
+      "inputs": {
+        "topic": {
+          "type": "string",
+          "description": "Primary research topic or cluster"
+        },
+        "sources": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of feed identifiers to aggregate"
+        }
+      },
+      "outputs": {
+        "signal_brief": {
+          "type": "object",
+          "description": "Curated list of notable signals"
+        }
+      }
+    },
+    {
+      "id": "draft-brief",
+      "name": "Draft Brief",
+      "description": "Produce an executive summary with opportunities and risks.",
+      "inputs": {
+        "audience": {
+          "type": "string",
+          "description": "Intended readership for the brief"
+        },
+        "signal_brief": {
+          "type": "object",
+          "description": "Curated signal payload produced by ingest phase"
+        }
+      },
+      "outputs": {
+        "brief": {
+          "type": "object",
+          "description": "Markdown-safe content for circulation"
+        }
+      }
+    }
+  ],
+  "guardrails": [
+    {
+      "id": "solstice-sourcing",
+      "description": "Annotate every claim with at least one verifiable source.",
+      "enforcement": "required",
+      "severity": "medium"
+    },
+    {
+      "id": "solstice-confidential",
+      "description": "Strip sensitive partner identifiers unless explicitly approved.",
+      "enforcement": "required",
+      "severity": "high"
+    }
+  ],
+  "model_config": {
+    "provider": "openai",
+    "model": "gpt-5.1-codex",
+    "fallbacks": ["openai/gpt-4.1-mini"]
+  },
+  "metadata": {
+    "playbooks": ["docs://research/solstice.md"],
+    "links": ["https://intranet.example/research/solstice"]
+  }
+}

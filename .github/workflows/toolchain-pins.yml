@@ -1,0 +1,44 @@
+name: toolchain-pins
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  pins:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Sync .nvmrc links
+        run: |
+          bash .dev/automation/scripts/sync-nvmrc.sh --force
+
+      - name: Enforce pinned Node via nvm
+        shell: bash
+        run: |
+          source scripts/ensure-nvm-node.sh
+          node -v
+
+      - name: Check toolchain pins
+        run: |
+          node scripts/check-toolchain-pins.mjs --json || exit 1
+
+      - name: Check pnpm store pin
+        run: |
+          PIN=10.23.0 scripts/check-pnpm-store-version.sh
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Toolchain Pins" >> $GITHUB_STEP_SUMMARY
+          node scripts/check-toolchain-pins.mjs --json >> $GITHUB_STEP_SUMMARY || true

@@ -1,0 +1,48 @@
+name: Renovate Preset extends check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+
+jobs:
+  check-renovate-extends:
+    name: Check that subrepos extend the central Renovate preset
+    permissions: # Minimal permissions to avoid write-all permissions flagged by some security checks
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11.14
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
+      - name: Install uv + minimal deps
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+          uv pip sync requirements.workspace.min.lock
+
+      - name: Run renovate-extends check
+        run: |
+          set -eux
+          python3 .dev/automation/scripts/update-renovate-extends.py --pattern '*/renovate.json' | tee ./renovate-extends.out || true
+          if grep -q "Will add extend to" ./renovate-extends.out; then
+            echo "Missing extends found — failing the check. Please run the migration helper and open a PR to add the central preset." >&2
+            exit 1
+          fi

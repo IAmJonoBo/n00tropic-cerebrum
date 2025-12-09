@@ -1,0 +1,78 @@
+{
+  // Master MCP suite for VS Code / Copilot Agent Mode.
+  // Copy or symlink this file to .vscode/mcp.json in the workspace root.
+  "servers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${workspaceFolder}"
+      ]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "docs": {
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["${workspaceFolder}/mcp/docs_server/server.py"],
+      "env": {
+        "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}"
+      }
+    },
+    "n00t-capabilities": {
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["${workspaceFolder}/mcp/capabilities_server.py"],
+      "env": {
+        "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}"
+      }
+    }
+    // Optional (uncomment as needed):
+    // "ai-workflow": {
+    //   "command": "node",
+    //   "args": ["${workspaceFolder}/.dev/automation/mcp-server/index.js"],
+    //   "options": { "cwd": "${workspaceFolder}" }
+    // },
+    // "cortex-catalog": {
+    //   "command": "node",
+    //   "args": ["${workspaceFolder}/n00-cortex/mcp-server/index.js"],
+    //   "options": { "cwd": "${workspaceFolder}/n00-cortex" }
+    // },
+    // "cortex-graph": {
+    //   "transport": "http",
+    //   "url": "http://localhost:8787/mcp"
+    // },
+    // "github": {
+    //   "command": "npx",
+    //   "args": ["-y", "@modelcontextprotocol/server-github"],
+    //   "env": { "GITHUB_TOKEN": "${env:GITHUB_TOKEN}" }
+    // },
+    // "github": {
+    //   "command": "npx",
+    //   "args": ["-y", "@modelcontextprotocol/server-github"],
+    //   "env": { "GITHUB_TOKEN": "${env:GITHUB_TOKEN}" }
+    // },
+    // "search": {
+    //   "command": "npx",
+    //   "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+    //   "env": { "BRAVE_API_KEY": "${env:BRAVE_API_KEY}" }
+    // }
+  },
+  "settings": {
+    "filesystem": {
+      "allowedPaths": [
+        "${workspaceFolder}",
+        "${workspaceFolder}/n00clear-fusion",
+        "${workspaceFolder}/n00-school",
+        "${workspaceFolder}/n00-horizons",
+        "${workspaceFolder}/n00-dashboard",
+        "${workspaceFolder}/n00-frontiers",
+        "${workspaceFolder}/n00-cortex",
+        "${workspaceFolder}/n00t",
+        "${workspaceFolder}/n00tropic",
+        "${workspaceFolder}/ops"
+      ]
+    }
+  }
+}

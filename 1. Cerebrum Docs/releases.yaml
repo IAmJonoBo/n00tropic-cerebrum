@@ -1,5 +1,5 @@
-version: 2025.11.04
-generated: "Tue Nov  4 12:57:48 SAST 2025"
+version: 2025.12.04
+generated: "Thu Dec  4 16:09:59 SAST 2025"
 repositories:
   - repo: n00-frontiers
     tag: unreleased

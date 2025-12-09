@@ -1,0 +1,586 @@
+= MCP Server Usage Tutorial
+:page-tags: diataxis:tutorial, domain:platform, audience:contrib, stability:stable
+:reviewed: 2025-11-27
+:toc:
+:toclevels: 3
+
+Learn how to configure and use Model Context Protocol (MCP) servers to access workspace automation through Copilot, Claude Desktop, and other MCP-aware clients.
+
+== What is MCP?
+
+Model Context Protocol (MCP) is a standardized interface for AI assistants to access external tools, resources, and automation. The n00tropic Cerebrum workspace exposes three MCP servers:
+
+1. **ai-workflow** - Workspace automation and AI workflows
+2. **cortex** - Schemas, catalogs, and configuration data
+3. **n00-docs** - Documentation search and retrieval
+
+== Prerequisites
+
+Before starting, ensure you have:
+
+* ✅ Completed xref:tutorials/workspace-setup.adoc[Workspace Setup Tutorial]
+* ✅ Node.js 20+ and pnpm installed
+* ✅ Python 3.11+ with workspace venv active
+* ✅ MCP server dependencies installed
+* ✅ An MCP-compatible client (VS Code Copilot, Claude Desktop, or Cline)
+
+== Step 1: Install MCP Server Dependencies
+
+Each MCP server has its own dependencies:
+
+=== AI Workflow Server
+
+[source,bash]
+----
+cd n00tropic/.dev/automation/mcp-server
+pnpm install
+
+# Verify installation
+node index.js <<< ' '
+# Should show startup banner, press Ctrl+C to exit
+cd ../../..
+----
+
+**Provides:**
+
+* `run_workflow_phase` - Execute workflow stages
+* `run_full_workflow` - Run complete workflows
+* `get_workflow_status` - Check script availability
+* Resources: capabilities manifest, workflow artifacts
+
+=== Cortex Catalog Server
+
+[source,bash]
+----
+cd n00-cortex/mcp-server
+pnpm install
+
+# Verify installation
+node index.js <<< ' '
+# Should show startup banner, press Ctrl+C to exit
+cd ../..
+----
+
+**Provides:**
+
+* Catalog JSON access (toolchain, templates, schemas)
+* Starter template resources
+* Documentation manifests
+* Read-only schema browsing
+
+=== Docs Search Server
+
+[source,bash]
+----
+cd mcp/docs_server
+pip install -r requirements.txt
+
+# Verify installation
+python server.py <<< ' '
+# Should initialize, press Ctrl+C to exit
+cd ../..
+----
+
+**Provides:**
+
+* Documentation search across all components
+* ADR retrieval and listing
+* Page content access by ID
+* Tag-based navigation
+
+== Step 2: Configure VS Code with Copilot
+
+If using GitHub Copilot with MCP support:
+
+=== Update VS Code Settings
+
+Edit `.vscode/settings.json`:
+
+[source,json]
+----
+{
+  "mcpServers": {
+    "ai-workflow": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/n00tropic-cerebrum/n00tropic/.dev/automation/mcp-server/index.js"
+      ],
+      "cwd": "/absolute/path/to/n00tropic-cerebrum/n00tropic"
+    },
+    "cortex": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/n00tropic-cerebrum/n00-cortex/mcp-server/index.js"
+      ],
+      "cwd": "/absolute/path/to/n00tropic-cerebrum/n00-cortex"
+    },
+    "n00-docs": {
+      "command": "python",
+      "args": [
+        "/absolute/path/to/n00tropic-cerebrum/mcp/docs_server/server.py"
+      ],
+      "cwd": "/absolute/path/to/n00tropic-cerebrum"
+    }
+  }
+}
+----
+
+IMPORTANT: Replace `/absolute/path/to/` with your actual workspace path (e.g., `/Volumes/APFS Space/n00tropic/n00tropic-cerebrum`).
+
+=== Restart VS Code
+
+After updating settings:
+
+1. Close and reopen VS Code
+2. Open the Copilot Chat panel
+3. Type `/help` to see available commands
+4. MCP tools should be available as `/mcp <server>.<tool>`
+
+=== Test the Connection
+
+[source]
+----
+/mcp ai-workflow.get_workflow_status
+----
+
+**Expected response**: JSON showing available scripts and executables.
+
+== Step 3: Configure Claude Desktop
+
+For Claude Desktop with MCP support:
+
+=== Update Claude Config
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+[source,json]
+----
+{
+  "mcpServers": {
+    "ai-workflow": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/n00tropic-cerebrum/n00tropic/.dev/automation/mcp-server/index.js"
+      ],
+      "cwd": "/absolute/path/to/n00tropic-cerebrum/n00tropic"
+    },
+    "cortex": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/n00tropic-cerebrum/n00-cortex/mcp-server/index.js"
+      ],
+      "cwd": "/absolute/path/to/n00tropic-cerebrum/n00-cortex"
+    },
+    "n00-docs": {
+      "command": "python",
+      "args": [
+        "/absolute/path/to/n00tropic-cerebrum/mcp/docs_server/server.py"
+      ],
+      "cwd": "/absolute/path/to/n00tropic-cerebrum",
+      "env": {
+        "VIRTUAL_ENV": "/absolute/path/to/n00tropic-cerebrum/.venv-workspace"
+      }
+    }
+  }
+}
+----
+
+=== Restart Claude Desktop
+
+1. Quit Claude Desktop completely
+2. Relaunch the application
+3. Start a new conversation
+4. Ask Claude to "list available MCP tools"
+
+== Step 4: Configure Cline (VS Code Extension)
+
+For the Cline VS Code extension:
+
+=== Update Cline Settings
+
+1. Open VS Code settings (Cmd+,)
+2. Search for "Cline"
+3. Find "MCP Servers" configuration
+4. Add the three servers using the same configuration as VS Code Copilot above
+
+Or edit `.vscode/settings.json` directly:
+
+[source,json]
+----
+{
+  "cline.mcpServers": {
+    "ai-workflow": { /* same as above */ },
+    "cortex": { /* same as above */ },
+    "n00-docs": { /* same as above */ }
+  }
+}
+----
+
+== Step 5: Discover Available Capabilities
+
+=== List All Capabilities
+
+Query the ai-workflow server for available automation:
+
+[source]
+----
+Show me all available workspace capabilities from the ai-workflow MCP server
+----
+
+**Response includes:**
+
+* `workspace.plan` - Generate DRY/YAGNI-scored plans
+* `workspace.gitDoctor` - Workspace health checks
+* `workspace.checkSubmodules` - Submodule hygiene validation
+* `workspace.checkSkeleton` - Manifest/skeleton validation
+* `planner.refreshPlans` - Regenerate plan artifacts
+* `docs.captureTypesenseSummary` - Parse Typesense logs
+* And many more...
+
+=== View Capability Details
+
+[source]
+----
+Show me the inputs and outputs for the workspace.plan capability
+----
+
+**Response structure:**
+
+[source,json]
+----
+{
+  "id": "workspace.plan",
+  "summary": "Generate DRY/YAGNI-scored plans via Codex engine.",
+  "entrypoint": "../../.dev/automation/scripts/workspace-plan-workflow.py",
+  "inputs": {
+    "brief": "Path or inline brief content",
+    "model": "Optional LLM override",
+    "airgapped": "Use local models",
+    "force": "Overwrite existing plan"
+  },
+  "outputs": {
+    "planPath": "Generated .plan.md file",
+    "metrics": "DRY/YAGNI scores"
+  }
+}
+----
+
+== Step 6: Execute Your First MCP Tool
+
+=== Check Workspace Health
+
+Ask your AI assistant:
+
+[source]
+----
+Use the ai-workflow MCP server to run workspace.gitDoctor and report the results
+----
+
+**What happens:**
+
+1. AI assistant calls `ai-workflow` MCP server
+2. Server executes `workspace-health.sh` script
+3. Results returned as structured JSON
+4. AI assistant summarizes findings
+
+**Example output:**
+
+[source]
+----
+Workspace health check complete:
+✓ Root repository clean
+✓ 9 submodules initialized
+✓ No detached HEADs
+✓ Artifact written to artifacts/workspace-health.json
+----
+
+=== Search Documentation
+
+[source]
+----
+Use the n00-docs MCP server to search for "MCP capabilities" documentation
+----
+
+**Response includes:**
+
+* Matching page titles
+* Page IDs and URLs
+* Content excerpts
+* Relevant tags
+
+=== Access Cortex Catalogs
+
+[source]
+----
+Use the cortex MCP server to show me the toolchain manifest
+----
+
+**Response provides:**
+
+* Node.js version requirements
+* Python version requirements
+* Tool versions (Trunk, Vale, etc.)
+* Renovate configuration references
+
+== Step 7: Execute Multi-Step Workflows
+
+=== Plan and Execute a Task
+
+[source]
+----
+I need to create a plan for "Add search functionality to documentation site".
+Use the ai-workflow server to:
+1. Generate a plan with the workspace.plan capability
+2. Show me the DRY and YAGNI scores
+3. Check if there are any conflicts to resolve
+----
+
+**Workflow:**
+
+1. AI creates a brief (or uses provided brief)
+2. Calls `workspace.plan` with appropriate parameters
+3. Reads generated `.plan.md` file
+4. Parses telemetry JSON for metrics
+5. Reports findings and recommendations
+
+=== Preflight Check Before Release
+
+[source]
+----
+Run a comprehensive preflight check before I create a release:
+1. Check workspace health
+2. Validate all submodules are clean
+3. Run meta-check for schema validation
+4. Confirm no stale :reviewed: dates
+----
+
+**Capabilities used:**
+
+* `workspace.gitDoctor` (health check)
+* `workspace.checkSubmodules` (submodule validation)
+* Direct script execution via `run_workflow_phase`
+* Attribute validation check
+
+== Common MCP Usage Patterns
+
+=== Pattern 1: Discovery → Execution → Validation
+
+[source]
+----
+1. List available capabilities
+2. Choose appropriate capability
+3. Execute with required inputs
+4. Validate output artifact
+5. Report results
+----
+
+=== Pattern 2: Resource Access → Processing
+
+[source]
+----
+1. Access resource via MCP (catalog, docs, manifest)
+2. Process/analyze the data
+3. Make recommendations
+4. Execute follow-up actions if needed
+----
+
+=== Pattern 3: Multi-Server Orchestration
+
+[source]
+----
+1. Query n00-docs for relevant documentation
+2. Access cortex for schema definitions
+3. Execute automation via ai-workflow
+4. Cross-reference results with docs
+----
+
+== Advanced Usage
+
+=== Custom Workflow Execution
+
+[source]
+----
+Run a custom workflow using ai-workflow:
+1. Phase: planning (interactive)
+2. Phase: review (interactive)
+3. Phase: implementation (automated)
+4. Phase: testing (automated)
+----
+
+**MCP call:**
+
+[source]
+----
+Use run_workflow_phase with:
+- phase: "planning"
+- interactive: true
+- taskDescription: "My custom task"
+----
+
+=== Batch Operations
+
+[source]
+----
+For each submodule in the workspace:
+1. Check for outdated dependencies
+2. Generate upgrade recommendations
+3. Create upgrade issues in GitHub
+----
+
+**Capabilities used:**
+
+* `workspace.gitDoctor` (list submodules)
+* Multiple `run_workflow_phase` calls
+* `project.syncGithub` (create issues)
+
+=== Telemetry Collection
+
+[source]
+----
+After running automation:
+1. Read telemetry from .dev/automation/artifacts/automation/
+2. Parse run envelopes
+3. Generate success/failure report
+4. Identify bottlenecks
+----
+
+== Troubleshooting
+
+=== MCP Server Not Found
+
+**Symptom:** "Server 'ai-workflow' not configured"
+
+**Solution:**
+
+1. Verify absolute paths in configuration
+2. Check that `node` and `python` are in PATH
+3. Restart the MCP client (VS Code, Claude, etc.)
+4. Check server logs for startup errors
+
+=== Tool Execution Fails
+
+**Symptom:** "Tool execution failed with exit code 1"
+
+**Solution:**
+
+1. Check that script has execute permissions: `chmod +x .dev/automation/scripts/*.sh`
+2. Verify Python venv is activated
+3. Check script logs in `.dev/automation/artifacts/`
+4. Run script manually to see full error
+
+=== Resource Not Found
+
+**Symptom:** "Resource not found: capabilities/manifest"
+
+**Solution:**
+
+1. Verify MCP server `cwd` is correct
+2. Check that required files exist (manifest.json, etc.)
+3. Ensure server dependencies installed (`pnpm install`)
+4. Try running server directly to see errors
+
+=== Permission Denied
+
+**Symptom:** "EACCES: permission denied"
+
+**Solution:**
+
+[source,bash]
+----
+# Fix script permissions
+chmod +x .dev/automation/scripts/*.sh
+chmod +x .dev/automation/scripts/*.py
+
+# Fix Python entrypoint
+chmod +x mcp/docs_server/server.py
+----
+
+=== JSON Parse Errors
+
+**Symptom:** "Unexpected token in JSON"
+
+**Solution:**
+
+1. Validate manifest.json: `python -m json.tool n00t/capabilities/manifest.json`
+2. Check for trailing commas
+3. Verify proper UTF-8 encoding
+4. Look for unescaped strings
+
+=== Timeout Errors
+
+**Symptom:** "Tool execution timed out"
+
+**Solution:**
+
+1. Check if script is blocking on user input
+2. Verify background processes aren't hanging
+3. Increase timeout in MCP client settings
+4. Use non-interactive mode for automation
+
+== Best Practices
+
+=== 1. Always Check Workspace Health First
+
+Before running automation:
+
+[source]
+----
+Check workspace health using workspace.gitDoctor before proceeding
+----
+
+=== 2. Use Non-Interactive Mode for Automation
+
+When chaining multiple steps:
+
+[source]
+----
+Set interactive=false for automated phases
+----
+
+=== 3. Validate Outputs
+
+After execution:
+
+[source]
+----
+Read the telemetry artifact and verify success status
+----
+
+=== 4. Handle Errors Gracefully
+
+[source]
+----
+If the tool fails, check the error log and suggest remediation
+----
+
+=== 5. Leverage Resource Access
+
+[source]
+----
+Before running automation, query n00-docs for relevant procedures
+----
+
+== Next Steps
+
+Now that you can use MCP servers:
+
+1. **Explore Capabilities**: See xref:reference/mcp-capabilities.adoc[MCP Capabilities Reference]
+2. **Read the Runbook**: See xref:ROOT:1. Cerebrum Docs/Agent Assisted Development/AGENT_E2E_RUNBOOK.adoc[Agent E2E Runbook]
+3. **Learn Workflows**: See xref:guides/running-automation.adoc[Running Automation Guide]
+4. **Understand Architecture**: See xref:adr/adr-001-mcp-server-architecture.adoc[ADR-001: MCP Server Architecture]
+
+== Summary Checklist
+
+- [ ] All three MCP servers installed (ai-workflow, cortex, n00-docs)
+- [ ] MCP client configured (VS Code/Claude/Cline)
+- [ ] Can list available capabilities
+- [ ] Successfully executed workspace.gitDoctor
+- [ ] Can search documentation via n00-docs
+- [ ] Can access cortex catalogs
+- [ ] Understand capability input/output structure
+- [ ] Know how to read telemetry artifacts
+- [ ] Familiar with troubleshooting steps
+
+**Learning Time**: 30-45 minutes
+
+**Support**: For MCP-specific issues, see xref:troubleshooting/n00t.adoc[n00t Troubleshooting] or review xref:adr/adr-003-capability-manifest-schema.adoc[ADR-003: Capability Manifest Schema].

@@ -1,0 +1,101 @@
+# Unified MCP suite for the n00tropic workspace.
+# Use with: WORKSPACE_ROOT=/path/to/n00tropic-cerebrum mcp-proxy tools -c mcp/mcp-suite.yaml
+# Optional servers (GitHub, search) require tokens; leave commented out if not needed.
+
+settings:
+  health_check_interval: 60
+  timeout: 30
+  retry_count: 2
+
+servers:
+  - name: filesystem
+    transport: stdio
+    command:
+      - npx
+      - "-y"
+      - "@modelcontextprotocol/server-filesystem"
+      - "${WORKSPACE_ROOT}"
+    timeout: 30
+
+  - name: memory
+    transport: stdio
+    command:
+      - npx
+      - "-y"
+      - "@modelcontextprotocol/server-memory"
+    timeout: 30
+
+  - name: docs
+    transport: stdio
+    command:
+      - "${WORKSPACE_ROOT}/.venv/bin/python"
+      - "${WORKSPACE_ROOT}/mcp/docs_server/server.py"
+    cwd: "${WORKSPACE_ROOT}"
+    timeout: 45
+
+  - name: n00t-capabilities
+    transport: stdio
+    command:
+      - "${WORKSPACE_ROOT}/.venv/bin/python"
+      - "${WORKSPACE_ROOT}/mcp/capabilities_server.py"
+    cwd: "${WORKSPACE_ROOT}"
+    timeout: 120
+
+  # AI workflow artifacts + phase runner (Node SDK)
+  - name: ai-workflow
+    transport: stdio
+    optional: true
+    command:
+      - node
+      - "${WORKSPACE_ROOT}/.dev/automation/mcp-server/index.js"
+    cwd: "${WORKSPACE_ROOT}"
+    timeout: 120
+
+  # Cortex catalog MCP server (Node SDK)
+  - name: cortex-catalog
+    transport: stdio
+    optional: true
+    command:
+      - node
+      - "${WORKSPACE_ROOT}/n00-cortex/mcp-server/index.js"
+    cwd: "${WORKSPACE_ROOT}/n00-cortex"
+    timeout: 120
+
+  # Cortex graph HTTP MCP-style server
+  - name: cortex-graph
+    transport: http
+    optional: true
+    base_url: http://localhost:8787/mcp
+    timeout: 60
+
+  # Optional: GitHub repo/server operations (needs GITHUB_TOKEN)
+  # - name: github
+  #   transport: stdio
+  #   command:
+  #     - npx
+  #     - "-y"
+  #     - "@modelcontextprotocol/server-github"
+  #   env:
+  #     GITHUB_TOKEN: "${GITHUB_TOKEN}"
+  #   timeout: 60
+
+  # Optional: Brave search (needs BRAVE_API_KEY)
+  # - name: search
+  #   transport: stdio
+  #   command:
+  #     - npx
+  #     - "-y"
+  #     - "@modelcontextprotocol/server-brave-search"
+  #   env:
+  #     BRAVE_API_KEY: "${BRAVE_API_KEY}"
+  #   timeout: 45
+
+  # Reserved: n00t capability host (coming from agent-core/mcp-proxy federation)
+  # Fill in once the capability MCP shim is enabled:
+  # - name: n00t-capabilities
+  #   transport: stdio
+  #   command:
+  #     - python
+  #     - "${WORKSPACE_ROOT}/n00t/cli.py"
+  #     - "mcp-capabilities"
+  #   timeout: 120

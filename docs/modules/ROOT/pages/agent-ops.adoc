@@ -1,0 +1,36 @@
+// vale off
+:page-tags: diataxis:howto, domain:platform, audience:agent, stability:beta
+:reviewed: 2025-11-25
+
+= Agent operations guide
+
+This page is optimized for agents. Follow it before automating changes.
+
+Ground rules
+
+* Prefer documented commands over improvisation. If in doubt, run `pnpm run docs:lint` and `pnpm run docs:fix-style -- --dry-run` before commits.
+* Respect the golden submodule path: commit then push inside the subrepo, then update the superrepo pointer.
+* Don’t stage artefacts: `.next/`, `dist/`, `docs/_build/`, `.venv/`, `.pnpm-store/`, `node_modules/`.
+* Use uv for Python (`uv sync --extra dev`) and pnpm for Node. Avoid `pip install` and `npm install`.
+
+Fast commands
+
+* Install hooks everywhere: `bash scripts/install-hooks.sh`
+* Docs lint: `pnpm run docs:lint`
+* Docs autoformat: `pnpm run docs:fix-style -- --pattern "docs/**/*.adoc,n00menon/modules/**/*.adoc"`
+* Refresh Typesense locally: `pnpm exec antora-playbook.yml && pnpm dlx http-server build/site -p 8080 & …` (see xref:search/typesense.adoc[]).
+
+Common pitfalls
+
+* Missing Typesense summary: run `docs/search/scripts/capture-latest-summary.sh` or trigger `search-reindex.yml`.
+* Stale review dates: update `:reviewed:` when verifying content.
+* Heading style: sentence case is enforced; autoformat via `docs:fix-style`.
+
+MCP capabilities to reuse
+
+* `planner.refreshPlans`: regenerate plans from briefs.
+* `docs.captureTypesenseSummary`: parse the latest Typesense log into JSON for dashboards.
+* `workspace-health` actions: prefer these over bespoke cleanup scripts.
+
+If you’re unsure, leave a short note in `docs/hooks.md` or the learning log and keep changes minimal until reviewed.
+// vale on

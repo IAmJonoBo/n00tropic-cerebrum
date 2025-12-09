@@ -1,0 +1,188 @@
+{
+  "meta": {
+    "catalog_ssot": "n00-frontiers",
+    "docs_ssot": "n00menon",
+    "schemas_enforcer": "n00-cortex",
+    "notes": [
+      "n00-frontiers is the canonical source for standards/templates; n00-cortex enforces schemas derived from it; n00menon is the docs SSoT.",
+      "All new repos should declare their role, required directories, and default branches here to stay evergreen."
+    ],
+    "defaults": {
+      "required": ["docs", "scripts"],
+      "branches": ["main", "docs"]
+    }
+  },
+  "repos": [
+    {
+      "name": "workspace",
+      "path": ".",
+      "language": "mixed",
+      "pkg": "pnpm",
+      "venv": ".venv-workspace",
+      "cli": "python3 cli.py",
+      "tooling": "tooling",
+      "scripts_dir": ".dev/automation/scripts",
+      "role": "workspace-orchestration"
+    },
+    {
+      "name": "n00-frontiers",
+      "path": "n00-frontiers",
+      "language": "python",
+      "pkg": "pnpm",
+      "venv": ".venv-frontiers",
+      "cli": "python3 cli/main.py",
+      "tooling": "tooling",
+      "scripts_dir": ".dev/n00-frontiers/scripts",
+      "role": "frontier-standards",
+      "ssot_for": ["engineering-standards", "templates", "governance"],
+      "feeds": ["n00-cortex", "n00t", "n00tropic", "n00plicate"]
+    },
+    {
+      "name": "n00-cortex",
+      "path": "n00-cortex",
+      "language": "python",
+      "pkg": "pnpm",
+      "venv": "n00-cortex/.venv",
+      "cli": "python3 cli/main.py",
+      "tooling": "tooling",
+      "scripts_dir": "n00-cortex/.dev/n00-cortex/scripts",
+      "role": "schemas-and-manifests",
+      "pulls_from": ["n00-frontiers"],
+      "exports_to": ["n00t", "n00plicate", "n00tropic"],
+      "ssot_for": ["schemas", "manifests"]
+    },
+    {
+      "name": "n00-dashboard",
+      "path": "n00-dashboard",
+      "language": "swift",
+      "pkg": "swiftpm",
+      "venv": null,
+      "cli": "bash cli/run.sh",
+      "tooling": "tooling",
+      "scripts_dir": "n00-dashboard/scripts",
+      "role": "dashboard-ui",
+      "required": [
+        "cli",
+        "env",
+        "automation",
+        "tooling",
+        "scripts",
+        "artifacts",
+        "docs",
+        "Tests"
+      ]
+    },
+    {
+      "name": "n00-horizons",
+      "path": "n00-horizons",
+      "language": "python",
+      "pkg": "pnpm",
+      "venv": "n00-horizons/.venv-horizons",
+      "cli": "python3 cli/main.py",
+      "tooling": "tooling",
+      "scripts_dir": "n00-horizons/.dev/n00-horizons/scripts",
+      "role": "strategy-and-projects"
+    },
+    {
+      "name": "n00-school",
+      "path": "n00-school",
+      "language": "python",
+      "pkg": "pnpm",
+      "venv": "n00-school/.venv-school",
+      "cli": "python3 cli/main.py",
+      "tooling": "tooling",
+      "scripts_dir": "n00-school/.dev/n00-school/scripts",
+      "role": "training-and-eval"
+    },
+    {
+      "name": "n00clear-fusion",
+      "path": "n00clear-fusion",
+      "language": "python",
+      "pkg": "pnpm",
+      "venv": "n00clear-fusion/.venv-fusion",
+      "cli": "python3 cli/main.py",
+      "tooling": "tooling",
+      "scripts_dir": "n00clear-fusion/.dev/n00clear-fusion/scripts",
+      "role": "ingestion-and-rag"
+    },
+    {
+      "name": "n00plicate",
+      "path": "n00plicate",
+      "language": "node",
+      "pkg": "pnpm",
+      "venv": null,
+      "cli": "node cli/index.mjs",
+      "tooling": "tooling",
+      "scripts_dir": "n00plicate/.dev/n00plicate/scripts",
+      "role": "design-system-packager"
+    },
+    {
+      "name": "n00menon",
+      "path": "n00menon",
+      "language": "node",
+      "pkg": "pnpm",
+      "venv": null,
+      "cli": "pnpm -C n00menon run validate",
+      "tooling": null,
+      "scripts_dir": "scripts",
+      "role": "docs-ssot",
+      "ssot_for": ["docs", "techdocs"],
+      "feeds": ["n00-frontiers", "n00-cortex", "n00t"],
+      "branches": ["main", "docs"],
+      "required": [
+        "docs",
+        "modules/ROOT/nav.adoc",
+        "modules/ROOT/pages",
+        "scripts"
+      ]
+    },
+    {
+      "name": "n00t",
+      "path": "n00t",
+      "language": "node",
+      "pkg": "pnpm",
+      "venv": null,
+      "cli": "pnpm exec tsx cli/index.ts",
+      "tooling": "tooling",
+      "scripts_dir": "n00t/.dev/n00t/scripts",
+      "role": "automation-surface",
+      "pulls_from": [".dev/automation/scripts"]
+    },
+    {
+      "name": "n00tropic",
+      "path": "n00tropic",
+      "language": "python",
+      "pkg": "pnpm",
+      "venv": "n00tropic/.venv",
+      "cli": "python3 cli/main.py",
+      "tooling": "tooling",
+      "scripts_dir": "n00tropic/.dev/n00tropic/scripts",
+      "role": "generators-and-doctrine",
+      "pulls_from": ["n00-frontiers", "n00-cortex"]
+    },
+    {
+      "name": "n00man",
+      "path": "n00man",
+      "language": "python",
+      "pkg": null,
+      "venv": "n00man/.venv-n00man",
+      "cli": "python3 cli/main.py",
+      "tooling": "tooling",
+      "scripts_dir": "n00man/scripts",
+      "role": "agent-foundry",
+      "required": [
+        "docs",
+        "docs/agents",
+        "agents",
+        "scripts",
+        "cli",
+        "env",
+        "tests",
+        "artifacts",
+        "automation",
+        "tooling"
+      ],
+      "branches": ["main"]
+    }
+  ]
+}

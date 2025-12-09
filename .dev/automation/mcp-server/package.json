@@ -1,0 +1,38 @@
+{
+  "name": "@n00tropic/ai-workflow-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for AI-assisted development workflows",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "ai-workflow-mcp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "keywords": [
+    "mcp",
+    "ai",
+    "workflow",
+    "development",
+    "automation"
+  ],
+  "author": "n00tropic",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/n00tropic/n00tropic-cerebrum",
+    "directory": ".dev/automation/mcp-server"
+  },
+  "files": [
+    "index.js",
+    "README.md"
+  ]
+}

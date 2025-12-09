@@ -1,0 +1,42 @@
+name: deps-drift
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Run drift analysis (fail on any drift)
+        run: |
+          .dev/automation/scripts/deps-drift.py --format both --output artifacts/deps-drift/latest.json --table-output artifacts/deps-drift/latest.md --plan-output artifacts/deps-drift/plan.json --fail-on any
+
+      - name: Upload drift report
+        uses: actions/upload-artifact@v4
+        with:
+          name: deps-drift-${{ github.sha }}
+          path: |
+            artifacts/deps-drift/latest.json
+            artifacts/deps-drift/latest.md
+            artifacts/deps-drift/plan.json
+          if-no-files-found: error
+
+      - name: Job summary
+        run: |
+          echo "## Dependency drift" >> $GITHUB_STEP_SUMMARY
+          cat artifacts/deps-drift/latest.md >> $GITHUB_STEP_SUMMARY

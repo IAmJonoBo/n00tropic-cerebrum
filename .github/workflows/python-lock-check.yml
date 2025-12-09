@@ -1,0 +1,57 @@
+name: python-lock-check
+
+on:
+  pull_request:
+    paths:
+      - requirements.workspace.txt
+      - requirements.workspace.lock
+      - scripts/refresh-python-lock.sh
+  schedule:
+    - cron: "15 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lock-check:
+    runs-on: [self-hosted, linux]
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK || '' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: false
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Check lock freshness
+        id: lock
+        run: |
+          set -e
+          export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+          OUTPUT=$(bash scripts/refresh-python-lock.sh --check 2>&1)
+          echo "$OUTPUT"
+          echo "output<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: Notify Discord
+        if: ${{ env.DISCORD_WEBHOOK != '' }}
+        run: |
+          set +e
+          STATUS="✅ Python lock check passed"
+          COLOR=3066993
+          if [[ "${{ steps.lock.outcome }}" != "success" ]]; then
+            STATUS="❌ Python lock check failed"
+            COLOR=15158332
+          fi
+          PAYLOAD=$(jq -n --arg content "$STATUS" --arg desc "${{ steps.lock.outputs.output }}" --argjson color $COLOR '{embeds:[{title:$content,description:$desc,color:$color}]}' )
+          curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "$DISCORD_WEBHOOK" || true

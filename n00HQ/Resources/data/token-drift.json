@@ -1,0 +1,9 @@
+{
+  "generated_at": "2025-11-29T19:49:17.115350",
+  "current_hash": "a3a5d67b6026f76b5826f4eecf8b1f13a6ecda52c1729ed3a73eac3b8160aefe",
+  "previous_hash": "6ac7376e1ceec9cc49f13a8e7baebdaba94ec4c6a5846b066e0e7e6aa7753cf9",
+  "drift": true,
+  "tokens_path": "n00plicate/packages/design-tokens/libs/tokens/json/tokens.json",
+  "validation": "failed",
+  "validation_reason": "token_validation_failed"
+}

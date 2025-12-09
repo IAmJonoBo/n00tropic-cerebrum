@@ -1,0 +1,47 @@
+name: runners-nightly
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-runners:
+    runs-on: [self-hosted, linux]
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN || '' }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN || '' }}
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK || '' }}
+      REQUIRED_RUNNER_LABELS: ${{ secrets.REQUIRED_RUNNER_LABELS || 'self-hosted,linux,x64,pnpm,uv' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: false
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+      - name: Run runner inventory
+        id: runners
+        run: |
+          set -e
+          OUTPUT=$(pnpm run tools:check-runners --json 2>&1)
+          echo "$OUTPUT"
+          echo "output<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: Notify Discord
+        if: ${{ env.DISCORD_WEBHOOK != '' }}
+        run: |
+          set +e
+          STATUS="✅ Runner check passed"
+          COLOR=3066993
+          if [[ "${{ steps.runners.outcome }}" != "success" ]]; then
+            STATUS="❌ Runner check failed"
+            COLOR=15158332
+          fi
+          PAYLOAD=$(jq -n --arg content "$STATUS" --arg desc "${{ steps.runners.outputs.output }}" --argjson color $COLOR '{embeds:[{title:$content,description:$desc,color:$color}]}' )
+          curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "$DISCORD_WEBHOOK" || true

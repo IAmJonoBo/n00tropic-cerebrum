@@ -1,0 +1,17 @@
+# Aggregated Python requirements for the Cerebrum workspace (full / test-all)
+# Core generators + governance
+-r n00tropic/requirements.txt
+-r n00-frontiers/requirements.txt
+-r n00-cortex/requirements.txt
+
+# Training / evaluation / strategy
+-r n00-school/requirements.txt
+-r n00clear-fusion/requirements.txt
+-r n00clear-fusion/requirements-doctr.txt
+
+# Automation surface + dev/test extras
+-r n00t/requirements.txt
+-r n00t/requirements-dev.txt
+
+# Shared docs server
+-r mcp/docs_server/requirements.txt

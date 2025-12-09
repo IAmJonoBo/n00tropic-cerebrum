@@ -1,0 +1,648 @@
+= Architecture Overview
+:page-tags: reference,architecture,diagrams
+:reviewed: 2025-11-27
+:toc: left
+:toclevels: 3
+:kroki-default-options: svg
+
+This page provides architectural diagrams for the n00tropic Cerebrum workspace, showing system structure, data flows, and key interactions.
+
+== Workspace Architecture
+
+The n00tropic Cerebrum workspace is a mono-repository containing multiple specialized sub-repositories that work together to provide automation, documentation, and AI-assisted development capabilities.
+
+[plantuml,workspace-architecture,svg]
+....
+@startuml
+!include <C4/C4_Context>
+
+title n00tropic Cerebrum - Workspace Context
+
+Person(developer, "Developer", "Software engineer using the workspace")
+Person(ai_agent, "AI Agent", "Automated assistant for development tasks")
+
+System_Boundary(cerebrum, "n00tropic Cerebrum") {
+    System(n00_cortex, "n00-cortex", "Central schema & catalog registry")
+    System(n00_frontiers, "n00-frontiers", "Template scaffolding system")
+    System(n00t, "n00t", "MCP server & automation hub")
+    System(n00tropic, "n00tropic", "AI design generator")
+    System(docs, "Documentation", "Antora-based docs site")
+}
+
+System_Ext(github, "GitHub", "Version control & CI/CD")
+System_Ext(erpnext, "ERPNext", "Project management system")
+System_Ext(sonarqube, "SonarQube", "Code quality platform")
+System_Ext(ai_models, "AI Models", "LLMs via Ollama/LiteLLM")
+
+Rel(developer, cerebrum, "Develops with", "Git, IDE")
+Rel(ai_agent, n00t, "Uses capabilities from", "MCP protocol")
+Rel(n00t, n00_cortex, "Reads schemas from")
+Rel(n00t, docs, "Generates docs via")
+Rel(n00_frontiers, n00_cortex, "Consumes catalogs from")
+Rel(n00tropic, n00_cortex, "Validates against schemas")
+Rel(cerebrum, github, "Syncs with", "Git push/pull")
+Rel(cerebrum, erpnext, "Reports to", "REST API")
+Rel(cerebrum, sonarqube, "Analyzes with", "MCP/REST")
+Rel(ai_agent, ai_models, "Queries", "HTTP API")
+
+@enduml
+....
+
+== MCP Server Architecture
+
+The workspace exposes three Model Context Protocol (MCP) servers that provide structured capabilities to AI agents and tools.
+
+[plantuml,mcp-architecture,svg]
+....
+@startuml
+!include <C4/C4_Container>
+
+title n00t MCP Server - Container Diagram
+
+Person(ai_client, "AI Client", "VS Code, Claude Desktop, Cline")
+
+System_Boundary(n00t, "n00t MCP Server") {
+    Container(server, "MCP Server", "Node.js", "Exposes capabilities via stdio")
+    Container(capability_registry, "Capability Registry", "JSON manifest", "Lists 18+ automation capabilities")
+    Container(script_executor, "Script Executor", "Child process", "Runs workspace automation scripts")
+    ContainerDb(artifacts, "Artifacts Store", "File system", "Stores execution logs & results")
+}
+
+System_Boundary(workspace, "Workspace Scripts") {
+    Container(automation, "Automation Scripts", "Bash/Python", "35+ workspace operations")
+    Container(validators, "Validators", "Python/Node", "Schema & template validation")
+    Container(generators, "Generators", "Python", "Doc index, manifests")
+}
+
+System_Ext(cortex_data, "n00-cortex/data", "Schemas & catalogs")
+System_Ext(docs_site, "Documentation Site", "Antora output")
+
+Rel(ai_client, server, "Invokes capabilities", "MCP over stdio")
+Rel(server, capability_registry, "Reads manifest from")
+Rel(server, script_executor, "Spawns")
+Rel(script_executor, automation, "Executes")
+Rel(script_executor, validators, "Runs")
+Rel(script_executor, generators, "Invokes")
+Rel(script_executor, artifacts, "Writes logs to")
+Rel(automation, cortex_data, "Reads/validates")
+Rel(generators, docs_site, "Produces")
+
+@enduml
+....
+
+== Automation Workflow
+
+This diagram shows the typical flow when executing workspace automation through MCP capabilities.
+
+[mermaid,automation-workflow,svg]
+....
+graph TD
+    A[AI Agent Request] --> B{Capability Type?}
+    
+    B -->|Validation| C[Run Validation Script]
+    B -->|Generation| D[Run Generator Script]
+    B -->|Workflow| E[Execute Workflow Phase]
+    B -->|Project Ops| F[Run Project Script]
+    
+    C --> G[Check Exit Code]
+    D --> G
+    E --> G
+    F --> G
+    
+    G -->|Success = 0| H[Parse Output]
+    G -->|Error != 0| I[Capture stderr]
+    
+    H --> J[Format Response]
+    I --> K[Format Error Response]
+    
+    J --> L[Log to Artifacts]
+    K --> L
+    
+    L --> M[Return to Agent]
+    
+    style A fill:#e1f5ff
+    style M fill:#c8e6c9
+    style G fill:#fff9c4
+    style I fill:#ffccbc
+....
+
+== Documentation Pipeline
+
+The documentation system uses Antora to aggregate content from multiple repositories and generate a unified site.
+
+[mermaid,docs-pipeline,svg]
+....
+sequenceDiagram
+    participant Dev as Developer
+    participant Repo as Git Repository
+    participant Antora as Antora Builder
+    participant Kroki as Kroki Server
+    participant Vale as Vale Linter
+    participant Site as Generated Site
+    
+    Dev->>Repo: Edit AsciiDoc files
+    Dev->>Repo: Commit & push
+    
+    Note over Repo: CI triggered
+    
+    Repo->>Vale: Run prose linting
+    Vale-->>Repo: Report issues
+    
+    Repo->>Antora: Build documentation
+    Antora->>Repo: Fetch content from all components
+    Antora->>Antora: Process AsciiDoc
+    
+    Antora->>Kroki: Request diagram rendering
+    Note over Kroki: PlantUML, Mermaid,<br/>GraphViz, etc.
+    Kroki-->>Antora: Return SVG diagrams
+    
+    Antora->>Site: Generate HTML site
+    Site->>Site: Build search index
+    
+    Note over Site: Site ready for deployment
+    
+    Dev->>Site: Preview locally
+....
+
+== Project Lifecycle
+
+Projects in the workspace follow a defined lifecycle with automated gates and validation.
+
+[mermaid,project-lifecycle,svg]
+....
+stateDiagram-v2
+    [*] --> Planning: Create project brief
+    
+    Planning --> Review: metadata.validate
+    Review --> Planning: Validation fails
+    Review --> Implementation: Approved
+    
+    Implementation --> Testing: Code complete
+    Testing --> Implementation: Tests fail
+    Testing --> Documentation: Tests pass
+    
+    Documentation --> QualityGate: Docs complete
+    QualityGate --> Implementation: Quality issues
+    QualityGate --> Deployment: Passed
+    
+    Deployment --> Monitoring: Deployed
+    Monitoring --> Maintenance: In production
+    
+    Maintenance --> Planning: Enhancement needed
+    Maintenance --> [*]: Archived
+    
+    note right of Review
+        Checks:
+        - Required fields
+        - Link validation
+        - Review date
+    end note
+    
+    note right of QualityGate
+        SonarQube checks:
+        - Code coverage
+        - Security hotspots
+        - Technical debt
+    end note
+....
+
+== ERPNext Integration
+
+The workspace integrates with ERPNext for project management, syncing metadata and tracking progress.
+
+[plantuml,erpnext-integration,svg]
+....
+@startuml
+!include <C4/C4_Component>
+
+title ERPNext Integration - Component Diagram
+
+Container_Boundary(workspace, "Workspace Automation") {
+    Component(preflight, "Preflight Check", "Bash", "Validates project metadata")
+    Component(sync_script, "ERPNext Sync", "Python", "Syncs projects to ERPNext")
+    Component(metadata_reader, "Metadata Reader", "Python", "Parses project YAML")
+    ComponentDb(project_files, "Project Metadata", "YAML files", "Stores project definitions")
+}
+
+Container_Boundary(erpnext_sys, "ERPNext System") {
+    Component(rest_api, "REST API", "Frappe", "Provides project CRUD")
+    ComponentDb(erpnext_db, "ERPNext Database", "MariaDB", "Stores project records")
+    Component(project_module, "Project Module", "Python", "Manages projects")
+}
+
+System_Ext(github_api, "GitHub API", "Issue & PR tracking")
+
+Rel(preflight, metadata_reader, "Uses")
+Rel(metadata_reader, project_files, "Reads")
+Rel(preflight, sync_script, "Triggers on success")
+Rel(sync_script, metadata_reader, "Uses")
+Rel(sync_script, rest_api, "POST/PUT/GET", "HTTPS")
+Rel(rest_api, project_module, "Calls")
+Rel(project_module, erpnext_db, "Queries/updates")
+Rel(sync_script, github_api, "Fetches issue data", "HTTPS")
+
+note right of sync_script
+    Syncs:
+    - Project name & description
+    - Status & priority
+    - GitHub issue links
+    - Review dates
+end note
+
+@enduml
+....
+
+== Dependency Management
+
+The workspace uses a multi-layered approach to dependency management across different package ecosystems.
+
+[mermaid,dependency-management,svg]
+....
+graph TB
+    subgraph Root["Workspace Root"]
+        TM[toolchain-manifest.json<br/>Central version registry]
+        RJ[renovate.json<br/>Workspace config]
+    end
+    
+    subgraph Cortex["n00-cortex"]
+        CPJ[package.json<br/>Node dependencies]
+        CPY[pyproject.toml<br/>Python dependencies]
+    end
+    
+    subgraph Frontiers["n00-frontiers"]
+        FPY[pyproject.toml<br/>Template system]
+        FNX[noxfile.py<br/>Test environments]
+    end
+    
+    subgraph N00t["n00t"]
+        NPJ[package.json<br/>MCP server]
+        NWS[pnpm-workspace<br/>Monorepo structure]
+    end
+    
+    subgraph Tropic["n00tropic"]
+        TPY[requirements.txt<br/>AI generator]
+    end
+    
+    TM --> CPJ
+    TM --> CPY
+    TM --> FPY
+    TM --> NPJ
+    TM --> TPY
+    
+    RJ --> Cortex
+    RJ --> Frontiers
+    RJ --> N00t
+    RJ --> Tropic
+    
+    CPJ --> |inherits| RJ
+    FPY --> |inherits| RJ
+    NPJ --> |inherits| RJ
+    TPY --> |inherits| RJ
+    
+    style TM fill:#ffeb3b
+    style RJ fill:#ff9800
+    style Root fill:#fff3e0
+....
+
+== Component Interactions
+
+High-level view of how the major workspace components interact during typical development workflows.
+
+[plantuml,component-interactions,svg]
+....
+@startuml
+
+package "n00-cortex" {
+    [Schema Registry] as SR
+    [Catalog Store] as CS
+    database "JSON Schemas" as JS
+}
+
+package "n00-frontiers" {
+    [Template Engine] as TE
+    [Validator] as TV
+    folder "Templates" as TM
+}
+
+package "n00t" {
+    [MCP Server] as MS
+    [Capability Executor] as CE
+    [Artifact Logger] as AL
+}
+
+package "n00tropic" {
+    [Design Generator] as DG
+    [Brief Parser] as BP
+}
+
+package "Documentation" {
+    [Antora] as AN
+    [Kroki] as KR
+    folder "Content" as DC
+}
+
+actor "Developer" as DEV
+actor "AI Agent" as AI
+
+DEV --> DG : Create design brief
+BP --> SR : Validate against schemas
+DG --> TM : Generate from templates
+DG --> DC : Output documentation
+
+AI --> MS : Request capability
+MS --> CE : Execute script
+CE --> SR : Read schemas
+CE --> TV : Validate templates
+CE --> AL : Log execution
+
+TE --> CS : Consume catalogs
+TV --> SR : Validate against schemas
+
+AN --> DC : Aggregate content
+AN --> KR : Render diagrams
+KR --> AN : Return SVG
+
+@enduml
+....
+
+== Data Flow
+
+This diagram shows how data flows through the workspace ecosystem, from initial schemas to final deliverables.
+
+[mermaid,data-flow,svg]
+....
+flowchart LR
+    subgraph Input["Input Sources"]
+        Brief[Design Brief]
+        Schema[JSON Schema]
+        Catalog[Catalog Data]
+    end
+    
+    subgraph Processing["Processing Layer"]
+        Validate{Validate}
+        Generate[Generate Code]
+        Template[Apply Template]
+        Transform[Transform Data]
+    end
+    
+    subgraph Storage["Data Storage"]
+        Git[(Git Repository)]
+        Artifacts[(Artifacts)]
+        Cache[(Build Cache)]
+    end
+    
+    subgraph Output["Deliverables"]
+        Code[Source Code]
+        Docs[Documentation]
+        Reports[Reports]
+        Metrics[Metrics]
+    end
+    
+    Brief --> Validate
+    Schema --> Validate
+    Catalog --> Validate
+    
+    Validate -->|Valid| Generate
+    Validate -->|Invalid| Reports
+    
+    Generate --> Template
+    Template --> Transform
+    
+    Transform --> Git
+    Transform --> Artifacts
+    Transform --> Cache
+    
+    Git --> Code
+    Artifacts --> Reports
+    Artifacts --> Metrics
+    Cache --> Docs
+    
+    style Validate fill:#fff9c4
+    style Git fill:#e1f5ff
+    style Code fill:#c8e6c9
+    style Reports fill:#ffccbc
+....
+
+== Technology Stack
+
+Overview of the key technologies and tools used across the workspace.
+
+[plantuml,tech-stack,svg]
+....
+@startuml
+skinparam componentStyle rectangle
+
+package "Frontend" {
+    [TypeScript 5.7+]
+    [React 18+]
+    [SwiftUI]
+}
+
+package "Backend" {
+    [Python 3.11+]
+    [Node.js 20+/24+]
+    [Bash]
+}
+
+package "Build & Package" {
+    [pnpm 9+]
+    [pip/uv]
+    [Swift Package Manager]
+}
+
+package "Quality & Linting" {
+    [Trunk 1.22+]
+    [Biome 2.3+]
+    [Vale 3.13+]
+    [SonarQube]
+}
+
+package "Documentation" {
+    [Antora 3.1.14]
+    [AsciiDoc]
+    [Kroki]
+}
+
+package "Testing" {
+    [Vitest]
+    [pytest]
+    [nox]
+}
+
+package "Automation" {
+    [GitHub Actions]
+    [Renovate]
+    [MCP Protocol]
+}
+
+package "Data & Config" {
+    [JSON Schema]
+    [YAML]
+    [TOML]
+}
+
+[TypeScript 5.7+] --> [Node.js 20+/24+]
+[React 18+] --> [TypeScript 5.7+]
+[Python 3.11+] --> [pytest]
+[Node.js 20+/24+] --> [Vitest]
+
+[pnpm 9+] --> [Node.js 20+/24+]
+[pip/uv] --> [Python 3.11+]
+
+[Trunk 1.22+] --> [Biome 2.3+]
+[Trunk 1.22+] --> [Vale 3.13+]
+
+[Antora 3.1.14] --> [AsciiDoc]
+[Antora 3.1.14] --> [Kroki]
+
+[MCP Protocol] --> [Node.js 20+/24+]
+[Renovate] --> [GitHub Actions]
+
+[JSON Schema] --> [Python 3.11+]
+[JSON Schema] --> [TypeScript 5.7+]
+
+@enduml
+....
+
+== Security Architecture
+
+Security controls and validation gates throughout the development pipeline.
+
+[plantuml,security-architecture,svg]
+....
+@startuml
+!define ICONURL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v2.4.0
+!include ICONURL/common.puml
+!include ICONURL/font-awesome-5/shield_alt.puml
+!include ICONURL/font-awesome-5/lock.puml
+!include ICONURL/font-awesome-5/search.puml
+
+title Security Architecture & Controls
+
+actor Developer
+rectangle "Development Environment" {
+    component "Pre-commit Hooks" as PCH
+    component "Trunk Linting" as TL
+}
+
+rectangle "Version Control" {
+    component "GitHub" as GH
+    component "Branch Protection" as BP
+}
+
+rectangle "CI Pipeline" {
+    component "Security Scan" as SS
+    component "Dependency Audit" as DA
+    component "Secret Detection" as SD
+    component "SAST" as SAST
+}
+
+rectangle "Quality Gates" {
+    component "SonarQube" as SQ
+    component "Coverage Check" as CC
+    component "Vulnerability Scan" as VS
+}
+
+rectangle "Deployment" {
+    component "Signed Artifacts" as SA
+    component "Access Control" as AC
+}
+
+Developer --> PCH : Commit code
+PCH --> TL : Auto-format & lint
+TL --> GH : Push changes
+
+GH --> BP : Enforce rules
+BP --> SS : Trigger CI
+
+SS --> DA : Check dependencies
+DA --> SD : Scan for secrets
+SD --> SAST : Static analysis
+
+SAST --> SQ : Report findings
+SQ --> CC : Measure coverage
+CC --> VS : Scan vulnerabilities
+
+VS --> SA : Package artifacts
+SA --> AC : Control deployment
+
+note right of BP
+    - Require PR reviews
+    - Status checks must pass
+    - Linear history
+    - No force push
+end note
+
+note right of SQ
+    - Security hotspots
+    - Code smells
+    - Technical debt
+    - Coverage > 80%
+end note
+
+@enduml
+....
+
+== Deployment Pipeline
+
+The complete deployment pipeline from code commit to production.
+
+[mermaid,deployment-pipeline,svg]
+....
+flowchart TD
+    Start([Developer Commits]) --> Lint[Trunk Auto-Lint]
+    Lint --> Push[Push to GitHub]
+    
+    Push --> CI{CI Checks}
+    
+    CI -->|Tests| Test[Run Test Suite]
+    CI -->|Quality| Quality[SonarQube Scan]
+    CI -->|Security| Security[Security Scan]
+    CI -->|Docs| DocBuild[Build Docs]
+    
+    Test --> TestPass{Pass?}
+    Quality --> QualityPass{Pass?}
+    Security --> SecPass{Pass?}
+    DocBuild --> DocPass{Pass?}
+    
+    TestPass -->|No| FailNotify[Notify Failure]
+    QualityPass -->|No| FailNotify
+    SecPass -->|No| FailNotify
+    DocPass -->|No| FailNotify
+    
+    TestPass -->|Yes| Merge{All Pass?}
+    QualityPass -->|Yes| Merge
+    SecPass -->|Yes| Merge
+    DocPass -->|Yes| Merge
+    
+    FailNotify --> End([Stop])
+    
+    Merge -->|Yes| Package[Package Artifacts]
+    Merge -->|No| End
+    
+    Package --> Tag[Create Release Tag]
+    Tag --> Deploy[Deploy to Production]
+    Deploy --> Verify[Post-Deploy Verification]
+    
+    Verify --> Success{Success?}
+    Success -->|Yes| Monitor[Monitor & Alert]
+    Success -->|No| Rollback[Rollback]
+    
+    Rollback --> Notify[Notify Team]
+    Notify --> End
+    
+    Monitor --> EndSuccess([Complete])
+    
+    style Start fill:#e1f5ff
+    style EndSuccess fill:#c8e6c9
+    style End fill:#ffccbc
+    style FailNotify fill:#ff9800
+    style Rollback fill:#f44336
+....
+
+== See Also
+
+* xref:guides/running-automation.adoc[Running Automation] - How to execute automation scripts
+* xref:tutorials/mcp-server-usage.adoc[MCP Server Usage] - Tutorial for using MCP capabilities
+* xref:guides/creating-adr.adoc[Creating ADRs] - How to document architectural decisions
+* xref:reference/mcp-capabilities.adoc[MCP Capabilities Reference] - Complete list of available capabilities

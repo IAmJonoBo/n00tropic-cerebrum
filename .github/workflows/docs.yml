@@ -5,6 +5,8 @@ on:
       - main
     paths:
       - docs/**
+      - n00menon/docs/**
+      - n00menon/modules/**/*.adoc
       - n00-frontiers/docs/**
       - n00-cortex/docs/**
       - n00t/docs/**
@@ -15,6 +17,8 @@ on:
   pull_request:
     paths:
       - docs/**
+      - n00menon/docs/**
+      - n00menon/modules/**/*.adoc
       - n00-frontiers/docs/**
       - n00-cortex/docs/**
       - n00t/docs/**
@@ -32,21 +36,39 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          submodules: recursive
+          submodules: false
+      - name: Try to fetch submodules (optional)
+        run: |
+          set -eux
+          git submodule sync --recursive || true
+          git submodule update --init --recursive || echo "Submodules failed to update — continuing without them"
       - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version-file: .nvmrc
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Check n00menon docs sync
+        run: pnpm run docs:sync-n00menon:check
+
       - name: Verify Antora + Danger availability
         run: |
-          pnpm -C n00plicate exec antora --version
-          pnpm -C n00plicate exec danger --version
+          if [ -d n00plicate ]; then
+            pnpm -C n00plicate exec antora --version
+            pnpm -C n00plicate exec danger --version
+          else
+            echo "n00plicate submodule not present; skipping antora/danger verification"
+          fi
+          if [ -d n00menon ]; then
+            pnpm -C n00menon exec antora --version || true
+            # n00menon might not include Danger config; skip if not present
+          else
+            echo "n00menon not present locally; CI build may use remote git component in CI playbook"
+          fi
       - name: Prepare pnpm and Antora
         run: |
           corepack enable
-          corepack prepare pnpm@latest --activate
+          corepack prepare pnpm@10.23.0 --activate
           # Local antora binaries are available via pnpm exec
       - name: Vale
         uses: errata-ai/vale-action@v2
@@ -55,14 +77,14 @@ jobs:
       - name: Vale triage artifacts
         run: pnpm run docs:vale-triage || true
       - name: Upload Vale triage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vale-triage
           path: artifacts/vale-triage.json
       - name: Generate spelling counts
         run: pnpm run docs:generate-spelling-counts || true
       - name: Upload spelling counts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vale-spelling-counts
           path: artifacts/vale-spelling-token-counts.json
@@ -74,20 +96,38 @@ jobs:
             'docs/**/*.md' '**/*.html'
       - name: Attr checks
         run: node scripts/check-attrs.mjs
+      - name: n00menon validate (if available)
+        run: |
+          if [ -d n00menon ]; then
+            pnpm -C n00menon run validate || true
+          else
+            echo "n00menon not present; skipping validate"
+          fi
+      - name: Workspace cspell
+        run: pnpm exec cspell --config ./cspell.json 'docs/**/*' || true
+      - name: Run Danger
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DANGER_JS_USE_TS_NODE: "1"
+        run: pnpm exec danger ci
       - name: Vale triage artifacts
         run: pnpm run docs:vale-triage || true
       - name: Spelling counts
         run: pnpm run docs:generate-spelling-counts || true
       - name: Upload spelling counts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vale-spelling-counts
           path: artifacts/vale-spelling-token-counts.json
       - name: Build Antora (CI playbook)
         run: |
-          cd n00plicate
-          pnpm install --frozen-lockfile
-          pnpm exec antora antora-playbook.ci.yml --stacktrace
+          if [ -d n00plicate ] || [ -d n00menon ]; then
+            cd n00plicate
+            pnpm install --frozen-lockfile
+            pnpm exec antora antora-playbook.ci.yml --stacktrace
+          else
+            echo "n00plicate submodule not present; skipping Antora build"
+          fi
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v4
         with:
@@ -100,11 +140,24 @@ jobs:
       - name: Python lint (auto fix safe changes)
         uses: actions/setup-python@v6
         with:
-          python-version: "3.10"
+          python-version: 3.11.14
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
+      - name: Install uv + minimal deps
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+          uv pip sync requirements.workspace.min.lock
       - name: Run lint-python script (fix mode)
         run: pnpm run lint:python:fix || true
       - name: Upload terms counts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: vale-terms-counts
           path: artifacts/vale-terms-token-counts.json

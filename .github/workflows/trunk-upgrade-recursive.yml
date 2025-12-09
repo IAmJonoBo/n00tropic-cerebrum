@@ -1,0 +1,47 @@
+name: trunk-upgrade-recursive
+
+on:
+  schedule:
+    - cron: "0 4 * * 1" # Mondays 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  trunk-upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+
+      - name: Run trunk upgrades (auto-init missing)
+        env:
+          TRUNK_INSTALL: 1
+          TRUNK_INIT_MISSING: 1
+        run: |
+          .dev/automation/scripts/trunk-upgrade.sh
+
+      - name: Push updates
+        if: ${{ github.repository_owner == 'n00tropic' }}
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
+        run: |
+          if git status --porcelain | grep .; then
+            git add .
+            git commit -m "chore(trunk): recursive upgrade"
+            git push
+          else
+            echo "No trunk changes to push"
+          fi

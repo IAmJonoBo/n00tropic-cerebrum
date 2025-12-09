@@ -1,0 +1,45 @@
+name: horizons-metadata
+
+on:
+  pull_request:
+    paths:
+      - "n00-horizons/**"
+      - ".dev/automation/scripts/validate-project-metadata.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Try to fetch submodules (optional)
+        run: |
+          set -eux
+          git submodule sync --recursive || true
+          git submodule update --init --recursive || echo "Submodules failed to update — continuing without them"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11.14
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
+      - name: Install uv + minimal deps
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+          uv pip sync requirements.workspace.min.lock
+      - name: Validate horizons metadata
+        run: |
+          python3 .dev/automation/scripts/validate-project-metadata.py --paths "n00-horizons/jobs/**/*.md" "n00-horizons/ideas/**/*.md" "n00-horizons/learning-log/**/*.md" || true

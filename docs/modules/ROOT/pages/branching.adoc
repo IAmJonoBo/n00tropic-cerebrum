@@ -1,0 +1,12 @@
+= Branch management (pointer)
+:page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-25
+
+Source of truth: xref:++n00menon/modules/ROOT/pages/branching.adoc++[] in the `n00menon` docs hub.
+
+Key reminders:
+
+* Branch naming: `feat/*`, `fix/*`, `docs/*`; keep branches short lived and `rebase` before pushing.
+* Update submodules via the golden path: commit in the subrepo first, then advance the pointer here.
+* Avoid staging build artefacts (`.next/`, `dist/`, `docs/_build/`, `artifacts/`) or local environments (`.venv/`, `.pnpm-store/`, `node_modules/`).
+* Docs/search changes must refresh Typesense and leave the latest `typesense-reindex-*.log[.json]` under `docs/search/logs/` to satisfy Danger/ci.

@@ -1,8 +1,35 @@
 * xref:index.adoc[Home]
 * xref:migration-status.adoc[Migration Tracker]
+
+.Getting Started
+* xref:tutorials/workspace-setup.adoc[Workspace Setup]
+* xref:tutorials/mcp-server-usage.adoc[MCP Server Usage]
+
+.How-To Guides
+* xref:guides/running-automation.adoc[Running Automation]
+* xref:guides/adding-mcp-capability.adoc[Adding MCP Capability]
+* xref:guides/creating-adr.adoc[Creating ADRs]
+* xref:guides/documentation-governance.adoc[Documentation Governance]
+* xref:golden-paths.adoc[Golden Paths]
+* xref:automation/control-plane.adoc[Control-Plane Automation]
+
+.Planning & Workflows
+* xref:planning.adoc[Planning & Typesense]
+** xref:closing-gaps.adoc[Gap Closure Plan]
+** xref:++n00-horizons/docs/modules/ROOT/pages/experiments/planner-telemetry.adoc++[Experiment: Planner telemetry]
+** xref:++n00-horizons/docs/modules/ROOT/pages/experiments/antora-typesense-completion.adoc++[Experiment: Docs migration]
+** xref:++n00-horizons/docs/modules/ROOT/pages/experiments/control-panel-upgrade.adoc++[Experiment: Control panel]
 * xref:README.adoc[Legacy README]
 * xref:contributing.adoc[Docs Contribution Playbook]
 * xref:search/index.adoc[Search & MCP]
+** xref:search/typesense.adoc[Typesense Operations]
+* xref:script-index.adoc[Script Index]
+* xref:pnpm-migration.adoc[pnpm Migration Guide]
+* xref:submodules.adoc[Submodule Playbook]
+* xref:branching.adoc[Branch Management Pointer]
+* xref:manifesto.adoc[Evergreen Engineering Manifesto]
+* xref:agent-ops.adoc[Agent Operations Guide]
+* xref:++../n00man/docs/agent-registry.adoc++[Agent Registry (n00man)]
 * Legacy imports
 ** xref:++1. Cerebrum Docs/README.adoc++[Cerebrum Knowledge Hub]
 *** xref:++1. Cerebrum Docs/AI_WORKSPACE_PLAYBOOK.adoc++[AI Workspace Playbook]
@@ -16,3 +43,13 @@
 **** xref:++1. Cerebrum Docs/ADR/ADR-002-agent-orchestration-and-training.adoc++[ADR-002 Agent Orchestration]
 **** xref:++1. Cerebrum Docs/ADR/ADR-003-operational-workspace-taxonomy-and-erpnext-integration.adoc++[ADR-003 Workspace Taxonomy]
 **** xref:++1. Cerebrum Docs/ADR/ADR-004-unified-project-management-system.adoc++[ADR-004 Unified PM System]
+
+.Troubleshooting
+* xref:troubleshooting/workspace.adoc[Workspace Issues]
+* xref:troubleshooting/n00t.adoc[n00t Issues]
+* xref:troubleshooting/n00tropic.adoc[n00tropic Issues]
+* xref:troubleshooting/n00-frontiers.adoc[n00-frontiers Issues]
+
+.Reference
+* xref:reference/architecture.adoc[Architecture Overview]
+* xref:reference/glossary.adoc[Glossary]

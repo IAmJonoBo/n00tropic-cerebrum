@@ -1,23 +1,23 @@
-= Start Here: 1. Cerebrum Docs
+= Start here: 1. Cerebrum docs
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
-:reviewed: 2025-11-11
+:reviewed: 2025-11-18
 
-This repo records cross-workspace decisions, shared policy, and release
+This repository records cross-workspace decisions, shared policy, and release
 manifests. Treat it as the governance layer for the polyrepo.
 
 == If you only have 5 minutes
 
-* Read xref:../README.adoc[`README.md`] for the current doc structure.
-* Check `ADR/` for recent architecture decisions; every cross-repo change should
+* Read xref:../README.adoc[] for the current doc structure.
+* Check `ADR/` for recent architecture decisions; every cross-repository change should
  reference an ADR here.
-* Review `RENOVATE_SETUP.md` and `TRUNK_GUIDE.md` when adjusting dependency or
- linting policies.
+* Review xref:++../RENOVATE_SETUP.adoc++[] and xref:++../TRUNK_GUIDE.adoc++[] when
+ adjusting dependency or linting policies.
 == Quick start (humans)
 
-[,bash]
+[source,bash]
 ----
-cd "1. Cerebrum Docs" pnpm install --prefix ../n00-cortex docs # optional: reuse
-Docusaurus tooling
+cd "1. Cerebrum Docs"
+pnpm install --prefix ../n00-cortex docs # optional: reuse Docusaurus tooling
 
 # Lint markdown and front matter
 trunk check --filter markdownlint-cli2
@@ -28,15 +28,21 @@ trunk check --filter markdownlint-cli2
 
 == Key directories
 
-|=== | Path | Purpose
+|===
+| Path | Purpose
 
-| `ADR/` | Canonical architecture decision records.
+| `ADR/`
+| Canonical architecture decision records.
 
-| `releases.yaml` | Workspace release log written by automation.
+| `releases.yaml`
+| Workspace release log written by automation.
 
-| `RENOVATE_SETUP.md` | Guidance on shared Renovate presets and onboarding.
+| xref:++../RENOVATE_SETUP.adoc++[]
+| Guidance on shared Renovate presets and onboarding.
 
-| `TRUNK_GUIDE.md` | Describes Trunk usage across repos. |===
+| xref:++../TRUNK_GUIDE.adoc++[]
+| Describes Trunk usage across repos.
+|===
 
 == Contribution guardrails
 
@@ -44,4 +50,4 @@ trunk check --filter markdownlint-cli2
  ADRs or PRs.
 * Update `releases.yaml` via automation scripts, not manual edits.
 * When introducing new workspace policy, document the process change here first,
- then reference it from other repos`' `START HERE` guides.
+ then reference it from other repositories' `START HERE` guides.

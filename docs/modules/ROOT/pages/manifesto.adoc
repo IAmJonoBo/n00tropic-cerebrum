@@ -1,0 +1,40 @@
+// vale off
+:page-tags: diataxis:explanation, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-25
+
+= Evergreen engineering manifesto
+
+Our ethos: keep the system adaptable, observable, and safe by default. Staleness is the enemy.
+
+Principles
+
+* Evergreen by design: Prefer repeatable automation (hooks, scripts, ci gates) over one-off cleanup. Every repo should be rebuildable from scratch.
+* Fast feedback: Default to cached, deterministic toolchains (`uv` for Python, pnpm for Node) and fail-fast lint gates (Vale, Lychee, asciidoc parse).
+* Single source of truth: Docs live in Antora; search is backed by Typesense; policies live in n00menon and are mirrored here.
+* Secure by default: Shipping workflows must include dependency audits and security scans; templates should scaffold these automatically.
+* Composable tooling: Keep hooks, scripts, and linters small, composable, and runnable locally and in ci.
+* Agents as first-class contributors: Every automation should emit machine-parseable summaries and keep MCP endpoints discoverable.
+
+Practices (applied across repos)
+
+* Pre-push: tidy submodules, manifest gate, doc autoformat (`docs:fix-style`), and run `docs:lint` in ci.
+* Docs quality: `docs:lint` = Vale + Lychee + attribute checks + asciidoc parse. Autoformat headings and style via `docs:fix-style`.
+* Python: `astral-sh/setup-uv@v2` + `uv sync` + pinned `requires-python`; shared `.cache/uv`.
+* Templates: n00-frontiers cookiecutters must ship ci, security, tests, and README; sanity check stays at 100%.
+* Search: keep `docs/search/logs/typesense-reindex-*.log(.json)` fresh (<7 days) and visible to Danger/ci; MCP exposes latest summary.
+* Submodules: commit in subrepo first; then advance the pointer; never stage build artefacts or local envs.
+* Tagging and indexing: every page needs `:page-tags:` + `:reviewed:`; automation enforces defaults and keeps Typesense indexable.
+
+Agent quickstart (policy-aware)
+
+* Read xref:agent-ops.adoc[] for agent-specific guardrails.
+* Use MCP: prefer documented capabilities (`planner.refreshPlans`, `docs.captureTypesenseSummary`, etc.) instead of ad hoc shell steps.
+* When editing docs: run `pnpm run docs:lint` and `pnpm run docs:fix-style -- --dry-run` before pushes.
+
+See also
+
+* xref:branching.adoc[Branch management]
+* xref:submodules.adoc[Submodule playbook]
+* xref:search/typesense.adoc[Typesense runbook]
+* xref:agent-ops.adoc[Agent operations]
+// vale on

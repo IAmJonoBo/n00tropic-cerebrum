@@ -1,0 +1,923 @@
+= Documentation Governance
+:page-tags: documentation,governance,standards,quality
+:reviewed: 2025-11-27
+:doctype: book
+:toc: left
+:toclevels: 3
+
+This guide establishes the governance framework for documentation across the n00tropic Cerebrum workspace, ensuring consistency, quality, and maintainability.
+
+== Overview
+
+Documentation governance ensures that all documentation across the workspace meets quality standards, remains current, and serves its intended audience effectively.
+
+=== Goals
+
+* **Consistency**: Uniform structure and style across all documentation
+* **Quality**: High-quality, accurate, and useful content
+* **Currency**: Documentation stays up-to-date with code and processes
+* **Discoverability**: Easy to find and navigate documentation
+* **Compliance**: Meets regulatory and organizational requirements
+
+=== Scope
+
+This governance applies to:
+
+* Technical documentation (APIs, guides, runbooks)
+* User documentation (tutorials, how-tos, references)
+* Process documentation (ADRs, SOPs, playbooks)
+* Code documentation (comments, docstrings, README files)
+* Generated documentation (from code, schemas, templates)
+
+== Documentation Standards
+
+=== Format Standards
+
+==== AsciiDoc
+
+Primary format for technical documentation in the `docs/` tree.
+
+**Required elements:**
+
+[source,asciidoc]
+----
+= Document Title
+:page-tags: tag1,tag2,tag3
+:reviewed: YYYY-MM-DD
+:toc: left
+:toclevels: 3
+
+== Section Heading
+
+Content here.
+
+=== Subsection
+
+More content.
+----
+
+**Benefits:**
+
+* Rich semantic markup
+* Built-in cross-referencing
+* PDF and HTML generation
+* Better tooling support than Markdown
+* Conditional content inclusion
+
+**When to use:**
+
+* Technical guides and references
+* Architecture documentation
+* Troubleshooting guides
+* Process documentation
+
+==== Markdown
+
+Acceptable format for README files and lightweight documentation.
+
+**Required elements:**
+
+[source,markdown]
+----
+# Document Title
+
+## Overview
+
+Brief description.
+
+## Contents
+
+- [Section 1](#section-1)
+- [Section 2](#section-2)
+
+## Section 1
+
+Content here.
+----
+
+**When to use:**
+
+* README files in repositories
+* Quick start guides
+* GitHub-rendered documentation
+* Agent-consumed documentation
+
+==== Jupyter Notebooks
+
+Interactive documentation with executable code.
+
+**Required elements:**
+
+[source,python]
+----
+# First cell: Title and description
+"""
+# Notebook Title
+
+Description and purpose.
+"""
+
+# Subsequent cells: Sections with narrative + code
+----
+
+**When to use:**
+
+* Tutorials with code examples
+* Data analysis demonstrations
+* Machine learning workflows
+* Interactive explorations
+
+=== Content Standards
+
+==== Writing Style
+
+**Principles:**
+
+* **Clear**: Use simple, direct language
+* **Concise**: Eliminate unnecessary words
+* **Accurate**: Verify technical details
+* **Complete**: Include all necessary information
+* **Consistent**: Follow style guide uniformly
+
+**Voice and tone:**
+
+* Use active voice: "Run the command" not "The command should be run"
+* Use present tense: "The system validates" not "The system will validate"
+* Use second person for instructions: "You configure" not "One configures"
+* Be professional but approachable
+
+**Technical writing guidelines:**
+
+* Define acronyms on first use: "Model Context Protocol (MCP)"
+* Use code formatting for: commands, file paths, code elements
+* Use bold for: UI elements, emphasis (sparingly)
+* Use italics for: introducing terms, foreign words
+* Number steps in procedures
+* Use bullet lists for non-sequential items
+
+==== Structure Standards
+
+**Required sections (adapt as needed):**
+
+1. **Title and metadata** (tags, review date)
+2. **Overview** (what, why, who)
+3. **Prerequisites** (what's needed before starting)
+4. **Main content** (instructions, explanations, examples)
+5. **Troubleshooting** (common issues and solutions)
+6. **Related documentation** (links to related resources)
+
+**Section depth:**
+
+* Limit to 3-4 heading levels
+* Use consistent heading hierarchy
+* Keep sections focused and cohesive
+
+**Code examples:**
+
+* Include language identifier for syntax highlighting
+* Show expected output when relevant
+* Provide context before and after code
+* Use realistic, working examples
+* Test code examples before publishing
+
+==== Accessibility Standards
+
+**Requirements:**
+
+* Use descriptive link text (not "click here")
+* Provide alt text for images
+* Use proper heading hierarchy
+* Ensure color is not the only indicator
+* Make tables accessible with headers
+* Include transcripts for video content
+
+**Example:**
+
+[source,asciidoc]
+----
+// Good
+xref:troubleshooting/n00t.adoc[n00t Troubleshooting Guide]
+
+// Bad
+link:troubleshooting/n00t.adoc[click here]
+----
+
+== Review Process
+
+=== Review Cycle
+
+All documentation follows a regular review cycle:
+
+[cols="1,1,3"]
+|===
+|Type |Frequency |Review Focus
+
+|Technical Guides
+|Quarterly
+|Accuracy, completeness, examples
+
+|API Documentation
+|Every release
+|Breaking changes, new features, deprecations
+
+|Troubleshooting Guides
+|Monthly
+|New issues, outdated solutions, common problems
+
+|Process Documentation
+|Semi-annually
+|Process changes, compliance updates
+
+|README Files
+|Every PR
+|Accuracy of quick start, dependencies
+
+|ADRs
+|At status change
+|Implementation status, outcomes, supersession
+|===
+
+=== Review Metadata
+
+Track reviews using frontmatter:
+
+[source,asciidoc]
+----
+= Document Title
+:reviewed: 2025-11-27
+:reviewer: github-username
+:next-review: 2026-02-27
+----
+
+=== Review Checklist
+
+When reviewing documentation:
+
+* [ ] **Accuracy**: Technical details are correct
+* [ ] **Completeness**: All necessary information included
+* [ ] **Clarity**: Content is understandable to target audience
+* [ ] **Currency**: Information is up-to-date
+* [ ] **Consistency**: Follows style and structure standards
+* [ ] **Examples**: Code examples work and are relevant
+* [ ] **Links**: All cross-references and external links work
+* [ ] **Formatting**: Proper use of markup and rendering
+* [ ] **Accessibility**: Meets accessibility requirements
+* [ ] **Tags**: Appropriate tags for discoverability
+
+=== Review Process
+
+1. **Self-review**: Author reviews before requesting formal review
+2. **Peer review**: Subject matter expert reviews content
+3. **Editorial review**: Documentation owner reviews for standards
+4. **Approval**: Merge after passing all reviews
+5. **Publication**: Deploy to documentation site
+6. **Announcement**: Notify relevant stakeholders
+
+== Version Control
+
+=== Branching Strategy
+
+Documentation follows the same Git workflow as code:
+
+* **main**: Published documentation
+* **feature/doc-name**: Work in progress
+* **hotfix/doc-name**: Urgent corrections
+
+=== Commit Messages
+
+Use conventional commits:
+
+[source,text]
+----
+docs: add troubleshooting guide for n00t MCP issues
+docs: update API reference for v2.0
+docs(n00-frontiers): fix broken links in validation guide
+fix(docs): correct code example in quick start
+----
+
+=== Change Documentation
+
+Document significant changes in:
+
+* **Commit messages**: Clear description of what changed
+* **Pull request description**: Context and rationale
+* **Changelog**: User-facing documentation changes
+* **Release notes**: Breaking changes, new documentation
+
+== Maintenance
+
+=== Routine Maintenance
+
+**Weekly:**
+
+* Check for broken links
+* Review and respond to documentation issues
+* Update code examples that fail
+
+**Monthly:**
+
+* Review documentation metrics (views, searches, feedback)
+* Update troubleshooting guides with new issues
+* Archive or update outdated content
+
+**Quarterly:**
+
+* Review and update technical guides
+* Audit documentation coverage
+* Update documentation roadmap
+
+**Annually:**
+
+* Complete documentation review
+* Update governance process
+* Review and update style guide
+
+=== Deprecation Process
+
+When deprecating documentation:
+
+1. **Mark as deprecated:**
++
+[source,asciidoc]
+----
+= Deprecated: Old Process
+:deprecated: true
+:deprecated-since: 2025-11-01
+:replaced-by: xref:new-process.adoc[New Process]
+
+WARNING: This documentation is deprecated and will be removed on 2026-02-01.
+Please use xref:new-process.adoc[New Process] instead.
+----
+
+2. **Announce deprecation**: In release notes, changelog, team channels
+
+3. **Grace period**: Minimum 3 months before removal
+
+4. **Archive**: Move to `99-Archive/docs/` before deletion
+
+5. **Redirect**: Set up redirects from old to new URLs
+
+=== Archival Process
+
+Archive documentation that is:
+
+* **Outdated**: No longer relevant to current systems
+* **Superseded**: Replaced by newer documentation
+* **Historical**: Valuable for reference but not active use
+
+**Archive location:**
+
+[source,text]
+----
+99-Archive/docs/
+  2024/
+    Q4/
+      deprecated-api-guide.adoc
+  2025/
+    Q1/
+      legacy-deployment-process.md
+----
+
+**Archive metadata:**
+
+[source,asciidoc]
+----
+= Archived: API Guide v1.x
+:archived: 2025-11-27
+:archived-reason: Superseded by v2.x API Guide
+:superseded-by: xref:api-guide-v2.adoc[API Guide v2.x]
+----
+
+== Quality Metrics
+
+=== Documentation Coverage
+
+Track coverage across:
+
+* **Code coverage**: Percentage of public APIs documented
+* **Feature coverage**: Percentage of features with user documentation
+* **Process coverage**: Percentage of processes documented
+
+**Targets:**
+
+* Public APIs: 100%
+* User-facing features: 95%
+* Internal processes: 80%
+
+=== Quality Indicators
+
+Monitor:
+
+* **Broken links**: Zero tolerance
+* **Review currency**: <10% overdue for review
+* **Issue resolution time**: <7 days for documentation bugs
+* **User feedback**: Track satisfaction and suggestions
+
+=== Metrics Dashboard
+
+Track metrics in:
+
+* `.dev/automation/artifacts/documentation/metrics.json`
+* Monthly reports in `1. Cerebrum Docs/metrics/`
+* Real-time dashboard (if available)
+
+== Tools and Automation
+
+=== Build System
+
+**Antora**: Primary documentation build system
+
+[source,bash]
+----
+# Local build
+npx antora antora-playbook.yml
+
+# CI build
+npx antora antora-playbook.ci.yml
+----
+
+**Configuration:**
+
+* `antora-playbook.yml`: Local development
+* `antora-playbook.ci.yml`: CI/CD builds
+* `antora-playbook.test.yml`: Testing configuration
+
+=== Validation Tools
+
+**Vale**: Prose linting
+
+[source,bash]
+----
+# Check all documentation
+vale docs/
+
+# Check specific file
+vale docs/modules/ROOT/pages/guides/documentation-governance.adoc
+----
+
+**Link checking:**
+
+[source,bash]
+----
+# Check for broken links
+find docs -name "*.adoc" -exec grep -l "xref\|link:" {} \; | \
+  xargs python scripts/check-links.py
+----
+
+**Spell checking:**
+
+[source,bash]
+----
+# Check spelling with cspell
+cspell "docs/**/*.adoc"
+----
+
+=== Automation
+
+**Automatic tasks:**
+
+* **Link validation**: On every commit (pre-commit hook)
+* **Spell check**: On every PR
+* **Build verification**: On every PR
+* **Metrics collection**: Daily
+* **Review reminders**: Weekly
+
+**Scripts:**
+
+* `scripts/validate-docs.sh`: Comprehensive validation
+* `scripts/check-links.py`: Link validation
+* `scripts/generate-metrics.py`: Metrics collection
+* `scripts/check-review-dates.py`: Review currency check
+
+== Roles and Responsibilities
+
+=== Documentation Owner
+
+**Responsibilities:**
+
+* Maintain documentation governance
+* Review and approve documentation changes
+* Track metrics and quality
+* Coordinate review cycles
+* Train contributors
+
+**Current owner:** Technical Lead
+
+=== Contributors
+
+**Responsibilities:**
+
+* Write and update documentation
+* Follow standards and guidelines
+* Respond to review feedback
+* Test examples and procedures
+* Maintain assigned documentation
+
+=== Reviewers
+
+**Responsibilities:**
+
+* Review documentation for technical accuracy
+* Check adherence to standards
+* Provide constructive feedback
+* Approve changes when ready
+
+=== Maintainers
+
+**Responsibilities:**
+
+* Monitor documentation health
+* Triage documentation issues
+* Coordinate urgent updates
+* Maintain documentation tools
+
+== Contribution Guidelines
+
+=== Creating New Documentation
+
+1. **Check for existing documentation**: Avoid duplication
+
+2. **Choose appropriate format**: AsciiDoc, Markdown, or Notebook
+
+3. **Follow template**:
++
+[source,bash]
+----
+cp docs/templates/guide-template.adoc docs/modules/ROOT/pages/guides/my-guide.adoc
+----
+
+4. **Write content**: Follow standards and style guide
+
+5. **Add to navigation**:
++
+[source,yaml]
+----
+# In docs/modules/ROOT/nav.adoc
+* xref:guides/my-guide.adoc[My Guide]
+----
+
+6. **Validate**:
++
+[source,bash]
+----
+./scripts/validate-docs.sh docs/modules/ROOT/pages/guides/my-guide.adoc
+----
+
+7. **Create PR**: Include description and request review
+
+=== Updating Existing Documentation
+
+1. **Create feature branch**: `git checkout -b docs/update-guide-name`
+
+2. **Make changes**: Edit documentation file
+
+3. **Update review date**:
++
+[source,asciidoc]
+----
+:reviewed: 2025-11-27
+----
+
+4. **Test changes**: Build and verify locally
+
+5. **Commit with clear message**: `docs: update guide with new process`
+
+6. **Create PR**: Request review from documentation owner
+
+=== Reporting Issues
+
+When reporting documentation issues:
+
+* **Title**: Clear description of the issue
+* **Location**: Specific file and section
+* **Problem**: What's wrong or unclear
+* **Suggestion**: Proposed fix (if applicable)
+* **Priority**: Critical, High, Medium, Low
+
+**Labels:**
+
+* `documentation`: All doc issues
+* `docs-bug`: Errors or inaccuracies
+* `docs-enhancement`: Improvements
+* `docs-missing`: Missing documentation
+* `docs-outdated`: Needs updating
+
+== Integration with Development
+
+=== Documentation in Development Workflow
+
+**Feature development:**
+
+1. Design feature (include documentation requirements)
+2. Implement feature
+3. Write/update documentation
+4. Review code + documentation together
+5. Merge when both approved
+
+**Documentation requirements for features:**
+
+* [ ] API documentation (if applicable)
+* [ ] User guide updates
+* [ ] Example code
+* [ ] Migration guide (breaking changes)
+* [ ] Changelog entry
+* [ ] Release notes
+
+=== Documentation in CI/CD
+
+**Pull request checks:**
+
+* Documentation builds successfully
+* No broken links
+* Spell check passes
+* Vale linting passes
+* Examples are valid
+
+**Merge requirements:**
+
+* All checks pass
+* Documentation review approved
+* Review date updated
+
+**Post-merge:**
+
+* Documentation deployed to staging
+* Metrics updated
+* Notifications sent
+
+=== Documentation with Releases
+
+**Release checklist:**
+
+* [ ] Changelog updated
+* [ ] Release notes written
+* [ ] API documentation current
+* [ ] Migration guide complete
+* [ ] Breaking changes documented
+* [ ] Examples updated
+* [ ] Version numbers correct
+
+**Release documentation:**
+
+* Publish to production site
+* Announce in release channels
+* Update external docs (if applicable)
+* Archive superseded versions
+
+== Compliance and Audit
+
+=== Compliance Requirements
+
+Documentation must comply with:
+
+* **Accessibility**: WCAG 2.2 AA standards
+* **Privacy**: No sensitive data in public docs
+* **Security**: No credentials or secrets
+* **Licensing**: Proper attribution and licenses
+
+=== Audit Process
+
+**Quarterly audits:**
+
+* Review currency (review dates)
+* Check broken links
+* Validate code examples
+* Assess coverage metrics
+* Review user feedback
+
+**Audit artifacts:**
+
+* Audit report: `1. Cerebrum Docs/audits/YYYY-QQ-audit.md`
+* Issues identified: GitHub issues
+* Remediation plan: Action items
+
+**Audit checklist:**
+
+* [ ] All documentation within review cycle
+* [ ] Zero broken links
+* [ ] Code examples tested
+* [ ] Coverage targets met
+* [ ] Accessibility compliant
+* [ ] No security issues
+* [ ] User feedback addressed
+
+=== Remediation
+
+When audit finds issues:
+
+1. **Categorize**: Critical, High, Medium, Low
+2. **Create issues**: One per significant finding
+3. **Prioritize**: Based on impact and effort
+4. **Assign**: To appropriate owners
+5. **Track**: Monitor progress
+6. **Verify**: Re-audit after fixes
+
+== Templates
+
+=== Guide Template
+
+[source,asciidoc]
+----
+= Guide Title
+:page-tags: category,topic,type
+:reviewed: YYYY-MM-DD
+:toc: left
+:toclevels: 3
+
+Brief overview of what this guide covers and who it's for.
+
+== Prerequisites
+
+What the reader needs before starting:
+
+* Requirement 1
+* Requirement 2
+
+== Step-by-Step Instructions
+
+=== Step 1: First Action
+
+Describe what to do.
+
+[source,bash]
+----
+# Example command
+command --option
+----
+
+Expected output:
+
+[source,text]
+----
+Expected result
+----
+
+=== Step 2: Next Action
+
+Continue with subsequent steps.
+
+== Troubleshooting
+
+Common issues and solutions.
+
+== Related Documentation
+
+* xref:related-guide.adoc[Related Guide]
+* xref:reference.adoc[Reference Documentation]
+----
+
+== Troubleshooting Template
+
+[source,asciidoc]
+----
+= Component Troubleshooting
+:page-tags: troubleshooting,component,issues
+:reviewed: YYYY-MM-DD
+:toc: left
+:toclevels: 3
+
+== Issue Category
+
+=== Specific Problem
+
+**Problem:** Brief description.
+
+**Symptoms:**
+[source,text]
+----
+Error messages or observable behavior
+----
+
+**Solutions:**
+
+1. **First approach:**
++
+[source,bash]
+----
+command to try
+----
+
+2. **Alternative approach:**
++
+Explanation and steps.
+
+**Prevention:**
+Tips to avoid this issue.
+
+== Getting Help
+
+Information on how to get additional support.
+
+== Related Documentation
+
+Links to related guides.
+----
+
+== API Reference Template
+
+[source,asciidoc]
+----
+= API Reference: Component Name
+:page-tags: api,reference,component
+:reviewed: YYYY-MM-DD
+:toc: left
+:toclevels: 3
+
+== Overview
+
+Component purpose and scope.
+
+== Classes/Functions
+
+=== ClassName or function_name
+
+**Purpose:** What it does.
+
+**Signature:**
+
+[source,python]
+----
+def function_name(param1: Type, param2: Type) -> ReturnType:
+    """Docstring."""
+----
+
+**Parameters:**
+
+* `param1` (Type): Description
+* `param2` (Type): Description
+
+**Returns:**
+
+ReturnType: Description
+
+**Raises:**
+
+* ExceptionType: When this occurs
+
+**Examples:**
+
+[source,python]
+----
+result = function_name("value1", 42)
+print(result)
+# Output: expected result
+----
+
+== Related Documentation
+
+Links to guides and tutorials.
+----
+
+== References
+
+* xref:contributing.adoc[Contributing Guide]
+* link:https://asciidoctor.org/docs/asciidoc-writers-guide/[AsciiDoc Writer's Guide]
+* link:https://docs.antora.org/[Antora Documentation]
+* link:https://vale.sh/[Vale Prose Linter]
+* link:https://www.w3.org/WAI/WCAG22/quickref/[WCAG 2.2 Quick Reference]
+
+== Appendices
+
+=== Style Guide Quick Reference
+
+**Formatting:**
+
+* `command` - inline code
+* *UI Element* - UI components
+* _emphasis_ - sparingly
+* **strong emphasis** - very sparingly
+
+**Headings:**
+
+* Level 1 (`=`) - Document title only
+* Level 2 (`==`) - Major sections
+* Level 3 (`===`) - Subsections
+* Level 4 (`====`) - Details (use sparingly)
+
+**Lists:**
+
+* Unordered: Use `*`, `**`, `***` for nesting
+* Ordered: Use `.`, `..`, `...` for nesting
+* Description: Use `term:: description`
+
+**Code blocks:**
+
+[source,asciidoc]
+----
+[source,language]
+----
+code here
+----
+----
+
+=== Useful Links
+
+* Documentation source: `docs/modules/ROOT/pages/`
+* Templates: `docs/templates/`
+* Build artifacts: `docs/build/`
+* Metrics: `.dev/automation/artifacts/documentation/`
+* Scripts: `scripts/`
+
+---
+
+_This governance document should be reviewed semi-annually and updated as the workspace evolves._

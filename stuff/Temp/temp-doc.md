@@ -12,10 +12,10 @@ This is **not** a generic integration.You are upgrading a **real, multi-repo, su
 - **n00-cortex** — schemas, manifests (e.g., toolchain-manifest.json), and enforcement rules; drives DRY/YAGNI via JSON schemas and reusable templates.
 - **n00-frontiers** — standards, templates, and quality benchmarks; regenerates based on n00-cortex and incorporates n00-school insights.
 - **n00plicate** — design asset generation; aligns with frontiers for scaffolding.
-- **.dev/automation** — 14+ battle-tested scripts (e.g., project-preflight.sh for validation, project-lifecycle-radar.sh for gap analysis, meta-check.sh for health, check-cross-repo-consistency.py for alignments, workspace-health.py for snapshots, trunk-upgrade.sh for updates, ai-workflows/* for phase-specific tasks) that must become **plan-executable steps**; artifacts like workspace-health.json and agent-runs.json for telemetry.
+- **.dev/automation** — 14+ battle-tested scripts (e.g., project-preflight.sh for validation, project-lifecycle-radar.sh for gap analysis, meta-check.sh for health, check-cross-repo-consistency.py for alignments, workspace-health.py for snapshots, trunk-upgrade.sh for updates, ai-workflows/\* for phase-specific tasks) that must become **plan-executable steps**; artifacts like workspace-health.json and agent-runs.json for telemetry.
 - **Interconnected Pipelines Mapping**:
   - **Training Pipelines (n00-school)**: YAML files define stages like ingest (e.g., from agent-runs.json), evaluate (e.g., DRY/YAGNI scoring via handlers like evaluate_dry_yagni), and export (e.g., LoRA fine-tunes); run nightly via n00t invocations; loop telemetry from plans/executions back to refine agents; evaluate adaptive features like scope changes by simulating drifts.
-  - **Automation Pipelines (.dev/automation)**: Script-based flows for preflights (project-preflight.sh/batch.sh), radar/summaries (project-lifecycle-radar.sh), control panels (project-control-panel.sh), consistency checks (check-cross-repo-consistency.py), health/maintenance (workspace-health.py, meta-check.sh), upgrades (trunk-upgrade.sh), and releases (workspace-release.sh); chainable for PM, invoked as MCP tools; integrate with n00-horizons for brief-to-playbook conversion and n00-cortex for schema validation.
+  - **Automation Pipelines (.dev/automation)**: Script-based flows for preflights (project-preflight.sh/batch.sh), radar/summaries (project-lifecycle-radar.sh), control panels (project-control-panel.py), consistency checks (check-cross-repo-consistency.py), health/maintenance (workspace-health.py, meta-check.sh), upgrades (trunk-upgrade.sh), and releases (workspace-release.sh); chainable for PM, invoked as MCP tools; integrate with n00-horizons for brief-to-playbook conversion and n00-cortex for schema validation.
   - **PM Pipelines (n00-horizons)**: Briefs in docs/experiments/ → playbooks via automation; orchestrate GitHub issues/projects, ERPNext syncs; handle scope changes via radar tools and consistency checks; feed outcomes to n00-school for training data.
   - **Orchestration Flows (n00t)**: Discovers via capabilities/manifest.json; brokers MCP packets to invoke pipelines; propagates telemetry across all.
   - **Schema/Enforcement Pipelines (n00-cortex/frontiers)**: Publish schemas/manifests → regenerate templates/notebooks → validate via automation; ensure DRY (reuse checks) and YAGNI (necessity scoring).
@@ -80,13 +80,13 @@ n00t/
 # n00-school/pipelines/planner-v1.yml (expand if exists, else add)
 stages:
   - name: ingest-plan
-    handler: school_lab.handlers.ingest_plan  # Ingest full plans incl. resolutions/conflicts
+    handler: school_lab.handlers.ingest_plan # Ingest full plans incl. resolutions/conflicts
   - name: evaluate-drift
-    handler: school_lab.handlers.evaluate_dry_yagni  # Score adaptability, conflicts, stitching
+    handler: school_lab.handlers.evaluate_dry_yagni # Score adaptability, conflicts, stitching
   - name: simulate-changes
-    handler: school_lab.handlers.simulate_scope_drifts  # New: Generate synthetic changes for adaptive training
+    handler: school_lab.handlers.simulate_scope_drifts # New: Generate synthetic changes for adaptive training
   - name: export-lora
-    handler: school_lab.handlers.export_planner_lora  # Fine-tune for responsive planning
+    handler: school_lab.handlers.export_planner_lora # Fine-tune for responsive planning
 ```
 
 Run nightly via `n00t school.trainingRun planner-v1`; use agent-runs.json for real-world data.
@@ -103,7 +103,7 @@ Run nightly via `n00t school.trainingRun planner-v1`; use agent-runs.json for re
 
 ### YOUR ORDERS
 
-1. Fork `IAmJonoBo/n00tropic-cerebrum` → branch `codex/planning-injection`.
+1. Fork `n00tropic/n00tropic-cerebrum` → branch `codex/planning-injection`.
 2. Execute the blueprint above — **no placeholders**; wire to mapped pipelines (e.g., invoke project-lifecycle-radar.sh in resolver for adaptive gap analysis).
 3. Run `meta-check.sh`, `workspace-health.py --autofix`, and all preflights; validate adaptability with synthetic tests (e.g., simulate scope change).
 4. Open PR with title:`[Codex] Planning Engine v1 — MCP-native, air-gapped, self-training, adaptive PM`.

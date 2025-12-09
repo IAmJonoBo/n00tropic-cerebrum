@@ -24,8 +24,14 @@
 
 1. **Bootstrap tooling** – `./.dev/scripts/bootstrap-trunk-python.sh` (only if Trunk cannot download runtimes automatically).
 2. **Refresh sources** – `./.dev/automation/scripts/refresh-workspace.sh`.
-3. **Meta-check** – `./.dev/automation/scripts/meta-check.sh` (runs lint/test suites per repo).
-4. **Release snapshot** – `./.dev/automation/scripts/workspace-release.sh` (writes `1. Cerebrum Docs/releases.yaml`).
+3. **Proactivity pass** – run `./bin/workspace health` (wraps `workspace-health.sh --publish-artifact`) or `python3 .dev/automation/scripts/workspace-health.py --auto-remediate --publish-artifact` (or the n00t capability `workspace.repair` in dry-run/apply mode). This applies skeletons, syncs submodules, performs a safe clean, and ensures branches before any plan/build. Use `META_CHECK_JOBS=<n>` to parallelize eligible steps when invoking meta-check.
+4. **Meta-check** – `./.dev/automation/scripts/meta-check.sh` (runs lint/test suites per repo).
+5. **Release snapshot** – `./.dev/automation/scripts/workspace-release.sh` (writes `1. Cerebrum Docs/releases.yaml`).
+6. **Installs** – root `pnpm install` is blocked; use subrepo installs or `pnpm --filter`. JS subrepos have preinstall guards; rerun installs via `scripts/normalize-workspace-pnpm.sh` (or MCP capability `workspace.normalizePnpm`) to enforce toolchain pins. If you must install at root, set `ALLOW_ROOT_PNPM_INSTALL=1`.
+7. **Python deps** – locked with `uv`; verify via `pnpm run python:lock:check` and use `workspace.venvHealth` when you need to audit or rebuild `.venv-*` directories.
+8. **Alerts** – set `DISCORD_WEBHOOK` (and optional `REQUIRED_RUNNER_LABELS`) for runner and Python lock notifications.
+9. **Secrets** – copy `.env.example` to `.env` in the workspace root; run `scripts/sync-env-templates.sh` to fan out `.env.example` stubs to subrepos. Keys: `GH_TOKEN`, `GITHUB_TOKEN`, `DISCORD_WEBHOOK`, `REQUIRED_RUNNER_LABELS`.
+10. **CLI shortcuts** – prefer `python3 cli.py health-toolchain|health-runners|health-python-lock|normalize-js` for common checks; they wrap the canonical scripts with logging. Skeleton compliance is available via `python3 cli.py workspace-doctor --strict` or the `workspace.checkSkeleton` capability (with `apply=true` for scaffolding).
 
 These scripts back the `workspace.*` capabilities exposed through `n00t/capabilities/manifest.json`.
 
@@ -33,7 +39,7 @@ These scripts back the `workspace.*` capabilities exposed through `n00t/capabili
 
 - **Keep code in the right repo**: automation scripts and schemas belong under `n00tropic-cerebrum/`; operational handbooks, client assets, or brand deliverables stay in the organisation root (`/Volumes/APFS Space/n00tropic`).
 - **No generated artefacts in git**: MkDocs `site/`, Storybook builds, token outputs, and ERPNext exports should remain ignored and published via pipelines or generated on demand.
-- **Link back to policy**: any cross-repo decision must land in `1. Cerebrum Docs/ADR/` with references to the repo-specific ADR.
+- **Link back to policy**: any cross-repo decision must land in `1. Cerebrum Docs/ADR/` with references to the repo-specific ADR (see ADR-007 for the proactivity doctrine).
 - **Isolate client data**: never commit exports under `n00tropic-cerebrum/`; use the `99-Clients/` directory in the root workspace for sensitive deliverables.
 
 ## Next steps

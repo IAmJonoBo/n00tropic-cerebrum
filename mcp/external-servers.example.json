@@ -1,0 +1,80 @@
+{
+  "//": "Optional external MCP servers (sanitize tokens; copy into mcp-suite or VS Code config as needed).",
+  "servers": {
+    "asana": { "type": "http", "url": "https://mcp.asana.com/sse" },
+    "azure-devops": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@azure-devops/mcp", "${env:ADO_ORG}"]
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": { "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}" }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"]
+    },
+    "chrome-devtools-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp",
+        "--browserUrl",
+        "${env:BROWSER_URL}",
+        "--headless",
+        "false",
+        "--isolated",
+        "false",
+        "--channel",
+        "stable",
+        "--chromeArg",
+        "--remote-debugging-port=62000"
+      ]
+    },
+    "logfire": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "logfire-mcp",
+        "--read-token",
+        "${env:LOGFIRE_TOKEN}",
+        "--base-url",
+        "${env:LOGFIRE_BASE_URL}"
+      ]
+    },
+    "sonarqube": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mcp-server-sonarqube"],
+      "env": {
+        "SONARQUBE_ORG": "${env:SONARQUBE_ORG}",
+        "SONARQUBE_TOKEN": "${env:SONARQUBE_TOKEN}",
+        "SONARQUBE_IDE_PORT": "${env:SONARQUBE_IDE_PORT}"
+      }
+    },
+    "markitdown": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--python", "3.13", "markitdown-mcp"]
+    },
+    "fetch": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    },
+    "git": { "type": "stdio", "command": "uvx", "args": ["mcp-server-git"] },
+    "tavily": {
+      "type": "http",
+      "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=${env:TAVILY_API_KEY}"
+    },
+    "sequentialthinking": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    }
+  }
+}

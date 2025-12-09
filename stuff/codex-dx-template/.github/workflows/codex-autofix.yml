@@ -38,12 +38,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: 25.2.1
           cache: "pnpm"
 
       - name: Install dependencies (if JS/TS project)
         run: |
-          corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile
+          corepack enable && corepack prepare pnpm@10.23.0 --activate && pnpm install --frozen-lockfile
 
       - name: Run Codex (guard-railed)
         uses: openai/codex-action@main

@@ -1,22 +1,10 @@
+---
 packages:
-  - "n00-cortex/**"
-  - "n00-dashboard/**"
-  - "n00-frontiers/**"
-  - "!n00-frontiers/examples/**"
-  - "!**/examples/**"
-  - "!**/templates/**"
-  - "!**/dist/**"
-  - "n00plicate/**"
-  - "n00t/**"
-  - "n00tropic/**"
-  - "n00tropic-cerebrum/**"
-  - "n00tropic_HQ/**"
-  - "n00clear-fusion/**"
-  - "n00-horizons/**"
-  - "n00-school/**"
-  - "stuff/**"
-  - "apps/**"
-  - "packages/**"
+  - .dev/automation/mcp-server
+  - ui/**
+  - apps/**
+  - packages/**
+  - stuff/**
 
 # Workspace settings that help centralize installs
 sharedWorkspaceLockfile: true

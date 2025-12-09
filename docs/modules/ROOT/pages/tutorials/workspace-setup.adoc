@@ -1,0 +1,540 @@
+= Workspace Setup Tutorial
+:page-tags: diataxis:tutorial, domain:platform, audience:contrib, stability:stable
+:reviewed: 2025-11-27
+:toc:
+:toclevels: 3
+
+Learn how to clone, configure, and prepare the n00tropic Cerebrum workspace for development and automation.
+
+== Prerequisites
+
+Before starting, ensure you have:
+
+* **Git** 2.30+ installed
+* **macOS** or Linux environment (Windows users should use WSL2)
+* **Python** 3.11+ installed
+* **Node.js** 20+ installed
+* **pnpm** 9.0+ installed (`npm install -g pnpm`)
+* **Command-line access** with bash or zsh
+* **15-20 GB** free disk space
+
+== Step 1: Clone the Repository
+
+The n00tropic Cerebrum workspace uses Git submodules extensively. Clone with submodules initialized:
+
+[source,bash]
+----
+# Choose your workspace location
+cd "/Volumes/APFS Space/n00tropic"  # macOS example
+# or
+cd ~/workspace  # Linux example
+
+# Clone with submodules
+git clone --recurse-submodules https://github.com/n00tropic/n00tropic-cerebrum.git
+
+# Navigate into workspace
+cd n00tropic-cerebrum
+----
+
+**What this does:**
+
+* Clones the main repository
+* Initializes all submodules (`n00-cortex`, `n00-frontiers`, `n00t`, `n00tropic`, etc.)
+* Sets up the federated workspace structure
+
+=== Understanding the Workspace Structure
+
+The workspace is organized as a *federated monorepo*:
+
+[source]
+----
+n00tropic-cerebrum/          # Superrepo
+├── n00-cortex/              # Schemas, manifests, catalogs (submodule)
+├── n00-frontiers/           # Templates and standards (submodule)
+├── n00t/                    # Agent control panel (submodule)
+├── n00tropic/               # AI design generator (submodule)
+├── n00-horizons/            # Project planning (submodule)
+├── n00-school/              # Learning resources (submodule)
+├── n00clear-fusion/         # Integration framework (submodule)
+├── n00menon/                # Documentation site (submodule)
+├── .dev/automation/         # Workspace-level automation
+├── docs/                    # Cerebrum documentation
+└── mcp/                     # MCP servers
+----
+
+**Key Directories:**
+
+* `.dev/automation/scripts/` - Automation entrypoints
+* `n00t/capabilities/manifest.json` - MCP capability registry
+* `n00-cortex/data/` - Shared schemas and toolchain config
+* `artifacts/` - Build outputs and generated content
+
+== Step 2: Verify Workspace Health
+
+Run the workspace health check to ensure all submodules are properly initialized:
+
+[source,bash]
+----
+./.dev/automation/scripts/workspace-health.sh --publish-artifact --json
+----
+
+**Expected output:**
+
+[source]
+----
+🏥 Workspace Health Check
+========================
+✓ Root repository clean
+✓ All submodules initialized
+✓ No detached HEADs
+✓ No upstream drift
+
+Writing artifacts/workspace-health.json
+----
+
+**If you see errors:**
+
+[cols="1,2"]
+|===
+| Error | Solution
+
+| "Submodule not initialized"
+| Run `git submodule update --init --recursive`
+
+| "Detached HEAD in submodule"
+| Run `git -C <submodule> checkout main`
+
+| "Untracked files"
+| Run `./.dev/automation/scripts/workspace-health.sh --clean-untracked`
+|===
+
+== Step 3: Set Up Python Environment
+
+The workspace uses a dedicated Python virtual environment for automation:
+
+[source,bash]
+----
+# Run the bootstrap script
+./scripts/bootstrap-python.sh
+
+# Activate the environment
+source .venv-workspace/bin/activate
+
+# Verify installation
+python --version  # Should be 3.11+
+pip list | grep -E "PyYAML|jsonschema"
+----
+
+**What gets installed:**
+
+* `PyYAML` - YAML parsing for configurations
+* `jsonschema` - Schema validation
+* `requests` - HTTP client for API calls
+* MCP server dependencies
+* Automation script requirements
+
+**Keeping it updated:**
+
+[source,bash]
+----
+# When requirements.workspace.txt changes
+source .venv-workspace/bin/activate
+pip install -r requirements.workspace.txt --upgrade
+----
+
+== Step 4: Set Up Node.js Environment
+
+Install workspace-level Node dependencies with pnpm:
+
+[source,bash]
+----
+# Install root dependencies
+pnpm install
+
+# Verify Antora is available
+pnpm exec antora --version  # Should be 3.1.14+
+
+# Verify Biome formatter is available
+pnpm exec biome --version
+----
+
+**What this installs:**
+
+* Antora documentation site generator
+* Biome JavaScript/TypeScript formatter
+* asciidoctor-kroki for diagram rendering
+* Danger.js for PR automation
+* Various workspace utilities
+
+=== Optional: Set Up Submodule Environments
+
+Some submodules have their own package.json files:
+
+[source,bash]
+----
+# Install n00t control panel dependencies
+cd n00t
+pnpm install
+cd ..
+
+# Install MCP server dependencies
+cd n00tropic/.dev/automation/mcp-server
+pnpm install
+cd ../../..
+
+cd n00-cortex/mcp-server
+pnpm install
+cd ../..
+----
+
+== Step 5: Configure Git Hooks (Optional)
+
+Set up pre-commit hooks for automatic linting:
+
+[source,bash]
+----
+# If using Trunk
+trunk init  # Only if not already initialized
+
+# Configure git to use hooks
+git config core.hooksPath .git/hooks
+----
+
+== Step 6: Run Your First Automation
+
+Test the workspace with a simple automation script:
+
+[source,bash]
+----
+# Check automation status
+./.dev/automation/scripts/workspace-status.sh
+----
+
+**Expected output:**
+
+[source]
+----
+📊 Workspace Status
+===================
+Root: On branch main, up to date with origin/main
+Submodules: 9 total, all clean
+Trunk: Available (version 1.x.x)
+----
+
+=== Run a Validation Check
+
+[source,bash]
+----
+# Run comprehensive meta-check
+./.dev/automation/scripts/meta-check.sh
+----
+
+This validates:
+
+* Schema correctness in n00-cortex
+* Renovate preset validity
+* CVE scans
+* Repository-specific linters
+
+== Step 7: Build the Documentation Site
+
+Generate the Antora documentation site:
+
+[source,bash]
+----
+# Build all component documentation
+pnpm exec antora antora-playbook.yml
+
+# View the site locally
+npx http-server build/site -p 8080
+----
+
+Open http://localhost:8080 in your browser to view the documentation.
+
+**Build artifacts:**
+
+* `build/site/` - Static HTML site
+* `build/site/search-index.js` - Lunr search index
+* `build/site/*/` - Component directories
+
+== Step 8: Configure Your Editor
+
+=== VS Code Setup
+
+Create or update `.vscode/settings.json`:
+
+[source,json]
+----
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv-workspace/bin/python",
+  "python.terminal.activateEnvironment": true,
+  "[asciidoc]": {
+    "editor.defaultFormatter": "asciidoctor.asciidoctor-vscode"
+  }
+}
+----
+
+**Recommended extensions:**
+
+* AsciiDoc (asciidoctor.asciidoctor-vscode)
+* Python (ms-python.python)
+* Trunk (trunk.io)
+* GitHub Copilot (github.copilot)
+
+=== MCP Server Configuration
+
+For GitHub Copilot with MCP support, update `.vscode/settings.json`:
+
+[source,json]
+----
+{
+  "mcpServers": {
+    "ai-workflow": {
+      "command": "node",
+      "args": ["n00tropic/.dev/automation/mcp-server/index.js"],
+      "cwd": "${workspaceFolder}/n00tropic"
+    },
+    "cortex": {
+      "command": "node",
+      "args": ["n00-cortex/mcp-server/index.js"],
+      "cwd": "${workspaceFolder}/n00-cortex"
+    },
+    "n00-docs": {
+      "command": "python",
+      "args": ["mcp/docs_server/server.py"],
+      "cwd": "${workspaceFolder}"
+    }
+  }
+}
+----
+
+== Step 9: Verify MCP Capabilities
+
+Test that MCP servers are working:
+
+[source,bash]
+----
+# Verify ai-workflow MCP server
+cd n00tropic/.dev/automation/mcp-server
+node index.js <<< ' '
+# Press Ctrl+C after startup messages appear
+cd ../../..
+
+# Verify cortex MCP server
+cd n00-cortex/mcp-server
+node index.js <<< ' '
+# Press Ctrl+C after startup messages appear
+cd ../..
+----
+
+**No errors?** You're ready to use MCP Tools with Copilot!
+
+== Step 10: Configure Environment Variables
+
+Create a `.env` file in the workspace root (optional but recommended):
+
+[source,bash]
+----
+# Create .env from template
+cat > .env << 'EOF'
+# Python virtual environment
+VIRTUAL_ENV=.venv-workspace
+
+# Observability (optional)
+OTEL_EXPORTER_OTLP_ENDPOINT=http://127.0.0.1:4317
+OTEL_SERVICE_NAME=n00tropic-cerebrum
+# OTEL_ENABLE_SENSITIVE_DATA=true  # Only in secure environments
+
+# GitHub API (for automation)
+# GITHUB_TOKEN=ghp_your_token_here
+
+# Disable tracing when OTLP unavailable
+# N00_DISABLE_TRACING=1
+EOF
+
+# Add .env to .gitignore if not already present
+echo ".env" >> .gitignore
+----
+
+== Common Tasks
+
+=== Refresh Workspace After Pull
+
+When you pull changes that update submodules:
+
+[source,bash]
+----
+# Pull latest changes
+git pull
+
+# Update submodules
+git submodule update --init --recursive
+
+# Or use the convenience script
+./.dev/automation/scripts/refresh-workspace.sh
+----
+
+=== Clean Generated Files
+
+[source,bash]
+----
+# Clean untracked files safely (skips repos with tracked changes)
+./.dev/automation/scripts/workspace-health.sh --clean-untracked
+
+# Rebuild documentation
+pnpm exec antora antora-playbook.yml
+----
+
+=== Sync Trunk Configuration
+
+When trunk configs change in n00-cortex:
+
+[source,bash]
+----
+# Sync configs to all submodules
+./scripts/sync-trunk-defs.mjs
+
+# Or use the comprehensive script
+./.dev/automation/scripts/sync-trunk-configs.sh
+----
+
+=== Update Dependencies
+
+[source,bash]
+----
+# Update pnpm dependencies
+pnpm update --latest
+
+# Update Python dependencies
+source .venv-workspace/bin/activate
+pip install -r requirements.workspace.txt --upgrade
+
+# Update Trunk CLI
+./.dev/automation/scripts/trunk-upgrade.sh
+----
+
+== Troubleshooting
+
+=== "Submodule already exists" Error
+
+[source,bash]
+----
+# Remove submodule registration
+git submodule deinit -f <submodule-path>
+
+# Re-initialize
+git submodule update --init --recursive
+----
+
+=== Python Virtual Environment Issues
+
+[source,bash]
+----
+# Remove existing venv
+rm -rf .venv-workspace
+
+# Recreate
+./scripts/bootstrap-python.sh
+
+# Verify
+source .venv-workspace/bin/activate
+python --version
+pip list
+----
+
+=== Node Module Installation Failures
+
+[source,bash]
+----
+# Clear pnpm cache
+pnpm store prune
+
+# Remove node_modules
+rm -rf node_modules .pnpm
+
+# Reinstall
+pnpm install
+----
+
+=== Submodule Detached HEAD
+
+[source,bash]
+----
+# Fix specific submodule
+git -C n00-cortex checkout main
+git -C n00-cortex pull
+
+# Fix all submodules
+./.dev/automation/scripts/workspace-health.sh --sync-submodules
+----
+
+=== "Permission Denied" on Scripts
+
+[source,bash]
+----
+# Fix execute permissions on automation scripts
+chmod +x .dev/automation/scripts/*.sh
+chmod +x scripts/*.sh
+
+# Or fix specific script
+chmod +x .dev/automation/scripts/workspace-health.sh
+----
+
+=== Antora Build Fails
+
+[source,bash]
+----
+# Check for missing attributes
+node scripts/check-attrs.mjs
+
+# Validate AsciiDoc syntax
+pnpm exec antora --stacktrace antora-playbook.yml
+
+# Check for broken xrefs
+# (Links validator coming in Phase 8)
+----
+
+=== MCP Server Won't Start
+
+[source,bash]
+----
+# Ensure dependencies installed
+cd n00tropic/.dev/automation/mcp-server
+pnpm install
+
+# Check for syntax errors
+node --check index.js
+
+# Run with verbose output
+NODE_OPTIONS='--trace-warnings' node index.js
+----
+
+== Next Steps
+
+Now that your workspace is set up:
+
+1. **Learn MCP Usage**: See xref:tutorials/mcp-server-usage.adoc[MCP Server Usage Tutorial]
+2. **Run Automation**: See xref:guides/running-automation.adoc[Running Automation Guide]
+3. **Contribute Docs**: See xref:ROOT:CONTRIBUTING-docs.adoc[Documentation Contribution Guide]
+4. **Explore Capabilities**: See xref:reference/mcp-capabilities.adoc[MCP Capabilities Reference]
+
+== Summary Checklist
+
+Use this checklist to verify your setup:
+
+- [ ] Repository cloned with `--recurse-submodules`
+- [ ] All submodules initialized and clean
+- [ ] Python 3.11+ installed
+- [ ] `.venv-workspace` created and activated
+- [ ] Node.js 20+ and pnpm installed
+- [ ] Root `pnpm install` completed successfully
+- [ ] Antora build works (`pnpm exec antora antora-playbook.yml`)
+- [ ] `workspace-health.sh` reports no errors
+- [ ] `workspace-status.sh` shows all submodules clean
+- [ ] MCP servers start without errors
+- [ ] Editor configured with recommended extensions
+- [ ] Environment variables configured (optional)
+
+**Setup Time**: Approximately 15-20 minutes for complete setup
+
+**Support**: If you encounter issues not covered in troubleshooting, see xref:troubleshooting.adoc[Workspace Troubleshooting] or check recent ADRs in xref:adr/index.adoc[Architecture Decisions].

@@ -1,0 +1,665 @@
+= Running Workspace Automation
+:page-tags: diataxis:howto, domain:platform, audience:operator, stability:stable
+:reviewed: 2025-11-27
+:toc:
+:toclevels: 2
+
+Learn how to execute workspace automation scripts and handle common scenarios.
+
+== Prerequisites
+
+* Workspace setup complete
+* Python venv activated: `source .venv-workspace/bin/activate`
+* Understanding of workspace structure
+
+== Quick Reference
+
+Common automation tasks:
+
+[source,bash]
+----
+# Health check
+./.dev/automation/scripts/workspace-health.sh --publish-artifact
+
+# Validate everything
+./.dev/automation/scripts/meta-check.sh
+
+# Refresh workspace after pull
+./.dev/automation/scripts/refresh-workspace.sh
+
+# Run project preflight
+./.dev/automation/scripts/project-preflight.sh --path <doc>
+
+# Generate lifecycle radar
+./.dev/automation/scripts/project-lifecycle-radar.sh
+
+# Build documentation
+./.dev/automation/scripts/docs-build.sh
+----
+
+== Workspace Health Checks
+
+=== Basic Health Check
+
+[source,bash]
+----
+./.dev/automation/scripts/workspace-health.sh
+----
+
+**What it checks:**
+
+* Root repository status
+* All submodule status
+* Detached HEAD states
+* Upstream drift
+
+=== Full Health Check with Artifact
+
+[source,bash]
+----
+./.dev/automation/scripts/workspace-health.sh \
+  --publish-artifact \
+  --json \
+  --strict-submodules \
+  --strict-root
+----
+
+**Flags:**
+
+* `--publish-artifact` - Write `artifacts/workspace-health.json`
+* `--json` - Output JSON to stdout
+* `--strict-submodules` - Fail on dirty submodules
+* `--strict-root` - Fail on dirty root
+
+**Output:**
+
+[source,json]
+----
+{
+  "root": {
+    "status": "clean",
+    "branch": "main",
+    "tracked": [],
+    "untracked": []
+  },
+  "submodules": [
+    {
+      "name": "n00-cortex",
+      "status": "clean",
+      "branch": "main"
+    }
+  ]
+}
+----
+
+=== Clean Untracked Files
+
+[source,bash]
+----
+./.dev/automation/scripts/workspace-health.sh --clean-untracked
+----
+
+**Safe operation:** Only cleans repos with no tracked changes.
+
+=== Sync Submodules
+
+[source,bash]
+----
+./.dev/automation/scripts/workspace-health.sh --sync-submodules
+----
+
+Equivalent to:
+
+[source,bash]
+----
+git submodule sync
+git submodule update --init --recursive
+----
+
+=== Fix All Issues
+
+[source,bash]
+----
+./.dev/automation/scripts/workspace-health.sh --fix-all
+----
+
+Combines:
+
+* `--sync-submodules`
+* Trunk config sync
+* Common repairs
+
+== Schema and Configuration Validation
+
+=== Run Meta-Check
+
+[source,bash]
+----
+./.dev/automation/scripts/meta-check.sh
+----
+
+**What it validates:**
+
+* JSON schemas in n00-cortex
+* Renovate presets
+* CVE scans (if tools available)
+* Workspace manifest
+* Cross-repo consistency
+
+**Expected output:**
+
+[source]
+----
+✓ Schemas valid
+✓ Renovate presets valid
+✓ No critical CVEs
+✓ Workspace manifest correct
+----
+
+=== Validate Specific Schema
+
+[source,bash]
+----
+cd n00-cortex
+pnpm run validate:schemas
+----
+
+=== Check Documentation Attributes
+
+[source,bash]
+----
+node scripts/check-attrs.mjs
+----
+
+Validates all `.adoc` files have:
+
+* `:page-tags:`
+* `:reviewed:` date
+* `:toc:`
+
+== Project Management Automation
+
+=== Capture Project Metadata
+
+[source,bash]
+----
+./.dev/automation/scripts/project-capture.sh \
+  --file "path/to/project.md"
+----
+
+**What it does:**
+
+* Extracts metadata (title, tags, dates)
+* Generates project ID
+* Validates schema compliance
+* Writes to tracking system
+
+=== Run Preflight Check
+
+[source,bash]
+----
+./.dev/automation/scripts/project-preflight.sh \
+  --path "path/to/project.md"
+----
+
+**Preflight checks:**
+
+1. Metadata capture
+2. GitHub sync validation
+3. ERPNext sync validation
+4. Required fields present
+5. Review date not stale
+
+**Output:**
+
+[source]
+----
+✓ Metadata captured
+✓ GitHub sync ready
+✓ ERPNext sync ready
+✓ All required fields present
+✓ Review date current
+----
+
+=== Generate Lifecycle Radar
+
+[source,bash]
+----
+./.dev/automation/scripts/project-lifecycle-radar.sh
+----
+
+**Creates:**
+
+* JSON radar of project states
+* Lifecycle totals
+* Overdue review warnings
+* Missing traceability reports
+
+**Output location:** `.dev/automation/artifacts/lifecycle-radar.json`
+
+=== Generate Control Panel
+
+[source,bash]
+----
+python ./.dev/automation/scripts/project-control-panel.py
+----
+
+**Creates:** Consolidated Markdown dashboard with:
+
+* Pipeline status
+* Planning signals
+* Blockers
+* Open jobs
+
+== Documentation Automation
+
+=== Build Antora Site
+
+[source,bash]
+----
+./.dev/automation/scripts/docs-build.sh
+----
+
+Or directly:
+
+[source,bash]
+----
+pnpm exec antora antora-playbook.yml
+----
+
+**Output:** `build/site/`
+
+=== Lint Documentation
+
+[source,bash]
+----
+./.dev/automation/scripts/docs-lint.sh
+----
+
+Runs:
+
+* Vale prose linting
+* Link checking (if Lychee installed)
+* Attribute validation
+
+=== Verify Documentation
+
+[source,bash]
+----
+./.dev/automation/scripts/docs-verify.sh
+----
+
+**Comprehensive check:**
+
+* Build succeeds
+* No broken xrefs
+* All attributes present
+* Vale passes
+
+== Dependency Management
+
+=== Generate SBOM
+
+[source,bash]
+----
+./.dev/automation/scripts/deps-sbom.sh
+----
+
+**Creates:** Software Bill of Materials in CycloneDX format
+
+=== Audit Dependencies
+
+[source,bash]
+----
+./.dev/automation/scripts/deps-audit.sh
+----
+
+**Checks for:**
+
+* Known CVEs
+* Deprecated packages
+* License compliance issues
+
+=== Detect Dependency Drift
+
+[source,bash]
+----
+python ./.dev/automation/scripts/deps-drift.py
+----
+
+**Identifies:**
+
+* Version inconsistencies across submodules
+* Deprecated package usage
+* Upgrade opportunities
+
+== Trunk Tooling
+
+=== Upgrade Trunk
+
+[source,bash]
+----
+./.dev/automation/scripts/trunk-upgrade.sh
+----
+
+**What it does:**
+
+* Upgrades Trunk CLI
+* Upgrades linters
+* Syncs configs to submodules
+
+=== Sync Trunk Configs
+
+[source,bash]
+----
+./.dev/automation/scripts/sync-trunk-configs.sh
+----
+
+**Copies configs from:** `n00-cortex/data/trunk/base/.trunk/`
+
+**To:** All submodule `.trunk/` directories
+
+=== Run Trunk Across Submodules
+
+[source,bash]
+----
+./.dev/automation/scripts/run-trunk-subrepos.sh --check
+----
+
+**Modes:**
+
+* `--check` - Lint only
+* `--fmt` - Format files
+* `--sync-only` - Copy configs without running
+
+== Branch Management
+
+=== Merge Eligible PRs
+
+[source,bash]
+----
+./.dev/automation/scripts/merge-to-minimal-set.sh
+----
+
+**Merges PRs labeled:** `automerge` (if mergeable and passing checks)
+
+=== Wrangle Stale Branches
+
+[source,bash]
+----
+./.dev/automation/scripts/wrangle-branches.sh
+----
+
+**Creates issue listing:**
+
+* Branches with no recent activity
+* Branches behind main
+* Branches with no associated PR
+
+=== Audit Temporary Branches
+
+[source,bash]
+----
+./.dev/automation/scripts/tmp-branch-audit.sh
+----
+
+**Output:** Markdown report in `artifacts/tmp/branch-wrangler/`
+
+== Python Environment Management
+
+=== Check Virtual Environment Health
+
+[source,bash]
+----
+./.dev/automation/scripts/venv-health.sh
+----
+
+**Reports:**
+
+* All `.venv-*` directories
+* Python versions
+* Installed packages
+* Stale environments
+
+=== Normalize pnpm Workspaces
+
+[source,bash]
+----
+./.dev/automation/scripts/normalize-workspace-pnpm.sh
+----
+
+**What it does:**
+
+* Removes `node_modules/.pnpm`
+* Reinstalls with pinned pnpm version
+* Fixes lockfile inconsistencies
+
+=== Sync .nvmrc Files
+
+[source,bash]
+----
+./.dev/automation/scripts/sync-nvmrc.sh
+----
+
+**Propagates Node version** from workspace root to submodules
+
+== GitHub Integration
+
+=== Sync Projects to GitHub
+
+[source,bash]
+----
+./.dev/automation/scripts/project-sync-github.sh \
+  --project "path/to/project.md"
+----
+
+**What it does:**
+
+* Creates/updates GitHub issue
+* Applies labels
+* Sets milestone
+* Links to project tracking
+
+=== Apply GitHub Project Blueprint
+
+[source,bash]
+----
+./.dev/automation/scripts/github-project-apply-blueprint.sh
+----
+
+**Sets up:**
+
+* Project boards
+* Issue templates
+* Labels
+* Milestones
+
+=== Wait for PR Checks
+
+[source,bash]
+----
+python ./.dev/automation/scripts/wait-for-pr-checks.py \
+  --pr 123 \
+  --timeout 600
+----
+
+**Polls until:**
+
+* All checks pass
+* Any check fails
+* Timeout reached
+
+== ERPNext Integration
+
+=== Sync to ERPNext
+
+[source,bash]
+----
+./.dev/automation/scripts/project-sync-erpnext.sh \
+  --project "path/to/project.md"
+----
+
+**Requires:**
+
+* `ERPNEXT_API_KEY` environment variable
+* `ERPNEXT_API_SECRET` environment variable
+* `ERPNEXT_URL` environment variable
+
+=== Import Blueprint
+
+[source,bash]
+----
+python ./.dev/automation/scripts/erpnext-import-blueprint.py \
+  --blueprint "path/to/blueprint.json"
+----
+
+=== Verify Checksums
+
+[source,bash]
+----
+./.dev/automation/scripts/erpnext-verify-checksums.sh
+----
+
+**Validates:** All synced records have matching checksums
+
+== Common Workflows
+
+=== Pre-Commit Workflow
+
+[source,bash]
+----
+# 1. Check workspace health
+./.dev/automation/scripts/workspace-health.sh
+
+# 2. Run linting
+./.dev/automation/scripts/docs-lint.sh
+
+# 3. Validate schemas
+./.dev/automation/scripts/meta-check.sh
+
+# 4. Build docs
+./.dev/automation/scripts/docs-build.sh
+----
+
+=== Pre-Release Workflow
+
+[source,bash]
+----
+# 1. Full health check
+./.dev/automation/scripts/workspace-health.sh \
+  --publish-artifact \
+  --strict-submodules \
+  --strict-root
+
+# 2. Validate all projects
+./.dev/automation/scripts/project-preflight-batch.sh
+
+# 3. Generate lifecycle radar
+./.dev/automation/scripts/project-lifecycle-radar.sh
+
+# 4. Update release notes
+./.dev/automation/scripts/workspace-release.sh
+----
+
+=== Dependency Update Workflow
+
+[source,bash]
+----
+# 1. Check for drift
+python ./.dev/automation/scripts/deps-drift.py
+
+# 2. Audit for CVEs
+./.dev/automation/scripts/deps-audit.sh
+
+# 3. Generate SBOM
+./.dev/automation/scripts/deps-sbom.sh
+
+# 4. Update dependencies
+pnpm update --latest
+pip install -r requirements.workspace.txt --upgrade
+----
+
+== Troubleshooting
+
+=== Script Not Found
+
+**Check if script exists:**
+
+[source,bash]
+----
+ls -la .dev/automation/scripts/<script-name>
+----
+
+**Fix permissions:**
+
+[source,bash]
+----
+chmod +x .dev/automation/scripts/<script-name>
+----
+
+=== Python Import Errors
+
+**Activate venv:**
+
+[source,bash]
+----
+source .venv-workspace/bin/activate
+----
+
+**Reinstall dependencies:**
+
+[source,bash]
+----
+pip install -r requirements.workspace.txt
+----
+
+=== Environment Variable Missing
+
+**Check required variables:**
+
+[source,bash]
+----
+echo $GITHUB_TOKEN
+echo $ERPNEXT_API_KEY
+----
+
+**Set in .env file:**
+
+[source,bash]
+----
+echo "GITHUB_TOKEN=ghp_..." >> .env
+----
+
+=== Script Hangs
+
+**Check for interactive prompts:**
+
+[source,bash]
+----
+# Run with FORCE_NON_INTERACTIVE
+FORCE_NON_INTERACTIVE=true ./.dev/automation/scripts/<script>.sh
+----
+
+**Check for background processes:**
+
+[source,bash]
+----
+ps aux | grep -i <script-name>
+----
+
+=== Permission Denied
+
+**Fix all script permissions:**
+
+[source,bash]
+----
+chmod +x .dev/automation/scripts/*.sh
+chmod +x .dev/automation/scripts/*.py
+----
+
+== See Also
+
+* xref:ROOT:1. Cerebrum Docs/AI_WORKSPACE_PLAYBOOK.adoc[AI Workspace Playbook]
+* xref:ROOT:1. Cerebrum Docs/WORKSPACE_MAINTENANCE.adoc[Workspace Maintenance]
+* xref:reference/mcp-capabilities.adoc[MCP Capabilities]
+* xref:guides/adding-mcp-capability.adoc[Adding MCP Capability]

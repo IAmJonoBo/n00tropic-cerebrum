@@ -1,0 +1,105 @@
+name: search-reindex
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - docs/**
+      - docsearch.config.json
+      - docs/search/**
+      - antora-playbook.yml
+
+permissions:
+  contents: read
+
+jobs:
+  reindex:
+    runs-on: ubuntu-latest
+    env:
+      TYPESENSE_API_KEY: ${{ secrets.TYPESENSE_API_KEY || 'tskey-ci' }}
+      TYPESENSE_PROTOCOL: ${{ secrets.TYPESENSE_PROTOCOL || 'http' }}
+      TYPESENSE_HOST: ${{ secrets.TYPESENSE_HOST || '127.0.0.1' }}
+      TYPESENSE_PORT: ${{ secrets.TYPESENSE_PORT || '8108' }}
+      TYPESENSE_COLLECTION: ${{ secrets.TYPESENSE_COLLECTION || 'n00-docs' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: false
+      - name: Try to fetch submodules (optional)
+        run: |
+          set -eux
+          git submodule sync --recursive || true
+          git submodule update --init --recursive || echo "Submodules failed to update — continuing without them"
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Enforce doc tags
+        run: pnpm run docs:tag-enforce
+      - name: Typesense freshness guard
+        run: pnpm run search:freshness-check
+      - name: Lint docs (Vale + Lychee + attrs)
+        run: pnpm run docs:lint
+      - name: Build Antora site
+        run: |
+          if [ -f antora-playbook.yml ]; then
+            if grep -q "n00plicate" antora-playbook.yml || [ -d n00plicate ]; then
+              pnpm exec antora antora-playbook.yml
+            else
+              echo "Antora playbook references submodule content that is not available; skipping Antora build"
+            fi
+          else
+            echo "No antora-playbook.yml found; skipping Antora build"
+          fi
+      - name: Serve Antora output
+        run: |
+          if [ -d build/site ]; then
+            npx http-server build/site -p 8080 &
+            echo $! > server.pid
+          else
+            echo "Antora site not built; skipping serve"
+          fi
+      - name: Start Typesense
+        working-directory: docs/search
+        env:
+          TYPESENSE_API_KEY: ${{ env.TYPESENSE_API_KEY }}
+        run: |
+          echo "TYPESENSE_API_KEY=${TYPESENSE_API_KEY}" > .env
+          echo "TYPESENSE_PROTOCOL=${TYPESENSE_PROTOCOL}" >> .env
+          echo "TYPESENSE_HOST=${TYPESENSE_HOST}" >> .env
+          echo "TYPESENSE_PORT=${TYPESENSE_PORT}" >> .env
+          echo "TYPESENSE_COLLECTION=${TYPESENSE_COLLECTION}" >> .env
+          docker compose -f typesense-compose.yml up -d
+      - name: Run Typesense DocSearch scraper
+        env:
+          TYPESENSE_API_KEY: ${{ env.TYPESENSE_API_KEY }}
+          TYPESENSE_PROTOCOL: ${{ env.TYPESENSE_PROTOCOL }}
+          TYPESENSE_HOST: ${{ env.TYPESENSE_HOST }}
+          TYPESENSE_PORT: ${{ env.TYPESENSE_PORT }}
+        run: |
+          mkdir -p docs/search/logs
+          LOG_PATH="docs/search/logs/typesense-reindex-${GITHUB_RUN_ID}.log"
+          CONFIG=$(node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('docsearch.config.json','utf8'));process.stdout.write(JSON.stringify(c));")
+          docker run --rm --network host \
+            -e CONFIG="$CONFIG" \
+            -e TYPESENSE_API_KEY="$TYPESENSE_API_KEY" \
+            -e TYPESENSE_HOST="$TYPESENSE_HOST" \
+            -e TYPESENSE_PORT="$TYPESENSE_PORT" \
+            -e TYPESENSE_PROTOCOL="$TYPESENSE_PROTOCOL" \
+            typesense/docsearch-scraper:0.9.0 | tee "$LOG_PATH"
+          node docs/search/scripts/save-typesense-summary.mjs "$LOG_PATH"
+      - name: Stop HTTP server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+          fi
+      - name: Stop Typesense
+        if: always()
+        working-directory: docs/search
+        run: docker compose -f typesense-compose.yml down

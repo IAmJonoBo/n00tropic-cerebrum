@@ -21,7 +21,7 @@ MARIADB_ROOT_PASSWORD=${ERP_DB_ROOT_PASSWORD:-"root"}
 
 ensure_prereqs() {
 	command -v pnpm >/dev/null 2>&1 || {
-		echo "pnpm is required. Install it via corepack (corepack enable; corepack use pnpm@latest)." >&2
+		echo "pnpm is required. Install it via corepack (corepack enable; corepack use pnpm@10.23.0)." >&2
 		exit 1
 	}
 	command -v "${PYTHON_BIN}" >/dev/null 2>&1 || {

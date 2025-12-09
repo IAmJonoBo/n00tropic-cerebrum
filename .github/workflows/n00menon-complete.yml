@@ -1,0 +1,49 @@
+name: n00menon-complete
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 6 * * 1 # Weekly Monday 06:00 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  complete:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+
+      - name: Ensure pnpm
+        run: |
+          corepack enable || true
+          corepack prepare pnpm@10.23.0 --activate || true
+
+      - name: Run n00menon completion script
+        id: run_complete
+        run: |
+          bash .dev/automation/scripts/complete-n00menon.sh | tee ./n00menon-complete.out || true
+          # If a branch was created by the script, expose it
+          if grep -q '^n00menon/complete/' ./n00menon-complete.out; then
+            echo "branch=$(grep '^n00menon/complete/' ./n00menon-complete.out | tail -n1)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR for n00menon changes
+        if: steps.run_complete.outputs.branch != ''
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(n00menon): apply completion changes"
+          title: "chore(n00menon): completion updates"
+          body: |
+            This PR applies completion steps (validation, UI build, and content improvements) to the `n00menon` component.
+          labels: docs, automation
+          branch: ${{ steps.run_complete.outputs.branch }}

@@ -1,0 +1,68 @@
+name: Renovate extends apply
+
+on:
+  schedule:
+    - cron: 0 3 * * 1 # Mondays 03:00 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  apply-renovate-extends:
+    name: Run & apply 'update-renovate-extends.py'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.11.14
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
+      - name: Install uv + minimal deps
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+          uv pip sync requirements.workspace.min.lock
+
+      - name: Run renovates extends apply script
+        id: apply
+        run: |
+          set -eux
+          python3 .dev/automation/scripts/update-renovate-extends.py --apply --pattern '*/renovate.json' | tee ./renovate-extends.apply.out || true
+          echo "CHANGED=$(if grep -q '^Will add extend to' ./renovate-extends.apply.out; then echo true; else echo false; fi)" >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        if: steps.apply.outputs.CHANGED == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b renovate-extends/apply
+          git add -A
+          git commit -m "chore(renovate): apply workspace preset extends to subrepos"
+          git push --set-upstream origin renovate-extends/apply
+
+      - name: Create Pull Request
+        if: steps.apply.outputs.CHANGED == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(renovate): apply workspace preset extends to subrepos"
+          title: "chore(renovate): apply workspace preset extends to subrepos"
+          body: |
+            The Renovate workspace preset extends were missing in some sub-repo `renovate.json` files. This change updates them to reference the centralized workspace preset.
+          labels: dependencies, automation
+          branch: renovate-extends/apply

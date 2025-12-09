@@ -1,0 +1,3026 @@
+{
+  "$schema": "https://n00tropic.dev/schemas/catalog-graph.schema.json",
+  "schema_version": "1.0.0",
+  "generated_at": "2025-11-29T18:37:54.541Z",
+  "source": "scripts/build-graph.mjs",
+  "nodes": [
+    {
+      "id": "schema.agent-capability",
+      "kind": "schema",
+      "title": "agent-capability schema",
+      "source": "n00-cortex/schemas/agent-capability.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.agent-profile",
+      "kind": "schema",
+      "title": "agent-profile schema",
+      "source": "n00-cortex/schemas/agent-profile.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.ai-guardrail",
+      "kind": "schema",
+      "title": "ai-guardrail schema",
+      "source": "n00-cortex/schemas/ai-guardrail.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.boilerplate",
+      "kind": "schema",
+      "title": "boilerplate schema",
+      "source": "n00-cortex/schemas/boilerplate.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.brand",
+      "kind": "schema",
+      "title": "brand schema",
+      "source": "n00-cortex/schemas/brand.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.catalog-graph",
+      "kind": "schema",
+      "title": "catalog-graph schema",
+      "source": "n00-cortex/schemas/catalog-graph.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.component",
+      "kind": "schema",
+      "title": "component schema",
+      "source": "n00-cortex/schemas/component.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.curriculum",
+      "kind": "schema",
+      "title": "curriculum schema",
+      "source": "n00-cortex/schemas/curriculum.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.dataset-manifest",
+      "kind": "schema",
+      "title": "dataset-manifest schema",
+      "source": "n00-cortex/schemas/dataset-manifest.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.dependency-override",
+      "kind": "schema",
+      "title": "dependency-override schema",
+      "source": "n00-cortex/schemas/dependency-override.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.docs-manifest",
+      "kind": "schema",
+      "title": "docs-manifest schema",
+      "source": "n00-cortex/schemas/docs-manifest.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.document-metadata",
+      "kind": "schema",
+      "title": "document-metadata schema",
+      "source": "n00-cortex/schemas/document-metadata.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.domain-corpus",
+      "kind": "schema",
+      "title": "domain-corpus schema",
+      "source": "n00-cortex/schemas/domain-corpus.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.evaluation-result",
+      "kind": "schema",
+      "title": "evaluation-result schema",
+      "source": "n00-cortex/schemas/evaluation-result.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.id",
+      "kind": "schema",
+      "title": "id schema",
+      "source": "n00-cortex/schemas/id.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.manifesto-doc",
+      "kind": "schema",
+      "title": "manifesto-doc schema",
+      "source": "n00-cortex/schemas/manifesto-doc.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.project-kit",
+      "kind": "schema",
+      "title": "project-kit schema",
+      "source": "n00-cortex/schemas/project-kit.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.project-metadata",
+      "kind": "schema",
+      "title": "project-metadata schema",
+      "source": "n00-cortex/schemas/project-metadata.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.run-envelope",
+      "kind": "schema",
+      "title": "run-envelope schema",
+      "source": "n00-cortex/schemas/run-envelope.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.slices",
+      "kind": "schema",
+      "title": "slices schema",
+      "source": "n00-cortex/schemas/slices.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.toolchain-manifest",
+      "kind": "schema",
+      "title": "toolchain-manifest schema",
+      "source": "n00-cortex/schemas/toolchain-manifest.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "schema.training-pipeline",
+      "kind": "schema",
+      "title": "training-pipeline schema",
+      "source": "n00-cortex/schemas/training-pipeline.schema.json",
+      "tags": ["schema"]
+    },
+    {
+      "id": "template.docs-only",
+      "kind": "template",
+      "title": "Docs Only",
+      "version": "1.0.0",
+      "source": "n00-frontiers/applications/scaffolder/templates/docs-only",
+      "tags": [],
+      "metadata": {
+        "language": null,
+        "framework": null
+      }
+    },
+    {
+      "id": "template.go-service",
+      "kind": "template",
+      "title": "Go Service",
+      "version": "1.0.0",
+      "source": "n00-frontiers/applications/scaffolder/templates/go-service",
+      "tags": [],
+      "metadata": {
+        "language": "go",
+        "framework": null
+      }
+    },
+    {
+      "id": "template.node-service",
+      "kind": "template",
+      "title": "Node Service",
+      "version": "1.0.0",
+      "source": "n00-frontiers/applications/scaffolder/templates/node-service",
+      "tags": [],
+      "metadata": {
+        "language": "typescript",
+        "framework": null
+      }
+    },
+    {
+      "id": "template.project-management",
+      "kind": "template",
+      "title": "Project Management",
+      "version": "1.0.0",
+      "source": "n00-frontiers/applications/scaffolder/templates/project-management",
+      "tags": [],
+      "metadata": {
+        "language": null,
+        "framework": null
+      }
+    },
+    {
+      "id": "template.python-service",
+      "kind": "template",
+      "title": "Python Service",
+      "version": "1.0.0",
+      "source": "n00-frontiers/applications/scaffolder/templates/python-service",
+      "tags": [],
+      "metadata": {
+        "language": "python",
+        "framework": null
+      }
+    },
+    {
+      "id": "template.react-webapp",
+      "kind": "template",
+      "title": "React Webapp",
+      "version": "1.0.0",
+      "source": "n00-frontiers/applications/scaffolder/templates/react-webapp",
+      "tags": [],
+      "metadata": {
+        "language": "typescript",
+        "framework": "react"
+      }
+    },
+    {
+      "id": "capability.workspace-plan",
+      "kind": "capability",
+      "title": "Generate DRY/YAGNI-scored plans via Codex engine.",
+      "source": "n00t/capabilities/manifest.json#workspace.plan",
+      "tags": ["planning", "automation"]
+    },
+    {
+      "id": "capability.deps-sbom",
+      "kind": "capability",
+      "title": "Generate Syft SBOMs for workspace targets (CycloneDX or SPDX).",
+      "source": "n00t/capabilities/manifest.json#deps.sbom",
+      "tags": ["dependencies", "sbom", "syft"]
+    },
+    {
+      "id": "capability.deps-audit",
+      "kind": "capability",
+      "title": "Generate SBOMs and upload them to Dependency-Track.",
+      "source": "n00t/capabilities/manifest.json#deps.audit",
+      "tags": ["dependencies", "sbom", "dependency-track"]
+    },
+    {
+      "id": "capability.deps-renovatedryrun",
+      "kind": "capability",
+      "title": "Run Renovate locally in dry-run mode to preview updates without PRs.",
+      "source": "n00t/capabilities/manifest.json#deps.renovateDryRun",
+      "tags": ["dependencies", "renovate"]
+    },
+    {
+      "id": "capability.deps-drift",
+      "kind": "capability",
+      "title": "Detect dependency version drift and deprecated packages across the workspace.",
+      "source": "n00t/capabilities/manifest.json#deps.drift",
+      "tags": ["dependencies", "drift", "deprecated"]
+    },
+    {
+      "id": "capability.deps-trunklint",
+      "kind": "capability",
+      "title": "Run trunk check (lint) and return latest log path.",
+      "source": "n00t/capabilities/manifest.json#deps.trunkLint",
+      "tags": ["lint", "trunk", "ci"]
+    },
+    {
+      "id": "capability.docs-build",
+      "kind": "capability",
+      "title": "Run the Antora CI playbook for workspace docs.",
+      "source": "n00t/capabilities/manifest.json#docs.build",
+      "tags": ["docs", "antora", "ci"]
+    },
+    {
+      "id": "capability.docs-lint",
+      "kind": "capability",
+      "title": "Run Vale, cspell, and Lychee across workspace docs surfaces.",
+      "source": "n00t/capabilities/manifest.json#docs.lint",
+      "tags": ["docs", "lint", "quality"]
+    },
+    {
+      "id": "capability.docs-verify",
+      "kind": "capability",
+      "title": "Verify n00menon doc surfaces (docs:verify).",
+      "source": "n00t/capabilities/manifest.json#docs.verify",
+      "tags": ["docs", "validation", "n00menon"]
+    },
+    {
+      "id": "capability.docs-setuprunner",
+      "kind": "capability",
+      "title": "Provision dependencies for Antora/Vale/Lychee docs runners on a host.",
+      "source": "n00t/capabilities/manifest.json#docs.setupRunner",
+      "tags": ["docs", "runner", "provisioning"]
+    },
+    {
+      "id": "capability.docs-syncsuper",
+      "kind": "capability",
+      "title": "Sync docs surfaces across the superrepo and push changes upstream.",
+      "source": "n00t/capabilities/manifest.json#docs.syncSuper",
+      "tags": ["docs", "sync", "automation"]
+    },
+    {
+      "id": "capability.runner-info",
+      "kind": "capability",
+      "title": "Show actions-runner health snapshot for this host.",
+      "source": "n00t/capabilities/manifest.json#runner.info",
+      "tags": ["runner", "diagnostics"]
+    },
+    {
+      "id": "capability.runner-cleanup",
+      "kind": "capability",
+      "title": "Prune old actions-runner backups while keeping the two newest copies.",
+      "source": "n00t/capabilities/manifest.json#runner.cleanup",
+      "tags": ["runner", "maintenance"]
+    },
+    {
+      "id": "capability.runner-upgrade",
+      "kind": "capability",
+      "title": "Upgrade the GitHub Actions self-hosted runner with a safe backup/rollback.",
+      "source": "n00t/capabilities/manifest.json#runner.upgrade",
+      "tags": ["runner", "upgrade"]
+    },
+    {
+      "id": "capability.workspace-metacheck",
+      "kind": "capability",
+      "title": "Run the full meta-check orchestration (frontiers sanity, schema validation, pip-audit, consistency checks).",
+      "source": "n00t/capabilities/manifest.json#workspace.metaCheck",
+      "tags": ["workspace", "meta-check"]
+    },
+    {
+      "id": "capability.fusion-pipeline",
+      "kind": "capability",
+      "title": "Run ingest → embed → generate → graph rebuild for a PDF corpus.",
+      "source": "n00t/capabilities/manifest.json#fusion.pipeline",
+      "tags": ["fusion", "pipeline", "graph", "ui:fusion"]
+    },
+    {
+      "id": "capability.horizons-preflight",
+      "kind": "capability",
+      "title": "Run horizons preflight for a metadata document.",
+      "source": "n00t/capabilities/manifest.json#horizons.preflight",
+      "tags": ["horizons", "preflight", "ui:horizons"]
+    },
+    {
+      "id": "capability.horizons-radar",
+      "kind": "capability",
+      "title": "Regenerate horizons lifecycle radar.",
+      "source": "n00t/capabilities/manifest.json#horizons.radar",
+      "tags": ["horizons", "radar", "ui:horizons"]
+    },
+    {
+      "id": "capability.horizons-orchestrate",
+      "kind": "capability",
+      "title": "Orchestrate job execution across n00-horizons.",
+      "source": "n00t/capabilities/manifest.json#horizons.orchestrate",
+      "tags": ["horizons", "orchestration", "jobs"]
+    },
+    {
+      "id": "capability.horizons-agentfoundry",
+      "kind": "capability",
+      "title": "Scaffold and register n00man agents with profiles and capabilities.",
+      "source": "n00t/capabilities/manifest.json#horizons.agentFoundry",
+      "tags": ["horizons", "agents", "foundry", "scaffolding"]
+    },
+    {
+      "id": "capability.fusion-ingest",
+      "kind": "capability",
+      "title": "Ingest a PDF corpus via n00clear-fusion pipelines.",
+      "source": "n00t/capabilities/manifest.json#fusion.ingest",
+      "tags": ["fusion", "ingest", "pdf"]
+    },
+    {
+      "id": "capability.fusion-embed",
+      "kind": "capability",
+      "title": "Generate hashed embeddings for ingested corpus chunks.",
+      "source": "n00t/capabilities/manifest.json#fusion.embed",
+      "tags": ["fusion", "embedding", "rag"]
+    },
+    {
+      "id": "capability.fusion-generate",
+      "kind": "capability",
+      "title": "Generate briefs, plans, and checklists from a corpus dataset.",
+      "source": "n00t/capabilities/manifest.json#fusion.generate",
+      "tags": ["fusion", "generator", "briefs"]
+    },
+    {
+      "id": "capability.workspace-refresh",
+      "kind": "capability",
+      "title": "Fast-forward all workspace repositories and update submodules.",
+      "source": "n00t/capabilities/manifest.json#workspace.refresh",
+      "tags": ["workspace", "refresh"]
+    },
+    {
+      "id": "capability.workspace-trunkupgrade",
+      "kind": "capability",
+      "title": "Run trunk upgrade across all repositories that declare Trunk configuration.",
+      "source": "n00t/capabilities/manifest.json#workspace.trunkUpgrade",
+      "tags": []
+    },
+    {
+      "id": "capability.workspace-release",
+      "kind": "capability",
+      "title": "Generate release manifest for the federated workspace.",
+      "source": "n00t/capabilities/manifest.json#workspace.release",
+      "tags": []
+    },
+    {
+      "id": "capability.workspace-gitdoctor",
+      "kind": "capability",
+      "title": "Summarise git health across the workspace and optionally clean untracked or sync submodules.",
+      "source": "n00t/capabilities/manifest.json#workspace.gitDoctor",
+      "tags": ["workspace", "git", "automation"]
+    },
+    {
+      "id": "capability.workspace-checksubmodules",
+      "kind": "capability",
+      "title": "Verify submodule cleanliness, branch alignment, and upstream parity.",
+      "source": "n00t/capabilities/manifest.json#workspace.checkSubmodules",
+      "tags": ["workspace", "submodules", "git"]
+    },
+    {
+      "id": "capability.workspace-checkskeleton",
+      "kind": "capability",
+      "title": "Validate workspace repos against the skeleton manifest and optionally scaffold missing bits.",
+      "source": "n00t/capabilities/manifest.json#workspace.checkSkeleton",
+      "tags": ["workspace", "skeleton", "automation"]
+    },
+    {
+      "id": "capability.workspace-normalizepnpm",
+      "kind": "capability",
+      "title": "Reinstall PNPM dependencies across templates and subrepos using the canonical toolchain version.",
+      "source": "n00t/capabilities/manifest.json#workspace.normalizePnpm",
+      "tags": ["workspace", "pnpm", "automation"]
+    },
+    {
+      "id": "capability.workspace-venvhealth",
+      "kind": "capability",
+      "title": "Inspect, prune, or refresh python virtual environments across the workspace.",
+      "source": "n00t/capabilities/manifest.json#workspace.venvHealth",
+      "tags": ["workspace", "python", "venv"]
+    },
+    {
+      "id": "capability.workspace-trunkupgradeworkspace",
+      "kind": "capability",
+      "title": "Upgrade Trunk, sync canonical configs, and optionally run checks across subrepos.",
+      "source": "n00t/capabilities/manifest.json#workspace.trunkUpgradeWorkspace",
+      "tags": ["workspace", "trunk", "ci"]
+    },
+    {
+      "id": "capability.workspace-status",
+      "kind": "capability",
+      "title": "Print a concise workspace git + submodule + Trunk snapshot for quick handoffs.",
+      "source": "n00t/capabilities/manifest.json#workspace.status",
+      "tags": ["workspace", "git", "status"]
+    },
+    {
+      "id": "capability.trunk-manage",
+      "kind": "capability",
+      "title": "Single entrypoint for Trunk sync, push/pull, upgrade, and fmt across subrepos.",
+      "source": "n00t/capabilities/manifest.json#trunk.manage",
+      "tags": ["trunk", "sync", "ci"]
+    },
+    {
+      "id": "capability.trunk-sync",
+      "kind": "capability",
+      "title": "Synchronise canonical Trunk config across workspace repos (check/pull/push).",
+      "source": "n00t/capabilities/manifest.json#trunk.sync",
+      "tags": ["trunk", "sync", "config"]
+    },
+    {
+      "id": "capability.trunk-runsubrepos",
+      "kind": "capability",
+      "title": "Run trunk check (and optional fmt) across subrepos after syncing canonical defs.",
+      "source": "n00t/capabilities/manifest.json#trunk.runSubrepos",
+      "tags": ["trunk", "lint", "ci"]
+    },
+    {
+      "id": "capability.trunk-lintsetup",
+      "kind": "capability",
+      "title": "Install or initialise Trunk CLI for the workspace without running checks.",
+      "source": "n00t/capabilities/manifest.json#trunk.lintSetup",
+      "tags": ["trunk", "setup"]
+    },
+    {
+      "id": "capability.workspace-syncnvmrc",
+      "kind": "capability",
+      "title": "Link subrepo .nvmrc files back to the workspace pin (optionally forcing overrides).",
+      "source": "n00t/capabilities/manifest.json#workspace.syncNvmrc",
+      "tags": ["workspace", "node", "nvmrc"]
+    },
+    {
+      "id": "capability.workspace-doctor",
+      "kind": "capability",
+      "title": "Workspace doctor sweep (tokens, Trunk sync, pnpm dependencies) with optional fixes.",
+      "source": "n00t/capabilities/manifest.json#workspace.doctor",
+      "tags": ["workspace", "doctor", "pnpm"]
+    },
+    {
+      "id": "capability.merge-minimalset",
+      "kind": "capability",
+      "title": "Merge all automerge-labeled PRs that are currently mergeable into main.",
+      "source": "n00t/capabilities/manifest.json#merge.minimalSet",
+      "tags": ["branches", "merge", "github"]
+    },
+    {
+      "id": "capability.branches-wrangle",
+      "kind": "capability",
+      "title": "Identify stale branches, merge automerge PRs, and file a cleanup issue (optional deletion).",
+      "source": "n00t/capabilities/manifest.json#branches.wrangle",
+      "tags": ["branches", "cleanup", "github"]
+    },
+    {
+      "id": "capability.branches-audittemp",
+      "kind": "capability",
+      "title": "Generate a branch-wrangler markdown report across the workspace and subrepos.",
+      "source": "n00t/capabilities/manifest.json#branches.auditTemp",
+      "tags": ["branches", "reporting", "github"]
+    },
+    {
+      "id": "capability.checks-waitforchecks",
+      "kind": "capability",
+      "title": "Poll GitHub check-runs for a PR until completion with fail-fast options.",
+      "source": "n00t/capabilities/manifest.json#checks.waitForChecks",
+      "tags": ["checks", "github", "polling"]
+    },
+    {
+      "id": "capability.checks-waitforprchecks",
+      "kind": "capability",
+      "title": "Watch a PR's statusCheckRollup until it succeeds, fails, or times out.",
+      "source": "n00t/capabilities/manifest.json#checks.waitForPrChecks",
+      "tags": ["checks", "github", "polling"]
+    },
+    {
+      "id": "capability.telemetry-recordrunenvelope",
+      "kind": "capability",
+      "title": "Append a run envelope entry for automation telemetry (JSONL under .dev/automation/artifacts).",
+      "source": "n00t/capabilities/manifest.json#telemetry.recordRunEnvelope",
+      "tags": ["telemetry", "automation"]
+    },
+    {
+      "id": "capability.telemetry-recordcapabilityrun",
+      "kind": "capability",
+      "title": "Persist a structured capability run record for dashboards/agents.",
+      "source": "n00t/capabilities/manifest.json#telemetry.recordCapabilityRun",
+      "tags": ["telemetry", "automation"]
+    },
+    {
+      "id": "capability.metadata-autofix",
+      "kind": "capability",
+      "title": "Autofix project metadata documents (tags, defaults, review dates).",
+      "source": "n00t/capabilities/manifest.json#metadata.autofix",
+      "tags": ["metadata", "autofix"]
+    },
+    {
+      "id": "capability.metadata-validate",
+      "kind": "capability",
+      "title": "Validate metadata-bearing documents against the schema and taxonomy.",
+      "source": "n00t/capabilities/manifest.json#metadata.validate",
+      "tags": ["metadata", "validation"]
+    },
+    {
+      "id": "capability.metadata-lintworkspacemanifest",
+      "kind": "capability",
+      "title": "Lint automation/workspace.manifest.json for required fields and uniqueness.",
+      "source": "n00t/capabilities/manifest.json#metadata.lintWorkspaceManifest",
+      "tags": ["metadata", "lint"]
+    },
+    {
+      "id": "capability.metadata-updaterenovateextends",
+      "kind": "capability",
+      "title": "Update Renovate preset extends entries across the workspace.",
+      "source": "n00t/capabilities/manifest.json#metadata.updateRenovateExtends",
+      "tags": ["renovate", "dependencies"]
+    },
+    {
+      "id": "capability.plan-resolveconflicts",
+      "kind": "capability",
+      "title": "Resolve plan conflicts for automation runs.",
+      "source": "n00t/capabilities/manifest.json#plan.resolveConflicts",
+      "tags": ["planning"]
+    },
+    {
+      "id": "capability.metadata-newuploadedbrief",
+      "kind": "capability",
+      "title": "Ingest a newly uploaded brief into the workspace registry.",
+      "source": "n00t/capabilities/manifest.json#metadata.newUploadedBrief",
+      "tags": ["briefs", "metadata"]
+    },
+    {
+      "id": "capability.project-frombrief",
+      "kind": "capability",
+      "title": "Create a job from a brief document.",
+      "source": "n00t/capabilities/manifest.json#project.fromBrief",
+      "tags": ["projects", "briefs"]
+    },
+    {
+      "id": "capability.project-lifecycleradarpy",
+      "kind": "capability",
+      "title": "Generate lifecycle radar (Python implementation).",
+      "source": "n00t/capabilities/manifest.json#project.lifecycleRadarPy",
+      "tags": ["projects", "radar"]
+    },
+    {
+      "id": "capability.project-slicereport",
+      "kind": "capability",
+      "title": "Generate a project slice report across metadata sources.",
+      "source": "n00t/capabilities/manifest.json#project.sliceReport",
+      "tags": ["projects", "reporting"]
+    },
+    {
+      "id": "capability.project-orchestrate",
+      "kind": "capability",
+      "title": "Orchestrate project capture/sync/ERPNext planning tasks (Python helper).",
+      "source": "n00t/capabilities/manifest.json#project.orchestrate",
+      "tags": ["projects", "orchestration"]
+    },
+    {
+      "id": "capability.project-autofixlinkspy",
+      "kind": "capability",
+      "title": "Autofix project links (Python variant).",
+      "source": "n00t/capabilities/manifest.json#project.autofixLinksPy",
+      "tags": ["projects", "links"]
+    },
+    {
+      "id": "capability.report-subrepostate",
+      "kind": "capability",
+      "title": "Generate Renovate/skeleton state report across top-level repos.",
+      "source": "n00t/capabilities/manifest.json#report.subrepoState",
+      "tags": ["reporting", "repos"]
+    },
+    {
+      "id": "capability.workspace-commitsubmodules",
+      "kind": "capability",
+      "title": "Stage and commit updated submodule SHAs in the superrepo.",
+      "source": "n00t/capabilities/manifest.json#workspace.commitSubmodules",
+      "tags": ["workspace", "git", "submodules"]
+    },
+    {
+      "id": "capability.deps-dependencytrackupload",
+      "kind": "capability",
+      "title": "Upload SBOMs to Dependency-Track from generated artifacts.",
+      "source": "n00t/capabilities/manifest.json#deps.dependencyTrackUpload",
+      "tags": ["dependencies", "dependency-track"]
+    },
+    {
+      "id": "capability.deps-latesttoolversions",
+      "kind": "capability",
+      "title": "Fetch latest published versions for runtimes and Trunk-managed linters.",
+      "source": "n00t/capabilities/manifest.json#deps.latestToolVersions",
+      "tags": ["tooling", "versions"]
+    },
+    {
+      "id": "capability.github-applyprojectblueprint",
+      "kind": "capability",
+      "title": "Apply a GitHub Project configuration blueprint via gh + GraphQL.",
+      "source": "n00t/capabilities/manifest.json#github.applyProjectBlueprint",
+      "tags": ["github", "projects"]
+    },
+    {
+      "id": "capability.github-applyprojectblueprintsh",
+      "kind": "capability",
+      "title": "Shell wrapper to apply GitHub Project blueprint.",
+      "source": "n00t/capabilities/manifest.json#github.applyProjectBlueprintSh",
+      "tags": ["github", "projects"]
+    },
+    {
+      "id": "capability.erpnext-bootstrap",
+      "kind": "capability",
+      "title": "Bootstrap an ERPNext environment for workspace automation.",
+      "source": "n00t/capabilities/manifest.json#erpnext.bootstrap",
+      "tags": ["erpnext", "bootstrap"]
+    },
+    {
+      "id": "capability.erpnext-importblueprint",
+      "kind": "capability",
+      "title": "Import an ERPNext project blueprint via REST (Python).",
+      "source": "n00t/capabilities/manifest.json#erpnext.importBlueprint",
+      "tags": ["erpnext", "blueprint"]
+    },
+    {
+      "id": "capability.erpnext-importblueprintsh",
+      "kind": "capability",
+      "title": "Shell wrapper to import ERPNext project blueprint.",
+      "source": "n00t/capabilities/manifest.json#erpnext.importBlueprintSh",
+      "tags": ["erpnext", "blueprint"]
+    },
+    {
+      "id": "capability.erpnext-stack",
+      "kind": "capability",
+      "title": "Manage ERPNext stack lifecycle for local/CI.",
+      "source": "n00t/capabilities/manifest.json#erpnext.stack",
+      "tags": ["erpnext", "stack"]
+    },
+    {
+      "id": "capability.erpnext-run",
+      "kind": "capability",
+      "title": "Run ERPNext helper script (bench stack).",
+      "source": "n00t/capabilities/manifest.json#erpnext.run",
+      "tags": ["erpnext"]
+    },
+    {
+      "id": "capability.n00menon-verify",
+      "kind": "capability",
+      "title": "Run n00menon verification workflow.",
+      "source": "n00t/capabilities/manifest.json#n00menon.verify",
+      "tags": ["n00menon", "docs"]
+    },
+    {
+      "id": "capability.n00menon-complete",
+      "kind": "capability",
+      "title": "Complete n00menon docs build/validation and open PR with changes.",
+      "source": "n00t/capabilities/manifest.json#n00menon.complete",
+      "tags": ["n00menon", "docs"]
+    },
+    {
+      "id": "capability.workspace-dependencytrackautopush",
+      "kind": "capability",
+      "title": "Sync Trunk configs automatically and push changes (CI helper).",
+      "source": "n00t/capabilities/manifest.json#workspace.dependencyTrackAutopush",
+      "tags": ["trunk", "ci"]
+    },
+    {
+      "id": "capability.trunk-syncconfigs",
+      "kind": "capability",
+      "title": "Shell helper to sync Trunk configs (check/pull).",
+      "source": "n00t/capabilities/manifest.json#trunk.syncConfigs",
+      "tags": ["trunk", "sync"]
+    },
+    {
+      "id": "capability.workspace-bootstrappython",
+      "kind": "capability",
+      "title": "Bootstrap Python toolchain with uv/pip for the workspace.",
+      "source": "n00t/capabilities/manifest.json#workspace.bootstrapPython",
+      "tags": ["workspace", "python"]
+    },
+    {
+      "id": "capability.workspace-bootstrapworkspace",
+      "kind": "capability",
+      "title": "Bootstrap the full workspace toolchain.",
+      "source": "n00t/capabilities/manifest.json#workspace.bootstrapWorkspace",
+      "tags": ["workspace", "bootstrap"]
+    },
+    {
+      "id": "capability.workspace-centralizepnpmstore",
+      "kind": "capability",
+      "title": "Centralize pnpm store for deterministic caching.",
+      "source": "n00t/capabilities/manifest.json#workspace.centralizePnpmStore",
+      "tags": ["pnpm", "cache"]
+    },
+    {
+      "id": "capability.workspace-checkforwardedflags",
+      "kind": "capability",
+      "title": "Validate forwarded flags for scripts.",
+      "source": "n00t/capabilities/manifest.json#workspace.checkForwardedFlags",
+      "tags": ["workspace"]
+    },
+    {
+      "id": "capability.workspace-checksuperrepo",
+      "kind": "capability",
+      "title": "Check superrepo consistency and prerequisites.",
+      "source": "n00t/capabilities/manifest.json#workspace.checkSuperrepo",
+      "tags": ["workspace", "superrepo"]
+    },
+    {
+      "id": "capability.workspace-createdefaultuibundle",
+      "kind": "capability",
+      "title": "Create default UI bundle.",
+      "source": "n00t/capabilities/manifest.json#workspace.createDefaultUiBundle",
+      "tags": ["ui", "bundle"]
+    },
+    {
+      "id": "capability.workspace-createvalestubstyles",
+      "kind": "capability",
+      "title": "Generate Vale stub styles for docs linting.",
+      "source": "n00t/capabilities/manifest.json#workspace.createValeStubStyles",
+      "tags": ["docs", "vale"]
+    },
+    {
+      "id": "capability.workspace-fetchsyft",
+      "kind": "capability",
+      "title": "Fetch Syft binary for SBOM generation.",
+      "source": "n00t/capabilities/manifest.json#workspace.fetchSyft",
+      "tags": ["sbom", "syft"]
+    },
+    {
+      "id": "capability.workspace-findnxrefs",
+      "kind": "capability",
+      "title": "Find Nx references in the workspace.",
+      "source": "n00t/capabilities/manifest.json#workspace.findNxRefs",
+      "tags": ["nx"]
+    },
+    {
+      "id": "capability.workspace-installhooks",
+      "kind": "capability",
+      "title": "Install workspace git hooks.",
+      "source": "n00t/capabilities/manifest.json#workspace.installHooks",
+      "tags": ["hooks"]
+    },
+    {
+      "id": "capability.workspace-pythoncachekey",
+      "kind": "capability",
+      "title": "Generate Python cache key for workflows.",
+      "source": "n00t/capabilities/manifest.json#workspace.pythonCacheKey",
+      "tags": ["python", "cache"]
+    },
+    {
+      "id": "capability.workspace-refreshpythonlock",
+      "kind": "capability",
+      "title": "Refresh Python lockfiles.",
+      "source": "n00t/capabilities/manifest.json#workspace.refreshPythonLock",
+      "tags": ["python", "dependencies"]
+    },
+    {
+      "id": "capability.workspace-removenxcache",
+      "kind": "capability",
+      "title": "Remove Nx cache directories.",
+      "source": "n00t/capabilities/manifest.json#workspace.removeNxCache",
+      "tags": ["nx", "cache"]
+    },
+    {
+      "id": "capability.workspace-runvaletermscandidatestest",
+      "kind": "capability",
+      "title": "Run Vale terms candidates test script.",
+      "source": "n00t/capabilities/manifest.json#workspace.runValeTermsCandidatesTest",
+      "tags": ["vale", "docs"]
+    },
+    {
+      "id": "capability.workspace-setuppnpm",
+      "kind": "capability",
+      "title": "Install/setup pnpm for the workspace.",
+      "source": "n00t/capabilities/manifest.json#workspace.setupPnpm",
+      "tags": ["pnpm", "setup"]
+    },
+    {
+      "id": "capability.workspace-synccontributing",
+      "kind": "capability",
+      "title": "Sync contributing guides across the workspace.",
+      "source": "n00t/capabilities/manifest.json#workspace.syncContributing",
+      "tags": ["docs", "contributing"]
+    },
+    {
+      "id": "capability.workspace-syncecosystem",
+      "kind": "capability",
+      "title": "Sync ecosystem metadata/templates.",
+      "source": "n00t/capabilities/manifest.json#workspace.syncEcosystem",
+      "tags": ["ecosystem"]
+    },
+    {
+      "id": "capability.workspace-syncenvtemplates",
+      "kind": "capability",
+      "title": "Sync environment template files across repos.",
+      "source": "n00t/capabilities/manifest.json#workspace.syncEnvTemplates",
+      "tags": ["env", "templates"]
+    },
+    {
+      "id": "capability.workspace-syncnodeversion",
+      "kind": "capability",
+      "title": "Synchronize Node version pins across repos.",
+      "source": "n00t/capabilities/manifest.json#workspace.syncNodeVersion",
+      "tags": ["node", "versions"]
+    },
+    {
+      "id": "capability.workspace-syncpythonversion",
+      "kind": "capability",
+      "title": "Synchronize Python version pins across repos.",
+      "source": "n00t/capabilities/manifest.json#workspace.syncPythonVersion",
+      "tags": ["python", "versions"]
+    },
+    {
+      "id": "capability.workspace-syncvenvs",
+      "kind": "capability",
+      "title": "Sync or recreate Python virtual environments across repos.",
+      "source": "n00t/capabilities/manifest.json#workspace.syncVenvs",
+      "tags": ["python", "venv"]
+    },
+    {
+      "id": "capability.workspace-tagpropagate",
+      "kind": "capability",
+      "title": "Propagate git tags across the workspace.",
+      "source": "n00t/capabilities/manifest.json#workspace.tagPropagate",
+      "tags": ["git", "tags"]
+    },
+    {
+      "id": "capability.workspace-tidysubmodules",
+      "kind": "capability",
+      "title": "Tidy submodules (git clean) with safety checks.",
+      "source": "n00t/capabilities/manifest.json#workspace.tidySubmodules",
+      "tags": ["git", "submodules"]
+    },
+    {
+      "id": "capability.workspace-qa",
+      "kind": "capability",
+      "title": "Run workspace QA helper script.",
+      "source": "n00t/capabilities/manifest.json#workspace.qa",
+      "tags": ["workspace", "qa"]
+    },
+    {
+      "id": "capability.workspace-example",
+      "kind": "capability",
+      "title": "Run the example workspace helper script.",
+      "source": "n00t/capabilities/manifest.json#workspace.example",
+      "tags": ["example"]
+    },
+    {
+      "id": "capability.workspace-fetchantoralocalclone",
+      "kind": "capability",
+      "title": "Clone Antora content locally for docs development.",
+      "source": "n00t/capabilities/manifest.json#workspace.fetchAntoraLocalClone",
+      "tags": ["docs", "antora"]
+    },
+    {
+      "id": "capability.ai-workflow-utils",
+      "kind": "capability",
+      "title": "Utility functions for AI workflows (logging/progress).",
+      "source": "n00t/capabilities/manifest.json#ai.workflow.utils",
+      "tags": ["ai", "workflow"]
+    },
+    {
+      "id": "capability.dependencies-check",
+      "kind": "capability",
+      "title": "Run canonical + override dependency consistency checks.",
+      "source": "n00t/capabilities/manifest.json#dependencies.check",
+      "tags": []
+    },
+    {
+      "id": "capability.dependencies-dashboard",
+      "kind": "capability",
+      "title": "Generate a Renovate dependency dashboard snapshot for the workspace.",
+      "source": "n00t/capabilities/manifest.json#dependencies.dashboard",
+      "tags": []
+    },
+    {
+      "id": "capability.cortex-frontiersingest",
+      "kind": "capability",
+      "title": "Regenerate n00-cortex frontiers catalog exports (or check for drift).",
+      "source": "n00t/capabilities/manifest.json#cortex.frontiersIngest",
+      "tags": []
+    },
+    {
+      "id": "capability.school-trainingrun",
+      "kind": "capability",
+      "title": "Trigger a model training or evaluation run managed by n00-school (validators + artefacts).",
+      "source": "n00t/capabilities/manifest.json#school.trainingRun",
+      "tags": []
+    },
+    {
+      "id": "capability.school-generatecurriculum",
+      "kind": "capability",
+      "title": "Generate training datasets from domain-specific curricula (coding, RAG, agents, planning).",
+      "source": "n00t/capabilities/manifest.json#school.generateCurriculum",
+      "tags": []
+    },
+    {
+      "id": "capability.ai-workflow-planning",
+      "kind": "capability",
+      "title": "Run the planning and research phase of the AI-assisted development workflow.",
+      "source": "n00t/capabilities/manifest.json#ai.workflow.planning",
+      "tags": []
+    },
+    {
+      "id": "capability.ai-workflow-architecture",
+      "kind": "capability",
+      "title": "Run the architecture and design phase of the AI-assisted development workflow.",
+      "source": "n00t/capabilities/manifest.json#ai.workflow.architecture",
+      "tags": []
+    },
+    {
+      "id": "capability.ai-workflow-coding",
+      "kind": "capability",
+      "title": "Run the core coding and implementation phase of the AI-assisted development workflow.",
+      "source": "n00t/capabilities/manifest.json#ai.workflow.coding",
+      "tags": []
+    },
+    {
+      "id": "capability.ai-workflow-debugging",
+      "kind": "capability",
+      "title": "Run the debugging and testing phase of the AI-assisted development workflow.",
+      "source": "n00t/capabilities/manifest.json#ai.workflow.debugging",
+      "tags": []
+    },
+    {
+      "id": "capability.ai-workflow-review",
+      "kind": "capability",
+      "title": "Run the review and deployment phase of the AI-assisted development workflow.",
+      "source": "n00t/capabilities/manifest.json#ai.workflow.review",
+      "tags": []
+    },
+    {
+      "id": "capability.ai-workflow-runner",
+      "kind": "capability",
+      "title": "Interactive runner for the complete AI-assisted development workflow.",
+      "source": "n00t/capabilities/manifest.json#ai.workflow.runner",
+      "tags": []
+    },
+    {
+      "id": "capability.erpnext-exportdata",
+      "kind": "capability",
+      "title": "Export ERPNext module data to the workspace archive and write telemetry.",
+      "source": "n00t/capabilities/manifest.json#erpnext.exportData",
+      "tags": []
+    },
+    {
+      "id": "capability.erpnext-verifyexports",
+      "kind": "capability",
+      "title": "Generate and verify ERPNext export checksums, emitting telemetry for on-call review.",
+      "source": "n00t/capabilities/manifest.json#erpnext.verifyExports",
+      "tags": []
+    },
+    {
+      "id": "capability.project-capture",
+      "kind": "capability",
+      "title": "Validate metadata-bearing artefacts and register them in the unified project catalog.",
+      "source": "n00t/capabilities/manifest.json#project.capture",
+      "tags": ["project-management", "automation", "governance"]
+    },
+    {
+      "id": "capability.project-sync-github",
+      "kind": "capability",
+      "title": "Plan GitHub project synchronisation using the unified metadata registry.",
+      "source": "n00t/capabilities/manifest.json#project.sync.github",
+      "tags": ["project-management", "automation", "github"]
+    },
+    {
+      "id": "capability.project-sync-erpnext",
+      "kind": "capability",
+      "title": "Plan ERPNext project synchronisation using the unified metadata registry.",
+      "source": "n00t/capabilities/manifest.json#project.sync.erpnext",
+      "tags": ["project-management", "automation", "erpnext"]
+    },
+    {
+      "id": "capability.project-preflight",
+      "kind": "capability",
+      "title": "Chain capture plus sync checks and enforce readiness gates before kicking off delivery work.",
+      "source": "n00t/capabilities/manifest.json#project.preflight",
+      "tags": ["project-management", "automation", "governance"]
+    },
+    {
+      "id": "capability.project-batchpreflight",
+      "kind": "capability",
+      "title": "Run preflight across registry-sourced metadata (or explicit paths) to expose GitHub ↔ ERPNext drift.",
+      "source": "n00t/capabilities/manifest.json#project.batchPreflight",
+      "tags": ["project-management", "automation", "governance"]
+    },
+    {
+      "id": "capability.project-recordidea",
+      "kind": "capability",
+      "title": "Scaffold a new idea with metadata, register it, and surface automation impacts.",
+      "source": "n00t/capabilities/manifest.json#project.recordIdea",
+      "tags": ["project-management", "automation", "governance"]
+    },
+    {
+      "id": "capability.project-recordjob",
+      "kind": "capability",
+      "title": "Create a frontier-grade job record with metadata, register it, and surface impacts.",
+      "source": "n00t/capabilities/manifest.json#project.recordJob",
+      "tags": ["project-management", "automation", "delivery"]
+    },
+    {
+      "id": "capability.project-ingestmarkdown",
+      "kind": "capability",
+      "title": "Attach metadata to existing markdown documents and register them in the catalog.",
+      "source": "n00t/capabilities/manifest.json#project.ingestMarkdown",
+      "tags": ["project-management", "automation", "governance"]
+    },
+    {
+      "id": "capability.project-lifecycleradar",
+      "kind": "capability",
+      "title": "Summarise lifecycle readiness gaps across metadata-bearing artefacts.",
+      "source": "n00t/capabilities/manifest.json#project.lifecycleRadar",
+      "tags": ["project-management", "automation", "governance"]
+    },
+    {
+      "id": "capability.project-controlpanel",
+      "kind": "capability",
+      "title": "Regenerate the control panel markdown snapshot for lifecycle + readiness dashboards.",
+      "source": "n00t/capabilities/manifest.json#project.controlPanel",
+      "tags": ["project", "control-panel", "readiness"]
+    },
+    {
+      "id": "capability.project-controltowerhealth",
+      "kind": "capability",
+      "title": "Run the five-step control tower health sweep across docs, cortex, and tests.",
+      "source": "n00t/capabilities/manifest.json#project.controlTowerHealth",
+      "tags": ["project", "control-tower", "health"]
+    },
+    {
+      "id": "capability.project-autofixlinks",
+      "kind": "capability",
+      "title": "Repair metadata link blocks (canonical paths, reciprocal references, artefact logging).",
+      "source": "n00t/capabilities/manifest.json#project.autofixLinks",
+      "tags": ["project-management", "automation", "governance"]
+    },
+    {
+      "id": "capability.workspace-repair",
+      "kind": "capability",
+      "title": "Dry-run (or apply) workspace auto-remediation: skeleton apply, submodule sync, safe clean, branch ensure.",
+      "source": "n00t/capabilities/manifest.json#workspace.repair",
+      "tags": ["workspace", "health", "repair"]
+    },
+    {
+      "id": "capability.workspace-graph",
+      "kind": "capability",
+      "title": "Export live capability+data graph and capability health artifacts for dashboards/agents.",
+      "source": "n00t/capabilities/manifest.json#workspace.graph",
+      "tags": ["graph", "capabilities", "observability"]
+    },
+    {
+      "id": "capability.workspace-policysync",
+      "kind": "capability",
+      "title": "Ingest frontiers → regenerate cortex schemas → sync docs → refresh releases.yaml.",
+      "source": "n00t/capabilities/manifest.json#workspace.policySync",
+      "tags": ["docs", "schemas", "templates"]
+    },
+    {
+      "id": "capability.workspace-tokensdrift",
+      "kind": "capability",
+      "title": "Detect design token drift and validate orchestrator contract (n00plicate).",
+      "source": "n00t/capabilities/manifest.json#workspace.tokensDrift",
+      "tags": ["design-tokens", "drift", "quality"]
+    },
+    {
+      "id": "capability.workspace-toolchainpins",
+      "kind": "capability",
+      "title": "Validate Node/pnpm pins against n00-cortex toolchain manifest across subrepos.",
+      "source": "n00t/capabilities/manifest.json#workspace.toolchainPins",
+      "tags": ["toolchain", "drift", "node", "pnpm"]
+    },
+    {
+      "id": "capability.search-typesensefreshness",
+      "kind": "capability",
+      "title": "Fail if Typesense reindex logs are older than the max age (default 7d).",
+      "source": "n00t/capabilities/manifest.json#search.typesenseFreshness",
+      "tags": ["typesense", "freshness", "docs"]
+    },
+    {
+      "id": "capability.fusion-ragpack",
+      "kind": "capability",
+      "title": "Publish latest n00clear-fusion export as a mountable RAG pack for agents.",
+      "source": "n00t/capabilities/manifest.json#fusion.ragPack",
+      "tags": ["rag", "fusion", "corpus"]
+    },
+    {
+      "id": "capability.horizons-planevalsync",
+      "kind": "capability",
+      "title": "Index planner telemetry for n00-school evaluation pipelines.",
+      "source": "n00t/capabilities/manifest.json#horizons.planEvalSync",
+      "tags": ["planning", "evaluation", "school"]
+    },
+    {
+      "id": "run-workspace-gitdoctor-20251121t040057z",
+      "kind": "run",
+      "title": "Run succeeded. Tail: [run-envelope] recorded run.workspace.health.20251121t040058z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "source": ".dev/automation/artifacts/automation/agent-runs.json",
+      "tags": [],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T06:00:57+02:00",
+        "completed_at": "2025-11-21T06:00:58+02:00",
+        "duration_ms": 1000
+      }
+    },
+    {
+      "id": "run-workspace-gitdoctor-20251121t040142z",
+      "kind": "run",
+      "title": "Run succeeded. Tail: [run-envelope] recorded run.workspace.health.20251121t040143z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "source": ".dev/automation/artifacts/automation/agent-runs.json",
+      "tags": [],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T06:01:42+02:00",
+        "completed_at": "2025-11-21T06:01:43+02:00",
+        "duration_ms": 1000
+      }
+    },
+    {
+      "id": "run-workspace-gitdoctor-20251121t061440z",
+      "kind": "run",
+      "title": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t061442z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "source": ".dev/automation/artifacts/automation/agent-runs.json",
+      "tags": [],
+      "metadata": {
+        "status": "failure",
+        "started_at": "2025-11-21T08:14:40+02:00",
+        "completed_at": "2025-11-21T08:14:42+02:00",
+        "duration_ms": 2000
+      }
+    },
+    {
+      "id": "run-workspace-gitdoctor-20251121t061617z",
+      "kind": "run",
+      "title": "Agent CLI run started.",
+      "source": ".dev/automation/artifacts/automation/agent-runs.json",
+      "tags": [],
+      "metadata": {
+        "status": "running",
+        "started_at": "2025-11-21T08:16:17+02:00"
+      }
+    },
+    {
+      "id": "run-workspace-gitdoctor-20251121t061634z",
+      "kind": "run",
+      "title": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t061635z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "source": ".dev/automation/artifacts/automation/agent-runs.json",
+      "tags": [],
+      "metadata": {
+        "status": "failure",
+        "started_at": "2025-11-21T08:16:34+02:00",
+        "completed_at": "2025-11-21T08:16:35+02:00",
+        "duration_ms": 1000
+      }
+    },
+    {
+      "id": "run-workspace-gitdoctor-20251121t085232z",
+      "kind": "run",
+      "title": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t085233z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "source": ".dev/automation/artifacts/automation/agent-runs.json",
+      "tags": [],
+      "metadata": {
+        "status": "failure",
+        "started_at": "2025-11-21T10:52:32+02:00",
+        "completed_at": "2025-11-21T10:52:33+02:00",
+        "duration_ms": 1000
+      }
+    },
+    {
+      "id": "run-workspace-gitdoctor-20251121t085506z",
+      "kind": "run",
+      "title": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t085507z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "source": ".dev/automation/artifacts/automation/agent-runs.json",
+      "tags": [],
+      "metadata": {
+        "status": "failure",
+        "started_at": "2025-11-21T10:55:06+02:00",
+        "completed_at": "2025-11-21T10:55:07+02:00",
+        "duration_ms": 1000
+      }
+    },
+    {
+      "id": "run-workspace-gitdoctor-20251121t085522z",
+      "kind": "run",
+      "title": "Run failed (exit 1). Tail: [run-envelope] recorded run.workspace.health.20251121t085523z -> .dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "source": ".dev/automation/artifacts/automation/agent-runs.json",
+      "tags": [],
+      "metadata": {
+        "status": "failure",
+        "started_at": "2025-11-21T10:55:22+02:00",
+        "completed_at": "2025-11-21T10:55:23+02:00",
+        "duration_ms": 1000
+      }
+    },
+    {
+      "id": "run-fusion-export-20251120t234607z",
+      "kind": "run",
+      "title": "fusion export: demo-template",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-20T23:46:07.585509+00:00",
+        "completed_at": "2025-11-20T23:46:07.585509+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "asset.demo-template-json",
+      "kind": "asset",
+      "title": "asset.demo-template.json"
+    },
+    {
+      "id": "run-fusion-export-20251120t235144z",
+      "kind": "run",
+      "title": "fusion export: demo-template",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-20T23:51:44.856646+00:00",
+        "completed_at": "2025-11-20T23:51:44.856646+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "run-fusion-ingest-20251121t002024z",
+      "kind": "run",
+      "title": "pdf ingest Designing Brand Identity_ A Comprehensive Guide to the World -- Alina Wheeler, Rob Meyerson -- 6, PT, 2024 -- Wiley & Sons, Incorporated, John -- 9781119984818 -- 70ffa76ffb16b044cc3f32317f364e53 -- Anna’s Archive.pdf",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T00:20:24.352445+00:00",
+        "completed_at": "2025-11-21T00:20:24.352445+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "kind": "dataset",
+      "title": "dataset.designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive",
+      "source": "n00-school/datasets"
+    },
+    {
+      "id": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-chunks-jsonl",
+      "kind": "asset",
+      "title": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-chunks.jsonl"
+    },
+    {
+      "id": "asset.corpora-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-json",
+      "kind": "asset",
+      "title": "asset.corpora-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive.json"
+    },
+    {
+      "id": "run-fusion-embed-20251121t002908z",
+      "kind": "run",
+      "title": "embeddings generated for designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T00:29:08.376918+00:00",
+        "completed_at": "2025-11-21T00:29:08.376918+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-embeddings-jsonl",
+      "kind": "asset",
+      "title": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-embeddings.jsonl"
+    },
+    {
+      "id": "run-fusion-generate-20251121t003535z",
+      "kind": "run",
+      "title": "generated templates for designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T00:35:35.685468+00:00",
+        "completed_at": "2025-11-21T00:35:35.685468+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-brand-brief-md",
+      "kind": "asset",
+      "title": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-brand-brief.md"
+    },
+    {
+      "id": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-brand-strategy-md",
+      "kind": "asset",
+      "title": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-brand-strategy.md"
+    },
+    {
+      "id": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-design-checklist-md",
+      "kind": "asset",
+      "title": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-design-checklist.md"
+    },
+    {
+      "id": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-web-project-plan-md",
+      "kind": "asset",
+      "title": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-web-project-plan.md"
+    },
+    {
+      "id": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-software-roadmap-md",
+      "kind": "asset",
+      "title": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-software-roadmap.md"
+    },
+    {
+      "id": "run-fusion-embed-20251121t004722z",
+      "kind": "run",
+      "title": "embeddings generated for designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive (backend=hashed)",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T00:47:22.970556+00:00",
+        "completed_at": "2025-11-21T00:47:22.970556+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "run-fusion-embed-20251121t010429z",
+      "kind": "run",
+      "title": "embeddings generated for designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive (backend=auto)",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T01:04:29.837362+00:00",
+        "completed_at": "2025-11-21T01:04:29.837362+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "run-fusion-embed-20251121t010457z",
+      "kind": "run",
+      "title": "embeddings generated for designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive (backend=hashed)",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T01:04:57.981956+00:00",
+        "completed_at": "2025-11-21T01:04:57.981956+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "run-fusion-generate-20251121t012403z",
+      "kind": "run",
+      "title": "generated templates for designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T01:24:03.066927+00:00",
+        "completed_at": "2025-11-21T01:24:03.066927+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-backstage-input-json",
+      "kind": "asset",
+      "title": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-backstage-input.json"
+    },
+    {
+      "id": "run-fusion-embed-20251121t012840z",
+      "kind": "run",
+      "title": "embeddings generated for designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive (backend=hashed)",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T01:28:40.977855+00:00",
+        "completed_at": "2025-11-21T01:28:40.977855+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "run-fusion-embed-20251121t015355z",
+      "kind": "run",
+      "title": "embeddings generated for designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive (backend=hashed)",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-21T01:53:55.375375+00:00",
+        "completed_at": "2025-11-21T01:53:55.375375+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "run-fusion-ingest-20251125t214638z",
+      "kind": "run",
+      "title": "ingest branding",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-25T21:46:38.862601+00:00",
+        "completed_at": "2025-11-25T21:46:38.862601+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "dataset.branding",
+      "kind": "dataset",
+      "title": "dataset.branding",
+      "source": "n00-school/datasets"
+    },
+    {
+      "id": "asset.exports-branding-chunks-jsonl",
+      "kind": "asset",
+      "title": "asset.exports-branding-chunks.jsonl"
+    },
+    {
+      "id": "asset.corpora-branding-json",
+      "kind": "asset",
+      "title": "asset.corpora-branding.json"
+    },
+    {
+      "id": "run-fusion-embed-20251125t214639z",
+      "kind": "run",
+      "title": "embeddings generated for branding (backend=hashed)",
+      "source": ".dev/automation/artifacts/automation/run-envelopes.jsonl",
+      "tags": ["n00clear-fusion"],
+      "metadata": {
+        "status": "success",
+        "started_at": "2025-11-25T21:46:39.108221+00:00",
+        "completed_at": "2025-11-25T21:46:39.108221+00:00",
+        "duration_ms": 0
+      }
+    },
+    {
+      "id": "asset.exports-branding-embeddings-jsonl",
+      "kind": "asset",
+      "title": "asset.exports-branding-embeddings.jsonl"
+    },
+    {
+      "id": "doc.data-readme-md",
+      "kind": "doc",
+      "title": "data/README.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/README.md",
+      "tags": ["data-governance", "canonical"]
+    },
+    {
+      "id": "doc.data-brand-json",
+      "kind": "doc",
+      "title": "data/brand.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/brand.json",
+      "tags": ["brand", "canonical"]
+    },
+    {
+      "id": "doc.data-brand-yaml",
+      "kind": "doc",
+      "title": "data/brand.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/brand.yaml",
+      "tags": ["brand", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-boilerplates-json",
+      "kind": "doc",
+      "title": "data/catalog/boilerplates.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/boilerplates.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-docs-manifest-json",
+      "kind": "doc",
+      "title": "data/catalog/docs-manifest.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/docs-manifest.json",
+      "tags": ["metadata", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-frontiers-assets-json",
+      "kind": "doc",
+      "title": "data/catalog/frontiers-assets.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/frontiers-assets.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-frontiers-assets-yaml",
+      "kind": "doc",
+      "title": "data/catalog/frontiers-assets.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/frontiers-assets.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-frontiers-metadata-json",
+      "kind": "doc",
+      "title": "data/catalog/frontiers-metadata.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/frontiers-metadata.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-frontiers-metadata-yaml",
+      "kind": "doc",
+      "title": "data/catalog/frontiers-metadata.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/frontiers-metadata.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-frontiers-templates-json",
+      "kind": "doc",
+      "title": "data/catalog/frontiers-templates.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/frontiers-templates.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-frontiers-templates-lock-json",
+      "kind": "doc",
+      "title": "data/catalog/frontiers-templates.lock.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/frontiers-templates.lock.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-frontiers-templates-yaml",
+      "kind": "doc",
+      "title": "data/catalog/frontiers-templates.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/frontiers-templates.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-fusion-datasets-json",
+      "kind": "doc",
+      "title": "data/catalog/fusion-datasets.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/fusion-datasets.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-fusion-datasets-lock-json",
+      "kind": "doc",
+      "title": "data/catalog/fusion-datasets.lock.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/fusion-datasets.lock.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-fusion-datasets-yaml",
+      "kind": "doc",
+      "title": "data/catalog/fusion-datasets.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/fusion-datasets.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-graph-example-json",
+      "kind": "doc",
+      "title": "data/catalog/graph.example.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/graph.example.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-graph-json",
+      "kind": "doc",
+      "title": "data/catalog/graph.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/graph.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-project-kits-json",
+      "kind": "doc",
+      "title": "data/catalog/project-kits.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/project-kits.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-project-tags-yaml",
+      "kind": "doc",
+      "title": "data/catalog/project-tags.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/project-tags.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-projects-json",
+      "kind": "doc",
+      "title": "data/catalog/projects.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/projects.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-catalog-template-schema-map-json",
+      "kind": "doc",
+      "title": "data/catalog/template-schema-map.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/catalog/template-schema-map.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-components-button-json",
+      "kind": "doc",
+      "title": "data/components/button.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/components/button.json",
+      "tags": ["component-library", "canonical"]
+    },
+    {
+      "id": "doc.data-dependency-overrides-n00-frontiers-json",
+      "kind": "doc",
+      "title": "data/dependency-overrides/n00-frontiers.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/dependency-overrides/n00-frontiers.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-ai-guardrail-json",
+      "kind": "doc",
+      "title": "data/examples/ai-guardrail.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/ai-guardrail.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-ai-guardrail-yaml",
+      "kind": "doc",
+      "title": "data/examples/ai-guardrail.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/ai-guardrail.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-boilerplate-json",
+      "kind": "doc",
+      "title": "data/examples/boilerplate.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/boilerplate.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-boilerplate-yaml",
+      "kind": "doc",
+      "title": "data/examples/boilerplate.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/boilerplate.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-id-examples-json",
+      "kind": "doc",
+      "title": "data/examples/id-examples.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/id-examples.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-manifesto-doc-json",
+      "kind": "doc",
+      "title": "data/examples/manifesto-doc.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/manifesto-doc.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-manifesto-doc-yaml",
+      "kind": "doc",
+      "title": "data/examples/manifesto-doc.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/manifesto-doc.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-project-kit-json",
+      "kind": "doc",
+      "title": "data/examples/project-kit.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/project-kit.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-project-kit-yaml",
+      "kind": "doc",
+      "title": "data/examples/project-kit.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/project-kit.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-examples-run-envelope-json",
+      "kind": "doc",
+      "title": "data/examples/run-envelope.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/examples/run-envelope.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-boilerplates-node-api-json",
+      "kind": "doc",
+      "title": "data/exports/boilerplates/node-api.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/boilerplates/node-api.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-boilerplates-node-api-yaml",
+      "kind": "doc",
+      "title": "data/exports/boilerplates/node-api.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/boilerplates/node-api.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-boilerplates-react-spa-json",
+      "kind": "doc",
+      "title": "data/exports/boilerplates/react-spa.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/boilerplates/react-spa.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-boilerplates-react-spa-yaml",
+      "kind": "doc",
+      "title": "data/exports/boilerplates/react-spa.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/boilerplates/react-spa.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-canonical-brand-brand-trust-and-security-json",
+      "kind": "doc",
+      "title": "data/exports/canonical/brand/brand-trust-and-security.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/canonical/brand/brand-trust-and-security.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-canonical-brand-brand-trust-and-security-yaml",
+      "kind": "doc",
+      "title": "data/exports/canonical/brand/brand-trust-and-security.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/canonical/brand/brand-trust-and-security.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-canonical-charter-architecture-overview-json",
+      "kind": "doc",
+      "title": "data/exports/canonical/charter/architecture-overview.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/canonical/charter/architecture-overview.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-canonical-charter-architecture-overview-yaml",
+      "kind": "doc",
+      "title": "data/exports/canonical/charter/architecture-overview.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/canonical/charter/architecture-overview.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-canonical-playbooks-coding-standards-json",
+      "kind": "doc",
+      "title": "data/exports/canonical/playbooks/coding-standards.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/canonical/playbooks/coding-standards.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-canonical-playbooks-coding-standards-yaml",
+      "kind": "doc",
+      "title": "data/exports/canonical/playbooks/coding-standards.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/canonical/playbooks/coding-standards.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-canonical-playbooks-test-strategy-json",
+      "kind": "doc",
+      "title": "data/exports/canonical/playbooks/test-strategy.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/canonical/playbooks/test-strategy.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-canonical-playbooks-test-strategy-yaml",
+      "kind": "doc",
+      "title": "data/exports/canonical/playbooks/test-strategy.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/canonical/playbooks/test-strategy.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-docs-only-json",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/docs-only.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/docs-only.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-docs-only-yaml",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/docs-only.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/docs-only.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-go-service-json",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/go-service.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/go-service.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-go-service-yaml",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/go-service.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/go-service.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-index-json",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/index.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/index.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-index-yaml",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/index.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/index.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-node-service-json",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/node-service.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/node-service.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-node-service-yaml",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/node-service.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/node-service.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-project-management-json",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/project-management.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/project-management.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-project-management-yaml",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/project-management.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/project-management.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-python-service-json",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/python-service.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/python-service.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-python-service-yaml",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/python-service.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/python-service.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-react-webapp-json",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/react-webapp.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/react-webapp.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-frontiers-templates-react-webapp-yaml",
+      "kind": "doc",
+      "title": "data/exports/frontiers/templates/react-webapp.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/frontiers/templates/react-webapp.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-project-kits-branding-json",
+      "kind": "doc",
+      "title": "data/exports/project-kits/branding.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/project-kits/branding.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-project-kits-branding-yaml",
+      "kind": "doc",
+      "title": "data/exports/project-kits/branding.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/project-kits/branding.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-project-kits-web-app-json",
+      "kind": "doc",
+      "title": "data/exports/project-kits/web-app.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/project-kits/web-app.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-exports-project-kits-web-app-yaml",
+      "kind": "doc",
+      "title": "data/exports/project-kits/web-app.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/exports/project-kits/web-app.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-fusion-gitkeep",
+      "kind": "doc",
+      "title": "data/fusion/.gitkeep",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/fusion/.gitkeep",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-fusion-branding-ingest-report-json",
+      "kind": "doc",
+      "title": "data/fusion/branding/ingest-report.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/fusion/branding/ingest-report.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-fusion-branding-summary-json",
+      "kind": "doc",
+      "title": "data/fusion/branding/summary.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/fusion/branding/summary.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-fusion-branding-tag-counts-json",
+      "kind": "doc",
+      "title": "data/fusion/branding/tag_counts.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/fusion/branding/tag_counts.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-llms-yaml",
+      "kind": "doc",
+      "title": "data/llms.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/llms.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-toolchain-manifest-json",
+      "kind": "doc",
+      "title": "data/toolchain-manifest.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/toolchain-manifest.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-trunk-readme-md",
+      "kind": "doc",
+      "title": "data/trunk/README.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/trunk/README.md",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-trunk-base-trunk-gitignore",
+      "kind": "doc",
+      "title": "data/trunk/base/.trunk/.gitignore",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/trunk/base/.trunk/.gitignore",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.data-trunk-base-trunk-trunk-yaml",
+      "kind": "doc",
+      "title": "data/trunk/base/.trunk/trunk.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/data/trunk/base/.trunk/trunk.yaml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-gitignore",
+      "kind": "doc",
+      "title": "docs/.gitignore",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/.gitignore",
+      "tags": ["docs-tooling", "boilerplate"]
+    },
+    {
+      "id": "doc.docs-docusaurus-migration-adoc",
+      "kind": "doc",
+      "title": "docs/DOCUSAURUS_MIGRATION.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/DOCUSAURUS_MIGRATION.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-readme-md",
+      "kind": "doc",
+      "title": "docs/README.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/README.md",
+      "tags": ["docs-tooling", "boilerplate"]
+    },
+    {
+      "id": "doc.docs-tags-md",
+      "kind": "doc",
+      "title": "docs/TAGS.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/TAGS.md",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-revamp-plan-md",
+      "kind": "doc",
+      "title": "docs/_revamp-plan.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/_revamp-plan.md",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-adr-adr-010-typescript7-alignment-md",
+      "kind": "doc",
+      "title": "docs/adr/ADR-010-typescript7-alignment.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/adr/ADR-010-typescript7-alignment.md",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-antora-yml",
+      "kind": "doc",
+      "title": "docs/antora.yml",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/antora.yml",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-automation-ll-14-01-25-frontier-ops-control-plane-enablement-md",
+      "kind": "doc",
+      "title": "docs/automation/LL-14-01-25-frontier-ops-control-plane-enablement.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/automation/LL-14-01-25-frontier-ops-control-plane-enablement.md",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-manifesto-md",
+      "kind": "doc",
+      "title": "docs/manifesto.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/manifesto.md",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-nav-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/nav.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/nav.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-ai-usage-and-guardrails-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/ai-usage-and-guardrails.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/ai-usage-and-guardrails.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-automation-overview-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/automation-overview.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/automation-overview.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-dependency-governance-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/dependency-governance.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/dependency-governance.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-development-playbook-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/development-playbook.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/development-playbook.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-frontiers-templates-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/frontiers-templates.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/frontiers-templates.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-fusion-linkage-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/fusion-linkage.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/fusion-linkage.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-index-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/index.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/index.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-intro-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/intro.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/intro.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-manifesto-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/manifesto.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/manifesto.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-mission-vision-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/mission-vision.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/mission-vision.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-quality-gates-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/quality-gates.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/quality-gates.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-reference-tag-governance-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/reference/tag-governance.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/reference/tag-governance.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-reference-version-sync-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/reference/version-sync.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/reference/version-sync.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-modules-root-pages-repo-contract-adoc",
+      "kind": "doc",
+      "title": "docs/modules/ROOT/pages/repo-contract.adoc",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/modules/ROOT/pages/repo-contract.adoc",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-tag-governance-md",
+      "kind": "doc",
+      "title": "docs/tag-governance.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/tag-governance.md",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.docs-version-sync-md",
+      "kind": "doc",
+      "title": "docs/version-sync.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/docs/version-sync.md",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.schemas-readme-md",
+      "kind": "doc",
+      "title": "schemas/README.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/README.md",
+      "tags": ["data-contracts", "canonical"]
+    },
+    {
+      "id": "doc.schemas-agent-capability-schema-json",
+      "kind": "doc",
+      "title": "schemas/agent-capability.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/agent-capability.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-agent-profile-schema-json",
+      "kind": "doc",
+      "title": "schemas/agent-profile.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/agent-profile.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-ai-guardrail-schema-json",
+      "kind": "doc",
+      "title": "schemas/ai-guardrail.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/ai-guardrail.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-boilerplate-schema-json",
+      "kind": "doc",
+      "title": "schemas/boilerplate.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/boilerplate.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-brand-schema-json",
+      "kind": "doc",
+      "title": "schemas/brand.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/brand.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-catalog-graph-schema-json",
+      "kind": "doc",
+      "title": "schemas/catalog-graph.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/catalog-graph.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-component-schema-json",
+      "kind": "doc",
+      "title": "schemas/component.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/component.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-curriculum-schema-json",
+      "kind": "doc",
+      "title": "schemas/curriculum.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/curriculum.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-dataset-manifest-schema-json",
+      "kind": "doc",
+      "title": "schemas/dataset-manifest.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/dataset-manifest.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-dependency-override-schema-json",
+      "kind": "doc",
+      "title": "schemas/dependency-override.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/dependency-override.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-design-readme-md",
+      "kind": "doc",
+      "title": "schemas/design/README.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/design/README.md",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.schemas-design-design-asset-schema-json",
+      "kind": "doc",
+      "title": "schemas/design/design-asset.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/design/design-asset.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-design-design-brief-schema-json",
+      "kind": "doc",
+      "title": "schemas/design/design-brief.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/design/design-brief.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-design-design-run-schema-json",
+      "kind": "doc",
+      "title": "schemas/design/design-run.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/design/design-run.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-docs-manifest-schema-json",
+      "kind": "doc",
+      "title": "schemas/docs-manifest.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/docs-manifest.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-document-metadata-schema-json",
+      "kind": "doc",
+      "title": "schemas/document-metadata.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/document-metadata.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-domain-corpus-schema-json",
+      "kind": "doc",
+      "title": "schemas/domain-corpus.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/domain-corpus.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-evaluation-result-schema-json",
+      "kind": "doc",
+      "title": "schemas/evaluation-result.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/evaluation-result.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-id-schema-json",
+      "kind": "doc",
+      "title": "schemas/id.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/id.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-manifesto-doc-schema-json",
+      "kind": "doc",
+      "title": "schemas/manifesto-doc.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/manifesto-doc.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-project-kit-schema-json",
+      "kind": "doc",
+      "title": "schemas/project-kit.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/project-kit.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-project-metadata-schema-json",
+      "kind": "doc",
+      "title": "schemas/project-metadata.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/project-metadata.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-run-envelope-schema-json",
+      "kind": "doc",
+      "title": "schemas/run-envelope.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/run-envelope.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-slices-schema-json",
+      "kind": "doc",
+      "title": "schemas/slices.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/slices.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-toolchain-manifest-schema-json",
+      "kind": "doc",
+      "title": "schemas/toolchain-manifest.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/toolchain-manifest.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.schemas-training-pipeline-schema-json",
+      "kind": "doc",
+      "title": "schemas/training-pipeline.schema.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/schemas/training-pipeline.schema.json",
+      "tags": ["data-contracts", "ai-guardrail"]
+    },
+    {
+      "id": "doc.templates-readme-md",
+      "kind": "doc",
+      "title": "templates/README.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/README.md",
+      "tags": ["templates-overview", "canonical"]
+    },
+    {
+      "id": "doc.templates-boilerplates-node-api-codeowners",
+      "kind": "doc",
+      "title": "templates/boilerplates/node-api/CODEOWNERS",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/boilerplates/node-api/CODEOWNERS",
+      "tags": ["starter-repos", "boilerplate"]
+    },
+    {
+      "id": "doc.templates-boilerplates-node-api-contributing-md",
+      "kind": "doc",
+      "title": "templates/boilerplates/node-api/CONTRIBUTING.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/boilerplates/node-api/CONTRIBUTING.md",
+      "tags": ["starter-repos", "boilerplate"]
+    },
+    {
+      "id": "doc.templates-boilerplates-node-api-readme-md",
+      "kind": "doc",
+      "title": "templates/boilerplates/node-api/README.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/boilerplates/node-api/README.md",
+      "tags": ["starter-repos", "boilerplate"]
+    },
+    {
+      "id": "doc.templates-boilerplates-node-api-catalog-info-yaml",
+      "kind": "doc",
+      "title": "templates/boilerplates/node-api/catalog-info.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/boilerplates/node-api/catalog-info.yaml",
+      "tags": ["starter-repos", "boilerplate"]
+    },
+    {
+      "id": "doc.templates-boilerplates-react-spa-codeowners",
+      "kind": "doc",
+      "title": "templates/boilerplates/react-spa/CODEOWNERS",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/boilerplates/react-spa/CODEOWNERS",
+      "tags": ["starter-repos", "boilerplate"]
+    },
+    {
+      "id": "doc.templates-boilerplates-react-spa-contributing-md",
+      "kind": "doc",
+      "title": "templates/boilerplates/react-spa/CONTRIBUTING.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/boilerplates/react-spa/CONTRIBUTING.md",
+      "tags": ["starter-repos", "boilerplate"]
+    },
+    {
+      "id": "doc.templates-boilerplates-react-spa-readme-md",
+      "kind": "doc",
+      "title": "templates/boilerplates/react-spa/README.md",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/boilerplates/react-spa/README.md",
+      "tags": ["starter-repos", "boilerplate"]
+    },
+    {
+      "id": "doc.templates-boilerplates-react-spa-catalog-info-yaml",
+      "kind": "doc",
+      "title": "templates/boilerplates/react-spa/catalog-info.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/boilerplates/react-spa/catalog-info.yaml",
+      "tags": ["starter-repos", "boilerplate"]
+    },
+    {
+      "id": "doc.templates-canonical-brand-brand-trust-and-security-md",
+      "kind": "doc",
+      "title": "templates/canonical/brand/brand-trust-and-security.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/canonical/brand/brand-trust-and-security.md",
+      "tags": ["brand", "canonical"]
+    },
+    {
+      "id": "doc.templates-canonical-charter-architecture-overview-md",
+      "kind": "doc",
+      "title": "templates/canonical/charter/architecture-overview.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/canonical/charter/architecture-overview.md",
+      "tags": ["org-charter", "canonical"]
+    },
+    {
+      "id": "doc.templates-canonical-playbooks-coding-standards-md",
+      "kind": "doc",
+      "title": "templates/canonical/playbooks/coding-standards.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/canonical/playbooks/coding-standards.md",
+      "tags": ["delivery-playbooks", "canonical"]
+    },
+    {
+      "id": "doc.templates-canonical-playbooks-test-strategy-md",
+      "kind": "doc",
+      "title": "templates/canonical/playbooks/test-strategy.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/canonical/playbooks/test-strategy.md",
+      "tags": ["delivery-playbooks", "canonical"]
+    },
+    {
+      "id": "doc.templates-project-kits-branding-asset-management-md",
+      "kind": "doc",
+      "title": "templates/project-kits/branding/ASSET_MANAGEMENT.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/project-kits/branding/ASSET_MANAGEMENT.md",
+      "tags": ["branding", "project-kit"]
+    },
+    {
+      "id": "doc.templates-project-kits-branding-brand-guidelines-md",
+      "kind": "doc",
+      "title": "templates/project-kits/branding/BRAND_GUIDELINES.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/project-kits/branding/BRAND_GUIDELINES.md",
+      "tags": ["branding", "project-kit"]
+    },
+    {
+      "id": "doc.templates-project-kits-branding-naming-messaging-md",
+      "kind": "doc",
+      "title": "templates/project-kits/branding/NAMING_MESSAGING.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/project-kits/branding/NAMING_MESSAGING.md",
+      "tags": ["branding", "project-kit"]
+    },
+    {
+      "id": "doc.templates-project-kits-branding-catalog-info-yaml",
+      "kind": "doc",
+      "title": "templates/project-kits/branding/catalog-info.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/project-kits/branding/catalog-info.yaml",
+      "tags": ["branding", "project-kit"]
+    },
+    {
+      "id": "doc.templates-project-kits-fusion-gitkeep",
+      "kind": "doc",
+      "title": "templates/project-kits/fusion/.gitkeep",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/project-kits/fusion/.gitkeep",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.templates-project-kits-fusion-index-json",
+      "kind": "doc",
+      "title": "templates/project-kits/fusion/index.json",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/project-kits/fusion/index.json",
+      "tags": ["general", "canonical"]
+    },
+    {
+      "id": "doc.templates-project-kits-web-app-development-setup-md",
+      "kind": "doc",
+      "title": "templates/project-kits/web-app/DEVELOPMENT_SETUP.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/project-kits/web-app/DEVELOPMENT_SETUP.md",
+      "tags": ["web-app", "project-kit"]
+    },
+    {
+      "id": "doc.templates-project-kits-web-app-project-charter-md",
+      "kind": "doc",
+      "title": "templates/project-kits/web-app/PROJECT_CHARTER.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/project-kits/web-app/PROJECT_CHARTER.md",
+      "tags": ["web-app", "project-kit"]
+    },
+    {
+      "id": "doc.templates-project-kits-web-app-technical-specs-md",
+      "kind": "doc",
+      "title": "templates/project-kits/web-app/TECHNICAL_SPECS.md",
+      "version": "1.1.0",
+      "source": "n00-cortex/templates/project-kits/web-app/TECHNICAL_SPECS.md",
+      "tags": ["web-app", "project-kit"]
+    },
+    {
+      "id": "doc.templates-project-kits-web-app-catalog-info-yaml",
+      "kind": "doc",
+      "title": "templates/project-kits/web-app/catalog-info.yaml",
+      "version": "1.0.0",
+      "source": "n00-cortex/templates/project-kits/web-app/catalog-info.yaml",
+      "tags": ["web-app", "project-kit"]
+    },
+    {
+      "id": "asset.branding-chunks",
+      "kind": "asset",
+      "title": "branding chunks",
+      "source": "n00clear-fusion/exports/branding/chunks.jsonl",
+      "tags": ["fusion", "chunks"]
+    },
+    {
+      "id": "asset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-chunks",
+      "kind": "asset",
+      "title": "designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive chunks",
+      "source": "n00clear-fusion/exports/designing-brand-identity--a-comprehensive-guide-to-the-world----alina-wheeler--rob-meyerson----6--pt--2024----wiley---sons--incorporated--john----9781119984818----70ffa76ffb16b044cc3f32317f364e53----anna-s-archive/chunks.jsonl",
+      "tags": ["fusion", "chunks"]
+    }
+  ],
+  "edges": [
+    {
+      "from": "template.docs-only",
+      "to": "schema.docs-manifest",
+      "type": "implements"
+    },
+    {
+      "from": "template.go-service",
+      "to": "schema.project-metadata",
+      "type": "implements"
+    },
+    {
+      "from": "template.node-service",
+      "to": "schema.project-metadata",
+      "type": "implements"
+    },
+    {
+      "from": "template.project-management",
+      "to": "schema.project-metadata",
+      "type": "implements"
+    },
+    {
+      "from": "template.python-service",
+      "to": "schema.project-metadata",
+      "type": "implements"
+    },
+    {
+      "from": "template.react-webapp",
+      "to": "schema.project-metadata",
+      "type": "implements"
+    },
+    {
+      "from": "capability.workspace-gitdoctor",
+      "to": "run-workspace-gitdoctor-20251121t040057z",
+      "type": "produces"
+    },
+    {
+      "from": "capability.workspace-gitdoctor",
+      "to": "run-workspace-gitdoctor-20251121t040142z",
+      "type": "produces"
+    },
+    {
+      "from": "capability.workspace-gitdoctor",
+      "to": "run-workspace-gitdoctor-20251121t061440z",
+      "type": "produces"
+    },
+    {
+      "from": "capability.workspace-gitdoctor",
+      "to": "run-workspace-gitdoctor-20251121t061617z",
+      "type": "produces"
+    },
+    {
+      "from": "capability.workspace-gitdoctor",
+      "to": "run-workspace-gitdoctor-20251121t061634z",
+      "type": "produces"
+    },
+    {
+      "from": "capability.workspace-gitdoctor",
+      "to": "run-workspace-gitdoctor-20251121t085232z",
+      "type": "produces"
+    },
+    {
+      "from": "capability.workspace-gitdoctor",
+      "to": "run-workspace-gitdoctor-20251121t085506z",
+      "type": "produces"
+    },
+    {
+      "from": "capability.workspace-gitdoctor",
+      "to": "run-workspace-gitdoctor-20251121t085522z",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-export",
+      "to": "run-fusion-export-20251120t234607z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-export-20251120t234607z",
+      "to": "asset.demo-template-json",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-export",
+      "to": "run-fusion-export-20251120t235144z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-export-20251120t235144z",
+      "to": "asset.demo-template-json",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-ingest",
+      "to": "run-fusion-ingest-20251121t002024z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-ingest-20251121t002024z",
+      "to": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-ingest-20251121t002024z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-chunks-jsonl",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-ingest-20251121t002024z",
+      "to": "asset.corpora-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-json",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-embed",
+      "to": "run-fusion-embed-20251121t002908z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-embed-20251121t002908z",
+      "to": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-embed-20251121t002908z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-embeddings-jsonl",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-generate",
+      "to": "run-fusion-generate-20251121t003535z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t003535z",
+      "to": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-generate-20251121t003535z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-brand-brief-md",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t003535z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-brand-strategy-md",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t003535z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-design-checklist-md",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t003535z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-web-project-plan-md",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t003535z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-software-roadmap-md",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-embed",
+      "to": "run-fusion-embed-20251121t004722z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-embed-20251121t004722z",
+      "to": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-embed-20251121t004722z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-embeddings-jsonl",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-embed",
+      "to": "run-fusion-embed-20251121t010429z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-embed-20251121t010429z",
+      "to": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-embed-20251121t010429z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-embeddings-jsonl",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-embed",
+      "to": "run-fusion-embed-20251121t010457z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-embed-20251121t010457z",
+      "to": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-embed-20251121t010457z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-embeddings-jsonl",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-generate",
+      "to": "run-fusion-generate-20251121t012403z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t012403z",
+      "to": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-generate-20251121t012403z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-brand-brief-md",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t012403z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-brand-strategy-md",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t012403z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-design-checklist-md",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t012403z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-web-project-plan-md",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t012403z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-software-roadmap-md",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-generate-20251121t012403z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-generated-backstage-input-json",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-embed",
+      "to": "run-fusion-embed-20251121t012840z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-embed-20251121t012840z",
+      "to": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-embed-20251121t012840z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-embeddings-jsonl",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-embed",
+      "to": "run-fusion-embed-20251121t015355z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-embed-20251121t015355z",
+      "to": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-embed-20251121t015355z",
+      "to": "asset.exports-designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-embeddings-jsonl",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-ingest",
+      "to": "run-fusion-ingest-20251125t214638z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-ingest-20251125t214638z",
+      "to": "dataset.branding",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-ingest-20251125t214638z",
+      "to": "asset.exports-branding-chunks-jsonl",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-ingest-20251125t214638z",
+      "to": "asset.corpora-branding-json",
+      "type": "produces"
+    },
+    {
+      "from": "capability.fusion-embed",
+      "to": "run-fusion-embed-20251125t214639z",
+      "type": "produces"
+    },
+    {
+      "from": "run-fusion-embed-20251125t214639z",
+      "to": "dataset.branding",
+      "type": "consumes"
+    },
+    {
+      "from": "run-fusion-embed-20251125t214639z",
+      "to": "asset.exports-branding-embeddings-jsonl",
+      "type": "produces"
+    },
+    {
+      "from": "dataset.branding",
+      "to": "asset.branding-chunks",
+      "type": "produces"
+    },
+    {
+      "from": "dataset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive",
+      "to": "asset.designing-brand-identity-a-comprehensive-guide-to-the-world-alina-wheeler-rob-meyerson-6-pt-2024-wiley-sons-incorporated-john-9781119984818-70ffa76ffb16b044cc3f32317f364e53-anna-s-archive-chunks",
+      "type": "produces"
+    }
+  ]
+}

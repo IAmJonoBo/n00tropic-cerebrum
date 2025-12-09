@@ -1,0 +1,14 @@
+= Glossary
+:page-tags: diataxis:reference, audience:contrib, stability:beta
+
+This placeholder exists to satisfy navigation and cross-references. Expand with workspace terminology as the docs migrate.
+
+|===
+| Term | Meaning
+
+| Cerebrum
+| The aggregated workspace that orchestrates subprojects and shared automation.
+
+| MCP
+| Model Context Protocol; used by agents and automation surfaces.
+|===

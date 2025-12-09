@@ -1,0 +1,46 @@
+name: Trunk sync (dry-run by default)
+
+on:
+  schedule:
+    - cron: 0 4 * * 1 # weekly Monday at 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-trunk-sync:
+    name: Check trunk sync (dry-run unless apply=true)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11.14
+      - name: Cache uv downloads
+        uses: actions/cache@v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
+      - name: Install uv + minimal deps
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+          uv pip sync requirements.workspace.min.lock
+
+      - name: Run trunk sync (dry-run only)
+        env:
+          APPLY: false
+        run: |
+          set -eux
+          python3 .dev/automation/scripts/sync-trunk-autopush.py

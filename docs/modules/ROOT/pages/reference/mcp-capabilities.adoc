@@ -1,0 +1,2 @@
+= MCP Capabilities (stub)
+Placeholder reference list for MCP capabilities. Replace with generated table from n00t when available.

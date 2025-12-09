@@ -1,0 +1,18 @@
+= Submodule overview
+:page-tags: diataxis:reference, audience:contrib, stability:draft
+
+This placeholder tracks the required submodules and their roles. Replace with the live catalog when available.
+
+|===
+| Submodule | Purpose
+
+| n00-frontiers | Standards, templates, and governance.
+| n00-cortex | Schemas/manifests derived from frontiers.
+| n00t | Automation surface and MCP host.
+| n00menon | Docs SSoT + demo service.
+| n00clear-fusion | Ingestion and RAG pipelines.
+| n00tropic | Generators and doctrine.
+| n00-horizons | Strategy and PM workflows.
+| n00-school | Training and evaluation.
+| n00plicate | Design-system packaging.
+|===

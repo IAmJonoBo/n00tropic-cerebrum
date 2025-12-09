@@ -1,38 +1,45 @@
-= ADR-002: Agent Orchestration & Training Spine
+= Architecture decision record 002: Agent orchestration and training spine
 :page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
 :reviewed: 2025-11-11
 
 == Status
 
-Accepted -- 2025-11-04
+Accepted - 2025-11-04
 
 == Context
 
 * n00t (n00t) has evolved from a simple MCP host into the control plane for
  workspace automation (refresh, meta-check, release).
-* We need a single entry point for running simulated delivery flows, validating
- generated projects, and exercising future customer environments.
+* A single entry point is required for running simulated delivery flows,
+ validating generated projects, and exercising future customer environments.
 * The organisation is spinning up `n00-school/` as the home for proprietary model
  training, evaluations, and red-team simulations. Outputs from that programme
  must loop back into generators and governance docs.
-* Prior automation lived in repo-local scripts; there was no shared telemetry bus
- or mechanism to broadcast new toolchain requirements to downstream consumers.
+* Prior automation lived in repository-local scripts; there was no shared telemetry bus
+ or mechanism to broadcast new Toolchain requirements to downstream consumers.
 == Decision
 
-. Promote *n00t* to the canonical agent orchestration surface: ** All workspace
-automation (refresh, meta-check, release) runs through n00t's capability graph.
-** n00t consumes `n00-cortex/data/toolchain-manifest.json` to provision shell
-environments and sanity checks. ** Interfaces (CLI/MCP/Web UI) expose hooks for
-project automation, template rendering, and simulated deployments. . Establish
-*n00-school* as the training and evaluation hub: ** All model artefacts,
-prompts, and evaluation logs live under `n00-school/`. ** Training runs are
-triggered via n00t, with progress and metrics streamed back to Cortex for
-cataloging. ** Every promoted model produces a release note in Cortex and a
-provenance record that generators can consume. . Encode governance: ** Toolchain
-changes land in Cortex first; cross-repo checks prevent drift before release. **
-Renovate policy is centralised in Cortex and imported by every repo. **
-Workspace releases require a clean cross-repo consistency check
-(`.dev/automation/scripts/check-cross-repo-consistency.py`).
+// vale Microsoft.Terms = NO
+. Promote *n00t* to the canonical agent orchestration surface:
+.. All workspace automation (refresh, meta-check, release) runs through n00t's
+ capability graph.
+.. n00t consumes `n00-cortex/data/toolchain-manifest.json` to provision shell
+ environments and sanity checks.
+.. Interfaces (command-line interface, MCP, and Web UI) expose hooks for project
+ automation, template rendering, and simulated deployments.
+. Establish *n00-school* as the training and evaluation hub:
+.. All model artefacts, prompts, and evaluation logs live under `n00-school/`.
+.. Training runs are triggered via n00t, with progress and metrics streamed back
+ to Cortex for cataloging.
+.. Every promoted model produces a release note in Cortex and a provenance record
+ that generators can consume.
+. Encode governance:
+.. Toolchain changes land in Cortex first; cross-repository checks prevent drift
+ before release.
+.. Renovate policy is centralised in Cortex and imported by every repository.
+.. Workspace releases require a clean cross-repository consistency check
+ (`.dev/automation/scripts/check-cross-repo-consistency.py`).
+// vale Microsoft.Terms = YES
 
 == Consequences
 
@@ -40,17 +47,18 @@ Workspace releases require a clean cross-repo consistency check
  orchestration (ci/CD, agents) predictable.
 * Positive: Training/telemetry footprints are isolated in n00-school with
  first-class documentation.
-* Positive: Toolchain updates are now auditable via Cortex + cross-repo checks,
+* Positive: Toolchain updates are now auditable via Cortex + cross-repository checks,
  reducing mismatch bugs.
-* Negative: n00t must ship additional adapters (CLI wrappers, socket integrations)
- before full rollout.
+* Negative: n00t must ship additional adapters (command-line wrappers, socket integrations)
+ before full roll out.
 * Negative: n00-school needs security review and access controls before storing
  sensitive datasets.
 == Follow-up Tasks
 
 . Flesh out n00t capability manifests (MCP resources) for meta-check, refresh,
-release, and simulated project runs. . Draft n00-school ADRs for dataset
-governance, evaluation metrics, and deployment of trained artefacts. . Wire n00t
-telemetry ingestion into Cortex catalogs and dashboards (design TBD). . Migrate
-existing automation scripts to call n00t APIs rather than shelling directly
-wherever feasible.
+ release, and simulated project runs.
+. Draft n00-school ADRs for dataset governance, evaluation metrics, and
+ deployment of trained artefacts.
+. Wire n00t telemetry ingestion into Cortex catalogs and dashboards (design TBD).
+. Migrate existing automation scripts to call n00t APIs rather than shelling
+ directly wherever feasible.

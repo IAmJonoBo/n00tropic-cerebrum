@@ -1,5 +1,7 @@
-= Sample Doc
+:page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-25
+= Sample doc
 
-This page mentions FooBar in a sentence: our FooBar is where we store code.
+This page mentions FooBar in a sentence. FooBar stores project code.
 
-Also mentions another FooBar with different casing: FooBar is capitalised in another sentence.
+Another FooBar reference appears with different casing. FooBar is capitalised in this example sentence.

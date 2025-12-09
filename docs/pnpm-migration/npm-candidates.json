@@ -7,12 +7,12 @@
   {
     "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-cortex/docs/_revamp-plan.md",
     "line": 19,
-    "text": "- Resolve `npm audit --audit-level=high` findings (fast-json-patch via `ajv-cli`) and document lockfile strategy."
+    "text": "- Resolve `pnpm audit --audit-level=high` findings (fast-json-patch via `ajv-cli`) and document lockfile strategy."
   },
   {
     "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-cortex/docs/docs/automation-overview.md",
     "line": 64,
-    "text": "- `pip-audit` runs automatically as part of meta-check when present; extend with additional ecosystem scanners as needed (e.g., `npm audit`, `cargo audit`)."
+    "text": "- `pip-audit` runs automatically as part of meta-check when present; extend with additional ecosystem scanners as needed (e.g., `pnpm audit`, `cargo audit`)."
   },
   {
     "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-frontiers/INDEX.md",
@@ -27,7 +27,7 @@
   {
     "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-frontiers/docs/adr/ADR-006-security-scanning-strategy.md",
     "line": 48,
-    "text": "- Node.js: `npm audit`, GitHub Dependency Review"
+    "text": "- Node.js: `pnpm audit`, GitHub Dependency Review"
   },
   {
     "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00-frontiers/docs/adr/ADR-009-evergreen-template-validation.md",
@@ -47,7 +47,7 @@
   {
     "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00plicate/apps/web/README.md",
     "line": 55,
-    "text": "pnpm start # or `npm start`"
+    "text": "pnpm start (legacy npm scripts no longer documented)"
   },
   {
     "path": "/Volumes/APFS Space/n00tropic/n00tropic-cerebrum/n00plicate/docs/ADR.md",

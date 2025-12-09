@@ -1,0 +1,740 @@
+= n00tropic Troubleshooting
+:page-tags: troubleshooting,n00tropic,ai-design-generator,workspace
+:reviewed: 2025-11-27
+:toc: left
+:toclevels: 3
+
+This guide helps resolve common issues with n00tropic, the operational workspace and AI Design Generator for the n00tropic platform.
+
+== AI Design Generator Issues
+
+=== Generator Fails to Start
+
+**Problem:** AI Design Generator cannot start or import required modules.
+
+**Symptoms:**
+[source,bash]
+----
+$ python n00tropic_cli/main.py design generate --brief brief.json
+ModuleNotFoundError: No module named 'openai'
+ModuleNotFoundError: No module named 'jsonschema'
+----
+
+**Solutions:**
+
+1. **Install required dependencies:**
++
+[source,bash]
+----
+cd n00tropic
+pip install -r requirements.txt
+----
+
+2. **Verify Python version:**
++
+[source,bash]
+----
+python --version
+# Should be Python 3.11+
+----
+
+3. **Create virtual environment:**
++
+[source,bash]
+----
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+----
+
+4. **Check installation:**
++
+[source,bash]
+----
+pip list | grep -E "openai|jsonschema|pydantic"
+----
+
+**Prevention:**
+- Use virtual environments for Python projects
+- Keep requirements.txt updated
+- Document Python version requirements
+
+=== Design Brief Validation Fails
+
+**Problem:** Design brief fails schema validation.
+
+**Symptoms:**
+[source,text]
+----
+Error: Design brief validation failed
+jsonschema.exceptions.ValidationError: 'required_field' is a required property
+----
+
+**Solutions:**
+
+1. **Check brief format:**
++
+[source,json]
+----
+{
+  "project_name": "My Project",
+  "client": "Client Name",
+  "design_type": "web",
+  "target_audience": "Target audience description",
+  "brand_guidelines": {
+    "colors": ["#primary", "#secondary"],
+    "typography": {
+      "headings": "Font Family",
+      "body": "Font Family"
+    }
+  },
+  "components": []
+}
+----
+
+2. **Validate against cortex schema:**
++
+[source,bash]
+----
+cd n00-cortex
+python scripts/validate-design-brief.py ../n00tropic/brief.json
+----
+
+3. **Use example brief as template:**
++
+[source,bash]
+----
+cp examples/design/brief-saas-landing.json my-brief.json
+# Edit my-brief.json
+----
+
+4. **Check required fields:**
++
+- `project_name` (string)
+- `client` (string)
+- `design_type` ("web" or "print")
+- `target_audience` (string)
+- `brand_guidelines` (object)
+
+**Prevention:**
+- Start from example briefs
+- Validate before running generator
+- Keep schema documentation handy
+
+=== Generated Artifacts Invalid
+
+**Problem:** Generated components or assets are malformed.
+
+**Symptoms:**
+[source,text]
+----
+SyntaxError: Unexpected token in generated component
+CSS validation errors in generated styles
+----
+
+**Solutions:**
+
+1. **Check AI model configuration:**
++
+[source,bash]
+----
+# Verify API keys
+echo $OPENAI_API_KEY
+echo $ANTHROPIC_API_KEY
+----
+
+2. **Review generation prompts:**
++
+[source,python]
+----
+# Check prompt templates in n00tropic_cli/generators/
+cat n00tropic_cli/generators/web_generator.py
+----
+
+3. **Validate generated output:**
++
+[source,bash]
+----
+# For web components
+cd output/directory
+npm install
+npm run lint
+----
+
+4. **Regenerate with different model:**
++
+[source,bash]
+----
+python n00tropic_cli/main.py design generate \
+  --brief brief.json \
+  --model gpt-4 \
+  --target ./output
+----
+
+**Prevention:**
+- Use validated prompt templates
+- Test with multiple AI models
+- Run linters on generated code
+- Review outputs before committing
+
+=== Quality Scoring Fails
+
+**Problem:** Quality assessment fails or returns unexpected scores.
+
+**Symptoms:**
+[source,text]
+----
+Error: Failed to assess component quality
+Accessibility check timeout
+----
+
+**Solutions:**
+
+1. **Install quality check dependencies:**
++
+[source,bash]
+----
+pip install -r requirements.txt
+npm install -g pa11y eslint prettier
+----
+
+2. **Run quality checks manually:**
++
+[source,bash]
+----
+cd output/directory
+
+# Accessibility
+pa11y http://localhost:3000
+
+# Linting
+eslint src/**/*.{js,jsx,ts,tsx}
+
+# Formatting
+prettier --check src/**/*.{js,jsx,ts,tsx}
+----
+
+3. **Check quality thresholds:**
++
+[source,python]
+----
+# In n00tropic_cli/quality/scorer.py
+THRESHOLDS = {
+    'accessibility': 0.8,
+    'code_quality': 0.7,
+    'design_consistency': 0.75
+}
+----
+
+4. **Skip quality checks for debugging:**
++
+[source,bash]
+----
+python n00tropic_cli/main.py design generate \
+  --brief brief.json \
+  --skip-quality-check
+----
+
+**Prevention:**
+- Install all quality tools upfront
+- Set realistic quality thresholds
+- Test quality checks on sample output
+
+== Template Syncing Issues
+
+=== Automated Sync Fails
+
+**Problem:** Automated template sync from cortex fails.
+
+**Symptoms:**
+[source,text]
+----
+GitHub Actions workflow failed: Sync Templates
+Error: Failed to fetch templates from n00-cortex
+----
+
+**Solutions:**
+
+1. **Check GitHub Actions logs:**
++
+[source,bash]
+----
+# View workflow runs at:
+# https://github.com/n00tropic/n00tropic-cerebrum/actions
+----
+
+2. **Verify cortex submodule:**
++
+[source,bash]
+----
+cd n00-cortex
+git status
+git pull origin main
+----
+
+3. **Test sync locally:**
++
+[source,bash]
+----
+cd n00tropic
+./scripts/sync-templates.sh --dry-run
+----
+
+4. **Check sync configuration:**
++
+[source,yaml]
+----
+# In .github/workflows/sync-templates.yml
+- name: Sync templates
+  uses: actions/checkout@v4
+  with:
+    repository: n00tropic/n00-cortex
+    path: n00-cortex
+    token: ${{ secrets.GITHUB_TOKEN }}
+----
+
+**Prevention:**
+- Monitor workflow runs
+- Keep submodules updated
+- Test sync scripts locally before pushing
+
+=== Protected Directory Modified
+
+**Problem:** Automation accidentally modified protected `clients/` directory.
+
+**Symptoms:**
+[source,bash]
+----
+$ git status
+modified: clients/confidential-file.md
+----
+
+**Solutions:**
+
+1. **Revert unwanted changes:**
++
+[source,bash]
+----
+cd clients
+git checkout -- .
+----
+
+2. **Verify protection rules:**
++
+[source,bash]
+----
+# In sync scripts, check for protection checks
+grep -r "clients" scripts/sync-templates.sh
+----
+
+3. **Add gitignore patterns:**
++
+[source,gitignore]
+----
+# In .gitignore or scripts
+clients/**
+!clients/.gitkeep
+----
+
+4. **Audit automation workflows:**
++
+[source,bash]
+----
+# Review all automation that touches files
+grep -r "git add" .github/workflows/
+----
+
+**Prevention:**
+- Implement strict protection rules in automation
+- Use `.gitignore` for sensitive directories
+- Run sync in dry-run mode first
+- Regular audits of automation behavior
+
+== Directory Structure Issues
+
+=== Template Not Found in Expected Location
+
+**Problem:** Cannot find synced templates in `06-Shared-Tools/Generated`.
+
+**Symptoms:**
+[source,bash]
+----
+$ ls 06-Shared-Tools/Generated
+ls: cannot access '06-Shared-Tools/Generated': No such file or directory
+----
+
+**Solutions:**
+
+1. **Create directory structure:**
++
+[source,bash]
+----
+mkdir -p 06-Shared-Tools/Generated
+----
+
+2. **Run initial sync:**
++
+[source,bash]
+----
+cd n00tropic
+./scripts/sync-templates.sh
+----
+
+3. **Check for sync errors:**
++
+[source,bash]
+----
+# Look for sync logs
+cat logs/template-sync-*.log
+----
+
+4. **Verify cortex exports:**
++
+[source,bash]
+----
+cd n00-cortex
+ls -la data/exports/**
+----
+
+**Prevention:**
+- Include directory structure in repository
+- Use `.gitkeep` files for empty directories
+- Document expected structure in README
+
+=== Incorrect Functional Organization
+
+**Problem:** Files placed in wrong functional directory.
+
+**Symptoms:**
+[source,text]
+----
+Sales materials in 04-Service-Delivery/
+Research artifacts in 02-Business-Operations/
+----
+
+**Solutions:**
+
+1. **Review directory structure:**
++
+[source,text]
+----
+01-Leadership/          - Strategic direction
+02-Business-Operations/ - Business processes
+03-Sales-Marketing/     - Sales and marketing
+04-Service-Delivery/    - Service execution
+05-Research-Innovation/ - Research initiatives
+06-Shared-Tools/        - Shared utilities
+clients/                - Client-specific (protected)
+99-Archive/             - Historical materials
+----
+
+2. **Move files to correct location:**
++
+[source,bash]
+----
+git mv 04-Service-Delivery/sales-deck.pdf 03-Sales-Marketing/
+----
+
+3. **Update references:**
++
+[source,bash]
+----
+# Search for broken links
+grep -r "04-Service-Delivery/sales-deck.pdf" .
+----
+
+**Prevention:**
+- Follow functional organization guidelines
+- Document directory purposes in README
+- Review file placements during code review
+
+== Cortex Integration Issues
+
+=== Cannot Publish to Cortex
+
+**Problem:** Generated artifacts cannot be published to cortex.
+
+**Symptoms:**
+[source,text]
+----
+Error: Failed to publish to cortex
+Permission denied: n00-cortex/data/exports/
+----
+
+**Solutions:**
+
+1. **Check cortex submodule status:**
++
+[source,bash]
+----
+cd n00-cortex
+git status
+git remote -v
+----
+
+2. **Verify write permissions:**
++
+[source,bash]
+----
+ls -la n00-cortex/data/exports/
+# Should be writable
+----
+
+3. **Test publish manually:**
++
+[source,bash]
+----
+cd n00tropic
+python scripts/publish-to-cortex.py --artifact output/component.jsx
+----
+
+4. **Check cortex catalog schema:**
++
+[source,bash]
+----
+cd n00-cortex
+pnpm run validate:schemas
+----
+
+**Prevention:**
+- Keep cortex submodule updated
+- Validate artifacts before publishing
+- Test publish process in development
+
+=== Schema Validation Fails on Publish
+
+**Problem:** Artifact fails cortex schema validation.
+
+**Symptoms:**
+[source,text]
+----
+ValidationError: Artifact does not match required schema
+Missing required field: 'metadata.author'
+----
+
+**Solutions:**
+
+1. **Review required schema fields:**
++
+[source,bash]
+----
+cd n00-cortex
+cat schemas/artifact-schema.json | jq '.required'
+----
+
+2. **Add missing metadata:**
++
+[source,json]
+----
+{
+  "metadata": {
+    "author": "n00tropic Design Generator",
+    "created": "2025-11-27T00:00:00Z",
+    "version": "1.0.0",
+    "tags": ["web", "component", "react"]
+  }
+}
+----
+
+3. **Validate before publishing:**
++
+[source,bash]
+----
+cd n00-cortex
+python scripts/validate-artifact.py ../n00tropic/output/artifact.json
+----
+
+**Prevention:**
+- Include metadata in generation templates
+- Auto-generate required fields
+- Run validation in CI/CD pipeline
+
+== Development Environment Issues
+
+=== Node Version Mismatch
+
+**Problem:** Node version conflicts with project requirements.
+
+**Symptoms:**
+[source,bash]
+----
+$ npm install
+Error: This project requires Node.js 20+
+Current version: v18.0.0
+----
+
+**Solutions:**
+
+1. **Use nvm to switch versions:**
++
+[source,bash]
+----
+nvm install 20
+nvm use 20
+node --version
+----
+
+2. **Check .nvmrc file:**
++
+[source,bash]
+----
+cat .nvmrc
+# Should specify required version
+----
+
+3. **Auto-load with nvm:**
++
+[source,bash]
+----
+# Add to ~/.bashrc or ~/.zshrc
+autoload -U add-zsh-hook
+load-nvmrc() {
+  if [[ -f .nvmrc ]]; then
+    nvm use
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+----
+
+**Prevention:**
+- Include `.nvmrc` in repository
+- Document Node requirements in README
+- Use nvm auto-switching
+
+=== Package Manager Conflicts
+
+**Problem:** Conflicts between npm, pnpm, and yarn.
+
+**Symptoms:**
+[source,text]
+----
+Error: This project uses pnpm
+Please remove node_modules and run: pnpm install
+----
+
+**Solutions:**
+
+1. **Clean and reinstall:**
++
+[source,bash]
+----
+rm -rf node_modules package-lock.json yarn.lock
+pnpm install
+----
+
+2. **Use only pnpm:**
++
+[source,bash]
+----
+npm install -g pnpm
+pnpm install
+----
+
+3. **Add `.npmrc` to enforce:**
++
+[source,ini]
+----
+# In .npmrc
+engine-strict=true
+package-manager=pnpm@9.15.0
+----
+
+**Prevention:**
+- Document required package manager
+- Use `only-allow` package to enforce
+- Include lockfile in version control
+
+== Workspace Organization Issues
+
+=== Archive Directory Cluttered
+
+**Problem:** `99-Archive/` contains too many unorganized files.
+
+**Symptoms:**
+[source,bash]
+----
+$ ls -la 99-Archive/ | wc -l
+500+ files with no structure
+----
+
+**Solutions:**
+
+1. **Create archive subdirectories:**
++
+[source,bash]
+----
+cd 99-Archive
+mkdir -p {2023,2024,2025}/{Q1,Q2,Q3,Q4}
+----
+
+2. **Move files by date:**
++
+[source,bash]
+----
+# Sort by year and quarter
+for file in *; do
+  year=$(stat -f %SB -t %Y "$file")
+  quarter=$(( ($(stat -f %SB -t %-m "$file") - 1) / 3 + 1 ))
+  mv "$file" "$year/Q$quarter/"
+done
+----
+
+3. **Document archive structure:**
++
+[source,markdown]
+----
+# In 99-Archive/README.md
+## Organization
+- YYYY/QQ/ - Files archived in that quarter
+- projects/ - Completed project archives
+- deprecated/ - Deprecated materials
+----
+
+**Prevention:**
+- Archive regularly with structure
+- Document archive policies
+- Automate archive organization
+
+== Getting Help
+
+If you continue to experience issues:
+
+1. **Check documentation:**
+   - link:../n00tropic/README.md[n00tropic README]
+   - link:../n00tropic/docs/design-generator.md[Design Generator Documentation]
+   - xref:troubleshooting/workspace.adoc[Workspace Troubleshooting]
+
+2. **Gather diagnostics:**
++
+[source,bash]
+----
+# Python environment
+python --version
+pip list > pip-packages.txt
+
+# Node environment
+node --version
+pnpm --version
+
+# Git status
+git status
+git submodule status
+
+# Check logs
+ls -la logs/
+cat logs/generator-*.log
+----
+
+3. **Report issues:**
+   - Include error messages and stack traces
+   - Attach relevant configuration files
+   - Describe steps to reproduce
+   - Open issue at https://github.com/n00tropic/n00tropic-cerebrum/issues[GitHub]
+
+== Related Documentation
+
+* xref:troubleshooting/workspace.adoc[Workspace Troubleshooting]
+* xref:troubleshooting/n00t.adoc[n00t Troubleshooting]
+* xref:troubleshooting/n00-frontiers.adoc[n00-frontiers Troubleshooting]
+* link:../../n00tropic/README.md[n00tropic README]
+* link:../../n00tropic/docs/design-generator.md[Design Generator Documentation]

@@ -1,0 +1,13 @@
+# Capability routing profile for mcp-proxy CapabilityRouter.
+# Pattern → server mappings (glob-style `*`).
+routes:
+  "docs.*": "docs"
+  "n00t_capabilities_*": "n00t-capabilities"
+  "deps.*": "n00t-capabilities"
+  "fusion.*": "n00t-capabilities"
+  "horizons.*": "n00t-capabilities"
+  "workspace.*": "n00t-capabilities"
+  "*": "filesystem" # default fallback
+
+defaults:
+  server: "filesystem"

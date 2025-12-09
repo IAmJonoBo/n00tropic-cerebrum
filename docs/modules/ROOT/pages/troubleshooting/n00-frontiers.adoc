@@ -1,0 +1,870 @@
+= n00-frontiers Troubleshooting
+:page-tags: troubleshooting,n00-frontiers,templates,scaffolding
+:reviewed: 2025-11-27
+:toc: left
+:toclevels: 3
+
+This guide helps resolve common issues with n00-frontiers, the machine-readable framework for software scaffolding and delivery.
+
+== Template Generation Issues
+
+=== Cookiecutter Template Fails
+
+**Problem:** Cookiecutter template rendering fails or produces invalid output.
+
+**Symptoms:**
+[source,bash]
+----
+$ cookiecutter templates/python-service
+Error: project_slug must be kebab-case
+ValidationError: Invalid template variable
+----
+
+**Solutions:**
+
+1. **Check input format:**
++
+Valid formats for common variables:
++
+[source,text]
+----
+project_slug: kebab-case (lowercase, hyphens only)
+pkg_name: snake_case (lowercase, underscores)
+class_name: PascalCase
+author_email: valid@email.com
+license: MIT, Apache-2.0, BSD-3-Clause, etc.
+----
+
+2. **Use validation command:**
++
+[source,bash]
+----
+cd n00-frontiers
+python scripts/validate-template-input.py \
+  --template python-service \
+  --input my-input.json
+----
+
+3. **Test with example values:**
++
+[source,bash]
+----
+cd n00-frontiers
+cookiecutter templates/python-service \
+  --no-input \
+  --config-file examples/inputs/python-service-example.yaml
+----
+
+4. **Check template syntax:**
++
+[source,bash]
+----
+cd templates/python-service
+# Verify Jinja2 syntax
+python -m py_compile hooks/*.py
+----
+
+**Prevention:**
+- Use validation scripts before rendering
+- Follow naming conventions strictly
+- Start from example configurations
+- Review template documentation
+
+=== Template Validation Fails
+
+**Problem:** Generated template fails validation checks.
+
+**Symptoms:**
+[source,bash]
+----
+$ .dev/validate-templates.sh --all
+ERROR: Template python-service validation failed
+Missing required file: pyproject.toml
+----
+
+**Solutions:**
+
+1. **Run specific validation:**
++
+[source,bash]
+----
+cd n00-frontiers
+.dev/validate-templates.sh --template python-service
+----
+
+2. **Check required files:**
++
+[source,bash]
+----
+# Each template should include:
+# - pyproject.toml or package.json
+# - README.md
+# - LICENSE
+# - .github/workflows/
+# - tests/
+----
+
+3. **Verify schema compliance:**
++
+[source,bash]
+----
+cd n00-frontiers
+python scripts/validate-against-schema.py \
+  --template output/my-project \
+  --schema ../n00-cortex/schemas/project-schema.json
+----
+
+4. **Fix validation errors:**
++
+Review validation output and add missing files or fix formatting:
++
+[source,bash]
+----
+# Common fixes
+touch README.md LICENSE
+mkdir -p .github/workflows tests
+----
+
+**Prevention:**
+- Run validation before committing templates
+- Include validation in CI/CD
+- Keep templates synchronized with schemas
+- Document required structure
+
+=== Post-Generation Hooks Fail
+
+**Problem:** Cookiecutter hooks fail during or after generation.
+
+**Symptoms:**
+[source,text]
+----
+Error in post_gen_project.py
+FileNotFoundError: [Errno 2] No such file or directory
+----
+
+**Solutions:**
+
+1. **Check hook scripts:**
++
+[source,bash]
+----
+cd templates/my-template/hooks
+python -m py_compile pre_gen_project.py post_gen_project.py
+----
+
+2. **Run hooks manually for debugging:**
++
+[source,bash]
+----
+cd output/generated-project
+python ../templates/my-template/hooks/post_gen_project.py
+----
+
+3. **Verify hook dependencies:**
++
+[source,python]
+----
+# In hooks/*.py
+import sys
+import subprocess
+from pathlib import Path
+
+# Check required modules are available
+try:
+    import jsonschema
+except ImportError:
+    print("Installing jsonschema...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "jsonschema"])
+----
+
+4. **Add error handling:**
++
+[source,python]
+----
+# In post_gen_project.py
+try:
+    # Hook logic
+    pass
+except Exception as e:
+    print(f"Warning: Hook failed: {e}")
+    # Continue anyway or exit based on criticality
+----
+
+**Prevention:**
+- Test hooks independently
+- Add robust error handling
+- Document hook dependencies
+- Use try-except blocks
+
+== Validation System Issues
+
+=== Nox Session Fails
+
+**Problem:** Nox validation sessions fail to run.
+
+**Symptoms:**
+[source,bash]
+----
+$ nox -s validate_templates_all
+Error: No noxfile.py found
+Python version not available
+----
+
+**Solutions:**
+
+1. **Install nox:**
++
+[source,bash]
+----
+pip install nox
+----
+
+2. **Verify Python 3.11 available:**
++
+[source,bash]
+----
+python3.11 --version
+# Or install via pyenv
+pyenv install 3.11
+----
+
+3. **Check noxfile.py location:**
++
+[source,bash]
+----
+cd n00-frontiers
+ls -la noxfile.py
+----
+
+4. **Run with specific Python:**
++
+[source,bash]
+----
+nox --python 3.11 -s validate_templates_all
+----
+
+**Prevention:**
+- Document Python version requirements
+- Include nox in requirements.txt
+- Use pyenv or venv for version management
+
+=== Hermetic Runtime Issues
+
+**Problem:** Trunk cannot download Python or validation fails with runtime errors.
+
+**Symptoms:**
+[source,bash]
+----
+Error: Python 3.11 not found for Trunk
+Trunk hermetic runtime download failed
+----
+
+**Solutions:**
+
+1. **Bootstrap Trunk Python:**
++
+[source,bash]
+----
+cd /path/to/n00tropic-cerebrum
+scripts/bootstrap-trunk-python.sh
+----
+
+2. **Manually download hermetic runtime:**
++
+[source,bash]
+----
+cd n00-frontiers
+trunk install
+----
+
+3. **Use system Python as fallback:**
++
+[source,yaml]
+----
+# In .trunk/trunk.yaml
+runtimes:
+  enabled:
+    - python@3.11.0
+      system_python: true
+----
+
+4. **Check network connectivity:**
++
+Trunk downloads runtimes from CDN. Verify network access:
++
+[source,bash]
+----
+curl -I https://trunk.io
+----
+
+**Prevention:**
+- Run bootstrap scripts during setup
+- Cache hermetic runtimes in CI/CD
+- Document network requirements
+- Test validation locally before pushing
+
+== Toolchain Alignment Issues
+
+=== Version Mismatch with Cortex
+
+**Problem:** Template runtime versions don't match cortex manifest.
+
+**Symptoms:**
+[source,bash]
+----
+Warning: Using Node 20, but cortex specifies Node 24
+Template validation may fail
+----
+
+**Solutions:**
+
+1. **Check toolchain manifest:**
++
+[source,bash]
+----
+cd n00-cortex
+cat data/toolchain-manifest.json | jq '.runtimes'
+----
+
+2. **Update template requirements:**
++
+[source,bash]
+----
+cd n00-frontiers
+# Update .nvmrc
+echo "24" > .nvmrc
+
+# Update package.json engines
+jq '.engines.node = ">=24.0.0"' package.json > tmp && mv tmp package.json
+----
+
+3. **Sync with cortex versions:**
++
+[source,bash]
+----
+cd n00-frontiers
+./scripts/sync-toolchain.sh
+----
+
+4. **Use nvm to switch:**
++
+[source,bash]
+----
+nvm use
+node --version  # Should match .nvmrc
+----
+
+**Prevention:**
+- Update cortex manifest first
+- Run sync scripts after cortex changes
+- Validate alignment in CI/CD
+- Document version requirements
+
+=== pnpm vs npm Conflicts
+
+**Problem:** Templates use different package managers inconsistently.
+
+**Symptoms:**
+[source,bash]
+----
+Some templates use npm, others use pnpm
+Package-lock.json and pnpm-lock.yaml both present
+----
+
+**Solutions:**
+
+1. **Standardize on pnpm:**
++
+[source,bash]
+----
+cd n00-frontiers
+# Remove npm artifacts
+find . -name "package-lock.json" -delete
+find . -name "node_modules" -type d -exec rm -rf {} +
+
+# Use pnpm everywhere
+pnpm install
+----
+
+2. **Update template defaults:**
++
+[source,jinja]
+----
+# In cookiecutter.json
+{
+  "package_manager": "pnpm"
+}
+
+# In template files, use:
+{{ cookiecutter.package_manager }} install
+----
+
+3. **Add .npmrc enforcement:**
++
+[source,ini]
+----
+# In template/.npmrc
+engine-strict=true
+package-manager=pnpm@9.15.0
+----
+
+**Prevention:**
+- Choose one package manager workspace-wide
+- Document decision in CONVENTIONS.md
+- Enforce via configuration files
+- Review during template validation
+
+== CI/CD Pipeline Issues
+
+=== GitHub Actions Workflow Fails
+
+**Problem:** Template CI/CD workflows fail after generation.
+
+**Symptoms:**
+[source,bash]
+----
+GitHub Actions: Build failed
+Error: Node version not available
+Secrets not configured
+----
+
+**Solutions:**
+
+1. **Check workflow Node version:**
++
+[source,yaml]
+----
+# In .github/workflows/ci.yml
+- uses: actions/setup-node@v4
+  with:
+    node-version: '24'  # Match .nvmrc
+----
+
+2. **Configure required secrets:**
++
+[source,bash]
+----
+# In GitHub repo settings > Secrets and variables > Actions
+# Add required secrets:
+# - GITHUB_TOKEN (automatic)
+# - NPM_TOKEN (for publishing)
+# - CODECOV_TOKEN (for coverage)
+----
+
+3. **Test workflow locally:**
++
+[source,bash]
+----
+# Using act (GitHub Actions local runner)
+act -j test
+----
+
+4. **Validate workflow syntax:**
++
+[source,bash]
+----
+# Use GitHub CLI
+gh workflow list
+gh workflow run ci.yml --ref main
+----
+
+**Prevention:**
+- Include workflow documentation in templates
+- Test workflows before releasing templates
+- Document required secrets
+- Use workflow templates from cortex
+
+=== Security Scanning Fails
+
+**Problem:** Security scans in CI fail or produce false positives.
+
+**Symptoms:**
+[source,text]
+----
+Trivy scan failed with vulnerabilities
+OSV-Scanner found critical issues
+Snyk test exceeded rate limit
+----
+
+**Solutions:**
+
+1. **Update dependencies:**
++
+[source,bash]
+----
+cd generated-project
+pnpm update
+pnpm audit fix
+----
+
+2. **Configure scan exceptions:**
++
+[source,yaml]
+----
+# In .osv-scanner.toml
+[[IgnoredVulns]]
+id = "GO-2023-1234"
+reason = "False positive - not applicable to our use case"
+----
+
+3. **Use security advisories:**
++
+[source,bash]
+----
+# Check GitHub Security Advisories
+gh api /repos/{owner}/{repo}/vulnerability-alerts
+----
+
+4. **Rate limit handling:**
++
+[source,bash]
+----
+# For Snyk, use authentication
+snyk auth
+export SNYK_TOKEN=$SNYK_AUTH_TOKEN
+----
+
+**Prevention:**
+- Keep dependencies updated
+- Configure scan thresholds appropriately
+- Document known issues and exceptions
+- Use authenticated scanning
+
+== Documentation Generation Issues
+
+=== Jupyter Book Build Fails
+
+**Problem:** Jupyter Book documentation fails to build.
+
+**Symptoms:**
+[source,bash]
+----
+$ jupyter-book build docs/
+Error: Invalid _config.yml
+Broken link in documentation
+----
+
+**Solutions:**
+
+1. **Validate configuration:**
++
+[source,bash]
+----
+cd docs
+# Check YAML syntax
+python -c "import yaml; yaml.safe_load(open('_config.yml'))"
+----
+
+2. **Fix broken links:**
++
+[source,bash]
+----
+# Run link checker
+jupyter-book build docs/ --builder linkcheck
+----
+
+3. **Install required extensions:**
++
+[source,bash]
+----
+pip install jupyter-book sphinx-design myst-nb
+----
+
+4. **Clear build cache:**
++
+[source,bash]
+----
+rm -rf docs/_build
+jupyter-book clean docs/
+jupyter-book build docs/
+----
+
+**Prevention:**
+- Validate links before committing
+- Use relative links where possible
+- Include link checks in CI/CD
+- Test build locally
+
+=== GitHub Pages Deployment Fails
+
+**Problem:** Documentation deployment to GitHub Pages fails.
+
+**Symptoms:**
+[source,text]
+----
+GitHub Actions: Deploy failed
+404 error on published site
+gh-pages branch not found
+----
+
+**Solutions:**
+
+1. **Enable GitHub Pages:**
++
+Repository Settings → Pages → Source: `gh-pages` branch
+
+2. **Check workflow permissions:**
++
+[source,yaml]
+----
+# In .github/workflows/deploy-docs.yml
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+----
+
+3. **Verify gh-pages branch:**
++
+[source,bash]
+----
+git fetch origin
+git branch -r | grep gh-pages
+
+# Create if missing
+git checkout --orphan gh-pages
+git rm -rf .
+echo "Documentation" > index.html
+git add .
+git commit -m "Initialize gh-pages"
+git push origin gh-pages
+----
+
+4. **Check build artifacts:**
++
+[source,bash]
+----
+# Verify _build/html exists
+ls -la docs/_build/html/
+----
+
+**Prevention:**
+- Test deployment in staging
+- Document GitHub Pages setup
+- Include deployment checks in workflow
+- Use GitHub Pages action
+
+== Integration Issues
+
+=== Cortex Export Sync Fails
+
+**Problem:** Cannot sync templates to cortex exports.
+
+**Symptoms:**
+[source,bash]
+----
+Error: Failed to update cortex exports
+Permission denied: n00-cortex/data/exports/
+----
+
+**Solutions:**
+
+1. **Update merge plan:**
++
+[source,bash]
+----
+cd n00-frontiers
+cat .dev/merge-plan.json
+# Verify source → destination mappings
+----
+
+2. **Check cortex submodule:**
++
+[source,bash]
+----
+cd n00-cortex
+git status
+git submodule update --init --recursive
+----
+
+3. **Run export manually:**
++
+[source,bash]
+----
+cd n00-frontiers
+python scripts/export-to-cortex.py --dry-run
+# Review changes, then:
+python scripts/export-to-cortex.py
+----
+
+4. **Verify catalog updates:**
++
+[source,bash]
+----
+cd n00-cortex
+cat data/catalog/templates.json | jq .
+----
+
+**Prevention:**
+- Keep merge plan synchronized
+- Document export process
+- Test exports before committing
+- Update catalog schema as needed
+
+=== Template Schema Drift
+
+**Problem:** Templates don't match cortex schemas.
+
+**Symptoms:**
+[source,text]
+----
+Schema validation failed
+Missing required metadata fields
+Incompatible version format
+----
+
+**Solutions:**
+
+1. **Check schema version:**
++
+[source,bash]
+----
+cd n00-cortex
+cat schemas/template-schema.json | jq '.version'
+----
+
+2. **Update template metadata:**
++
+[source,json]
+----
+{
+  "template_version": "2.0.0",
+  "schema_version": "1.0.0",
+  "metadata": {
+    "author": "n00tropic",
+    "license": "MIT",
+    "tags": ["python", "service", "api"]
+  }
+}
+----
+
+3. **Run schema validation:**
++
+[source,bash]
+----
+cd n00-cortex
+python scripts/validate-template.py \
+  ../n00-frontiers/templates/python-service
+----
+
+4. **Regenerate templates:**
++
+[source,bash]
+----
+cd n00-frontiers
+./scripts/regenerate-from-schema.sh python-service
+----
+
+**Prevention:**
+- Version schemas and templates together
+- Run validation in CI/CD
+- Document schema changes
+- Automate template updates
+
+== Standards Compliance Issues
+
+=== Control Traceability Validation Fails
+
+**Problem:** Control traceability matrix validation fails.
+
+**Symptoms:**
+[source,bash]
+----
+$ python scripts/validate-traceability.py
+Error: Missing control implementations
+Standards coverage below threshold
+----
+
+**Solutions:**
+
+1. **Review traceability matrix:**
++
+[source,bash]
+----
+cd n00-frontiers
+cat control-traceability-matrix.json | jq '.controls'
+----
+
+2. **Add missing controls:**
++
+[source,json]
+----
+{
+  "control_id": "NIST-SSDF-PW.1.1",
+  "implementation": "pre-commit hooks",
+  "evidence": ".pre-commit-config.yaml",
+  "status": "implemented"
+}
+----
+
+3. **Update evidence:**
++
+[source,bash]
+----
+# Add missing evidence files
+touch docs/security/security-review-checklist.md
+----
+
+4. **Run gap analysis:**
++
+[source,bash]
+----
+python scripts/standards-gap-analysis.py
+# Review gaps and implement missing controls
+----
+
+**Prevention:**
+- Maintain traceability during development
+- Include controls in template design
+- Document evidence collection
+- Regular compliance audits
+
+== Getting Help
+
+If you continue to experience issues:
+
+1. **Check documentation:**
+   - link:../../n00-frontiers/README.md[n00-frontiers README]
+   - link:../../n00-frontiers/FRAMEWORK.md[Framework Guide]
+   - link:../../n00-frontiers/docs/VALIDATION-GUIDE.md[Validation Guide]
+   - link:../../n00-frontiers/BIBLE.md[Implementation Bible]
+
+2. **Review examples:**
++
+[source,bash]
+----
+cd n00-frontiers/examples
+ls -la projects/  # Sample generated projects
+ls -la inputs/    # Example template inputs
+----
+
+3. **Run diagnostics:**
++
+[source,bash]
+----
+# Environment check
+python --version
+nox --version
+trunk --version
+
+# Template validation
+.dev/validate-templates.sh --all
+
+# Sanity check
+python scripts/sanity-check.py
+----
+
+4. **Report issues:**
+   - Include template name and version
+   - Attach validation errors
+   - Provide generated output samples
+   - Open issue at https://github.com/n00tropic/n00-frontiers/issues[GitHub]
+
+== Related Documentation
+
+* xref:troubleshooting/workspace.adoc[Workspace Troubleshooting]
+* xref:troubleshooting/n00t.adoc[n00t Troubleshooting]
+* xref:troubleshooting/n00tropic.adoc[n00tropic Troubleshooting]
+* link:../../n00-frontiers/README.md[n00-frontiers README]
+* link:../../n00-frontiers/docs/VALIDATION-GUIDE.md[Validation Guide]
+* link:../../n00-frontiers/CONVENTIONS.md[Development Conventions]

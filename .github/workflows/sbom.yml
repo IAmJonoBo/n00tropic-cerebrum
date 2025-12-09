@@ -1,0 +1,78 @@
+name: sbom
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    name: SBOM (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    continue-on-error: true # non-blocking per owner request
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - workspace
+          - n00-frontiers
+          - n00-cortex
+          - n00-dashboard
+          - n00-horizons
+          - n00-school
+          - n00clear-fusion
+          - n00plicate
+          - n00menon
+          - n00t
+          - n00tropic
+          - n00man
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install Syft
+        # AGENT_HOOK: dependency-management
+        uses: anchore/sbom-action/download-syft@v0
+        with:
+          syft-version: v1.18.1
+
+      - name: Generate SBOM
+        env:
+          SBOM_TARGETS: ${{ matrix.target }}
+          SBOM_REF: ${{ github.ref_name }}
+          SBOM_OUTPUT_ROOT: ${{ github.workspace }}/artifacts/sbom
+          SYFT_LOG: error
+          SYFT_YARN_ENABLE_EXPERIMENTAL_PARSER: true
+        run: ./.dev/automation/scripts/deps-sbom.sh
+
+      - name: Upload to Dependency-Track
+        if: ${{ secrets.DEPENDENCY_TRACK_BASE_URL != '' && secrets.DEPENDENCY_TRACK_API_KEY != '' }}
+        env:
+          DEPENDENCY_TRACK_BASE_URL: ${{ secrets.DEPENDENCY_TRACK_BASE_URL }}
+          DEPENDENCY_TRACK_API_KEY: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
+          SBOM_REF: ${{ github.ref_name }}
+        run: ./.dev/automation/scripts/deps-dependency-track-upload.sh --target ${{ matrix.target }}
+
+      - name: Notify if upload skipped
+        if: ${{ secrets.DEPENDENCY_TRACK_BASE_URL == '' || secrets.DEPENDENCY_TRACK_API_KEY == '' }}
+        run: |
+          echo "::warning::Dependency-Track upload skipped (secrets not provided). SBOM artifacts are still published."
+          echo "Store credentials locally (.env on the SSH host) and run deps-audit manually: ./cli.py deps:audit --target ${{ matrix.target }}"
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.target }}-${{ github.ref_name }}
+          path: artifacts/sbom/${{ matrix.target }}/${{ github.ref_name }}
+          if-no-files-found: error

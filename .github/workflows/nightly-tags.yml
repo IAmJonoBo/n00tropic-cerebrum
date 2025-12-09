@@ -1,0 +1,29 @@
+name: nightly-tags
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  propagate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24.11.0"
+          cache: pnpm
+      - name: Run tag propagation across all repos
+        run: bash scripts/tag-propagate.sh
+      - name: Auto-apply tag suggestions
+        run: pnpm run docs:tag-suggest --apply
+      - name: Report Typesense freshness
+        run: pnpm run search:freshness-check || true

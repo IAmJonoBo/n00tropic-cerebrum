@@ -2,6 +2,7 @@
   "name": "frontier-web",
   "private": true,
   "version": "0.1.0",
+  "packageManager": "pnpm@10.23.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,21 +17,24 @@
     "lighthouse": "lhci autorun"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.56.1",
     "@types/node": "^24.10.1",
-    "@vitest/coverage-v8": "^4.0.8",
+    "@vitest/coverage-v8": "^4.0.13",
     "eslint": "^9.39.1",
-    "eslint-config-standard-with-typescript": "^43.0.1",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-n": "^17.23.1",
     "eslint-plugin-promise": "^7.2.1",
+    "globals": "^16.5.0",
     "lighthouse": "^13.0.1",
     "prettier": "^3.6.2",
-    "stylelint": "^16.25.0",
+    "stylelint": "^16.26.0",
     "stylelint-config-standard": "^39.0.1",
     "typescript": "^5.9.3",
-    "vite": "^7.2.2",
-    "vitest": "^4.0.8"
+    "typescript-eslint": "^8.48.0",
+    "vite": "^7.2.4",
+    "vitest": "^4.0.13"
   }
 }

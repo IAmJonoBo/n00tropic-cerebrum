@@ -1,0 +1,65 @@
+{
+  "group": "n00tropic-cerebrum",
+  "components": [
+    {
+      "name": "workspace",
+      "projectName": "n00tropic-cerebrum::workspace",
+      "tags": ["workspace", "pnpm"]
+    },
+    {
+      "name": "n00-frontiers",
+      "projectName": "n00tropic-cerebrum::n00-frontiers",
+      "tags": ["python", "standards"]
+    },
+    {
+      "name": "n00-cortex",
+      "projectName": "n00tropic-cerebrum::n00-cortex",
+      "tags": ["python", "schemas"]
+    },
+    {
+      "name": "n00-dashboard",
+      "projectName": "n00tropic-cerebrum::n00-dashboard",
+      "tags": ["swift", "ui"]
+    },
+    {
+      "name": "n00-horizons",
+      "projectName": "n00tropic-cerebrum::n00-horizons",
+      "tags": ["python", "projects"]
+    },
+    {
+      "name": "n00-school",
+      "projectName": "n00tropic-cerebrum::n00-school",
+      "tags": ["python", "training"]
+    },
+    {
+      "name": "n00clear-fusion",
+      "projectName": "n00tropic-cerebrum::n00clear-fusion",
+      "tags": ["python", "rag"]
+    },
+    {
+      "name": "n00plicate",
+      "projectName": "n00tropic-cerebrum::n00plicate",
+      "tags": ["node", "design-system"]
+    },
+    {
+      "name": "n00menon",
+      "projectName": "n00tropic-cerebrum::n00menon",
+      "tags": ["node", "docs"]
+    },
+    {
+      "name": "n00t",
+      "projectName": "n00tropic-cerebrum::n00t",
+      "tags": ["node", "automation"]
+    },
+    {
+      "name": "n00tropic",
+      "projectName": "n00tropic-cerebrum::n00tropic",
+      "tags": ["python", "generators"]
+    },
+    {
+      "name": "n00man",
+      "projectName": "n00tropic-cerebrum::n00man",
+      "tags": ["python", "agent-foundry"]
+    }
+  ]
+}

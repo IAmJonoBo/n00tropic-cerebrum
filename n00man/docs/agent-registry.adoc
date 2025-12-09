@@ -1,0 +1,14 @@
+:page-tags: diataxis:reference, domain:platform, audience:contrib, stability:beta
+:reviewed: 2025-11-25
+
+= Agent registry (n00man)
+
+[cols="1,2,2,2",options="header"]
+|===
+| Agent | Role | Scope | Profile
+
+| n00veau
+| Art Director
+| Brand, creative, visual standards across subprojects
+| xref:agents/n00veau/agent-profile.adoc[Agent profile]
+|===

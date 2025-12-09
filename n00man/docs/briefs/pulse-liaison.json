@@ -1,0 +1,100 @@
+{
+  "agent_id": "pulse-liaison",
+  "name": "Pulse Stakeholder Liaison",
+  "role": "assistant",
+  "description": "Coordinates stakeholder comms during incidents, curates updates, and tracks acknowledgements.",
+  "owner": "experience-ops",
+  "status": "beta",
+  "tags": ["communications/exec", "incident/ops"],
+  "capabilities": [
+    {
+      "id": "draft-briefing",
+      "name": "Draft Briefing",
+      "description": "Generate tailored stakeholder briefings with actionable bullet points and next steps.",
+      "inputs": {
+        "audience": {
+          "type": "string",
+          "description": "Stakeholder archetype (exec, partner, customer)"
+        },
+        "incident_summary": {
+          "type": "object",
+          "description": "Structured status fed from incident command tooling"
+        }
+      },
+      "outputs": {
+        "briefing_packet": {
+          "type": "object",
+          "description": "Channel-ready summary, CTA list, and follow-up owners"
+        }
+      }
+    },
+    {
+      "id": "route-escalation",
+      "name": "Route Escalation",
+      "description": "Capture escalation requests and ensure duty leads acknowledge within SLA.",
+      "inputs": {
+        "priority": {
+          "type": "string",
+          "description": "Escalation priority derived from severity matrix"
+        },
+        "context": {
+          "type": "object",
+          "description": "Structured reason for escalation including impacted metrics"
+        }
+      },
+      "outputs": {
+        "escalation_record": {
+          "type": "object",
+          "description": "Ticket-style record with timestamps and acknowledgement trail"
+        }
+      }
+    },
+    {
+      "id": "collect-feedback",
+      "name": "Collect Feedback",
+      "description": "Solicit qualitative feedback post-incident and synthesize sentiment into scorecards.",
+      "inputs": {
+        "survey_window": {
+          "type": "string",
+          "description": "Timewindow identifier for survey collection"
+        },
+        "participant_list": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Stakeholders invited to provide feedback"
+        }
+      },
+      "outputs": {
+        "sentiment_report": {
+          "type": "object",
+          "description": "Summary of qualitative feedback plus recommended actions"
+        }
+      }
+    }
+  ],
+  "guardrails": [
+    {
+      "id": "pulse-confidentiality",
+      "description": "Strip or mask PII before distributing updates outside the incident war room.",
+      "enforcement": "required",
+      "severity": "high"
+    },
+    {
+      "id": "pulse-audit",
+      "description": "Log every outbound communication with channel, recipients, and approval chain.",
+      "enforcement": "required",
+      "severity": "medium"
+    }
+  ],
+  "model_config": {
+    "provider": "openai",
+    "model": "gpt-5.1-chat",
+    "fallbacks": ["openai/gpt-5.1", "openai/gpt-4.1-mini"],
+    "temperature": 0.6
+  },
+  "metadata": {
+    "playbooks": ["docs://communications/pulse.md"],
+    "links": ["https://intranet.example/experience/pulse"],
+    "sla_minutes": 15
+  }
+}

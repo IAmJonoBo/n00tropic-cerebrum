@@ -6,10 +6,14 @@ artifacts/
 .secrets/
 n00-dashboard/.build/
 n00-dashboard/.swiftpm/
+.build/
+.swiftpm/
 
 # Python
 __pycache__/
 *.py[cod]
+# uv cache
+.cache/uv/
 *.pyc
 .mypy_cache/
 .ruff_cache/
@@ -17,9 +21,10 @@ __pycache__/
 
 # Node / tooling
 node_modules/
-/.trunk/
+# Trunk config is tracked (hooks disabled); keep cache dirs ignored separately.
 dist/
 build/
+/.pnpm-store
 
 # Local envs
 .venv/
@@ -28,3 +33,7 @@ env/
 .env
 *.env
 *.bak
+n00tropic_HQ/12-Platform-Ops/erpnext-docker/local.env
+docs/search/.env
+.venv-planner/
+/actions-runner

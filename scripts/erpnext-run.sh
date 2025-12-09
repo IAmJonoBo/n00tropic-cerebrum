@@ -20,8 +20,8 @@ OPEN_BROWSER=1
 RUN_JOBS=1
 FORCE_SETUP=0
 WAIT_TIMEOUT="${ERP_HEALTH_TIMEOUT:-180}"
-SITE_URL_OVERRIDE="${ERP_SITE_URL:-}"
-ENV_FILE_OVERRIDE="${ERP_ENV_FILE:-}"
+SITE_URL_OVERRIDE="${ERP_SITE_URL-}"
+ENV_FILE_OVERRIDE="${ERP_ENV_FILE-}"
 EXIT_ON_TIMEOUT=1
 BENCH_START_FLAGS="${BENCH_START_FLAGS:---no-dev}"
 DEV_MODE=0
@@ -60,60 +60,60 @@ EOF
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
-		--no-browser)
-			OPEN_BROWSER=0
-			shift
-			;;
-		--skip-jobs)
-			RUN_JOBS=0
-			shift
-			;;
-		--env-file)
-			ENV_FILE_OVERRIDE="$2"
-			shift 2
-			;;
-		--site-url)
-			SITE_URL_OVERRIDE="$2"
-			shift 2
-			;;
-		--health-path)
-			HEALTH_PATH="$2"
-			shift 2
-			;;
-		--timeout)
-			WAIT_TIMEOUT="$2"
-			shift 2
-			;;
-		--force-setup)
-			FORCE_SETUP=1
-			shift
-			;;
-		--keep-alive-on-timeout)
-			EXIT_ON_TIMEOUT=0
-			shift
-			;;
-		--dev-mode)
-			DEV_MODE=1
-			BENCH_START_FLAGS=""
-			shift
-			;;
-		--skip-update)
-			SKIP_BENCH_UPDATE=1
-			shift
-			;;
-		--attach)
-			ATTACH_ON_SUCCESS=1
-			shift
-			;;
-		-h|--help)
-			usage
-			exit 0
-			;;
-		*)
-			echo "Unknown option: $1" >&2
-			usage
-			exit 1
-			;;
+	--no-browser)
+		OPEN_BROWSER=0
+		shift
+		;;
+	--skip-jobs)
+		RUN_JOBS=0
+		shift
+		;;
+	--env-file)
+		ENV_FILE_OVERRIDE="$2"
+		shift 2
+		;;
+	--site-url)
+		SITE_URL_OVERRIDE="$2"
+		shift 2
+		;;
+	--health-path)
+		HEALTH_PATH="$2"
+		shift 2
+		;;
+	--timeout)
+		WAIT_TIMEOUT="$2"
+		shift 2
+		;;
+	--force-setup)
+		FORCE_SETUP=1
+		shift
+		;;
+	--keep-alive-on-timeout)
+		EXIT_ON_TIMEOUT=0
+		shift
+		;;
+	--dev-mode)
+		DEV_MODE=1
+		BENCH_START_FLAGS=""
+		shift
+		;;
+	--skip-update)
+		SKIP_BENCH_UPDATE=1
+		shift
+		;;
+	--attach)
+		ATTACH_ON_SUCCESS=1
+		shift
+		;;
+	-h | --help)
+		usage
+		exit 0
+		;;
+	*)
+		echo "Unknown option: $1" >&2
+		usage
+		exit 1
+		;;
 	esac
 done
 
@@ -123,13 +123,14 @@ if [[ ! -x ${STACK_SCRIPT} ]]; then
 fi
 
 detect_dir() {
-	local first="$1"; shift || true
-	if [[ -d "${first}" ]]; then
+	local first="$1"
+	shift || true
+	if [[ -d ${first} ]]; then
 		printf '%s\n' "${first}"
 		return
 	fi
 	for candidate in "$@"; do
-		if [[ -d "${candidate}" ]]; then
+		if [[ -d ${candidate} ]]; then
 			printf '%s\n' "${candidate}"
 			return
 		fi
@@ -151,7 +152,7 @@ resolve_env_file() {
 		"${WORKSPACE_ROOT}/../n00tropic_HQ/12-Platform-Ops/secrets/erpnext.env"
 	)
 	for candidate in "${candidates[@]}"; do
-		if [[ -f "${candidate}" ]]; then
+		if [[ -f ${candidate} ]]; then
 			printf '%s\n' "${candidate}"
 			return
 		fi
@@ -179,21 +180,22 @@ else
 fi
 
 run_stack_cmd() {
-	local cmd="$1"; shift || true
+	local cmd="$1"
+	shift || true
 	local env_args=(
 		"STACK_ROOT=${STACK_ROOT}"
 		"BENCH_NAME=${BENCH_NAME}"
 	)
-	if [[ -n ${ERP_DB_ROOT_PASSWORD:-} ]]; then
+	if [[ -n ${ERP_DB_ROOT_PASSWORD-} ]]; then
 		env_args+=("ERP_DB_ROOT_PASSWORD=${ERP_DB_ROOT_PASSWORD}")
 	fi
-	if [[ -n ${ERP_ADMIN_PASSWORD:-} ]]; then
+	if [[ -n ${ERP_ADMIN_PASSWORD-} ]]; then
 		env_args+=("ERP_ADMIN_PASSWORD=${ERP_ADMIN_PASSWORD}")
 	fi
-	if [[ -n ${ERP_SITE_NAME:-} ]]; then
+	if [[ -n ${ERP_SITE_NAME-} ]]; then
 		env_args+=("ERP_SITE_NAME=${ERP_SITE_NAME}")
 	fi
-	if [[ -n ${BENCH_START_FLAGS:-} ]]; then
+	if [[ -n ${BENCH_START_FLAGS-} ]]; then
 		env_args+=("BENCH_START_FLAGS=${BENCH_START_FLAGS}")
 	fi
 	env_args+=("SKIP_BENCH_UPDATE=${SKIP_BENCH_UPDATE}")
@@ -216,7 +218,7 @@ start_bench_process() {
 host_resolves() {
 	local host=$1
 	[[ -z ${host} ]] && return 1
-	python3 - <<'PY' "$host" >/dev/null 2>&1
+	python3 - "$host" <<'PY' >/dev/null 2>&1
 import socket
 import sys
 
@@ -229,7 +231,7 @@ PY
 }
 
 parse_site_host_port() {
-	python3 - <<'PY' "$1"
+	python3 - "$1" <<'PY'
 import sys
 from urllib.parse import urlparse
 
@@ -244,7 +246,7 @@ PY
 }
 
 bench_flags_include_procfile() {
-	[[ ${BENCH_START_FLAGS:-} =~ (^|[[:space:]])(-p|--procfile)([[:space:]]|$) ]]
+	[[ ${BENCH_START_FLAGS-} =~ (^|[[:space:]])(-p|--procfile)([[:space:]]|$) ]]
 }
 
 prepare_procfile_override() {
@@ -312,7 +314,7 @@ bootstrap_bench() {
 }
 
 detect_site_name() {
-	if [[ -n ${ERP_SITE_NAME:-} ]]; then
+	if [[ -n ${ERP_SITE_NAME-} ]]; then
 		printf '%s\n' "${ERP_SITE_NAME}"
 		return
 	fi
@@ -333,16 +335,16 @@ detect_site_name() {
 			local candidate
 			candidate=$(basename "${site_path}")
 			case "${candidate}" in
-				assets|logs|.DS_Store)
-					continue
-					;;
-				.*)
-					continue
-					;;
-				*)
-					first_site="${candidate}"
-					break
-					;;
+			assets | logs | .DS_Store)
+				continue
+				;;
+			.*)
+				continue
+				;;
+			*)
+				first_site="${candidate}"
+				break
+				;;
 			esac
 		done
 		shopt -u nullglob
@@ -353,7 +355,7 @@ detect_site_name() {
 find_available_port() {
 	local start="$1"
 	local ceiling="$2"
-	if [[ "$ceiling" -lt "$start" ]]; then
+	if [[ $ceiling -lt $start ]]; then
 		ceiling="$start"
 	fi
 	python3 - "$start" "$ceiling" <<'PY'
@@ -387,7 +389,7 @@ determine_site_url() {
 }
 
 AVAILABLE_SITE_PORT=$(find_available_port "${SITE_PORT}" "${SITE_PORT_CEILING}")
-if [[ "${AVAILABLE_SITE_PORT}" != "${SITE_PORT}" ]]; then
+if [[ ${AVAILABLE_SITE_PORT} != "${SITE_PORT}" ]]; then
 	log "Port ${SITE_PORT} busy; shifting ERPNext site to ${AVAILABLE_SITE_PORT} (override via ERP_SITE_PORT*)."
 	SITE_PORT="${AVAILABLE_SITE_PORT}"
 fi
@@ -397,10 +399,10 @@ SITE_HOST=""
 SITE_PORT_VALUE="${SITE_PORT}"
 if SITE_COMPONENTS=$(parse_site_host_port "${SITE_URL}" 2>/dev/null); then
 	read -r parsed_host parsed_port <<<"${SITE_COMPONENTS}"
-	if [[ -n ${parsed_host:-} ]]; then
+	if [[ -n ${parsed_host-} ]]; then
 		SITE_HOST="${parsed_host}"
 	fi
-	if [[ -n ${parsed_port:-} ]]; then
+	if [[ -n ${parsed_port-} ]]; then
 		SITE_PORT_VALUE="${parsed_port}"
 	fi
 fi
@@ -439,7 +441,7 @@ wait_for_health() {
 	local waited=0
 	local interval=5
 	while [[ ${waited} -lt ${WAIT_TIMEOUT} ]]; do
-		if [[ -n ${STACK_PID:-} ]] && ! kill -0 "${STACK_PID}" >/dev/null 2>&1; then
+		if [[ -n ${STACK_PID-} ]] && ! kill -0 "${STACK_PID}" >/dev/null 2>&1; then
 			log "bench process exited while waiting for health"
 			return 1
 		fi
@@ -498,7 +500,7 @@ write_runtime_file "starting" "Launching bench stack"
 
 STACK_PID=
 cleanup() {
-	if [[ -n ${STACK_PID:-} ]]; then
+	if [[ -n ${STACK_PID-} ]]; then
 		log "Stopping ERPNext stack (PID ${STACK_PID})"
 		kill -TERM "${STACK_PID}" >/dev/null 2>&1 || true
 		wait "${STACK_PID}" >/dev/null 2>&1 || true
@@ -507,7 +509,7 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 detach_stack() {
-	if [[ -z ${STACK_PID:-} ]]; then
+	if [[ -z ${STACK_PID-} ]]; then
 		return
 	fi
 	trap - EXIT INT TERM
@@ -549,7 +551,7 @@ else
 	exit 1
 fi
 
-if [[ -n ${STACK_PID:-} ]]; then
+if [[ -n ${STACK_PID-} ]]; then
 	wait "${STACK_PID}"
 	EXIT_CODE=$?
 	STACK_PID=

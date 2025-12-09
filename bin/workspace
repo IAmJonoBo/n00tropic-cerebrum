@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_DIR="$ROOT/.dev/automation/scripts"
+source "$SCRIPT_DIR/lib/log.sh"
+
+usage() {
+	cat <<USAGE
+workspace <command> [args]
+
+Commands:
+  health              Run workspace health (publish artifact)
+  meta-check          Run full meta-check
+  release-dry-run     Run workspace release dry-run
+  deps-audit          Run osv-scanner + pip-audit (per scripts)
+  ingest-frontiers    Ingest frontiers catalog into cortex (updates locks)
+  render-templates    Render frontiers templates (nox render_templates)
+
+Environment:
+  WORKSPACE_ROOT override root (default: detected)
+USAGE
+}
+
+WORKSPACE_ROOT="${WORKSPACE_ROOT:-$ROOT}"
+
+cmd=${1-}
+shift || true
+
+case "$cmd" in
+health)
+	log_info "Running workspace health"
+	"$SCRIPT_DIR/workspace-health.sh" --publish-artifact "$@"
+	;;
+meta-check)
+	log_info "Running meta-check"
+	"$SCRIPT_DIR/meta-check.sh" "$@"
+	;;
+release-dry-run)
+	log_info "Running workspace-release dry-run"
+	"$SCRIPT_DIR/workspace-release.sh" --dry-run "$@"
+	;;
+deps-audit)
+	log_info "Running dependency audits"
+	"$SCRIPT_DIR/deps-audit.sh" "$@"
+	;;
+ingest-frontiers)
+	log_info "Ingesting frontiers exports into cortex"
+	(cd "$WORKSPACE_ROOT/n00-cortex" && pnpm run ingest:frontiers -- --update-lock "$@")
+	;;
+render-templates)
+	log_info "Rendering frontiers templates"
+	(cd "$WORKSPACE_ROOT/n00-frontiers" && nox -s render_templates "$@")
+	;;
+"" | -h | --help | help)
+	usage
+	;;
+*)
+	log_fail "Unknown command: $cmd"
+	;;
+esac

@@ -1,23 +1,68 @@
-= Search Operations
+= Search operations
 :page-tags: diataxis:howto, domain:platform, audience:operator, stability:beta
-:reviewed: 2025-11-11
+:reviewed: 2025-11-19
+// vale.Terms = NO
 
 == Modes
 
-* **Offline / local builds**–Lunr indexes are emitted automatically when running
- `pnpm exec antora-playbook.yml`. Confirm `build/site/search-index.js` exists.
-* **Production (Algolia DocSearch)**–Option A is active. The DocSearch crawler
- targets the GitHub Pages deployment for `n00-cerebrum`. Keep the
- `docsearch.json` configuration in the Algolia dashboard in sync with any URL
- changes.
-[#Algolia]
-== Re-index steps
+* **Offline / local builds**: Antora emits Lunr indexes automatically when you run
+ the docs playbook command documented in xref:README.adoc[]. Confirm
+ `build/site/search-index.js` exists.
+* **Typesense (preferred)**: Launch the local container via
+ `docs/search/typesense-compose.yml` or target a remote Typesense cluster.
+ Run the Typesense-maintained DocSearch scraper (`typesense/docsearch-scraper`
+ Docker image) to seed collections with page metadata (see
+ `docs/search/README.adoc`).
+* **Algolia (legacy)**: Historical crawler remains available but is no longer the
+ default; keep configuration in sync only if you still serve the previous index.
 
-. Push doc changes to `main` (or a release branch) and wait for `ci/docs.yml` to
-finish so GitHub Pages is up-to-date. . Sign in to Algolia DocSearch, select the
-`n00-cerebrum` index, and trigger a **manual crawl**. (Automated crawling can be
-scheduled once the domain stabilizes.) . Verify the new documents via the
-DocSearch preview, then smoke test the in-site search UI.
+[#Typesense]
+== Re-index steps for Typesense
+
+. Build docs: `pnpm exec antora-playbook.yml`.
+. Serve `build/site` locally:
++
+[source,bash]
+----
+pnpm dlx http-server build/site -p 8080
+----
+. Export environment variables from `docs/search/.env` and run the Typesense
+ compose stack.
+. Execute the scraper via Docker:
+
+```bash
+CONFIG=$(node -e "const fs=require('fs');const c=JSON.parse(fs.readFileSync('docsearch.config.json','utf8'));process.stdout.write(JSON.stringify(c));")
+docker run --rm --network host \
+ -e CONFIG="$CONFIG" \
+ -e TYPESENSE_API_KEY=$TYPESENSE_API_KEY \
+ -e TYPESENSE_HOST=$TYPESENSE_HOST \
+ -e TYPESENSE_PORT=$TYPESENSE_PORT \
+ -e TYPESENSE_PROTOCOL=$TYPESENSE_PROTOCOL \
+ typesense/docsearch-scraper:0.9.0 | tee docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+node docs/search/scripts/save-typesense-summary.mjs docs/search/logs/typesense-reindex-$(date +%Y%m%d).log
+```
+
+Linux can rely on `--network host`. On macOS/WSL use the network from the compose stack plus `--add-host.docker.internal:host-gateway` so the scraper reaches the HTTP server.
+. Trigger `.github/workflows/search-reindex.yml` for ci validation once secrets are present.
+. Stop the HTTP server + Typesense container when complete.
+
+[#remote]
+== Remote deployment validation
+
+When targeting a shared Typesense cluster, set the following repository secrets so `.github/workflows/search-reindex.yml` can authenticate:
+
+* `TYPESENSE_API_KEY`
+* `TYPESENSE_HOST`
+* `TYPESENSE_PORT`
+* `TYPESENSE_PROTOCOL`
+* `TYPESENSE_COLLECTION`
+
+Trigger the workflow manually (`Actions → search-reindex → Run workflow`) after updating secrets. The job spins up a local HTTP server, runs the Dockerised scraper with the remote endpoint, and reports success/failure in the job summary. Each run archives logs under `docs/search/logs/` plus machine-readable summaries (`.log.json`); see `docs/search/logs/typesense-reindex-20251119.log` and its `.json` twin for the latest evidence (37 indexed records).
+
+== Guardrails
+
+* `docs/search/scripts/capture-latest-summary.sh` parses the newest `typesense-reindex-*.log` and writes the `.log.json` summary consumed by automation.
+* Danger raises a blocking failure when the latest summary is missing or older than 7 days, ensuring search validation stays fresh before docs/brief PRs merge.
 
 == Troubleshooting
 
@@ -25,5 +70,7 @@ DocSearch preview, then smoke test the in-site search UI.
  indexes are removed.
 * When Algolia misses fresh content, double-check that pages declare `:page-tags:`
  and `:reviewed:`. Missing attributes are rejected by the crawler.
-* For hackable offline experiments, point your browser at `build/site/index.html`
+ * For hackable offline experiments, point your browser at `build/site/index.html`
  and inspect the `window.antoraLunrIndex` payload.
+
+// vale.Terms = YES

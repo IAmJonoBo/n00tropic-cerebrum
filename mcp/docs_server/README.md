@@ -1,119 +1,51 @@
 # n00 Docs MCP Server
 
-A Model Context Protocol (MCP) server providing read-only access to n00 Cerebrum documentation.
+A Model Context Protocol (MCP) server that exposes n00 Cerebrum documentation as read‑only tools.
 
 ## Features
 
-This MCP server exposes three tools for AI agents to interact with documentation:
+- `list_tags()` — return all unique tags from documentation pages.
+- `search(query)` — full-text search across all docs.
+- `get_page(id)` — fetch an individual page (rendered HTML if available, otherwise AsciiDoc).
 
-- **`list_tags()`** - Returns all unique tags from documentation pages
-- **`search(query)`** - Full-text search across all documentation pages
-- **`get_page(id)`** - Retrieve a specific page by its ID
+## Deploy locally
 
-## Installation
+1. (Recommended) Create and activate a virtualenv in the repo root.
+2. Install dependencies: `pip install -r mcp/docs_server/requirements.txt`
+3. Run the server from the repo root: `python mcp/docs_server/server.py`  
+   Or use the shortcut: `make mcp-dev`
+4. The server is read-only and only touches `docs/` and `build/site/`.
 
-```bash
-# Install dependencies
-pip install -r requirements.txt
-```
+## Activate in VS Code (GitHub Copilot Agent Mode)
 
-## Usage
+Prereqs:
 
-### Running Locally
+- VS Code 1.99 or later with the GitHub Copilot extension; Agent Mode in these builds includes MCP support. citeturn1search0turn1search10
+- If you’re on an org/enterprise account, ensure the “Model Context Protocol” policy is enabled (it is disabled by default). citeturn1search0
 
-```bash
-# From the repository root
-python mcp/docs_server/server.py
+Steps:
 
-# Or use the Makefile target
-make mcp-dev
-```
+1. Start the server (see “Deploy locally”) or let Copilot start it on demand via config.
+2. Create `.vscode/mcp.json` in this workspace with:
+   ```json
+   {
+     "servers": {
+       "n00-docs": {
+         "command": "python",
+         "args": ["${workspaceFolder}/mcp/docs_server/server.py"]
+       }
+     }
+   }
+   ```
+3. Open Copilot Chat, switch the mode dropdown to **Agent**, click the tools (🔧) icon, and choose **Edit config**; VS Code opens `mcp.json` if it isn’t already. Save the file, then click **Start** at the top of the editor to launch the server. citeturn1search8
+4. In the tools list you should see `n00-docs` with the three tools above. Try a prompt like “Use n00-docs to list_tags.”
 
-### MCP Client Configuration
+## Tools reference
 
-Add this to your MCP client configuration (e.g., Claude Desktop, Cline):
-
-```json
-{
-  "mcpServers": {
-    "n00-docs": {
-      "command": "python",
-      "args": ["/path/to/n00tropic-cerebrum/mcp/docs_server/server.py"]
-    }
-  }
-}
-```
-
-## Tools Reference
-
-### list_tags()
-
-Lists all unique tags found across documentation pages.
-
-**Returns:** `list[str]` - Sorted list of unique tags
-
-**Example:**
-```python
-tags = list_tags()
-# Returns: ['diataxis:reference', 'domain:platform', 'audience:contrib', ...]
-```
-
-### search(query: str)
-
-Searches documentation pages for the given query string.
-
-**Parameters:**
-- `query` (str): Search query string
-
-**Returns:** `list[dict]` - List of matching pages with:
-  - `id` - Page identifier
-  - `title` - Page title
-  - `url` - Relative URL
-  - `tags` - List of page tags
-  - `score` - Match score
-
-**Example:**
-```python
-results = search("antora migration")
-# Returns pages containing the search terms, sorted by relevance
-```
-
-### get_page(id: str)
-
-Retrieves a documentation page by its ID.
-
-**Parameters:**
-- `id` (str): Page identifier (relative path without extension, e.g., "index" or "search/index")
-
-**Returns:** `dict` - Page data:
-  - `id` - Page identifier
-  - `format` - Content format ("html" or "asciidoc")
-  - `content` - Page content
-  - `title` - Page title (asciidoc format only)
-  - `tags` - Page tags (asciidoc format only)
-
-**Example:**
-```python
-page = get_page("index")
-# Returns the index page content and metadata
-```
-
-## Allowed Paths
-
-The server only accesses:
-- `docs/` - AsciiDoc source files
-- `build/site/` - Built HTML files
-
-All paths are restricted to the repository root.
-
-## Development
-
-To modify the server:
-
-1. Edit `server.py`
-2. Test locally: `python mcp/docs_server/server.py`
-3. Verify tools work as expected with an MCP client
+- `list_tags()` → returns a sorted list of unique tags.
+- `search(query: str)` → returns matching pages with `id`, `title`, `url`, `tags`, `score`.
+- `get_page(id: str)` → returns page content plus metadata (HTML if built, otherwise AsciiDoc).
 
 ## Security
 
-This is a **read-only** server. It provides no write capabilities and only accesses documentation files within the repository.
+This server is read-only: no write operations, and file access is restricted to `docs/` and `build/site/`.

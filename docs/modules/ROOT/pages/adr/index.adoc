@@ -1,0 +1,7 @@
+= ADR index (stub)
+:page-tags: diataxis:reference, audience:contrib, stability:draft
+
+This placeholder satisfies references to `adr/index.adoc`. Link real ADRs here as they migrate.
+
+* ADR-001 — (placeholder)
+* ADR-002 — (placeholder)

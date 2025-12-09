@@ -43,10 +43,19 @@ tokens:
   - sequenceDiagram
   - Dev
   - dev
+  - CI
+  - CLI
   - fmt
   - formatters
   - asciidoc
   - Tools
   - Repo
+  - Typesense
+  - DocSearch
+  - docsearch
+  - workstreams
+  - Workstreams
+  - Workstream
+  - workstream
+  - Dockerised
 ---
-

@@ -6,32 +6,209 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import subprocess
+import subprocess  # nosec B404 - trusted workspace commands only
 import sys
 from pathlib import Path
+from shutil import which
 from typing import Iterable, List, Optional, Tuple
+
+from observability import initialize_tracing
 
 WORKSPACE_ROOT = Path(__file__).resolve().parent
 ORG_ROOT = WORKSPACE_ROOT.parent
-SCRIPTS_ROOT = ORG_ROOT / ".dev" / "automation" / "scripts"
+SCRIPTS_ROOT = WORKSPACE_ROOT / ".dev" / "automation" / "scripts"
+MANIFEST_PATH = WORKSPACE_ROOT / "automation" / "workspace.manifest.json"
 TRUNK_TIMEOUT = int(os.environ.get("TRUNK_UPGRADE_TIMEOUT", "600"))
+GIT_BIN = which("git") or "git"
+if not GIT_BIN:
+    raise SystemExit("git executable not found in PATH")
 
-SUBREPO_MAP = {
-    "workspace": WORKSPACE_ROOT,
-    "n00-cortex": WORKSPACE_ROOT / "n00-cortex",
-    "n00-dashboard": WORKSPACE_ROOT / "n00-dashboard",
-    "n00-frontiers": WORKSPACE_ROOT / "n00-frontiers",
-    "n00-horizons": WORKSPACE_ROOT / "n00-horizons",
-    "n00-school": WORKSPACE_ROOT / "n00-school",
-    "n00clear-fusion": WORKSPACE_ROOT / "n00clear-fusion",
-    "n00plicate": WORKSPACE_ROOT / "n00plicate",
-    "n00t": WORKSPACE_ROOT / "n00t",
-    "n00tropic": WORKSPACE_ROOT / "n00tropic",
+SUBREPO_PYTHON_CLI = "python3 cli/main.py"
+
+_FALLBACK_SUBREPO_CONTEXT = {
+    "workspace": {
+        "path": WORKSPACE_ROOT,
+        "language": "mixed",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / ".venv-workspace",
+        "cli": "python3 cli.py",
+        "tooling": WORKSPACE_ROOT / "tooling",
+        "scripts_dir": WORKSPACE_ROOT / ".dev" / "automation" / "scripts",
+    },
+    "n00-cortex": {
+        "path": WORKSPACE_ROOT / "n00-cortex",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00-cortex" / ".venv",
+        "cli": SUBREPO_PYTHON_CLI,
+        "tooling": WORKSPACE_ROOT / "n00-cortex" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-cortex"
+        / ".dev"
+        / "n00-cortex"
+        / "scripts",
+    },
+    "n00-dashboard": {
+        "path": WORKSPACE_ROOT / "n00-dashboard",
+        "language": "node",
+        "pkg": "pnpm",
+        "venv": None,
+        "cli": "pnpm exec ts-node cli/index.ts",
+        "tooling": WORKSPACE_ROOT / "n00-dashboard" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-dashboard"
+        / ".dev"
+        / "n00-dashboard"
+        / "scripts",
+    },
+    "n00-frontiers": {
+        "path": WORKSPACE_ROOT / "n00-frontiers",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00-frontiers" / ".venv-frontiers",
+        "cli": SUBREPO_PYTHON_CLI,
+        "tooling": WORKSPACE_ROOT / "n00-frontiers" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-frontiers"
+        / ".dev"
+        / "n00-frontiers"
+        / "scripts",
+    },
+    "n00-horizons": {
+        "path": WORKSPACE_ROOT / "n00-horizons",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00-horizons" / ".venv-horizons",
+        "cli": SUBREPO_PYTHON_CLI,
+        "tooling": WORKSPACE_ROOT / "n00-horizons" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-horizons"
+        / ".dev"
+        / "n00-horizons"
+        / "scripts",
+    },
+    "n00-school": {
+        "path": WORKSPACE_ROOT / "n00-school",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00-school" / ".venv-school",
+        "cli": SUBREPO_PYTHON_CLI,
+        "tooling": WORKSPACE_ROOT / "n00-school" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00-school"
+        / ".dev"
+        / "n00-school"
+        / "scripts",
+    },
+    "n00clear-fusion": {
+        "path": WORKSPACE_ROOT / "n00clear-fusion",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00clear-fusion" / ".venv-fusion",
+        "cli": SUBREPO_PYTHON_CLI,
+        "tooling": WORKSPACE_ROOT / "n00clear-fusion" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00clear-fusion"
+        / ".dev"
+        / "n00clear-fusion"
+        / "scripts",
+    },
+    "n00plicate": {
+        "path": WORKSPACE_ROOT / "n00plicate",
+        "language": "node",
+        "pkg": "pnpm",
+        "venv": None,
+        "cli": "pnpm exec tsx cli/index.ts",
+        "tooling": WORKSPACE_ROOT / "n00plicate" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT
+        / "n00plicate"
+        / ".dev"
+        / "n00plicate"
+        / "scripts",
+    },
+    "n00menon": {
+        "path": WORKSPACE_ROOT / "n00menon",
+        "language": "node",
+        "pkg": "pnpm",
+        "venv": None,
+        "cli": "pnpm -C n00menon run validate",
+        "tooling": None,
+        "scripts_dir": WORKSPACE_ROOT / "scripts",
+    },
+    "n00t": {
+        "path": WORKSPACE_ROOT / "n00t",
+        "language": "node",
+        "pkg": "pnpm",
+        "venv": None,
+        "cli": "pnpm exec tsx cli/index.ts",
+        "tooling": WORKSPACE_ROOT / "n00t" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT / "n00t" / ".dev" / "n00t" / "scripts",
+    },
+    "n00tropic": {
+        "path": WORKSPACE_ROOT / "n00tropic",
+        "language": "python",
+        "pkg": "pnpm",
+        "venv": WORKSPACE_ROOT / "n00tropic" / ".venv",
+        "cli": SUBREPO_PYTHON_CLI,
+        "tooling": WORKSPACE_ROOT / "n00tropic" / "tooling",
+        "scripts_dir": WORKSPACE_ROOT / "n00tropic" / ".dev" / "n00tropic" / "scripts",
+    },
 }
 
 
+def _normalize_repo_entry(entry: dict) -> dict:
+    """Convert manifest strings into absolute paths and keep optional fields nullable."""
+
+    path = entry.get("path")
+    if not path:
+        raise ValueError("Repo entry missing 'path'")
+
+    def _maybe_path(key: str) -> Optional[Path]:
+        value = entry.get(key)
+        return WORKSPACE_ROOT / value if value else None
+
+    return {
+        "path": WORKSPACE_ROOT / path,
+        "language": entry.get("language"),
+        "pkg": entry.get("pkg"),
+        "venv": _maybe_path("venv"),
+        "cli": entry.get("cli"),
+        "tooling": _maybe_path("tooling"),
+        "scripts_dir": _maybe_path("scripts_dir"),
+        "role": entry.get("role"),
+        "ssot_for": entry.get("ssot_for", []),
+        "pulls_from": entry.get("pulls_from", []),
+        "feeds": entry.get("feeds", []),
+    }
+
+
+def load_subrepo_context() -> dict:
+    if MANIFEST_PATH.exists():
+        try:
+            payload = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+            repos = payload.get("repos", [])
+            context = {}
+            for entry in repos:
+                name = entry.get("name")
+                if not name:
+                    continue
+                context[name] = _normalize_repo_entry(entry)
+            if context:
+                return context
+        except Exception as exc:  # pragma: no cover - init guardrail
+            print(
+                f"[workspace-manifest] falling back to built-in mapping due to: {exc}",
+                file=sys.stderr,
+            )
+    return _FALLBACK_SUBREPO_CONTEXT
+
+
+SUBREPO_CONTEXT = load_subrepo_context()
+SUBREPO_MAP = {name: meta["path"] for name, meta in SUBREPO_CONTEXT.items()}
+
+
 def iter_repos(selected: Optional[Iterable[str]] = None) -> List[Tuple[str, Path]]:
-    names = list(selected) if selected else list(SUBREPO_MAP.keys())
+    names = list(selected) if selected else list(SUBREPO_CONTEXT.keys())
     repos: List[Tuple[str, Path]] = []
     for name in names:
         path = SUBREPO_MAP.get(name)
@@ -42,15 +219,32 @@ def iter_repos(selected: Optional[Iterable[str]] = None) -> List[Tuple[str, Path
     return repos
 
 
-def run(cmd: List[str], cwd: Path) -> None:
-    subprocess.run(cmd, check=True, cwd=cwd)
+def run(
+    cmd: List[str],
+    cwd: Path,
+    *,
+    capture_output: bool = False,
+    text: bool = True,
+    check: bool = True,
+    env: Optional[dict] = None,
+) -> subprocess.CompletedProcess[str]:
+    """Execute trusted workspace commands with consistent subprocess defaults."""
+
+    return subprocess.run(  # nosec B603 - commands are workspace-managed and vetted
+        cmd,
+        check=check,
+        cwd=cwd,
+        capture_output=capture_output,
+        text=text,
+        env=env,
+    )
 
 
 def run_script(script_name: str, *args: str) -> None:
     script_path = SCRIPTS_ROOT / script_name
     if not script_path.exists():
         raise SystemExit(f"Script not found: {script_path}")
-    run([str(script_path), *args], cwd=ORG_ROOT)
+    run([str(script_path), *args], cwd=WORKSPACE_ROOT)
 
 
 def run_workspace_script(script_name: str, *args: str) -> None:
@@ -60,14 +254,19 @@ def run_workspace_script(script_name: str, *args: str) -> None:
     run([str(script_path), *args], cwd=WORKSPACE_ROOT)
 
 
+def venv_executable(venv: Path, exe: str) -> Path:
+    suffix = "Scripts" if os.name == "nt" else "bin"
+    return venv / suffix / exe
+
+
 def status_report() -> None:
     repos = iter_repos()
     repos.append(("n00tropic_HQ", ORG_ROOT / "n00tropic_HQ"))
     for name, repo_path in repos:
         if not repo_path.exists():
             continue
-        result = subprocess.run(
-            ["git", "status", "-sb"],
+        result = run(
+            [GIT_BIN, "status", "-sb"],
             cwd=repo_path,
             text=True,
             capture_output=True,
@@ -121,18 +320,21 @@ def ensure_repo_remote(repo: str, path: Path, apply_changes: bool) -> None:
     if not path.exists():
         print(f"[remotes] {repo}: path missing ({path})")
         return
-    is_repo = subprocess.run(
-        ["git", "rev-parse", "--is-inside-work-tree"],
-        cwd=path,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        check=False,
-    ).returncode == 0
+    is_repo = (
+        run(
+            [GIT_BIN, "rev-parse", "--is-inside-work-tree"],
+            cwd=path,
+            capture_output=True,
+            text=True,
+            check=False,
+        ).returncode
+        == 0
+    )
     if not is_repo:
         print(f"[remotes] {repo}: not a git repository, skipping")
         return
-    current = subprocess.run(
-        ["git", "remote"],
+    current = run(
+        [GIT_BIN, "remote"],
         cwd=path,
         text=True,
         capture_output=True,
@@ -142,8 +344,8 @@ def ensure_repo_remote(repo: str, path: Path, apply_changes: bool) -> None:
     if repo in remotes:
         print(f"[remotes] {repo}: remote already configured")
         return
-    origin_url = subprocess.run(
-        ["git", "remote", "get-url", "origin"],
+    origin_url = run(
+        [GIT_BIN, "remote", "get-url", "origin"],
         cwd=path,
         text=True,
         capture_output=True,
@@ -158,7 +360,7 @@ def ensure_repo_remote(repo: str, path: Path, apply_changes: bool) -> None:
         )
         return
     url = origin_url.stdout.strip()
-    subprocess.run(["git", "remote", "add", repo, url], cwd=path, check=True)
+    run([GIT_BIN, "remote", "add", repo, url], cwd=path)
     print(f"[remotes] {repo}: added remote alias -> {url}")
 
 
@@ -177,7 +379,9 @@ def run_trunk_upgrade(targets: Optional[Iterable[str]]) -> None:
         resolved.append(canonical)
 
     if not resolved:
-        print("[trunk] No matching repositories resolved; nothing to do.", file=sys.stderr)
+        print(
+            "[trunk] No matching repositories resolved; nothing to do.", file=sys.stderr
+        )
         return
 
     args: List[str] = []
@@ -186,7 +390,35 @@ def run_trunk_upgrade(targets: Optional[Iterable[str]]) -> None:
     run_script("trunk-upgrade.sh", *args)
 
 
-def main() -> int:
+PROJECT_COMMAND_SCRIPTS = {
+    "capture": "project-capture.sh",
+    "sync-github": "project-sync-github.sh",
+    "sync-erpnext": "project-sync-erpnext.sh",
+}
+
+
+def handle_docs_sync(_: argparse.Namespace) -> None:
+    """Run the superproject docs sync (submodule refresh + n00menon sync/build)."""
+
+    script = SCRIPTS_ROOT / "docs-sync-super.sh"
+    if not script.exists():
+        raise SystemExit(f"Docs sync script missing: {script}")
+    run([str(script)], cwd=ORG_ROOT)
+
+
+def handle_docs_verify(_: argparse.Namespace) -> None:
+    """Run docs verification (Vale/Lychee/attrs) via n00menon and workspace helpers."""
+
+    run_workspace_script("docs-verify.sh")
+
+
+def handle_docs_lint(_: argparse.Namespace) -> None:
+    """Run docs linting (cspell + Vale + Lychee) across workspace."""
+
+    run_workspace_script("docs-lint.sh")
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="n00tropic cerebrum orchestrator")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -195,42 +427,112 @@ def main() -> int:
     preflight_parser = subparsers.add_parser(
         "preflight", help="Run batch preflight across registry and/or target docs."
     )
-    preflight_parser.add_argument("--paths", nargs="*", default=[], help="Specific metadata paths to include.")
     preflight_parser.add_argument(
-        "--include-registry", action="store_true", help="Include every registry-sourced document."
+        "--paths", nargs="*", default=[], help="Specific metadata paths to include."
+    )
+    preflight_parser.add_argument(
+        "--include-registry",
+        action="store_true",
+        help="Include every registry-sourced document.",
     )
 
-    subparsers.add_parser("control-panel", help="Regenerate the control panel snapshot.")
+    subparsers.add_parser(
+        "control-panel", help="Regenerate the control panel snapshot."
+    )
+
+    subparsers.add_parser(
+        "docs-sync",
+        help="Refresh docs: update submodules, sync n00menon surfaces, build, format.",
+    )
+    subparsers.add_parser(
+        "docs-verify",
+        help="Run fast docs verification (sync check + attrs + link checks).",
+    )
+    subparsers.add_parser(
+        "docs-lint",
+        help="Run spell/style/link linting across docs surfaces (workspace + n00menon).",
+    )
+    subparsers.add_parser(
+        "n00menon-verify",
+        help="Install deps, sync docs, test, and build docs for n00menon.",
+    )
+    subparsers.add_parser(
+        "runner-upgrade",
+        help="Upgrade self-hosted GitHub Actions runner with backup/rollback.",
+    )
+    subparsers.add_parser(
+        "runner-prune-backups",
+        help="Remove old actions-runner backups (keeps newest two).",
+    )
+    subparsers.add_parser(
+        "runner-doctor", help="Show actions-runner health snapshot on this host."
+    )
+    subparsers.add_parser(
+        "venv-health",
+        help="Inspect/prune/refresh virtualenvs; enforces .venv-<scope> policy.",
+    )
 
     autofix_parser = subparsers.add_parser(
         "autofix-links", help="Repair metadata link blocks (default dry-run)."
     )
     autofix_parser.add_argument(
-        "--path", dest="path_list", action="append", default=[], help="Metadata document to autofix."
+        "--path",
+        dest="path_list",
+        action="append",
+        default=[],
+        help="Metadata document to autofix.",
     )
-    autofix_parser.add_argument("--all", action="store_true", help="Run across all known documents.")
-    autofix_parser.add_argument("--apply", action="store_true", help="Persist fixes to disk.")
+    autofix_parser.add_argument(
+        "--all", action="store_true", help="Run across all known documents."
+    )
+    autofix_parser.add_argument(
+        "--apply", action="store_true", help="Persist fixes to disk."
+    )
 
-    for name in ("capture", "sync-github", "sync-erpnext"):
-        cmd_parser = subparsers.add_parser(name, help=f"{name.replace('-', ' ').title()} a metadata document.")
-        cmd_parser.add_argument("--path", required=True, help="Path to the metadata-bearing Markdown file.")
+    for name in PROJECT_COMMAND_SCRIPTS:
+        cmd_parser = subparsers.add_parser(
+            name, help=f"{name.replace('-', ' ').title()} a metadata document."
+        )
+        cmd_parser.add_argument(
+            "--path", required=True, help="Path to the metadata-bearing Markdown file."
+        )
 
-    doctor_parser = subparsers.add_parser("doctor", help="Run workspace git doctor checks.")
-    doctor_parser.add_argument("--strict", action="store_true", help="Fail on advisory findings.")
+    doctor_parser = subparsers.add_parser(
+        "doctor", help="Run workspace git doctor checks."
+    )
+    doctor_parser.add_argument(
+        "--strict", action="store_true", help="Fail on advisory findings."
+    )
+    subparsers.add_parser(
+        "repo-context", help="Generate workspace repo context artifact."
+    )
 
-    upgrade_parser = subparsers.add_parser("upgrade-tools", help="Check for latest tool versions.")
-    upgrade_parser.add_argument("--apply", action="store_true", help="Apply suggested upgrades where possible.")
+    upgrade_parser = subparsers.add_parser(
+        "upgrade-tools", help="Check for latest tool versions."
+    )
+    upgrade_parser.add_argument(
+        "--apply", action="store_true", help="Apply suggested upgrades where possible."
+    )
 
-    subparsers.add_parser("status", help="Show git status for the workspace and key subrepos.")
+    subparsers.add_parser(
+        "status", help="Show git status for the workspace and key subrepos."
+    )
 
-    manifest_parser = subparsers.add_parser("manifest", help="Pretty-print an artefact JSON/manifest.")
+    manifest_parser = subparsers.add_parser(
+        "manifest", help="Pretty-print an artefact JSON/manifest."
+    )
     manifest_parser.add_argument("path", help="Path to the JSON file.")
 
-    caps_parser = subparsers.add_parser("capabilities", help="List or inspect n00t capabilities.")
-    caps_parser.add_argument("--id", help="Show the full manifest entry for a specific capability.")
+    caps_parser = subparsers.add_parser(
+        "capabilities", help="List or inspect n00t capabilities."
+    )
+    caps_parser.add_argument(
+        "--id", help="Show the full manifest entry for a specific capability."
+    )
 
     trunk_parser = subparsers.add_parser(
-        "trunk-upgrade", help="Run `trunk upgrade` inside every repo with Trunk configuration."
+        "trunk-upgrade",
+        help="Run `trunk upgrade` inside every repo with Trunk configuration.",
     )
     trunk_parser.add_argument(
         "--repos",
@@ -253,8 +555,124 @@ def main() -> int:
         help="Optional subset of repo names to include when running the trunk subcommand.",
     )
 
+    trunk_sync_parser = subparsers.add_parser(
+        "trunk-sync",
+        help="Run sync-trunk-autopush.py to fan out canonical configs and optionally create PRs.",
+    )
+    trunk_sync_parser.add_argument(
+        "--repos",
+        nargs="*",
+        help="Optional subset of repo names to sync (defaults to all discovered repos).",
+    )
+    trunk_sync_parser.add_argument(
+        "--apply",
+        action="store_true",
+        help="Commit and push branch + PR per repo instead of dry-run output.",
+    )
+
+    subparsers.add_parser(
+        "health-toolchain", help="Check Node/pnpm pins across workspace and subrepos."
+    )
+
+    health_runners = subparsers.add_parser(
+        "health-runners", help="Check self-hosted runner coverage/labels."
+    )
+    health_runners.add_argument(
+        "--required-labels",
+        default=os.environ.get(
+            "REQUIRED_RUNNER_LABELS", "self-hosted,linux,x64,pnpm,uv"
+        ),
+        help="Comma-separated labels that must be present on runners.",
+    )
+    health_runners.add_argument(
+        "--webhook",
+        help="Optional Discord webhook to notify (mirrors DISCORD_WEBHOOK env).",
+    )
+
+    subparsers.add_parser(
+        "health-python-lock", help="Verify uv lock freshness for workspace Python deps."
+    )
+
+    deps_sbom = subparsers.add_parser(
+        "deps:sbom", help="Generate SBOMs with Syft across workspace targets."
+    )
+    deps_sbom.add_argument(
+        "--target",
+        action="append",
+        help="Optional target(s) from automation/workspace.manifest.json (repeatable).",
+    )
+    deps_sbom.add_argument(
+        "--format",
+        default="cyclonedx-json",
+        help="Syft output format (default: cyclonedx-json).",
+    )
+    deps_sbom.add_argument(
+        "--ref",
+        help="Override ref label used in output paths (defaults to git SHA or GITHUB_REF_NAME).",
+    )
+    deps_sbom.add_argument(
+        "--list",
+        action="store_true",
+        help="List detected targets without generating SBOMs.",
+    )
+
+    deps_audit = subparsers.add_parser(
+        "deps:audit",
+        help="Generate SBOMs then upload them to Dependency-Track (requires secrets).",
+    )
+    deps_audit.add_argument(
+        "--target",
+        action="append",
+        help="Optional target(s) to limit the run (repeatable).",
+    )
+    deps_audit.add_argument(
+        "--ref",
+        help="Override ref label (defaults to git SHA or GITHUB_REF_NAME).",
+    )
+    deps_audit.add_argument(
+        "--format",
+        default="cyclonedx-json",
+        help="SBOM format to generate before upload.",
+    )
+    deps_audit.add_argument(
+        "--skip-upload",
+        action="store_true",
+        help="Generate SBOMs only; skip Dependency-Track upload.",
+    )
+
+    deps_drift = subparsers.add_parser(
+        "deps:drift",
+        help="Detect dependency version drift and deprecated packages across the workspace.",
+    )
+    deps_drift.add_argument(
+        "--format",
+        choices=["json", "table", "both"],
+        default="both",
+        help="Output format (default: both).",
+    )
+
+    deps_renovate = subparsers.add_parser(
+        "deps:renovate:dry-run",
+        help="Run Renovate locally in dry-run mode (no PRs).",
+    )
+    deps_renovate.add_argument(
+        "--log-level",
+        default=os.environ.get("RENOVATE_LOG_LEVEL", "info"),
+        help="Renovate log level (default: info).",
+    )
+
+    normalize_js = subparsers.add_parser(
+        "normalize-js", help="Run normalize-workspace-pnpm.sh with pin enforcement."
+    )
+    normalize_js.add_argument(
+        "--allow-mismatch",
+        action="store_true",
+        help="Allow Node pin mismatch (otherwise fails).",
+    )
+
     remote_parser = subparsers.add_parser(
-        "remotes", help="Verify that each repo has a remote alias that matches its directory name."
+        "remotes",
+        help="Verify that each repo has a remote alias that matches its directory name.",
     )
     remote_parser.add_argument(
         "--repos",
@@ -267,66 +685,281 @@ def main() -> int:
         help="Add the missing remote alias using the origin URL when needed.",
     )
 
-    args = parser.parse_args()
+    bootstrap_parser = subparsers.add_parser(
+        "bootstrap", help="Bootstrap dependencies for a given repo (venv or pnpm)."
+    )
+    bootstrap_parser.add_argument(
+        "repo", help="Target repo key from SUBREPO_CONTEXT (e.g., n00-frontiers)."
+    )
+    bootstrap_parser.add_argument(
+        "--no-install",
+        action="store_true",
+        help="Skip dependency installation after venv/pnpm setup.",
+    )
 
-    if args.command == "radar":
-        run_script("project-lifecycle-radar.sh")
-    elif args.command == "preflight":
-        cmd: List[str] = []
-        if args.paths:
-            cmd.extend(["--paths", *args.paths])
-        if args.include_registry:
-            cmd.append("--include-registry")
-        run_script("project-preflight-batch.sh", *cmd)
-    elif args.command == "control-panel":
-        run_script("project-control-panel.sh")
-    elif args.command == "autofix-links":
-        cmd: List[str] = []
-        if args.path_list:
-            for path in args.path_list:
-                cmd.extend(["--path", path])
-        if args.all:
-            cmd.append("--all")
-        if args.apply:
-            cmd.append("--apply")
-        run_script("project-autofix-links.sh", *cmd)
-    elif args.command in {"capture", "sync-github", "sync-erpnext"}:
-        if args.command == "capture":
-            script_name = "project-capture.sh"
-        elif args.command == "sync-github":
-            script_name = "project-sync-github.sh"
-        else:
-            script_name = "project-sync-erpnext.sh"
-        run_script(script_name, "--path", args.path)
-    elif args.command == "doctor":
-        flags: List[str] = []
-        if args.strict:
-            flags.append("--strict")
-        run_workspace_script("workspace-gitdoctor-capability.sh", *flags)
-    elif args.command == "upgrade-tools":
-        flags = ["--apply"] if args.apply else []
-        run_script("get-latest-tool-versions.py", *flags)
-    elif args.command == "status":
-        status_report()
-    elif args.command == "manifest":
-        read_manifest(Path(args.path))
-    elif args.command == "capabilities":
-        list_capabilities(args.id)
-    elif args.command == "trunk-upgrade":
-        run_trunk_upgrade(args.repos)
-    elif args.command == "trunk":
-        if args.subcommand == "upgrade":
-            run_trunk_upgrade(args.repos)
-        else:  # pragma: no cover
-            raise SystemExit(f"Unsupported trunk subcommand: {args.subcommand}")
-    elif args.command == "remotes":
-        targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
-        for name, path in iter_repos(targets):
-            ensure_repo_remote(name, path, args.apply)
-    else:  # pragma: no cover - safety net
+    return parser
+
+
+def handle_radar(_: argparse.Namespace) -> None:
+    run_script("project-lifecycle-radar.sh")
+
+
+def handle_preflight(args: argparse.Namespace) -> None:
+    cmd: List[str] = []
+    if args.paths:
+        cmd.extend(["--paths", *args.paths])
+    if args.include_registry:
+        cmd.append("--include-registry")
+    run_script("project-preflight-batch.sh", *cmd)
+
+
+def handle_control_panel(_: argparse.Namespace) -> None:
+    run_script("project-control-panel.py")
+
+
+def handle_autofix_links(args: argparse.Namespace) -> None:
+    cmd: List[str] = []
+    for path in args.path_list:
+        cmd.extend(["--path", path])
+    if args.all:
+        cmd.append("--all")
+    if args.apply:
+        cmd.append("--apply")
+    run_script("project-autofix-links.sh", *cmd)
+
+
+def handle_project_command(args: argparse.Namespace) -> None:
+    script_name = PROJECT_COMMAND_SCRIPTS[args.command]
+    run_script(script_name, "--path", args.path)
+
+
+def handle_doctor(args: argparse.Namespace) -> None:
+    flags: List[str] = ["--strict"] if args.strict else []
+    run_workspace_script("workspace-health.sh", *flags)
+    skeleton_flags: List[str] = []
+    if args.strict:
+        skeleton_flags.append("--apply")
+    run_workspace_script("check-workspace-skeleton.py", *skeleton_flags)
+    generate_repo_context_artifact()
+
+
+def handle_upgrade_tools(args: argparse.Namespace) -> None:
+    flags = ["--apply"] if args.apply else []
+    run_script("get-latest-tool-versions.py", *flags)
+
+
+def handle_status(_: argparse.Namespace) -> None:
+    status_report()
+
+
+def handle_manifest(args: argparse.Namespace) -> None:
+    read_manifest(Path(args.path))
+
+
+def handle_capabilities(args: argparse.Namespace) -> None:
+    list_capabilities(args.id)
+
+
+def handle_trunk_upgrade(args: argparse.Namespace) -> None:
+    run_trunk_upgrade(args.repos)
+
+
+def handle_trunk_alias(args: argparse.Namespace) -> None:
+    run_trunk_upgrade(args.repos)
+
+
+def handle_trunk_sync(args: argparse.Namespace) -> None:
+    script_args: List[str] = []
+    for repo in args.repos or []:
+        script_args.extend(["--repo", repo])
+    if args.apply:
+        script_args.append("--apply")
+    run_script("sync-trunk-autopush.py", *script_args)
+
+
+def handle_health_toolchain(_: argparse.Namespace) -> None:
+    run(["pnpm", "run", "tools:check-toolchain"], cwd=WORKSPACE_ROOT)
+
+
+def handle_health_runners(args: argparse.Namespace) -> None:
+    env = os.environ.copy()
+    env["REQUIRED_RUNNER_LABELS"] = args.required_labels
+    if args.webhook:
+        env["DISCORD_WEBHOOK"] = args.webhook
+    run(["pnpm", "run", "tools:check-runners"], cwd=WORKSPACE_ROOT, env=env)
+
+
+def handle_health_python_lock(_: argparse.Namespace) -> None:
+    run(["pnpm", "run", "python:lock:check"], cwd=WORKSPACE_ROOT)
+
+
+def handle_deps_sbom(args: argparse.Namespace) -> None:
+    cmd = [".dev/automation/scripts/deps-sbom.sh"]
+    if args.list:
+        cmd.append("--list")
+    if args.ref:
+        cmd.extend(["--ref", args.ref])
+    if args.format:
+        cmd.extend(["--format", args.format])
+    for target in args.target or []:
+        cmd.extend(["--target", target])
+    run(cmd, cwd=WORKSPACE_ROOT)
+
+
+def handle_deps_audit(args: argparse.Namespace) -> None:
+    cmd = [".dev/automation/scripts/deps-audit.sh"]
+    if args.ref:
+        cmd.extend(["--ref", args.ref])
+    if args.format:
+        cmd.extend(["--format", args.format])
+    if args.skip_upload:
+        cmd.append("--skip-upload")
+    for target in args.target or []:
+        cmd.extend(["--target", target])
+    run(cmd, cwd=WORKSPACE_ROOT)
+
+
+def handle_deps_renovate_dry_run(args: argparse.Namespace) -> None:
+    env = os.environ.copy()
+    env["RENOVATE_LOG_LEVEL"] = args.log_level
+    run(
+        [".dev/automation/scripts/deps-renovate-dry-run.sh"],
+        cwd=WORKSPACE_ROOT,
+        env=env,
+    )
+
+
+def handle_deps_drift(args: argparse.Namespace) -> None:
+    cmd = [".dev/automation/scripts/deps-drift.py", "--format", args.format]
+    run(cmd, cwd=WORKSPACE_ROOT)
+
+
+def handle_normalize_js(args: argparse.Namespace) -> None:
+    cmd = [".dev/automation/scripts/normalize-workspace-pnpm.sh"]
+    if args.allow_mismatch:
+        cmd.append("--allow-mismatch")
+    run(cmd, cwd=WORKSPACE_ROOT)
+
+
+def handle_remotes(args: argparse.Namespace) -> None:
+    targets = args.repos if args.repos else list(SUBREPO_MAP.keys())
+    for name, path in iter_repos(targets):
+        ensure_repo_remote(name, path, args.apply)
+
+
+def handle_bootstrap(args: argparse.Namespace) -> None:
+    name = args.repo
+    meta = SUBREPO_CONTEXT.get(name)
+    if not meta:
+        raise SystemExit(
+            f"Unknown repo '{name}'. Valid options: {', '.join(SUBREPO_CONTEXT.keys())}"
+        )
+
+    repo_root = meta.get("path")
+    if not repo_root or not repo_root.exists():
+        raise SystemExit(f"Repo path missing for '{name}': {repo_root}")
+
+    language = meta.get("language")
+    if language == "python":
+        venv_path = meta.get("venv")
+        if not venv_path:
+            raise SystemExit(
+                f"No venv configured for '{name}'. Update SUBREPO_CONTEXT."
+            )
+        python_bin = sys.executable
+        run([python_bin, "-m", "venv", str(venv_path)], cwd=repo_root, check=True)
+        pip_bin = venv_executable(venv_path, "pip")
+        if not pip_bin.exists():
+            raise SystemExit(f"Expected pip inside venv but not found at {pip_bin}")
+        run(
+            [str(pip_bin), "install", "-U", "pip", "setuptools", "wheel"], cwd=repo_root
+        )
+        reqs = repo_root / "requirements.txt"
+        if reqs.exists() and not args.no_install:
+            run([str(pip_bin), "install", "-r", str(reqs)], cwd=repo_root)
+    else:
+        # Default to pnpm bootstrap for non-Python repos.
+        cmd = ["pnpm", "install", "--frozen-lockfile"]
+        if args.no_install:
+            cmd.append("--ignore-scripts")
+        run(cmd, cwd=repo_root)
+
+    generate_repo_context_artifact()
+    print(f"[bootstrap] {name} ready at {repo_root}")
+
+
+def generate_repo_context_artifact() -> Path:
+    artifacts_dir = WORKSPACE_ROOT / "artifacts"
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    ctx_path = artifacts_dir / "workspace-repo-context.json"
+    serialisable = []
+    for name, meta in SUBREPO_CONTEXT.items():
+        serialisable.append(
+            {
+                "name": name,
+                "path": str(meta.get("path")),
+                "language": meta.get("language"),
+                "packageManager": meta.get("pkg"),
+                "venv": str(meta.get("venv")) if meta.get("venv") else None,
+                "cli": meta.get("cli"),
+                "toolingDir": str(meta.get("tooling")) if meta.get("tooling") else None,
+                "scriptsDir": (
+                    str(meta.get("scripts_dir")) if meta.get("scripts_dir") else None
+                ),
+            }
+        )
+    ctx_path.write_text(json.dumps(serialisable, indent=2) + "\n", encoding="utf-8")
+    return ctx_path
+
+
+COMMAND_HANDLERS = {
+    "radar": handle_radar,
+    "preflight": handle_preflight,
+    "control-panel": handle_control_panel,
+    "autofix-links": handle_autofix_links,
+    "capture": handle_project_command,
+    "sync-github": handle_project_command,
+    "sync-erpnext": handle_project_command,
+    "doctor": handle_doctor,
+    "upgrade-tools": handle_upgrade_tools,
+    "status": handle_status,
+    "manifest": handle_manifest,
+    "capabilities": handle_capabilities,
+    "trunk-upgrade": handle_trunk_upgrade,
+    "trunk": handle_trunk_alias,
+    "trunk-sync": handle_trunk_sync,
+    "health-toolchain": handle_health_toolchain,
+    "health-runners": handle_health_runners,
+    "health-python-lock": handle_health_python_lock,
+    "deps:sbom": handle_deps_sbom,
+    "deps:audit": handle_deps_audit,
+    "deps:renovate:dry-run": handle_deps_renovate_dry_run,
+    "deps:drift": handle_deps_drift,
+    "normalize-js": handle_normalize_js,
+    "remotes": handle_remotes,
+    "bootstrap": handle_bootstrap,
+    "repo-context": lambda _: generate_repo_context_artifact(),
+    "docs-sync": handle_docs_sync,
+    "docs-verify": handle_docs_verify,
+    "docs-lint": handle_docs_lint,
+    "venv-health": lambda _: run_workspace_script("venv-health.sh"),
+    "runner-doctor": lambda _: run_workspace_script("runner-doctor.sh"),
+    "runner-upgrade": lambda _: run_workspace_script("runner-upgrade.sh"),
+    "runner-prune-backups": lambda _: run_workspace_script("runner-prune-backups.sh"),
+    "n00menon-verify": lambda _: run_workspace_script("n00menon-verify.sh"),
+}
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    # Best-effort OTLP tracing so automation runs show up in the shared collector.
+    initialize_tracing("n00tropic-workspace-cli")
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    handler = COMMAND_HANDLERS.get(args.command)
+    if not handler:
         parser.print_help()
         return 1
-
+    handler(args)
     return 0
 
 

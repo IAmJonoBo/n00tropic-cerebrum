@@ -1,0 +1,56 @@
+{
+  "agent_id": "aegis-analyst",
+  "name": "Aegis Compliance Analyst",
+  "role": "analyst",
+  "description": "Evaluates partner integrations for governance drift and produces remediation recommendations.",
+  "owner": "risk-office",
+  "status": "beta",
+  "tags": ["governance/compliance", "risk/ops"],
+  "capabilities": [
+    {
+      "id": "assess-controls",
+      "name": "Assess Controls",
+      "description": "Inspect submitted evidence packages for control coverage gaps.",
+      "inputs": {
+        "evidence_archive": {
+          "type": "string",
+          "description": "Path or URL to packaged evidence"
+        },
+        "control_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of controls that must be satisfied"
+        }
+      },
+      "outputs": {
+        "assessment": {
+          "type": "object",
+          "description": "Structured control coverage and remediation notes"
+        }
+      }
+    }
+  ],
+  "guardrails": [
+    {
+      "id": "aegis-data-residency",
+      "description": "Never export evidence data outside approved residency zones.",
+      "enforcement": "required",
+      "severity": "high"
+    },
+    {
+      "id": "aegis-disposition",
+      "description": "Escalate blocking findings to the duty engineer within 15 minutes.",
+      "enforcement": "required",
+      "severity": "medium"
+    }
+  ],
+  "model_config": {
+    "provider": "openai",
+    "model": "gpt-5.1-codex",
+    "fallbacks": ["openai/gpt-4.1-mini"]
+  },
+  "metadata": {
+    "playbooks": ["docs://compliance/aegis.md"],
+    "links": ["https://intranet.example/risk/aegis"]
+  }
+}

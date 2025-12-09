@@ -12,42 +12,100 @@ jobs:
   health:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (include submodules)
         uses: actions/checkout@v5
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
           submodules: recursive
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.14"
+          python-version: 3.11.14
+      - name: Cache uv downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+      - name: Cache uv downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+      - name: Install uv (fast Python installer)
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Sync Python deps with uv lock
+        run: |
+          export UV_CACHE_DIR=${UV_CACHE_DIR:-$GITHUB_WORKSPACE/.cache/uv}
+          uv pip sync requirements.workspace.lock
+      - name: Verify Python lock freshness
+        run: pnpm run python:lock:check
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
-          cache: pnpm
-          cache-dependency-path: n00t/pnpm-lock.yaml
+          node-version-file: .nvmrc
       - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
         with:
-          version: 10.21.0
+          version: 10.23.0
+      - name: Verify pnpm
+        run: pnpm -v
+      - name: Verify toolchain pins
+        run: pnpm run tools:check-toolchain --json
+      - name: Install OS packages (ripgrep)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
       - name: Install n00t dependencies
         working-directory: n00t
-        run: pnpm install --frozen-lockfile
+        run: |
+          set -eux
+          pnpm install --frozen-lockfile
+      - name: Fail on conflict markers
+        run: |
+          set -eux
+          if git grep -n "^<<<<<<< " -- ":!node_modules"; then
+            echo "Conflict markers detected" >&2
+            exit 1
+          fi
+      - name: Check self-hosted runners (optional)
+        if: ${{ env.GH_TOKEN != '' || env.GITHUB_TOKEN != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN || '' }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN || '' }}
+          REQUIRED_RUNNER_LABELS: ${{ secrets.REQUIRED_RUNNER_LABELS || 'self-hosted,linux,x64,pnpm,uv' }}
+        run: pnpm run tools:check-runners || true
       - name: Scan for npm usage (fail if found)
-        run: pnpm run tools:scan-npm -- --exclude=templates,examples,stuff,vendor && echo "No npm usage found"
+        run: pnpm run tools:scan-npm -- --exclude=templates,examples,stuff,vendor,scripts/setup-pnpm.sh && echo "No npm usage found"
       - name: Run Biome checks for scripts
-        run: pnpm -s exec biome check "scripts/**/*.mjs"
+        run: pnpm exec biome check "scripts/**/*.mjs"
       - name: Install trunk CLI
         run: |
           curl -sSf https://trunk.io/install.sh | sh
           export PATH=$HOME/.trunk/bin:$PATH
           trunk --version
+      - name: Try to fetch submodules (optional)
+        run: |
+          set -eux
+          git submodule sync --recursive || true
+          git submodule update --init --recursive || echo "Submodules failed to update — continuing without them"
+
       - name: Run trunk checks across subrepos (fmt + check)
         run: |
           # Ensure trunk definitions are synced from the workspace base to subrepos
           pnpm run trunk:sync-defs || true
           chmod +x .dev/automation/scripts/run-trunk-subrepos.sh
           .dev/automation/scripts/run-trunk-subrepos.sh --fmt || true
+      - name: Enforce doc tags across all repos
+        run: bash scripts/tag-propagate.sh && pnpm run docs:tag-suggest --apply
+      - name: Typesense freshness (info)
+        run: pnpm run search:freshness-check || true
       - name: Install Python linters
         run: |
           python -m pip install --upgrade pip
@@ -56,5 +114,63 @@ jobs:
         run: pnpm run lint:python
       - name: Run Python lint script (auto-fix safe changes)
         run: pnpm run lint:python:fix || true
+      - name: Validate cortex schemas
+        run: pnpm run ci:validate:cortex
       - name: Run workspace.gitDoctor capability
-        run: ./.dev/automation/scripts/workspace-gitdoctor-capability.sh --sync-submodules --publish-artifact --strict
+        run: ./.dev/automation/scripts/workspace-health.sh --sync-submodules --publish-artifact --strict
+      - name: Lint workspace manifest & gate new repos
+        run: |
+          python .dev/automation/scripts/lint-workspace-manifest.py
+          bash .dev/automation/scripts/manifest-gate.sh
+      - name: Tidy submodules (sync + gate + skeleton dry-run)
+        run: bash scripts/tidy-submodules.sh
+
+  health-selfhosted:
+    name: workspace-health (self-hosted runner)
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Checkout (no submodules by default)
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          submodules: false
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.11.14
+      - name: Cache uv downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ hashFiles('requirements.workspace.min.lock') }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: n00t/pnpm-lock.yaml
+      - name: Set up pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+        with:
+          version: 10.23.0
+      - name: Verify pnpm (self-hosted)
+        run: pnpm -v
+      - name: Install n00t dependencies (self-hosted)
+        working-directory: n00t
+        run: |
+          set -eux
+          pnpm -v
+          pnpm install --frozen-lockfile
+      - name: Run trunk checks across subrepos (fmt + check)
+        run: |
+          set -eux
+          pnpm run trunk:sync-defs || true
+          chmod +x .dev/automation/scripts/run-trunk-subrepos.sh
+          .dev/automation/scripts/run-trunk-subrepos.sh --fmt || true
+      - name: Run Python lint script
+        run: pnpm run lint:python
+      - name: Run workspace.gitDoctor capability (self-hosted)
+        run: ./.dev/automation/scripts/workspace-health.sh --sync-submodules --publish-artifact --strict

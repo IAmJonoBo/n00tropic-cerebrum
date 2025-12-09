@@ -1,0 +1,44 @@
+{
+  "folders": [
+    { "name": "cerebrum-root", "path": "." },
+    { "name": "n00-cortex", "path": "n00-cortex" },
+    { "name": "n00-frontiers", "path": "n00-frontiers" },
+    { "name": "n00t", "path": "n00t" },
+    { "name": "n00-school", "path": "n00-school" },
+    { "name": "n00plicate", "path": "n00plicate" },
+    { "name": "n00tropic", "path": "n00tropic" },
+    { "name": "n00clear-fusion", "path": "n00clear-fusion" },
+    { "name": "n00-horizons", "path": "n00-horizons" },
+    { "name": "n00menon", "path": "n00menon" },
+    { "name": "n00-dashboard", "path": "n00-dashboard" },
+    { "name": "actions-runner", "path": "actions-runner" },
+    { "name": "vendor (token-cli mirror)", "path": "vendor/n00plicate-token-cli.git" }
+  ],
+  "settings": {
+    "git.detectSubmodules": true,
+    "git.openRepositoryInParentFolders": "always",
+    "git.submoduleCheckoutMode": "recursive",
+    "search.useIgnoreFiles": true,
+    "explorer.excludeGitIgnore": true,
+    "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true,
+      "**/.trunk/**": true,
+      "**/.cache/**": true,
+      "**/.turbo/**": true,
+      "**/node_modules/**": true,
+      "**/dist/**": true,
+      "**/build/**": true,
+      "vendor/**": true
+    },
+    "files.watcherExclude": {
+      "**/node_modules/**": true,
+      "**/.venv-*/**": true,
+      "**/.pnpm/**": true,
+      "**/.trunk/**": true,
+      "**/dist/**": true,
+      "**/build/**": true,
+      "vendor/**": true
+    }
+  }
+}
