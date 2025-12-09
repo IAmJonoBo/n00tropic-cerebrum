@@ -40,11 +40,6 @@
       "prPriority": 20
     },
     {
-      "description": "Lock file maintenance priority",
-      "matchDepTypes": ["lockFileMaintenance"],
-      "prPriority": 5
-    },
-    {
       "description": "Group JavaScript/TypeScript toolchain minors & patches",
       "matchManagers": ["npm"],
       "matchPackageNames": [
