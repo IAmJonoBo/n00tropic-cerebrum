@@ -8,7 +8,7 @@ Lightweight, self-contained deployment scaffolding for OWASP Dependency-Track so
 
 ## Quickstart (local/dev)
 
-1. Copy `.env.example` to `.env` and set a strong `DT_ADMIN_PASSWORD`. Keep this file off GitHub; store it on the SSH-accessible host or secrets manager.
+1. Copy `.env.example` to `.env` and set a strong `DTRACK_DEFAULT_ADMIN_PASSWORD` (or `DT_ADMIN_PASSWORD` alias). Keep this file off GitHub; store it on the SSH-accessible host or secrets manager.
 2. Start the stack:
 
    ```bash

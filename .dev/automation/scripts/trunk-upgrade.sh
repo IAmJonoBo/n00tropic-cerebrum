@@ -554,14 +554,14 @@ else
 		while [[ ${#ACTIVE_PIDS[@]} -ge $PARALLEL_JOBS ]]; do
 			pid="${ACTIVE_PIDS[0]}"
 			wait_for_pid "$pid"
-			ACTIVE_PIDS=(${ACTIVE_PIDS[@]:1})
+			ACTIVE_PIDS=("${ACTIVE_PIDS[@]:1}")
 		done
 	done
 
 	while [[ ${#ACTIVE_PIDS[@]} -gt 0 ]]; do
 		pid="${ACTIVE_PIDS[0]}"
 		wait_for_pid "$pid"
-		ACTIVE_PIDS=(${ACTIVE_PIDS[@]:1})
+		ACTIVE_PIDS=("${ACTIVE_PIDS[@]:1}")
 	done
 
 	trap - EXIT

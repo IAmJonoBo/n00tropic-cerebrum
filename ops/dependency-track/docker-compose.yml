@@ -6,9 +6,10 @@ services:
     restart: unless-stopped
     ports:
       - "8081:8080"
+    env_file:
+      - .env
     environment:
-      - DTRACK_DEFAULT_ADMIN_PASSWORD=${DT_ADMIN_PASSWORD:?set DT_ADMIN_PASSWORD in .env}
-      - DTRACK_DEFAULT_ADMIN_USERNAME=admin
+      - DTRACK_DEFAULT_ADMIN_USERNAME=${DT_ADMIN_USERNAME:-admin}
       - DTRACK_BASE_URL=${DT_BASE_URL:-http://localhost:8081}
     volumes:
       - ./data:/data

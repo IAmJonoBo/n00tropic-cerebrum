@@ -93,7 +93,7 @@ if [[ ${SYNC_ONLY} == true ]]; then
 	exit 0
 fi
 
-mapfile -t REPOS < <(find . -maxdepth 3 -path "./*/.trunk/trunk.yaml" -not -path "./.trunk/trunk.yaml" -print | sed -e 's#^\./##' -e 's#/\.trunk/trunk\.yaml$##' | sort)
+mapfile -t REPOS < <(find . -maxdepth 2 -path "./*/.trunk/trunk.yaml" -not -path "./.trunk/trunk.yaml" -print | sed -e 's#^\./##' -e 's#/\.trunk/trunk\.yaml$##' | sort)
 if [[ ${#REPOS[@]} -eq 0 ]]; then
 	echo "No subrepositories with .trunk/trunk.yaml found; skipping trunk checks."
 	exit 0
