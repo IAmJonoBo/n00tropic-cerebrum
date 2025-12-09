@@ -54,8 +54,8 @@
         "/^vitest$/",
         "/^tsup$/",
         "/^vite$/",
-        "/^@vitest//",
-        "/^@storybook//",
+        "/^@vitest\\//",
+        "/^@storybook\\//",
         "/^storybook$/"
       ],
       "groupName": "js/ts tooling",
