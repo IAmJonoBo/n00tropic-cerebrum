@@ -64,7 +64,7 @@ def fence_close_re(ch: str, n: int) -> re.Pattern:
 LIST_MARKER_RE = re.compile(
     r"""
     ^(?P<indent>\s*)
-    (?P<marker>[*+-]|\d{1,9}[.)])
+    (?P<marker>[*+-]|\d{1,9}(?:\.|\)))
     (?P<space>\s+)
     (?P<checkbox>\[(?:\s|x|X)\]\s+)?  # optional task list box
     """,
