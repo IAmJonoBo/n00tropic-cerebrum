@@ -12,16 +12,10 @@
   "lockFileMaintenance": {
     "enabled": true,
     "schedule": ["before 04:00 on monday"],
-    "automerge": true,
-    "prPriority": 5
+    "automerge": true
   },
-  "npm": {
-    "pnpm": {
-      "enabled": true
-    },
-    "postUpdateOptions": ["pnpmDedupe"],
-    "ignoreScripts": false
-  },
+  "postUpdateOptions": ["pnpmDedupe"],
+  "ignoreScripts": false,
   "pip_requirements": {
     "fileMatch": [
       "(^|/)requirements(\\.workspace)?(\\.min)?(\\.lock)?\\.txt$",
@@ -41,23 +35,28 @@
     {
       "description": "Surface majors with cooling-off window",
       "matchUpdateTypes": ["major"],
-      "stabilityDays": 3,
+      "minimumReleaseAge": "3 days",
       "labels": ["dep:major"],
       "prPriority": 20
     },
     {
+      "description": "Lock file maintenance priority",
+      "matchDepTypes": ["lockFileMaintenance"],
+      "prPriority": 5
+    },
+    {
       "description": "Group JavaScript/TypeScript toolchain minors & patches",
-      "matchManagers": ["npm", "pnpm"],
-      "matchPackagePatterns": [
-        "^eslint",
-        "^@typescript",
-        "^typescript$",
-        "^vitest$",
-        "^tsup$",
-        "^vite$",
-        "^@vitest/",
-        "^@storybook/",
-        "^storybook$"
+      "matchManagers": ["npm"],
+      "matchPackageNames": [
+        "/^eslint/",
+        "/^@typescript/",
+        "/^typescript$/",
+        "/^vitest$/",
+        "/^tsup$/",
+        "/^vite$/",
+        "/^@vitest//",
+        "/^@storybook//",
+        "/^storybook$/"
       ],
       "groupName": "js/ts tooling",
       "labels": ["dep:tooling"],
@@ -68,7 +67,7 @@
     {
       "description": "Group Python tooling (lint/test/packaging)",
       "matchManagers": ["pip-compile", "pip_requirements"],
-      "matchPackagePatterns": ["^(black|ruff|mypy|pytest|uv)$", "^types-"],
+      "matchPackageNames": ["/^(black|ruff|mypy|pytest|uv)$/", "/^types-/"],
       "groupName": "python tooling",
       "labels": ["dep:tooling"],
       "matchUpdateTypes": ["minor", "patch"],
@@ -85,13 +84,13 @@
     },
     {
       "description": "Pin Renovate to workspace Node toolchain",
-      "matchManagers": ["npm", "pnpm"],
+      "matchManagers": ["npm"],
       "matchPackageNames": ["pnpm"],
       "allowedVersions": "10.x"
     },
     {
       "description": "Treat infra/templates separately to avoid noise",
-      "matchPaths": ["n00-frontiers/applications/scaffolder/**", "stuff/**"],
+      "matchFileNames": ["n00-frontiers/applications/scaffolder/**", "stuff/**"],
       "labels": ["dep:templates"],
       "prPriority": 15
     }
